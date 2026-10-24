@@ -300,6 +300,26 @@ func interface_e_fluxo() -> void:
 	conferir("Continuar abre resumo do mais recente sem criar Main", resumo.scene_file_path == "res://scenes/panels/PainelMeuPorto.tscn"
 		and gs.espaco == recente["espaco"] and resumo.resumo["porto"] == recente["porto"]
 		and arvore.root.find_child("Main", true, false) == null)
+	# ⚠️ O DIA E A SEMANA SÃO A TARJA DO RESUMO (`138`): o bloco acima conferia o
+	# dicionário do resumo, que sobrevive à tarja apagada. O que se pergunta é
+	# o que o painel ESCREVE.
+	var escritos: Array = []
+	for rotulo in resumo.find_children("*", "Label", true, false):
+		escritos.append(rotulo.text)
+	conferir("o resumo escreve o dia e a semana", escritos.has(resumo.resumo["dia"])
+		and escritos.has(resumo.resumo["semana"]) and String(resumo.resumo["semana"]).begins_with("Semana "))
+	# E a partida nova com espaços ocupados pergunta ONDE, com o título dela:
+	# sem ele, a lista dos três espaços lê-se como a do «Carregar».
+	botao(inicio, "Nova partida").pressed.emit()
+	var escolha = inicio.get_child(inicio.get_child_count() - 1)
+	var titulos: Array = []
+	if escolha.scene_file_path == "res://scenes/panels/PainelEspacos.tscn":
+		for rotulo in escolha.find_children("*", "Label", true, false):
+			titulos.append(rotulo.text)
+	conferir("Nova partida com espaços ocupados pergunta onde, com o título", titulos.has("Nova partida")
+		and not titulos.has("Carregar partida"))
+	if escolha.scene_file_path == "res://scenes/panels/PainelEspacos.tscn":
+		escolha.free()
 	var quantidade: int = inicio.get_child_count()
 	inicio._continuar()
 	conferir("retomada repetida não duplica painel", inicio.get_child_count() == quantidade)

@@ -259,6 +259,20 @@ func _cenario(main: Node) -> void:
 	var fila = main._fila_lugares.get_child(0)
 	conferir("barco chamável mantém realce e ação", fila.modulate == fila.PULSO_COR
 		and (fila._tw_pulso == null or not fila._tw_pulso.is_valid() or not fila._tw_pulso.is_running()))
+	# ⚠️ E O CARTÃO DA DOCA TEM O SEU REALCE, que nenhum caso montava (`138`):
+	# o barco atracado sem ninguém, que o jogo não monta (atracar leva sempre o
+	# trabalhador) e que, se acontecer, é o que tem de acender — fixo, com o
+	# movimento reduzido, em vez de piscar.
+	var cartao_doca = main._dock_cards.get_child(0)
+	var guardada: Dictionary = gs.docks[0].duplicate(true)
+	gs.docks[0] = {"boat": {"id": 991, "value": 6000, "classe": "pesqueiro", "motivo": "pescado",
+		"op_turns": 1, "progress": 0, "rival": false, "matched": false, "matched_value": 0,
+		"paciencia": 2}, "worker_id": null}
+	cartao_doca.refresh()
+	conferir("doca com barco à espera mantém realce fixo", cartao_doca.modulate == Color(1.3, 1.18, 0.8)
+		and (cartao_doca._tw_pulso == null or not cartao_doca._tw_pulso.is_valid()))
+	gs.docks[0] = guardada
+	cartao_doca.refresh()
 	for camiao in main.trafego._camioes():
 		conferir("trânsito sem serviço fica oculto", not camiao["no"].visible)
 	var fauna: Array = main.find_children("*", "Node2D", true, false).filter(func(no: Node) -> bool:

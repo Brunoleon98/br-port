@@ -72,6 +72,8 @@ func _rodar() -> void:
 	_a5_ligacoes()
 	print("=== A6: volume vai ao bus e volta ===")
 	_a6_volume()
+	print("=== A7: o mar e a gaivota tocam quando o relógio deles dispara ===")
+	_a7_ambiente()
 
 	print("")
 	if _falhas == 0:
@@ -228,9 +230,51 @@ func _a6_volume() -> void:
 	A.definir_volume("SFX", 0.5)
 	_confere("volume 0,5 volta como 0,5", abs(A.volume("SFX") - 0.5) < 0.02,
 		"voltou %.3f" % A.volume("SFX"))
+	# ⚠️ E O QUE VOLTA DO BUS NÃO É O QUE FICA (`138`). A asserção de cima lê o
+	# `AudioServer`, que é desta sessão; o volume que o jogador escolheu só
+	# sobrevive ao jogo fechar se estiver no arquivo, e o `_gravar_config()`
+	# podia gravar um arquivo sem ele com tudo verde. Lê-se o arquivo.
+	var cfg := ConfigFile.new()
+	var lido := cfg.load(A.config) == OK
+	var gravado: float = float(cfg.get_value("volume", "SFX", -1.0)) if lido else -1.0
+	_confere("e o 0,5 fica gravado no arquivo de volume", abs(gravado - 0.5) < 0.02,
+		"o arquivo diz %.3f" % gravado)
 	A.definir_volume("SFX", 0.0)
 	_confere("volume zero silencia o bus",
 		AudioServer.is_bus_mute(AudioServer.get_bus_index("SFX")))
 	_confere("e volume() devolve 0 quando mudo", A.volume("SFX") == 0.0)
 	A.definir_volume("SFX", antes)
 	_confere("e volta ao que estava", abs(A.volume("SFX") - antes) < 0.02)
+
+
+# ⚠️ O AMBIENTE NÃO TEM SINAL DO JOGO: TEM DOIS RELÓGIOS (`138`). O A5 prova
+# que cada sinal do `GameState` pede o som dele; o mar e a gaivota não vêm de
+# sinal nenhum, vêm de dois `Timer` do `AmbienteCosteiro`, e a ligação de cada
+# um podia sair com as seis suítes verdes. Dispara-se o `timeout` à mão — é o
+# que o relógio faz quando chega a hora, e esperá-lo seria pôr segundos de
+# relógio numa suíte de meio segundo — e pergunta-se pelo pedido, e por o
+# relógio ficar outra vez armado no intervalo dele.
+func _a7_ambiente() -> void:
+	var ambiente: Node = load("res://scripts/AmbienteCosteiro.gd").new()
+	root.add_child(ambiente)
+	var casos := [["mar", "do mar", ambiente._mar, ambiente.INTERVALO_MAR],
+		["gaivota", "da gaivota", ambiente._gaivota, ambiente.INTERVALO_GAIVOTA]]
+	for caso in casos:
+		var id: String = caso[0]
+		var de: String = caso[1]
+		var relogio: Timer = caso[2]
+		var intervalo: Vector2 = caso[3]
+		_confere("o relógio %s está armado ao abrir" % de, not relogio.is_stopped())
+		A._nascimento = -999.0
+		A._pedido = ""
+		A._pedido_prioridade = -1
+		relogio.timeout.emit()
+		_confere("o relógio %s pede o som %s" % [de, de], A._pedido == id,
+			"pediu «%s»" % A._pedido)
+		_confere("e o relógio %s volta a armar-se entre %.1f e %.1f s" % [de, intervalo.x, intervalo.y],
+			not relogio.is_stopped() and relogio.time_left >= intervalo.x
+			and relogio.time_left <= intervalo.y, "%.2f s" % relogio.time_left)
+	A._pedido = ""
+	A._pedido_prioridade = -1
+	root.remove_child(ambiente)
+	ambiente.free()

@@ -1,0 +1,1904 @@
+[
+ {
+  "id": "AcomodacaoDeLeitura:19:not",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: aparelho volta a geometria padrao Menu-celular"
+  ],
+  "compila": true,
+  "segundos": 120.5334401400005
+ },
+ {
+  "id": "AcomodacaoDeLeitura:80:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: aparelho conserva medidas e centro Menu-celular",
+   "RB5: leitura maior cabe em (720, 1152): PainelDiario",
+   "RB5: o Construir no Maior cabe na tela baixa e rola por dentro"
+  ],
+  "compila": true,
+  "segundos": 119.32396255599997
+ },
+ {
+  "id": "AcomodacaoDeLeitura:88:not",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: o Construir no Maior cabe na tela baixa e rola por dentro"
+  ],
+  "compila": true,
+  "segundos": 120.69179049500053
+ },
+ {
+  "id": "AcomodacaoDoPorto:140:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.53443969
+ },
+ {
+  "id": "AcomodacaoDoPorto:82:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.98522285699983
+ },
+ {
+  "id": "AcomodacaoDoPorto:96:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.77281112999935
+ },
+ {
+  "id": "AmbienteCosteiro:15:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.37014077000003
+ },
+ {
+  "id": "AmbienteCosteiro:24:bool",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.70337719899999
+ },
+ {
+  "id": "AmbienteCosteiro:26:apagar",
+  "morto_por": "teste_audio",
+  "rotulos": [
+   "o relógio do mar pede o som do mar  — pediu «»",
+   "e o relógio do mar volta a armar-se entre 6.5 e 9.5 s  — 2.00 s",
+   "o relógio da gaivota pede o som da gaivota  — pediu «»"
+  ],
+  "compila": true,
+  "segundos": 0.4521747549997599
+ },
+ {
+  "id": "ArmazemLocal:58:logico",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F13: esta suíte corre como ferramenta  — args [\"--script\", \"res://tests/teste_fumaca.gd\"]",
+   "F13: `--script` conta como ferramenta",
+   "F13: `-s` conta como ferramenta",
+   "F13: o save desta corrida vive em user://ferramentas/  — user://savegame.json",
+   "F13: a pasta de registros desta corrida vive em user://ferramentas/  — user://registros"
+  ],
+  "compila": true,
+  "segundos": 28.067372717999206
+ },
+ {
+  "id": "ArmazemLocal:72:apagar",
+  "morto_por": "teste_audio",
+  "rotulos": [
+   "e o 0,5 fica gravado no arquivo de volume  — o arquivo diz -1.000"
+  ],
+  "compila": true,
+  "segundos": 0.5573675730001924
+ },
+ {
+  "id": "AssetPlacementTest:206:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.36734658599926
+ },
+ {
+  "id": "AssetPlacementTest:209:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.7406954070002
+ },
+ {
+  "id": "AssetPlacementTest:238:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.54645747300037
+ },
+ {
+  "id": "Audio:126:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 126.28702806399997
+ },
+ {
+  "id": "Audio:183:apagar",
+  "morto_por": "teste_audio",
+  "rotulos": [
+   "volume 0,5 volta como 0,5  — voltou 1.000",
+   "e o 0,5 fica gravado no arquivo de volume  — o arquivo diz 1.000"
+  ],
+  "compila": true,
+  "segundos": 0.5663375949998226
+ },
+ {
+  "id": "Audio:198:apagar",
+  "morto_por": "teste_audio",
+  "rotulos": [
+   "e o 0,5 fica gravado no arquivo de volume  — o arquivo diz -1.000"
+  ],
+  "compila": true,
+  "segundos": 0.6021120239993252
+ },
+ {
+  "id": "BarcoFila:195:rel",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: cada barco ao largo tem casco à vista ([0, 0, 0] px)",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 63.15313541299929
+ },
+ {
+  "id": "BarcoFila:233:bool",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 123.42182461999982
+ },
+ {
+  "id": "BarcoFila:67:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 123.26546622500064
+ },
+ {
+  "id": "ConteudoComoJogar:7:const",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T25: espaços e cobranças vêm das regras",
+   "T25: consulta, navegação e preservação da partida"
+  ],
+  "compila": true,
+  "segundos": 62.777716609999516
+ },
+ {
+  "id": "ConteudoComoJogar:8:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.2701853919998
+ },
+ {
+  "id": "ConteudoComoJogar:9:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 123.95044863600015
+ },
+ {
+  "id": "ConteudoMeuPorto:14:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T27: vencimento identifica dia fechado sem adiantar decisão",
+   "T27: resumo de retomada e consulta sem efeitos"
+  ],
+  "compila": true,
+  "segundos": 62.17249714100035
+ },
+ {
+  "id": "ConteudoMeuPorto:25:not",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T27: resumo de retomada e consulta sem efeitos"
+  ],
+  "compila": true,
+  "segundos": 62.1277331729998
+ },
+ {
+  "id": "ConteudoMeuPorto:75:rel",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T27: encerrada não promete obra nem recebimento futuros",
+   "T27: resumo de retomada e consulta sem efeitos"
+  ],
+  "compila": true,
+  "segundos": 62.41445872099939
+ },
+ {
+  "id": "CopiaDoDiagnostico:11:aritm",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.30816808500003
+ },
+ {
+  "id": "CopiaDoDiagnostico:28:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.0826234569995
+ },
+ {
+  "id": "CopiaDoDiagnostico:41:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 124.60335015599958
+ },
+ {
+  "id": "CounterOfferPanel:158:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F10: há um botão «Manter…» ligado para tocar  — achou 0",
+   "o bloco F10 correu até ao fim",
+   "F14: há um botão «Manter…» ligado para tocar  — achou 0",
+   "F14: o caminho dos preços correu até ao fim",
+   "F14: há um botão «Manter…» ligado para tocar  — achou 0"
+  ],
+  "compila": true,
+  "segundos": 26.06118465000054
+ },
+ {
+  "id": "CounterOfferPanel:237:rel",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F14: negócio fechado por «Igualar» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)  — veste TarjaNarrativaRuim / RotuloTotalRuim, esperado TarjaNarrativaBoa",
+   "F14: negócio fechado por «Cortar» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)  — veste TarjaNarrativaRuim / RotuloTotalRuim, esperado TarjaNarrativaBoa",
+   "F14: negócio fechado por «Manter» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)  — veste TarjaNarrativaRuim / RotuloTotalRuim, esperado TarjaNarrativaBoa",
+   "F14: negócio perdido — a tarja veste o tom da palavra («Negócio perdido para Porto Farol»)  — veste TarjaNarrativaBoa / RotuloTotalBom, esperado TarjaNarrativaRuim"
+  ],
+  "compila": true,
+  "segundos": 28.79966620599953
+ },
+ {
+  "id": "CounterOfferPanel:310:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.23672064099992
+ },
+ {
+  "id": "DebtPaymentPanel:158:const",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F14: e no dia da cobrança em que ela vence  — «Volta R$137.248 na cobrança do dia 84», a cobrança vence no dia 56"
+  ],
+  "compila": true,
+  "segundos": 27.25736365099965
+ },
+ {
+  "id": "DebtPaymentPanel:59:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F10 Ribeiro, entrada: o painel está no tempo «entrada»  — está em «»",
+   "F10 Ribeiro, entrada: o painel tem cartão",
+   "F10: há um botão «Não consigo…» ligado para tocar  — achou 0",
+   "o bloco F10 correu até ao fim",
+   "F11: pagou, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela  — na tela, de baixo para cima: DebtPaymentPanel.tscn«»"
+  ],
+  "compila": true,
+  "segundos": 27.25781875299981
+ },
+ {
+  "id": "DebtPaymentPanel:81:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F10: toda frase com o nome foi medida com ele (9 tokens, 96 rótulos vistos)  — sem medida: linha 264 «Boa tarde{vocativo}. Rivaldo Ribeiro, Ba»; linha 462 «{vocativo}»",
+   "F17: a fala do painel de «ribeiro» está no histórico  — a mais recente é de «ribeiro»: Boa tarde. Rivaldo Ribeiro, Banco Porto"
+  ],
+  "compila": true,
+  "segundos": 29.369733806000113
+ },
+ {
+  "id": "DiagnosticoDoJogo:17:rel",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T28: identidade conserva commit completo e marca modificada",
+   "T28: build limpo não recebe marca de modificado",
+   "T28: identidade inválida não se apresenta como build",
+   "T28: identidade, prévia, cópia e consulta sem efeitos"
+  ],
+  "compila": true,
+  "segundos": 63.718226134999895
+ },
+ {
+  "id": "DiagnosticoDoJogo:38:not",
+  "morto_por": "teste_fumaca (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 28.15699476700047
+ },
+ {
+  "id": "DiagnosticoDoJogo:9:logico",
+  "morto_por": "run_tests (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 62.95615263200034
+ },
+ {
+  "id": "DiarioFase2:7:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F10 Diário da Fase 2: todo o texto cai dentro do cartão (0 peças)",
+   "F10: toda frase com o nome foi medida com ele (9 tokens, 102 rótulos vistos)  — sem medida: linha 664 «O {portName} cresceu.»"
+  ],
+  "compila": true,
+  "segundos": 27.841334656999607
+ },
+ {
+  "id": "DiarioFase2:8:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F10 Diário da Fase 2: todo o texto cai dentro do cartão (0 peças)",
+   "F10: toda frase com o nome foi medida com ele (9 tokens, 102 rótulos vistos)  — sem medida: linha 664 «O {portName} cresceu.»"
+  ],
+  "compila": true,
+  "segundos": 29.926255098000183
+ },
+ {
+  "id": "DiarioFase2:9:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: a página da Fase 2 relida diz que a fase acabou",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 62.73511824599973
+ },
+ {
+  "id": "DocaCartao:115:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: o cartão da doca mostra o valor do barco atracado",
+   "T31: e, com o acordo, o valor acordado",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 65.12792930599971
+ },
+ {
+  "id": "DocaCartao:206:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T29: doca com barco à espera mantém realce fixo",
+   "T29: preferência, movimento, informação e isolamento"
+  ],
+  "compila": true,
+  "segundos": 62.30820569400021
+ },
+ {
+  "id": "DocaCartao:80:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 127.15359918400009
+ },
+ {
+  "id": "Dock:1112:bool",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D39: alocada com o barco no berço, o pau trabalha já com progress 0  — tween true, pilha false"
+  ],
+  "compila": true,
+  "segundos": 119.62943531899964
+ },
+ {
+  "id": "Dock:1179:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.90894090500115
+ },
+ {
+  "id": "Dock:1334:not",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D39: devolvido o barco, a pilha sai e o pau volta a varrer em repouso",
+   "D40: no segundo turno a lança varre em repouso, a pilha fica e ela espera"
+  ],
+  "compila": true,
+  "segundos": 128.78444576500078
+ },
+ {
+  "id": "Dock:416:aritm",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 128.55501424999966
+ },
+ {
+  "id": "Dock:843:not",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T29: operação mantém trabalhador e ciclo de serviço",
+   "T29: preferência, movimento, informação e isolamento"
+  ],
+  "compila": true,
+  "segundos": 63.20686187299998
+ },
+ {
+  "id": "Dock:895:logico",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T29: operação mantém trabalhador e ciclo de serviço",
+   "T29: preferência, movimento, informação e isolamento"
+  ],
+  "compila": true,
+  "segundos": 65.16398503799974
+ },
+ {
+  "id": "EndGame:143:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 123.3671674749994
+ },
+ {
+  "id": "EndGame:250:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.34171264199995
+ },
+ {
+  "id": "EndGame:63:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F14: balanço de quem perdeu — a tarja veste o tom da palavra («»)  — veste TarjaNarrativaRuim / RotuloTotalRuim, esperado",
+   "F14: balanço de quem venceu — a tarja veste o tom da palavra («»)  — veste TarjaNarrativaBoa / RotuloTotalBom, esperado"
+  ],
+  "compila": true,
+  "segundos": 29.300042496999595
+ },
+ {
+  "id": "Fauna:282:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.15352997900027
+ },
+ {
+  "id": "Fauna:337:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.73670229100026
+ },
+ {
+  "id": "Fauna:487:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.54122205400108
+ },
+ {
+  "id": "FilaDeMensagens:161:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F22.1: e sai do histórico — nunca foi dito"
+  ],
+  "compila": true,
+  "segundos": 27.79892053900039
+ },
+ {
+  "id": "FilaDeMensagens:200:not",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F8g: a segunda obra não repete a fala igual — funde-se  — repetiu: Consertar o armazém — obra iniciada. 2 dias; pronto no dia 10., Preço igualado — barco fechado por R$7.506., Consertar o armazém — pronto. +50% no barco que vem deixar carga, Semana nova. Barcos esperando e dinheiro no caixa. Aproveita., O Porto Farol tá de olho no que passa por aqui, chefia., Zezão terminou. Ficou bom — e olha que eu duvidei."
+  ],
+  "compila": true,
+  "segundos": 28.283811955999226
+ },
+ {
+  "id": "FilaDeMensagens:225:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F8a: a fala do upgrade é apresentada  — apresentadas:",
+   "F8a: e a mensagem do sistema da mesma compra também  — apresentadas:",
+   "F8c: com barco à espera e caixa curto, sai a variante das duas  — ficou:",
+   "F8c: sem barco e com caixa folgado, sai a variante de nenhuma das duas  — ficou:",
+   "F8c2: a variante é a do estado em que a linha é ESCRITA, não a do sinal  — ficou:  (a do sinal seria: Semana nova. Tudo quieto por enquanto, chefia.)"
+  ],
+  "compila": true,
+  "segundos": 28.6964120800003
+ },
+ {
+  "id": "FolhaDoCaderno:292:apagar",
+  "morto_por": "teste_fumaca (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 29.90006635500049
+ },
+ {
+  "id": "FolhaDoCaderno:300:logico",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 118.55179432499972
+ },
+ {
+  "id": "FolhaDoCaderno:81:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.17896460100019
+ },
+ {
+  "id": "GameState:1048:not",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: o arranque abre a partida gravada, e não uma nova",
+   "T31: sem save, o arranque abre partida nova",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 61.694388161999086
+ },
+ {
+  "id": "GameState:1085:const",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "o save traz os dois nomes de volta",
+   "o do porto",
+   "e o do jogador",
+   "F12: o save carrega",
+   "F12: e os rostos voltam iguais  — eram [15, 26, 0], voltaram []"
+  ],
+  "compila": true,
+  "segundos": 28.530733028001123
+ },
+ {
+  "id": "GameState:1151:apagar",
+  "morto_por": "teste_audio",
+  "rotulos": [],
+  "compila": false,
+  "segundos": 0.2745008490001055
+ },
+ {
+  "id": "GameState:1219:aritm",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T20: a partida segue na Fase 2, no primeiro dia dela, sem fim de jogo",
+   "T21: a treliça abre no primeiro dia da Fase 2"
+  ],
+  "compila": true,
+  "segundos": 65.02862778799954
+ },
+ {
+  "id": "GameState:1305:bool",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 125.92078321400004
+ },
+ {
+  "id": "GameState:1342:rel",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F15 docas, armazenagem com o armazém: o trabalhador entra na doca",
+   "F15: o caminho das docas correu até ao fim",
+   "F15 dia 32: o melhor dia é o 32, com a parcela dentro (-R$156.000), e o recorde diz R$8.877 do dia 4"
+  ],
+  "compila": true,
+  "segundos": 28.193108344999928
+ },
+ {
+  "id": "GameState:1344:rel",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: alocar fora do array recusa sem erro do motor",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 63.573787043000266
+ },
+ {
+  "id": "GameState:1358:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 124.23038939899925
+ },
+ {
+  "id": "GameState:1541:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T24: multa e reputação únicas, sem pagar serviço",
+   "T24: negativo e despesas sobrevivem à retomada",
+   "T24: confirmação real cobra uma vez",
+   "T24: cancelamento, contas, migração, interface e registro"
+  ],
+  "compila": true,
+  "segundos": 63.9678774089989
+ },
+ {
+  "id": "GameState:1748:const",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "[recusar] a perda entra também no dia"
+  ],
+  "compila": true,
+  "segundos": 64.15408700800072
+ },
+ {
+  "id": "GameState:1784:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: atender um barco sobe a reputação em 0.8",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 62.151008247999926
+ },
+ {
+  "id": "GameState:1858:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F11: pagou, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela  — na tela, de baixo para cima: nada",
+   "F11: não pagou, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela  — na tela, de baixo para cima: nada",
+   "F11: soltar com fila, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela  — na tela, de baixo para cima: nada"
+  ],
+  "compila": true,
+  "segundos": 29.1861991629994
+ },
+ {
+  "id": "GameState:2015:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F15 dia 32: o melhor dia é o 32, com a parcela dentro (R$3.844.000), e o recorde diz R$8.877 do dia 4"
+  ],
+  "compila": true,
+  "segundos": 27.447780559999956
+ },
+ {
+  "id": "GameState:2881:bool",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.07335491100093
+ },
+ {
+  "id": "GameState:2952:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: o recorde malformado no save carrega a zero, sem herdar o da partida viva",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 63.43922916200063
+ },
+ {
+  "id": "GameState:3339:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "um save recusado não deixa arquivo para trás (versão 13, abaixo do piso)",
+   "save de versão FUTURA também é recusado (versão 19)",
+   "save sem campo de versão nenhum é recusado",
+   "arquivo que não é JSON de objeto é recusado e apagado",
+   "e o arquivo impossível foi apagado  — sobrou no disco para ser tentado outra vez no próximo arranque"
+  ],
+  "compila": true,
+  "segundos": 29.59214501600036
+ },
+ {
+  "id": "Icones:117:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 118.84592032100045
+ },
+ {
+  "id": "Icones:132:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: texto sem corte local Contra-oferta"
+  ],
+  "compila": true,
+  "segundos": 119.83249024500037
+ },
+ {
+  "id": "Icones:99:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F14: antes da aposta, o cliente diz o que sobra e o novo desconto",
+   "F14: o caminho da recusa correu até ao fim"
+  ],
+  "compila": true,
+  "segundos": 28.44885452699964
+ },
+ {
+  "id": "Main:1149:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 125.94777447999877
+ },
+ {
+  "id": "Main:313:rel",
+  "morto_por": "teste_fumaca (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 27.841303652001443
+ },
+ {
+  "id": "Main:332:rel",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T29: escolha para fundo já aberto e repõe pose inteira",
+   "T29: elementos criados depois nascem com fundo parado",
+   "T29: preferência, movimento, informação e isolamento"
+  ],
+  "compila": true,
+  "segundos": 59.72872085600102
+ },
+ {
+  "id": "Main:497:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 126.79755267299879
+ },
+ {
+  "id": "Main:633:not",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F18 rodapé, dia 81: conta -1 disponíveis e o painel tem 3 para construir",
+   "F18 rodapé, dia 82: conta -1 disponíveis e o painel tem 3 para construir",
+   "F18 rodapé, dia 83: conta -1 disponíveis e o painel tem 2 para construir",
+   "F18 rodapé, dia 84: conta -1 disponíveis e o painel tem 0 para construir",
+   "F18 rodapé: a contagem muda dentro dos dias percorridos  — [-1]"
+  ],
+  "compila": true,
+  "segundos": 28.825010022999777
+ },
+ {
+  "id": "Main:755:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "o rótulo nomeia a doca livre  — diz \"Ao largo — toque num barco para atracar\""
+  ],
+  "compila": true,
+  "segundos": 117.3155515719991
+ },
+ {
+  "id": "Main:991:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.62332792899906
+ },
+ {
+  "id": "MataNoMapa:152:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "Cenario/Arvore00 vem depois de quem está atrás  — profundidade -4.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore01 vem depois de quem está atrás  — profundidade -2.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore02 vem depois de quem está atrás  — profundidade -5.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore03 vem depois de quem está atrás  — profundidade -4.0, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore04 vem depois de quem está atrás  — profundidade -2.1, mas BarcoEspera2 vem antes dele e está em 46.8"
+  ],
+  "compila": true,
+  "segundos": 122.56545150300008
+ },
+ {
+  "id": "MataNoMapa:174:logico",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "Cenario/Arvore00 vem depois de quem está atrás  — profundidade -4.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore01 vem depois de quem está atrás  — profundidade -2.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore02 vem depois de quem está atrás  — profundidade -5.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore03 vem depois de quem está atrás  — profundidade -4.0, mas BarcoEspera2 vem antes dele e está em 46.8",
+   "Cenario/Arvore04 vem depois de quem está atrás  — profundidade -2.1, mas BarcoEspera2 vem antes dele e está em 46.8"
+  ],
+  "compila": true,
+  "segundos": 118.34718155900009
+ },
+ {
+  "id": "MataNoMapa:184:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.79904037199958
+ },
+ {
+  "id": "MemoriaDeLeitura:18:logico",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: a marca e o primeiro caractere a vista no paragrafo cortado"
+  ],
+  "compila": true,
+  "segundos": 116.67360880700107
+ },
+ {
+  "id": "MemoriaDeLeitura:36:aritm",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo"
+  ],
+  "compila": true,
+  "segundos": 62.85070879199975
+ },
+ {
+  "id": "MemoriaDeLeitura:37:aritm",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo"
+  ],
+  "compila": true,
+  "segundos": 60.99339435000002
+ },
+ {
+  "id": "MovimentoDeFundo:14:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.64908969099997
+ },
+ {
+  "id": "MovimentoDeFundo:16:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T29: escolha para fundo já aberto e repõe pose inteira",
+   "T29: elementos criados depois nascem com fundo parado",
+   "T29: preferência, movimento, informação e isolamento"
+  ],
+  "compila": true,
+  "segundos": 60.614836226999614
+ },
+ {
+  "id": "MovimentoDeFundo:22:logico",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 117.5703018639997
+ },
+ {
+  "id": "NarradoraDaCida:136:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "as 16 falas da Dona Cida chegam todas ao jogo  — mudas: arlindo_indireto"
+  ],
+  "compila": true,
+  "segundos": 27.982015257999592
+ },
+ {
+  "id": "NarradoraDaCida:257:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "as 16 falas da Dona Cida chegam todas ao jogo  — mudas: semana_nova_fila_curto",
+   "F8c: com barco à espera e caixa curto, sai a variante das duas  — ficou:",
+   "F8c2: a variante é a do estado em que a linha é ESCRITA, não a do sinal  — ficou:  (a do sinal seria: Semana nova. Tudo quieto por enquanto, chefia.)"
+  ],
+  "compila": true,
+  "segundos": 27.939556195000478
+ },
+ {
+  "id": "NarradoraDaCida:44:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F8a: a fala do upgrade é apresentada  — apresentadas: Reconstruir o Píer 2 — obra iniciada. 2 dias; pronto no dia 3., Reconstruir o Píer 2 — pronto. +1 doca e +1 trabalhador",
+   "F8c: com barco à espera e caixa curto, sai a variante das duas  — ficou:",
+   "F8c: sem barco e com caixa folgado, sai a variante de nenhuma das duas  — ficou:",
+   "F8c2: a variante é a do estado em que a linha é ESCRITA, não a do sinal  — ficou:  (a do sinal seria: Semana nova. Tudo quieto por enquanto, chefia.)",
+   "F8e: com a parcela paga, a fala do caixa curto é a que não a cobra  — apresentadas: Parcela de R$130.435 paga ao Sr. Ribeiro."
+  ],
+  "compila": true,
+  "segundos": 28.473312093999994
+ },
+ {
+  "id": "Narrativa:487:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 118.26510597200104
+ },
+ {
+  "id": "Narrativa:491:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.96803122600068
+ },
+ {
+  "id": "Narrativa:705:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 123.74368100899846
+ },
+ {
+  "id": "ObraNoMapa:103:const",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D45: o armazém mostra o quadro 0 no dia 1 da obra  — textura res://art/props/galpao_velho.png"
+  ],
+  "compila": true,
+  "segundos": 126.15783483999985
+ },
+ {
+  "id": "ObraNoMapa:114:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.19740738099972
+ },
+ {
+  "id": "ObraNoMapa:141:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D45: a rua recapeada cai nos pedaços da tabela no dia 1 da obra",
+   "D45: a rua por recapear cai nos pedaços da tabela no dia 1 da obra",
+   "D45: o asfalto vai do avental a 55% do pátio no dia 2 da obra, nos cantos da tabela  — o trecho 2 tem 0 vértices",
+   "D45: a rua recapeada cai nos pedaços da tabela no dia 2 da obra",
+   "D45: a rua por recapear cai nos pedaços da tabela no dia 2 da obra"
+  ],
+  "compila": true,
+  "segundos": 121.07796907900047
+ },
+ {
+  "id": "PainelAjustes:102:rel",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: controle aplica tamanho e preserva foco",
+   "RB5: controle retorna ao padrao"
+  ],
+  "compila": true,
+  "segundos": 125.91892261599969
+ },
+ {
+  "id": "PainelAjustes:61:rel",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: o botao que diz Maior aplica o maior e o que diz Padrao volta"
+  ],
+  "compila": true,
+  "segundos": 125.62518468000053
+ },
+ {
+  "id": "PainelAjustes:67:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: ajustes oferecem os dois tamanhos",
+   "RB5: o botao que diz Maior aplica o maior e o que diz Padrao volta"
+  ],
+  "compila": true,
+  "segundos": 119.12237104400083
+ },
+ {
+  "id": "PainelBoletim:54:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 124.38384026600033
+ },
+ {
+  "id": "PainelBoletim:66:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 124.12042780900083
+ },
+ {
+  "id": "PainelBoletim:76:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F17: a fala do painel de «cida» está no histórico  — a mais recente é de «ribeiro»: Boa tarde. Rivaldo Ribeiro, Banco Porto",
+   "F17: e com a cara dessa fala (cida)"
+  ],
+  "compila": true,
+  "segundos": 28.0680340229992
+ },
+ {
+  "id": "PainelCaixa:41:rel",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "mostra que o primeiro dia ainda nao fechou  — painel diz: Dinheiro do dia"
+  ],
+  "compila": true,
+  "segundos": 124.96139140000014
+ },
+ {
+  "id": "PainelCaixa:63:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.05460403699908
+ },
+ {
+  "id": "PainelCaixa:90:rel",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: o caixa diz o que entrou ontem (R$8.000), com o total de cada dia",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 63.33767678300137
+ },
+ {
+  "id": "PainelCalendario:101:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: janelas de leitura tem altura util Calendário",
+   "RB5: abertura maior conserva area de leitura Calendário"
+  ],
+  "compila": true,
+  "segundos": 124.41402816200025
+ },
+ {
+  "id": "PainelCalendario:121:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 123.57925229300054
+ },
+ {
+  "id": "PainelCalendario:122:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 126.72650688000067
+ },
+ {
+  "id": "PainelCancelarServico:37:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 126.55961753200063
+ },
+ {
+  "id": "PainelCancelarServico:50:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T24: a confirmação mostra o botão Cancelar serviço",
+   "T24: cancelamento, contas, migração, interface e registro"
+  ],
+  "compila": true,
+  "segundos": 65.32999107599971
+ },
+ {
+  "id": "PainelCancelarServico:57:bool",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T24: recusa pede reabrir: confirmar outra vez não cancela",
+   "T24: confirmação real cobra uma vez",
+   "T24: registro 5 observa uma vez, sem identidade pessoal",
+   "T24: cancelamento, contas, migração, interface e registro"
+  ],
+  "compila": true,
+  "segundos": 65.97992522999994
+ },
+ {
+  "id": "PainelCelular:139:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 129.4705824119992
+ },
+ {
+  "id": "PainelCelular:218:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.97003977799977
+ },
+ {
+  "id": "PainelCelular:230:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D38: mediu o corpo e o «Guardar» do telefone (5 peças)  — [\"BotaoLateral3\", \"BotaoLateral2\", \"BotaoLateral1\", \"@PanelContainer@1994\", \"@Button@2081\"]"
+  ],
+  "compila": true,
+  "segundos": 130.0427847560004
+ },
+ {
+  "id": "PainelComoJogar:21:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: fontes do painel Como jogar (índice)",
+   "RB5: fontes do painel Como jogar (artigo)",
+   "RB5: fontes do painel Como jogar (glossário)"
+  ],
+  "compila": true,
+  "segundos": 121.13879015999919
+ },
+ {
+  "id": "PainelComoJogar:85:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 124.48122258500007
+ },
+ {
+  "id": "PainelComoJogar:88:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo",
+   "T25: consulta conserva posição do artigo"
+  ],
+  "compila": true,
+  "segundos": 62.74114498999916
+ },
+ {
+  "id": "PainelConfiguracoes:12:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 124.46596714099906
+ },
+ {
+  "id": "PainelConfiguracoes:16:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T28: porta de versão e diagnóstico existe",
+   "T28: identidade, prévia, cópia e consulta sem efeitos",
+   "T30: Configurações reúne as três consultas e Voltar",
+   "T30: quatro entradas, retorno das consultas e movimento legível"
+  ],
+  "compila": true,
+  "segundos": 63.2822197050009
+ },
+ {
+  "id": "PainelConfiguracoes:23:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.17765290900024
+ },
+ {
+  "id": "PainelDiagnostico:22:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D33: o motor montou todos os estados  — Diagnóstico (cópia indisponível) pediu o tempo «indisponivel» e o painel está em «consulta»",
+   "RB5: montou Diagnóstico (cópia indisponível)",
+   "RB5: percurso montou todos os estados",
+   "RB5: abertura direta montou Diagnóstico (cópia indisponível)",
+   "RB5: aberturas diretas terminaram"
+  ],
+  "compila": true,
+  "segundos": 121.7818268409992
+ },
+ {
+  "id": "PainelDiagnostico:36:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D33: o motor montou todos os estados  — Diagnóstico (cópia indisponível): tocar «Copiar diagnóstico» casou 0 botões",
+   "RB5: montou Diagnóstico (cópia indisponível)",
+   "RB5: percurso montou todos os estados",
+   "RB5: abertura direta montou Diagnóstico (cópia indisponível)",
+   "RB5: aberturas diretas terminaram"
+  ],
+  "compila": true,
+  "segundos": 130.58309822900083
+ },
+ {
+  "id": "PainelDiagnostico:39:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T28: botões têm alvo e cabem na tela",
+   "T28: botões têm alvo e cabem na tela",
+   "T28: identidade, prévia, cópia e consulta sem efeitos"
+  ],
+  "compila": true,
+  "segundos": 63.78646003599897
+ },
+ {
+  "id": "PainelDiario:37:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: fontes do painel Diário"
+  ],
+  "compila": true,
+  "segundos": 118.03332433700052
+ },
+ {
+  "id": "PainelDiario:38:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F10 Diário: o painel tem cartão",
+   "F10: toda frase com o nome foi medida com ele (9 tokens, 102 rótulos vistos)  — sem medida: linha 55 «O avô escrevia aqui toda semana — vinte »; linha 59 «O {portName} tem dívida, tem madeira pod»"
+  ],
+  "compila": true,
+  "segundos": 28.422838452999713
+ },
+ {
+  "id": "PainelDiario:41:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F10 Diário: todo o texto cai dentro do cartão (0 peças)",
+   "F10: toda frase com o nome foi medida com ele (9 tokens, 102 rótulos vistos)  — sem medida: linha 55 «O avô escrevia aqui toda semana — vinte »; linha 59 «O {portName} tem dívida, tem madeira pod»"
+  ],
+  "compila": true,
+  "segundos": 27.7956419789989
+ },
+ {
+  "id": "PainelDocas:117:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F15 docas, armazenagem com o armazém: o quadro promete -R$1 e o jogo paga R$116.666",
+   "F15 docas, contêiner com o pátio: o quadro promete -R$1 e o jogo paga R$86.667",
+   "F15 docas, pescado, sem bónus: o quadro promete -R$1 e o jogo paga R$12.345",
+   "F15 docas, preço fechado com o rival: o quadro promete -R$1 e o jogo paga R$83.333",
+   "F15 docas, barco de três dias, dia 1: a barra promete -1 de -1, e o jogo fica em 1"
+  ],
+  "compila": true,
+  "segundos": 27.579502577998937
+ },
+ {
+  "id": "PainelDocas:127:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F15 docas, armazenagem com o armazém: o quadro promete -R$1 e o jogo paga R$116.666",
+   "F15 docas, contêiner com o pátio: o quadro promete -R$1 e o jogo paga R$86.667",
+   "F15 docas, pescado, sem bónus: o quadro promete -R$1 e o jogo paga R$12.345",
+   "F15 docas, preço fechado com o rival: o quadro promete -R$1 e o jogo paga R$83.333"
+  ],
+  "compila": true,
+  "segundos": 28.0426453400014
+ },
+ {
+  "id": "PainelDocas:159:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: o painel das docas diz a classe, quando paga e quem opera",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 65.96118787100022
+ },
+ {
+  "id": "PainelEspacos:38:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.32419703399864
+ },
+ {
+  "id": "PainelEspacos:52:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T27: Nova partida com espaços ocupados pergunta onde, com o título",
+   "T27: resumo de retomada e consulta sem efeitos"
+  ],
+  "compila": true,
+  "segundos": 61.500255801000094
+ },
+ {
+  "id": "PainelEspacos:82:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 124.05724816200018
+ },
+ {
+  "id": "PainelMensagens:123:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.22681242099861
+ },
+ {
+  "id": "PainelMensagens:151:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "D38: ribeiro tem os dois balões — o primeiro, com bico, e o seguido (0, 0 com bico)",
+   "D38: os balões de ribeiro têm um tom só  — []",
+   "D38: arlindo tem os dois balões — o primeiro, com bico, e o seguido (0, 0 com bico)",
+   "D38: os balões de arlindo têm um tom só  — []",
+   "D38: cida tem os dois balões — o primeiro, com bico, e o seguido (0, 0 com bico)"
+  ],
+  "compila": true,
+  "segundos": 120.35339376999946
+ },
+ {
+  "id": "PainelMensagens:315:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.70722275300068
+ },
+ {
+  "id": "PainelMenu:182:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.74446397400061
+ },
+ {
+  "id": "PainelMenu:277:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 117.44703456199932
+ },
+ {
+  "id": "PainelMenu:329:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 117.9113345049991
+ },
+ {
+  "id": "PainelMeta:11:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: antes da Fase 2 a meta diz quando abre e deixa fechar",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 61.8252390710004
+ },
+ {
+  "id": "PainelMeta:24:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T22: painel tem exatamente três barras",
+   "T22: barras leem dias, infra pronta e missão, nesta ordem"
+  ],
+  "compila": true,
+  "segundos": 61.592953108000074
+ },
+ {
+  "id": "PainelMeta:25:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 117.84578778100149
+ },
+ {
+  "id": "PainelMeuPorto:19:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.83577079099996
+ },
+ {
+  "id": "PainelMeuPorto:26:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T27: o resumo escreve o dia e a semana",
+   "T27: resumo de retomada e consulta sem efeitos"
+  ],
+  "compila": true,
+  "segundos": 61.509406011000465
+ },
+ {
+  "id": "PainelMeuPorto:30:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 117.82223337299911
+ },
+ {
+  "id": "PainelNarrativo:121:apagar",
+  "morto_por": "teste_design (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.99951524399876
+ },
+ {
+  "id": "PainelNarrativo:469:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.270292272
+ },
+ {
+  "id": "PainelNarrativo:556:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F14: cobrança com dinheiro — a tarja veste o tom da palavra («Depois de pagar: R$123.457»)  — veste TarjaNarrativaBoa / RotuloTotal, esperado TarjaNarrativaBoa",
+   "F14: resposta de quem pagou — a tarja veste o tom da palavra («Parcela quitada: R$140.000»)  — veste TarjaNarrativaBoa / RotuloTotal, esperado TarjaNarrativaBoa",
+   "F14: resposta de quem aceitou — a tarja veste o tom da palavra («Parcela paga com o empréstimo: R$140.000»)  — veste TarjaNarrativaBoa / RotuloTotal, esperado TarjaNarrativaBoa",
+   "F14: negócio fechado por «Igualar» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)  — veste TarjaNarrativaBoa / RotuloTotal, esperado TarjaNarrativaBoa",
+   "F14: negócio fechado por «Cortar» — a tarja veste o tom da palavra («Negócio fechado no seu porto»)  — veste TarjaNarrativaBoa / RotuloTotal, esperado TarjaNarrativaBoa"
+  ],
+  "compila": true,
+  "segundos": 29.1469936579997
+ },
+ {
+  "id": "PainelNarrativo:591:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F14: o boletim tem os blocos «Entrou» e «Saiu»  — [\"Boletim Financeiro\", \"Semana 1 de 12\", \"Docagens\", \"R$3.000\", \"Armazém\", \"R$4.007\", \"Pátio de contêineres\", \"R$5.014\", \"Aluguel de píer\", \"R$6.021\", \"Salários\", \"R$7.028\", \"Manutenção\", \"R$8.035\", \"Parcela\", \"R$9.042\", \"Cancelamento de serviço\", \"R$11.056\", \"Prejuízo de R$17.119\", \"O Sr. Ribeiro emprestou R$10.049, fora do resultado.\", \"Fechou no vermelho, chefia — mas quem levou foi o Sr. Ribeiro.\\nEsse vermelho eu assino embaixo.\"]",
+   "F14: o caminho do boletim correu até ao fim"
+  ],
+  "compila": true,
+  "segundos": 28.496552252001493
+ },
+ {
+  "id": "PainelNarrativo:877:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.59351285699995
+ },
+ {
+  "id": "PainelParcela:38:rel",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T11: no dia 28 o painel diz «Vence hoje, dia 28.»"
+  ],
+  "compila": true,
+  "segundos": 61.89619957099967
+ },
+ {
+  "id": "PainelParcela:46:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F14: parcela por quitar — há uma tarja  — 0 tarjas",
+   "F15 parcela: a linha de apoio é a cheia menos o abatimento ([])",
+   "F15 parcela: a barra mede o dinheiro contra o valor de hoje",
+   "F15: há um botão «Quitar agora…» ligado para tocar  — achou 0",
+   "F15: o caminho da parcela correu até ao fim"
+  ],
+  "compila": true,
+  "segundos": 27.336697393999202
+ },
+ {
+  "id": "PainelParcela:98:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T31: a parcela com falta deixa fechar",
+   "T31: reputação, arranque e o que os painéis mostram e fazem"
+  ],
+  "compila": true,
+  "segundos": 62.23286037999969
+ },
+ {
+  "id": "PainelReputacao:147:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F15: o caminho da reputação correu até ao fim"
+  ],
+  "compila": true,
+  "segundos": 25.678113423999093
+ },
+ {
+  "id": "PainelReputacao:51:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F15 reputação 76.60: o quadro diz o patamar do jogo («»)",
+   "F15 reputação 76.60: a escada tem os cinco degraus  — 0 degraus",
+   "F15 reputação 76.60: um degrau marcado, e um só  — 0",
+   "F15 reputação 76.60: «» — a -1.0 chega-se a Respeitado, e um pouco antes ainda não",
+   "F15 reputação 20.95: o quadro diz o patamar do jogo («»)"
+  ],
+  "compila": true,
+  "segundos": 26.54143312800079
+ },
+ {
+  "id": "PainelReputacao:99:const",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: texto sem corte local Reputação"
+  ],
+  "compila": true,
+  "segundos": 120.6896082910007
+ },
+ {
+  "id": "PauseMenu:50:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F16 pausa: ajuda entre Continuar e Ajustes ()",
+   "F23: a pausa diz em que fase e dia está («»)"
+  ],
+  "compila": true,
+  "segundos": 27.2004908050003
+ },
+ {
+  "id": "PauseMenu:87:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F16 pausa: ajuda entre Continuar e Ajustes (Continuar, , , , )"
+  ],
+  "compila": true,
+  "segundos": 27.485958713999935
+ },
+ {
+  "id": "PauseMenu:88:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.92726804599988
+ },
+ {
+  "id": "PreferenciasDeApresentacao:38:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T29: nova instância relê escolha persistente",
+   "T29: preferência independe do espaço 1",
+   "T29: preferência independe do espaço 2",
+   "T29: preferência independe do espaço 3",
+   "T29: toque aplica imediatamente e permanece no disco"
+  ],
+  "compila": true,
+  "segundos": 62.01315646900002
+ },
+ {
+  "id": "PreferenciasDeApresentacao:40:rel",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: leitor restaura maior/false ordem 0",
+   "RB5: leitor restaura maior/false ordem 1",
+   "RB5: leitor restaura maior/true ordem 0",
+   "RB5: leitor restaura maior/true ordem 1"
+  ],
+  "compila": true,
+  "segundos": 119.75465321199954
+ },
+ {
+  "id": "PreferenciasDeApresentacao:61:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: valor invalido nao altera a escolha",
+   "RB5: o botao que diz Maior aplica o maior e o que diz Padrao volta",
+   "RB5: controle aplica tamanho e preserva foco",
+   "RB5: exemplo usa fonte maior do tema",
+   "RB5: falha ao lembrar texto aparece nos Ajustes"
+  ],
+  "compila": true,
+  "segundos": 122.08601305899901
+ },
+ {
+  "id": "PropIso:43:logico",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.42177995400016
+ },
+ {
+  "id": "PropIso:66:rel",
+  "morto_por": "asset_validator (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 1.8611640489998535
+ },
+ {
+  "id": "PropIso:95:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.81052572799854
+ },
+ {
+  "id": "Registro:189:apagar",
+  "morto_por": "teste_registro",
+  "rotulos": [
+   "linhas_gravadas() bate com o arquivo  — contou 228, o arquivo tem 225",
+   "armar() outra vez recomeça a contagem  — a abertura contou 231 linhas",
+   "três linhas depois da abertura ficam as três  — 4 linhas, esperadas 234",
+   "mas o nome do porto sim (é escolha de jogo)",
+   "grava se o campo ficou em branco"
+  ],
+  "compila": true,
+  "segundos": 1.3097814780003318
+ },
+ {
+  "id": "Registro:203:rel",
+  "morto_por": "teste_registro",
+  "rotulos": [
+   "a partida nova do dia 1 grava-se como nova, não retomada  — [{ \"caixa_inicial\": 400000.0, \"e\": \"abriu\", \"jogo\": \"\", \"numero_da_fase\": 1.0, \"parcela\": 140000.0, \"plataforma\": \"Linux\", \"quando\": \"2026-10-24T07:58:47\", \"retomada\": true, \"t_inicial\": 1.0, \"turnos_por_semana\": 7.0, \"turnos_totais\": 84.0, \"versao\": 5.0 }]"
+  ],
+  "compila": true,
+  "segundos": 1.0131846929998574
+ },
+ {
+  "id": "Registro:295:const",
+  "morto_por": "teste_registro",
+  "rotulos": [
+   "o turno sem aviso vermelho conta zero avisos  — [{ \"alocados\": 2.0, \"avisos_ruins\": 1.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 0.0, \"perdidos\": 0.0, \"rep\": 65.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 2.0, \"trab\": 2.0 }]",
+   "e um aviso vermelho no turno conta um  — [{ \"alocados\": 2.0, \"avisos_ruins\": 1.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 0.0, \"perdidos\": 0.0, \"rep\": 65.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 2.0, \"trab\": 2.0 }, { \"alocados\": 2.0, \"avisos_ruins\": 2.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 1.0, \"perdidos\": 0.0, \"rep\": 66.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 3.0, \"trab\": 2.0 }]"
+  ],
+  "compila": true,
+  "segundos": 1.1241830870003469
+ },
+ {
+  "id": "Registro:316:rel",
+  "morto_por": "teste_registro",
+  "rotulos": [
+   "o turno conta as duas docas com trabalhador  — [{ \"alocados\": 0.0, \"avisos_ruins\": 0.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 0.0, \"perdidos\": 0.0, \"rep\": 65.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 2.0, \"trab\": 2.0 }]"
+  ],
+  "compila": true,
+  "segundos": 1.110913944999993
+ },
+ {
+  "id": "Registro:413:apagar",
+  "morto_por": "run_tests",
+  "rotulos": [
+   "T24: registro 5 observa uma vez, sem identidade pessoal",
+   "T24: cancelamento, contas, migração, interface e registro"
+  ],
+  "compila": true,
+  "segundos": 62.84233818699977
+ },
+ {
+  "id": "Retratos:171:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.41276602400103
+ },
+ {
+  "id": "Retratos:184:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.6154828939998
+ },
+ {
+  "id": "Retratos:200:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.95589603500048
+ },
+ {
+  "id": "RolagemDaOperacao:34:rel",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: arrasto com um dedo rola sem executar acao da partida"
+  ],
+  "compila": true,
+  "segundos": 121.65410751299896
+ },
+ {
+  "id": "RolagemDaOperacao:36:rel",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: arrastar rola sem executar acao da partida",
+   "RB5: arrasto sobre barco atracado nao libera ao premir"
+  ],
+  "compila": true,
+  "segundos": 121.39430228899982
+ },
+ {
+  "id": "RolagemDaOperacao:39:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: toque sem arrasto continua atracando",
+   "RB5: arrasto sobre barco atracado nao libera ao premir"
+  ],
+  "compila": true,
+  "segundos": 122.45090457600054
+ },
+ {
+  "id": "TelaInicial:112:rel",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F16 tela inicial: quatro entradas sem porto guardado  — []"
+  ],
+  "compila": true,
+  "segundos": 27.49585112800014
+ },
+ {
+  "id": "TelaInicial:73:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "o bloco D48 correu ate ao fim"
+  ],
+  "compila": true,
+  "segundos": 119.90121730499959
+ },
+ {
+  "id": "TelaInicial:83:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 121.13878400899921
+ },
+ {
+  "id": "TelaNomes:77:apagar",
+  "morto_por": "teste_fumaca (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 27.086410332000014
+ },
+ {
+  "id": "TelaNomes:82:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 120.64863047200015
+ },
+ {
+  "id": "TelaNomes:97:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.96544657099912
+ },
+ {
+  "id": "TextoDaInterface:125:rel",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "RB5: troca conserva campo texto cursor e foco"
+  ],
+  "compila": true,
+  "segundos": 122.26055864200134
+ },
+ {
+  "id": "TextoDaInterface:135:logico",
+  "morto_por": "teste_fumaca (só SCRIPT ERROR)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 27.359603287000937
+ },
+ {
+  "id": "TextoDaInterface:138:apagar",
+  "morto_por": "teste_fumaca (teto)",
+  "rotulos": [],
+  "compila": true,
+  "segundos": 72.5274022199992
+ },
+ {
+  "id": "TrafegoDeCamioes:1436:logico",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.03144257399981
+ },
+ {
+  "id": "TrafegoDeCamioes:531:const",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "nenhuma carroçaria sai do asfalto nas curvas abertas (a que mais se aproxima: 13.390)  — armazenagem (empresa 1) na diagonal (-0.35, -6.45) -> (-0.597249, 6.684628), quina (-4.8, -6.0)",
+   "porto_mapa_iso.svg: nenhum ponto da rota cai em calçada  — em (3.26, 14.57) — pixel (169, 384) — 20 px de calçada em 11x11, e o mínimo é 20; o centro pinta 5b6268",
+   "porto_mapa_iso_patio.svg: nenhum ponto da rota cai em calçada  — em (3.26, 14.57) — pixel (169, 384) — 20 px de calçada em 11x11, e o mínimo é 20; o centro pinta 4b555c",
+   "em 5400 s de jogo, nenhum camião passa por cima de outro à vista  — 51 vez(es); a primeira: t=158.6: Caminhao2 em (8.051193, 19.20002) e CaminhaoRetorno1 em (8.550016, 20.00426) sobrepõem-se 0.12",
+   "quem entra na rua — no arranque ou a sair do berço — nunca vai bater (4 x 785 posições)  — com a ida em s=0.0 e o retorno em (2.05, 3.2) (a sair do berço 1), a regra deixa entrar e aos 11.9 os dois tocam-se em (-0.356514, -6.103947) / (0.142604, -6.978428)"
+  ],
+  "compila": true,
+  "segundos": 126.15558527299982
+ },
+ {
+  "id": "TrafegoDeCamioes:538:const",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "em 5400 s de jogo, nenhum camião passa por cima de outro à vista  — 462 vez(es); a primeira: t=-1775.0: Caminhao2 em (15.65002, 33.55001) e CaminhaoRetorno0 em (16.1174, 33.1174) sobrepõem-se 0.15",
+   "o bloco D35 correu até ao fim"
+  ],
+  "compila": true,
+  "segundos": 143.18322088200148
+ },
+ {
+  "id": "TrafegoDeCamioes:591:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "em 5400 s de jogo, nenhum camião passa por cima de outro à vista  — 118 vez(es); a primeira: t=-1542.4: Caminhao1 em (11.64368, 23.55) e CaminhaoRetorno0 em (12.55002, 23.70571) sobrepõem-se 0.02"
+  ],
+  "compila": true,
+  "segundos": 129.08456690000094
+ },
+ {
+  "id": "TrafegoDeCamioes:799:const",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "doca vazia não chama camião nenhum",
+   "barco sem trabalhador também não  — o pedido é «ao ALOCAR um navio», e sem operário o porto não está a operar"
+  ],
+  "compila": true,
+  "segundos": 120.82432004600014
+ },
+ {
+  "id": "TrafegoDeCamioes:945:apagar",
+  "morto_por": "teste_design",
+  "rotulos": [
+   "as 32 silhuetas de camião aparecem na rua (serviço × empresa × silhueta)  — nunca apareceram: [\"caminhao_conteiner_retorno.png\", \"caminhao_conteiner_retorno_mx.png\", \"caminhao_conteiner_b_retorno.png\", \"caminhao_conteiner_b_retorno_mx.png\", \"caminhao_granel_retorno.png\", \"caminhao_granel_retorno_mx.png\", \"caminhao_granel_b_retorno.png\", \"caminhao_granel_b_retorno_mx.png\"]",
+   "e o retorno também (0 vezes)"
+  ],
+  "compila": true,
+  "segundos": 123.4463941799986
+ },
+ {
+  "id": "TutorialDoToninho:203:logico",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F22.1: e o «AVANÇAR DIA» pulsa (2 tweens novos)  — modulate (1.0, 1.0, 1.0, 1.0)"
+  ],
+  "compila": true,
+  "segundos": 27.82454642599987
+ },
+ {
+  "id": "TutorialDoToninho:208:not",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F22.1: e o «AVANÇAR DIA» pulsa (2 tweens novos)  — modulate (1.0, 1.0, 1.0, 1.0)"
+  ],
+  "compila": true,
+  "segundos": 27.945408002000477
+ },
+ {
+  "id": "TutorialDoToninho:76:rel",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 119.77405860399995
+ },
+ {
+  "id": "UpgradePanel:174:apagar",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 125.04361898300158
+ },
+ {
+  "id": "UpgradePanel:192:const",
+  "morto_por": null,
+  "rotulos": [],
+  "compila": true,
+  "segundos": 122.00992867100103
+ },
+ {
+  "id": "UpgradePanel:264:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F18 pier_2, dia 83: o Construir avisa ANTES de comprar, em âmbar  — Reconstruir o Píer 2 | +1 doca e +1 trabalhador · 2 dias de obra | Fica pronto só no fim do dia 84, e não será usado nesta fase.",
+   "F18 armazem, dia 83: o Construir avisa ANTES de comprar, em âmbar  — Consertar o armazém | +50% no barco que vem deixar carga · 2 dias de obra | Fica pronto só no fim do dia 84, e não será usado nesta fase.",
+   "F18 patio, dia 82: o Construir avisa ANTES de comprar, em âmbar  — Pavimentar o pátio | dobra a renda do píer e +30% no contêiner · 3 dias de obra | Fica pronto só no fim do dia 84, e não será usado nesta fase."
+  ],
+  "compila": true,
+  "segundos": 30.27883854999891
+ },
+ {
+  "id": "VezDasTelas:104:not",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F11: pagou, o boletim — só PainelBoletim.tscn na tela  — na tela, de baixo para cima: nada",
+   "F11: não pagou, o boletim — só PainelBoletim.tscn na tela  — na tela, de baixo para cima: nada",
+   "F11: quitou antes, fechado o boletim — só EndGame.tscn «narracao» na tela  — na tela, de baixo para cima: nada",
+   "F11: soltar o Main com telas na fila não abre a seguinte (41 nós órfãos)"
+  ],
+  "compila": true,
+  "segundos": 28.672470913001234
+ },
+ {
+  "id": "VezDasTelas:40:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F11: pagou, o boletim — só PainelBoletim.tscn na tela  — na tela, de baixo para cima: nada",
+   "F11: não pagou, o boletim — só PainelBoletim.tscn na tela  — na tela, de baixo para cima: nada",
+   "F11: quitou antes, fechado o boletim — só EndGame.tscn «narracao» na tela  — na tela, de baixo para cima: nada"
+  ],
+  "compila": true,
+  "segundos": 30.957979004999288
+ },
+ {
+  "id": "VezDasTelas:86:apagar",
+  "morto_por": "teste_fumaca",
+  "rotulos": [
+   "F11: pagou, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela  — na tela, de baixo para cima: nada",
+   "F11: não pagou, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela  — na tela, de baixo para cima: nada",
+   "F11: quitou antes, o boletim — só PainelBoletim.tscn na tela  — na tela, de baixo para cima: nada",
+   "F11: soltar com fila, no vencimento — só DebtPaymentPanel.tscn «entrada» na tela  — na tela, de baixo para cima: nada"
+  ],
+  "compila": true,
+  "segundos": 28.81550852199871
+ }
+]

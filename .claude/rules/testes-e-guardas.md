@@ -26,7 +26,7 @@ fazer à mão — base verde antes e depois, o original por bytes, a guarda
 DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
 — e o CI reinjeta o catálogo inteiro a cada PR (job «Defeitos já provados»),
 em três fatias de quatro cópias, que um job final exige somarem o catálogo
-(`137`). Aqui: `--trabalhadores 4`, ~25 min.
+(`137`). Aqui: `--trabalhadores 4`, ~30 min (191 em 24/10).
 
 - **Guarda nova:** escreva o `[[mutante]]` sem `reprova`, rode
   `--explorar --so <id> --suites <a suíte>`, e declare a asserção que É a
@@ -108,6 +108,25 @@ equivalentes). A lógica perguntada está guardada; o que escapa é outra coisa:
 - **Executar não é conferir.** A cobertura por função diz que a linha correu;
   só um defeito posto nela diz se alguém olhou. A medição e o instrumentador
   estão em `docs/arquivo/MEDICOES_VELOCIDADE_TESTES_2026-10-24/`.
+- ⚠️ **E O BOTÃO ESCOLHE-SE PELO QUE ELE DIZ, NÃO PELO NOME DO NÓ.** O RB5
+  premia o `TextoMaior` pelo nome, e os rótulos Padrão e Maior trocados
+  passavam verdes; o T24 chamava `confirmar()` direto, e o botão podia sair
+  da árvore (`138`). E o toque do telefone prova-se com `ScreenTouch` e
+  `ScreenDrag` no `push_input`, que os entrega crus: o rato emulado é do
+  `Input`, e o gesto do rato rolava com o ramo do dedo partido.
+- ⚠️ **E A GRAVIDADE DE UMA AMOSTRA LIDA À MÃO É HIPÓTESE.** Dois dos treze
+  «graves» da `137` não chegavam ao jogador: «confirmar duas vezes cancela
+  duas vezes» o jogo recusa, e a meta da Fase 1 o `Main` nunca abre. Antes de
+  escrever a guarda, siga o defeito até à tela, e escreva ao lado dela o que
+  ela defende de verdade (`138`). Das médias, o calendário era equivalente
+  (trocar o VALOR de uma chave que se lê por `has()` não muda nada), e os
+  recordes só vazavam com um campo de outro tipo: a chave em falta, que a
+  primeira guarda montou, o `.get(nome, {})` já zerava.
+- ⚠️ **E ONDE UM DEFEITO DE LEIAUTE SE VÊ DIZ-O UMA SONDA COM E SEM ELE.** A
+  acomodação do Maior desligada deu a mesma geometria em quase todo painel a
+  1280; correr o percurso do contraste nas duas árvores, a três alturas, e
+  comparar as caixas achou o único caso que muda à vista — o Construir, que
+  a 1000 px começava em −37 (`138`).
 
 ## O jogador ao acaso (T26, `118`)
 

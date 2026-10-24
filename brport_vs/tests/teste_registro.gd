@@ -52,6 +52,7 @@ var _b5 := false
 var _b6 := false
 var _b7 := false
 var _b8 := false
+var _b9 := false
 
 
 func _confere(rotulo: String, ok: bool, detalhe: String = "") -> void:
@@ -104,13 +105,15 @@ func _rodar() -> void:
 	_r7_obra_pronta()
 	print("=== R8: a segunda chance do Sr. Ribeiro grava-se com o que entrou e o que volta ===")
 	_r8_segunda_chance()
+	print("=== R9: o que cada linha conta — retomada, docas com trabalhador, avisos vermelhos ===")
+	_r9_o_que_o_turno_conta()
 
 	# A bandeira de cada bloco. Ver o aviso do cabeçalho: sem isto, "passou"
 	# quer dizer "não reprovou", que não é a mesma coisa que "correu".
-	_confere("os nove blocos correram até ao fim",
-		_b1 and _b1b and _b2 and _b3 and _b4 and _b5 and _b6 and _b7 and _b8,
-		"R1=%s R1b=%s R2=%s R3=%s R4=%s R5=%s R6=%s R7=%s R8=%s"
-			% [_b1, _b1b, _b2, _b3, _b4, _b5, _b6, _b7, _b8])
+	_confere("os dez blocos correram até ao fim",
+		_b1 and _b1b and _b2 and _b3 and _b4 and _b5 and _b6 and _b7 and _b8 and _b9,
+		"R1=%s R1b=%s R2=%s R3=%s R4=%s R5=%s R6=%s R7=%s R8=%s R9=%s"
+			% [_b1, _b1b, _b2, _b3, _b4, _b5, _b6, _b7, _b8, _b9])
 
 	_limpar()
 
@@ -602,6 +605,61 @@ func _r8_segunda_chance() -> void:
 		_confere("no dia em que a partida retoma", int(e.get("t", -1)) == GS.turn,
 			"gravou %s, o jogo está no %d" % [e.get("t"), GS.turn])
 	_b8 = true
+
+
+# ⚠️ O R2 CONFERE QUE A LINHA EXISTE E TEM A FORMA; ninguém conferia o NÚMERO
+# (`138`). São três que o leitor do A7 soma e que um defeito trocava calado:
+# a partida nova lida como retomada (o leitor deixa de a dar por abandonada),
+# as docas com trabalhador contadas ao contrário e o turno que já nasce com um
+# aviso vermelho. Contagem só se testa acima de um: duas docas com gente.
+func _r9_o_que_o_turno_conta() -> void:
+	_limpar()
+	GS.new_game()
+	R._armado = false
+	R.armar()
+	var abriu := _eventos("abriu")
+	_confere("a partida nova do dia 1 grava-se como nova, não retomada",
+		abriu.size() == 1 and abriu[0].get("retomada") == false, str(abriu))
+	GS.turn = 6
+	R._armado = false
+	R.armar()
+	abriu = _eventos("abriu")
+	_confere("e a que arma a meio da partida grava-se retomada",
+		abriu.size() == 1 and abriu[0].get("retomada") == true, str(abriu))
+
+	_limpar()
+	GS.new_game()
+	if GS.phase == "rival_offer":
+		GS.negotiate_rival("igualar")
+	GS.fila = []
+	while GS.docks.size() < 2:
+		GS.docks.append({"boat": null, "worker_id": null})
+	while GS.workers.size() < 2:
+		GS.workers.append(GS.novo_trabalhador())
+	for i in 2:
+		GS.docks[i] = {"boat": {"id": 990 + i, "value": 6000, "classe": "pesqueiro",
+			"motivo": "pescado", "op_turns": 3, "progress": 0, "rival": false,
+			"matched": false, "matched_value": 0, "paciencia": 2},
+			"worker_id": int(GS.workers[i]["id"])}
+		GS.workers[i]["busy_turns"] = 3
+	R._armado = false
+	R.armar()
+	GS.advance_turn()
+	var turnos := _eventos("turno")
+	_confere("o turno conta as duas docas com trabalhador",
+		turnos.size() == 1 and int(turnos[0].get("alocados", -1)) == 2
+			and int(turnos[0].get("barcos", -1)) == 2, str(turnos))
+	_confere("o turno sem aviso vermelho conta zero avisos",
+		turnos.size() == 1 and int(turnos[0].get("avisos_ruins", -1)) == 0, str(turnos))
+	if GS.phase == "rival_offer":
+		GS.negotiate_rival("igualar")
+	GS.fila = []
+	GS.message.emit("Aviso do R9.", "bad", "teste")
+	GS.advance_turn()
+	turnos = _eventos("turno")
+	_confere("e um aviso vermelho no turno conta um",
+		turnos.size() == 2 and int(turnos[1].get("avisos_ruins", -1)) == 1, str(turnos))
+	_b9 = true
 
 
 func _eventos(nome: String) -> Array:

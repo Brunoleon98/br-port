@@ -36,6 +36,7 @@ func rodar(na_arvore: SceneTree) -> void:
 	await _paineis()
 	await _abertura_direta()
 	await _proporcoes()
+	await _cartao_alto()
 	_preferencias.tamanho_do_texto = modo_anterior
 	_preferencias.reduzir_movimento = movimento_anterior
 	_preferencias.caminho = caminho_anterior
@@ -189,6 +190,20 @@ func _inicio() -> void:
 	await assentar()
 	var botao: Button = tela.find_child("TextoMaior", true, false)
 	conferir("ajustes oferecem os dois tamanhos", botao != null and tela.find_child("TextoPadrao", true, false) != null)
+	# ⚠️ O JOGADOR ESCOLHE PELO QUE O BOTÃO DIZ, NÃO PELO NOME DO NÓ (`138`).
+	# Este bloco premia o `TextoMaior` pelo nome, e os dois rótulos trocados
+	# deixavam-no verde: o botão que diz «Maior» punha o Padrão.
+	var diz_maior := _botao_que_diz(tela, "Maior (+25%)")
+	var diz_padrao := _botao_que_diz(tela, "Padrão")
+	if diz_maior != null:
+		diz_maior.pressed.emit()
+		await assentar()
+	var ficou_maior := _preferencias.tamanho_do_texto == "maior"
+	if diz_padrao != null:
+		diz_padrao.pressed.emit()
+		await assentar()
+	conferir("o botao que diz Maior aplica o maior e o que diz Padrao volta", diz_maior != null
+		and diz_padrao != null and ficou_maior and _preferencias.tamanho_do_texto == "padrao")
 	botao.grab_focus()
 	botao.pressed.emit()
 	await assentar()
@@ -251,6 +266,30 @@ func _gestos(tela: Control, rolo: ScrollContainer, apoio: RefCounted) -> void:
 	conferir("arrastar rola sem executar acao da partida", rolo.scroll_vertical > 0 and antes == apoio.fotografia())
 	rolo.scroll_vertical = 0
 	await assentar()
+	# ⚠️ O TELEFONE ARRASTA COM O DEDO, NÃO COM O RATO (`138`). O gesto de cima
+	# é o do rato, e o ramo do toque podia deixar de rolar com ele verde. O
+	# `push_input` entrega o toque cru: a emulação de rato é do `Input`, não do
+	# `Viewport`, e por isso este caminho não se confunde com o de cima.
+	var dedo := InputEventScreenTouch.new()
+	dedo.index = 0
+	dedo.position = origem
+	dedo.pressed = true
+	arvore.root.push_input(dedo, true)
+	var desliza := InputEventScreenDrag.new()
+	desliza.index = 0
+	desliza.position = origem - Vector2(0, 70)
+	desliza.relative = Vector2(0, -70)
+	arvore.root.push_input(desliza, true)
+	var solta := InputEventScreenTouch.new()
+	solta.index = 0
+	solta.position = desliza.position
+	solta.pressed = false
+	arvore.root.push_input(solta, true)
+	await assentar()
+	conferir("arrasto com um dedo rola sem executar acao da partida", rolo.scroll_vertical > 0
+		and antes == apoio.fotografia())
+	rolo.scroll_vertical = 0
+	await assentar()
 	# O controle contrário é um toque completo no barco, pela GUI real.
 	var cartao: Control = tela._fila_lugares.get_child(0)
 	var toque: Vector2 = cartao.get_global_rect().get_center()
@@ -278,6 +317,13 @@ func _gestos(tela: Control, rolo: ScrollContainer, apoio: RefCounted) -> void:
 	await assentar()
 
 
+func _botao_que_diz(tela: Node, texto: String) -> Button:
+	for no in TextoDaInterface.descendentes(tela):
+		if no is Button and no.text == texto and no.is_visible_in_tree():
+			return no
+	return null
+
+
 func _mouse(posicao: Vector2, pressionado: bool) -> void:
 	var evento := InputEventMouseButton.new()
 	evento.position = posicao
@@ -295,6 +341,28 @@ func _leitura_e_campos() -> void:
 	ajuda._mostrar("glossario")
 	await assentar()
 	var rolo: ScrollContainer = ajuda._rolo
+	# ⚠️ A MARCA É O PRIMEIRO CARACTERE À VISTA, NÃO O INÍCIO DO PARÁGRAFO
+	# (`138`). O caso de baixo confere que a marca se conserva — e conserva-se
+	# seja qual for o caractere marcado. Com o topo a cortar um parágrafo a
+	# meio, o caractere 0 está acima da dobra, e a marca tem de cair depois.
+	var paragrafo: Label = null
+	for no in TextoDaInterface.descendentes(rolo):
+		if no is Label and no.get_line_count() >= 4 and (paragrafo == null or no.size.y > paragrafo.size.y):
+			paragrafo = no
+	var corte := false
+	if paragrafo != null:
+		rolo.scroll_vertical += roundi(paragrafo.global_position.y - rolo.global_position.y
+			+ paragrafo.size.y / 2.0)
+		await assentar()
+		var meio := MemoriaDeLeitura.marcar(rolo)
+		var topo := rolo.global_position.y
+		if not meio.is_empty() and meio.no == paragrafo and meio.caractere > 0:
+			var marcada: Rect2 = paragrafo.get_character_bounds(meio.caractere)
+			var anterior: Rect2 = paragrafo.get_character_bounds(meio.caractere - 1)
+			corte = paragrafo.global_position.y < topo \
+				and paragrafo.global_position.y + marcada.end.y > topo \
+				and paragrafo.global_position.y + anterior.end.y <= topo + 1.0
+	conferir("a marca e o primeiro caractere a vista no paragrafo cortado", corte)
 	rolo.scroll_vertical = 280
 	await assentar()
 	var marca := MemoriaDeLeitura.marcar(rolo)
@@ -508,3 +576,34 @@ func _proporcoes() -> void:
 						and (texto.em_rolagem or texto.excesso_janela <= 2.0)
 			conferir("leitura maior cabe em %s: %s" % [tamanho, cena], cabe)
 			visor.free()
+
+
+# ⚠️ O CARTÃO ALTO É O ÚNICO QUE A ACOMODAÇÃO MUDA À VISTA (`138`). Medido
+# com uma sonda, o defeito que a desliga e o código certo dão a MESMA
+# geometria em quase todo painel a 1280: os que cabem, cabem nos dois. O
+# Construir no Maior é o que não cabe — numa tela de 720×1000 ele começava em
+# −37 px, com o título fora da tela, e o certo é ficar dentro e rolar por
+# dentro. As duas metades da pergunta são o que o jogador vê.
+func _cartao_alto() -> void:
+	var motor = load("res://scripts/validation/contraste_ui.gd").new()
+	_preferencias.tamanho_do_texto = "maior"
+	var caso: Dictionary = {}
+	for candidato in motor.percurso():
+		if candidato.nome == "Construir":
+			caso = candidato
+	var visor := SubViewport.new()
+	visor.size = Vector2i(720, 1000)
+	arvore.root.add_child(visor)
+	var tela: Control = motor.montar_caso(visor, gs, caso, TextoDaInterface.TEMA) if not caso.is_empty() else null
+	await assentar()
+	var cartao: Control = null
+	if tela != null:
+		for no in TextoDaInterface.descendentes(tela):
+			if no is PanelContainer and no.has_meta(&"cartao_rolavel_rb5"):
+				cartao = no
+	var caixa := cartao.get_global_rect() if cartao != null else Rect2()
+	conferir("o Construir no Maior cabe na tela baixa e rola por dentro", cartao != null
+		and caixa.position.y >= 0.0 and caixa.end.y <= 1000.0
+		and cartao.get_meta(&"cartao_rolavel_rb5").get_parent() is ScrollContainer)
+	visor.free()
+	arvore.root.get_node("Registro").desarmar()

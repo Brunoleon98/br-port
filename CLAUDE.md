@@ -96,12 +96,8 @@ chmod +x ~/godot-bin/Godot_v$V-stable_linux.x86_64
 G=~/godot-bin/Godot_v$V-stable_linux.x86_64
 
 $G --headless --path brport_vs --import                       # UMA VEZ por clone
-$G --headless --fixed-fps 60 --path brport_vs --script res://tests/run_tests.gd
-$G --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_design.gd
-$G --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_audio.gd
-$G --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_fumaca.gd
-$G --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_registro.gd
-$G --headless --fixed-fps 60 --path brport_vs --script res://scripts/validation/asset_validator.gd
+python3 tools/correr_suites.py --godot "$G"   # as seis, um user:// cada; SUITES OK
+$G --headless --fixed-fps 60 --path brport_vs --script res://tests/run_tests.gd  # uma
 tools/capturar_evidencia.sh brport_vs /tmp/fotos "$G"   # as fotos (uma: captura.md)
 
 # Blender como biblioteca Python (~1 GB, minutos)

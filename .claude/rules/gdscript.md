@@ -126,6 +126,13 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
   nem pelo tipo: o único rasto é o `SCRIPT ERROR` na saída, e é por isso que
   o passo do CI que o reprova não é redundante com as asserções. «Rebentar»
   aqui quer dizer *escrever na saída*, não *parar o bloco*.
+  ⚠️ **E DESDE O 4.5 A SUÍTE PODE PERGUNTÁ-LO.** Um `Logger` próprio, posto
+  com `OS.add_logger()` à volta da chamada, recebe o `SCRIPT ERROR` em
+  `_log_error()` — medido numa sonda no 4.6.3: um erro captado, e a função
+  tipada a devolver o `false` que a recusa também devolveria. É o que separa
+  a doca fora do array de uma recusa no T31 (`138`). A janela fica estreita
+  (só a chamada), e o erro tem de nascer numa função chamada: no próprio
+  `_process` ele aborta a suíte antes do `remove_logger`.
 - **⚠️ E O LAMBDA CAPTURA A VARIÁVEL LOCAL POR VALOR.** `var n := 0` e um
   `func(): n += 1` ligado a um sinal contam numa CÓPIA: o T20 nasceu a provar
   «zero cobranças na Fase 2» com um contador assim, e o zero era de graça. Num

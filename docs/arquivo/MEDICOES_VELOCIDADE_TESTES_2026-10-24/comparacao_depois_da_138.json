@@ -1,0 +1,532 @@
+{
+ "validos": 205,
+ "apanhados_antes": 106,
+ "apanhados_depois": 131,
+ "equivalentes_antes": 15,
+ "equivalentes_depois": 16,
+ "perdidos": [],
+ "novos": [
+  {
+   "id": "AcomodacaoDeLeitura:88:not",
+   "por": "teste_design",
+   "gravidade": "media",
+   "o_que": "no texto Maior, o cartão rolável não se acomoda"
+  },
+  {
+   "id": "AmbienteCosteiro:26:apagar",
+   "por": "teste_audio",
+   "gravidade": "alta",
+   "o_que": "mar e gaivota nunca tocam"
+  },
+  {
+   "id": "Audio:198:apagar",
+   "por": "teste_audio",
+   "gravidade": "alta",
+   "o_que": "o volume escolhido não é gravado"
+  },
+  {
+   "id": "BarcoFila:195:rel",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "a escala dos cascos da fila fica 0: os barcos ao largo somem"
+  },
+  {
+   "id": "DiarioFase2:9:apagar",
+   "por": "run_tests",
+   "gravidade": "media",
+   "o_que": "some a legenda «Fase 2 concluída»"
+  },
+  {
+   "id": "DocaCartao:115:apagar",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "o cartão da doca não mostra o valor do barco"
+  },
+  {
+   "id": "DocaCartao:206:apagar",
+   "por": "run_tests",
+   "gravidade": "media",
+   "o_que": "com reduzir movimento, o destaque da doca some"
+  },
+  {
+   "id": "GameState:1048:not",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "no arranque, o save que carrega é trocado por partida nova"
+  },
+  {
+   "id": "GameState:1344:rel",
+   "por": "run_tests",
+   "gravidade": "media",
+   "o_que": "alocar na doca de índice igual ao total passa a guarda (fora do array)"
+  },
+  {
+   "id": "GameState:1784:apagar",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "atender um barco deixa de subir a reputação"
+  },
+  {
+   "id": "GameState:2952:apagar",
+   "por": "run_tests",
+   "gravidade": "media",
+   "o_que": "os recordes de uma partida vazam para a carregada"
+  },
+  {
+   "id": "MemoriaDeLeitura:18:logico",
+   "por": "teste_design",
+   "gravidade": "media",
+   "o_que": "a memória de leitura marca o caractere errado"
+  },
+  {
+   "id": "PainelAjustes:61:rel",
+   "por": "teste_design",
+   "gravidade": "alta",
+   "o_que": "os rótulos Padrão e Maior trocam de lugar"
+  },
+  {
+   "id": "PainelCaixa:90:rel",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "o bloco «Entrou» só aparece com receita zero"
+  },
+  {
+   "id": "PainelCancelarServico:50:apagar",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "o botão de confirmar o cancelamento some"
+  },
+  {
+   "id": "PainelCancelarServico:57:bool",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "confirmar duas vezes cancela duas vezes"
+  },
+  {
+   "id": "PainelDocas:159:apagar",
+   "por": "run_tests",
+   "gravidade": "media",
+   "o_que": "o painel das docas perde a linha de classe, prazo e trabalhador"
+  },
+  {
+   "id": "PainelEspacos:52:apagar",
+   "por": "run_tests",
+   "gravidade": "media",
+   "o_que": "a escolha de espaço para partida nova perde o título"
+  },
+  {
+   "id": "PainelMeta:11:apagar",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "a meta antes da Fase 2 abre sem botão de fechar"
+  },
+  {
+   "id": "PainelMeuPorto:26:apagar",
+   "por": "run_tests",
+   "gravidade": "media",
+   "o_que": "o «Meu porto agora» perde o dia e a semana"
+  },
+  {
+   "id": "PainelParcela:98:apagar",
+   "por": "run_tests",
+   "gravidade": "alta",
+   "o_que": "a parcela com falta abre sem botão de fechar"
+  },
+  {
+   "id": "Registro:203:rel",
+   "por": "teste_registro",
+   "gravidade": "media",
+   "o_que": "toda partida nova lida como retomada"
+  },
+  {
+   "id": "Registro:295:const",
+   "por": "teste_registro",
+   "gravidade": "media",
+   "o_que": "cada turno começa com uma mensagem ruim contada"
+  },
+  {
+   "id": "Registro:316:rel",
+   "por": "teste_registro",
+   "gravidade": "media",
+   "o_que": "docas ocupadas contadas ao contrário"
+  },
+  {
+   "id": "RolagemDaOperacao:34:rel",
+   "por": "teste_design",
+   "gravidade": "alta",
+   "o_que": "o arrasto com um dedo deixa de rolar a operação"
+  }
+ ],
+ "sobrevivem": [
+  {
+   "id": "Audio:126:rel",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "AcomodacaoDoPorto:140:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "AcomodacaoDoPorto:82:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "AcomodacaoDoPorto:96:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "AmbienteCosteiro:24:bool",
+   "gravidade": "baixa",
+   "classe": "som"
+  },
+  {
+   "id": "AmbienteCosteiro:15:apagar",
+   "gravidade": "baixa",
+   "classe": "som"
+  },
+  {
+   "id": "BarcoFila:233:bool",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "BarcoFila:67:rel",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "ConteudoComoJogar:8:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "ConteudoComoJogar:9:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "CopiaDoDiagnostico:41:apagar",
+   "gravidade": "baixa",
+   "classe": "headless"
+  },
+  {
+   "id": "CopiaDoDiagnostico:28:apagar",
+   "gravidade": "media",
+   "classe": "headless"
+  },
+  {
+   "id": "CopiaDoDiagnostico:11:aritm",
+   "gravidade": "baixa",
+   "classe": "headless"
+  },
+  {
+   "id": "CounterOfferPanel:310:apagar",
+   "gravidade": "baixa",
+   "classe": "painel"
+  },
+  {
+   "id": "DocaCartao:80:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "Dock:416:aritm",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "EndGame:143:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "EndGame:250:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "Fauna:487:rel",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "Fauna:282:rel",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "Fauna:337:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "FolhaDoCaderno:81:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "FolhaDoCaderno:300:logico",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "Icones:117:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "Main:991:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "MataNoMapa:184:const",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "MovimentoDeFundo:22:logico",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "MovimentoDeFundo:14:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "Narrativa:487:rel",
+   "gravidade": "baixa",
+   "classe": "logica"
+  },
+  {
+   "id": "Narrativa:705:apagar",
+   "gravidade": "media",
+   "classe": "texto"
+  },
+  {
+   "id": "Narrativa:491:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "ObraNoMapa:114:rel",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelBoletim:66:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelBoletim:54:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "PainelCaixa:63:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "PainelCalendario:121:const",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelCalendario:122:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelCancelarServico:37:const",
+   "gravidade": "baixa",
+   "classe": "painel"
+  },
+  {
+   "id": "PainelCelular:218:const",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelCelular:139:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelComoJogar:85:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelConfiguracoes:12:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "PainelConfiguracoes:23:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "PainelEspacos:82:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelEspacos:38:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "PainelMensagens:123:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelMensagens:315:const",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelMenu:182:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelMenu:277:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelMenu:329:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelMeta:25:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelMeuPorto:19:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "PainelMeuPorto:30:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelNarrativo:469:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PauseMenu:88:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "PropIso:95:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "PropIso:43:logico",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "Retratos:200:rel",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "Retratos:171:rel",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "Retratos:184:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "TelaInicial:83:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "TelaNomes:82:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "TelaNomes:97:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "TrafegoDeCamioes:1436:logico",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "TutorialDoToninho:76:rel",
+   "gravidade": "baixa",
+   "classe": "preferencia"
+  },
+  {
+   "id": "UpgradePanel:174:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "UpgradePanel:192:const",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "GameState:1358:apagar",
+   "gravidade": "baixa",
+   "classe": "logica"
+  },
+  {
+   "id": "GameState:2881:bool",
+   "gravidade": "-",
+   "classe": "equivalente"
+  },
+  {
+   "id": "GameState:1305:bool",
+   "gravidade": "media",
+   "classe": "logica"
+  },
+  {
+   "id": "Dock:1179:apagar",
+   "gravidade": "media",
+   "classe": "visual"
+  },
+  {
+   "id": "Main:1149:apagar",
+   "gravidade": "baixa",
+   "classe": "painel"
+  },
+  {
+   "id": "Main:497:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  },
+  {
+   "id": "PainelNarrativo:877:apagar",
+   "gravidade": "baixa",
+   "classe": "visual"
+  }
+ ]
+}
