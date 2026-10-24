@@ -36,6 +36,7 @@ func rodar(na_arvore: SceneTree) -> void:
 	await _paineis()
 	await _abertura_direta()
 	await _proporcoes()
+	await _cartao_alto()
 	_preferencias.tamanho_do_texto = modo_anterior
 	_preferencias.reduzir_movimento = movimento_anterior
 	_preferencias.caminho = caminho_anterior
@@ -575,3 +576,34 @@ func _proporcoes() -> void:
 						and (texto.em_rolagem or texto.excesso_janela <= 2.0)
 			conferir("leitura maior cabe em %s: %s" % [tamanho, cena], cabe)
 			visor.free()
+
+
+# ⚠️ O CARTÃO ALTO É O ÚNICO QUE A ACOMODAÇÃO MUDA À VISTA (`138`). Medido
+# com uma sonda, o defeito que a desliga e o código certo dão a MESMA
+# geometria em quase todo painel a 1280: os que cabem, cabem nos dois. O
+# Construir no Maior é o que não cabe — numa tela de 720×1000 ele começava em
+# −37 px, com o título fora da tela, e o certo é ficar dentro e rolar por
+# dentro. As duas metades da pergunta são o que o jogador vê.
+func _cartao_alto() -> void:
+	var motor = load("res://scripts/validation/contraste_ui.gd").new()
+	_preferencias.tamanho_do_texto = "maior"
+	var caso: Dictionary = {}
+	for candidato in motor.percurso():
+		if candidato.nome == "Construir":
+			caso = candidato
+	var visor := SubViewport.new()
+	visor.size = Vector2i(720, 1000)
+	arvore.root.add_child(visor)
+	var tela: Control = motor.montar_caso(visor, gs, caso, TextoDaInterface.TEMA) if not caso.is_empty() else null
+	await assentar()
+	var cartao: Control = null
+	if tela != null:
+		for no in TextoDaInterface.descendentes(tela):
+			if no is PanelContainer and no.has_meta(&"cartao_rolavel_rb5"):
+				cartao = no
+	var caixa := cartao.get_global_rect() if cartao != null else Rect2()
+	conferir("o Construir no Maior cabe na tela baixa e rola por dentro", cartao != null
+		and caixa.position.y >= 0.0 and caixa.end.y <= 1000.0
+		and cartao.get_meta(&"cartao_rolavel_rb5").get_parent() is ScrollContainer)
+	visor.free()
+	arvore.root.get_node("Registro").desarmar()
