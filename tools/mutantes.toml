@@ -651,6 +651,7 @@ depois = '''
 	# chave, e um campo que falte fica em «ainda não houve».
 	pass
 '''
+reprova = { run_tests = "T31: o recorde malformado no save carrega a zero" }
 
 # amostra: GameState:1344:rel
 [[mutante]]
@@ -670,6 +671,7 @@ func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool
 		return false
 	if dock_index < 0 or dock_index > docks.size():
 '''
+reprova = { run_tests = "T31: alocar fora do array recusa sem erro do motor" }
 
 # amostra: Registro:203:rel
 [[mutante]]
@@ -683,6 +685,7 @@ antes = '''
 depois = '''
 		"retomada": _GS.turn >= 1,
 '''
+reprova = { teste_registro = "a partida nova do dia 1 grava-se como nova" }
 
 # amostra: Registro:295:const
 [[mutante]]
@@ -696,6 +699,7 @@ antes = '''
 depois = '''
 	_mensagens_ruins = 1
 '''
+reprova = { teste_registro = "o turno sem aviso vermelho conta zero avisos" }
 
 # amostra: Registro:316:rel
 [[mutante]]
@@ -709,6 +713,7 @@ antes = '''
 depois = '''
 			if d["worker_id"] == null:
 '''
+reprova = { teste_registro = "o turno conta as duas docas com trabalhador" }
 
 # amostra: DiarioFase2:9:apagar
 [[mutante]]
@@ -722,6 +727,7 @@ antes = '''
 depois = '''
 	pass
 '''
+reprova = { run_tests = "T31: a página da Fase 2 relida diz que a fase acabou" }
 
 # amostra: PainelDocas:159:apagar
 [[mutante]]
@@ -735,6 +741,7 @@ antes = '''
 depois = '''
 		pass
 '''
+reprova = { run_tests = "T31: o painel das docas diz a classe, quando paga e quem opera" }
 
 # amostra: PainelEspacos:52:apagar
 [[mutante]]
@@ -748,6 +755,7 @@ antes = '''
 depois = '''
 		pass
 '''
+reprova = { run_tests = "T27: Nova partida com espaços ocupados pergunta onde" }
 
 # amostra: PainelMeuPorto:26:apagar
 [[mutante]]
@@ -761,6 +769,7 @@ antes = '''
 depois = '''
 	pass
 '''
+reprova = { run_tests = "T27: o resumo escreve o dia e a semana" }
 
 # amostra: AcomodacaoDeLeitura:88:not
 [[mutante]]
@@ -776,6 +785,7 @@ depois = '''
 	var conteudo: Control = cartao.get_meta(&"cartao_rolavel_rb5")
 	if is_instance_valid(conteudo):
 '''
+reprova = { teste_design = "RB5: o Construir no Maior cabe na tela baixa" }
 
 # amostra: DocaCartao:206:apagar
 [[mutante]]
@@ -789,6 +799,7 @@ antes = '''
 depois = '''
 		pass
 '''
+reprova = { run_tests = "T29: doca com barco à espera mantém realce fixo" }
 
 # amostra: MemoriaDeLeitura:18:logico
 [[mutante]]
@@ -802,6 +813,7 @@ antes = '''
 depois = '''
 				if letra.size.y > 0 or no.global_position.y + letra.end.y > topo:
 '''
+reprova = { teste_design = "RB5: a marca e o primeiro caractere a vista" }
 
 # ── O JOGADOR AO ACASO (`118`) ─────────────────────────────────────────────
 # Defeitos que nenhum bloco montava o estado para ver; o T26 joga até lá.

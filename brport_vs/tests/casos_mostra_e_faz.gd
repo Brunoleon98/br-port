@@ -343,10 +343,13 @@ func cascos_da_fila_a_vista(main: Node) -> void:
 
 
 # ⚠️ O `load_game()` ZERA OS RECORDES ANTES DE OS LER, e é essa linha que
-# separa as duas partidas: sem ela, o que o save não trouxer fica com o valor
-# da partida que estava viva. Nenhum save que o jogo grava hoje vem sem eles —
-# o que esta guarda defende é a leitura escrita ao lado dela, «um campo que
-# falte fica em ainda não houve», e é por isso que o save se monta sem a chave.
+# separa as duas partidas: sem ela, o recorde que o save não consegue dar fica
+# com o valor da partida que estava viva. E não é a chave EM FALTA que o
+# prova — medido: a primeira versão desta guarda tirava `recordes` do save e
+# o defeito passava, porque o `.get(nome, {})` devolve um dicionário vazio e
+# o laço reescreve cada campo a zero na mesma. O reset só separa quando um
+# recorde vem com OUTRO TIPO, que o laço salta. Nenhum save que o jogo grava
+# vem assim; o que se defende é a leitura escrita ao lado do código.
 func recordes_nao_vazam() -> void:
 	montar()
 	gs.docks[0] = {"boat": barco(907, 8800), "worker_id": int(gs.workers[0]["id"])}
@@ -355,13 +358,13 @@ func recordes_nao_vazam() -> void:
 	var vivo: int = int(gs.recordes()["maior_negocio"]["valor"])
 	gs.save_game()
 	var dados: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(gs.save_path))
-	dados.erase("recordes")
+	dados["recordes"]["maior_negocio"] = "malformado"
 	var f := FileAccess.open(gs.save_path, FileAccess.WRITE)
 	f.store_string(JSON.stringify(dados))
 	f.close()
 	var carregou: bool = gs.load_game()
 	var negocio: Dictionary = gs.recordes()["maior_negocio"]
-	conferir("o save sem recordes carrega sem herdar os da partida viva", vivo == 8800
+	conferir("o recorde malformado no save carrega a zero, sem herdar o da partida viva", vivo == 8800
 		and carregou and int(negocio["valor"]) == 0 and int(negocio["turno"]) == 0)
 
 
