@@ -101,7 +101,7 @@ registada sem o Bruno pedir.
   que espera `SUITES OK` (`139`).
 - O catálogo inteiro de mutantes, quando o código de um alvo dele ou uma
   suíte mudou: `python3 tools/conferir_mutantes.py --godot "$G"
-  --trabalhadores 4`, ~25 min em quatro cópias do repositório
+  --trabalhadores 4`, ~30 min em quatro cópias do repositório
   (`docs/decisoes/137`).
 - `python3 tools/conferir_docs.py`, que espera `DOCS OK`, se mexeu em
   documento.

@@ -107,7 +107,7 @@ também deve.
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
 | **qualquer documento** | `python3 tools/conferir_docs.py` | `DOCS OK` |
 | **uma guarda nova, ou um bug corrigido** | o defeito em `tools/mutantes.toml`, e `python3 tools/conferir_mutantes.py --godot "$G" --so <id>` (`117`; o fluxo em `testes-e-guardas.md`) | `MUTANTES OK` |
-| **o código de um alvo do catálogo, ou uma suíte** | `python3 tools/conferir_mutantes.py --godot "$G" --trabalhadores 4` — o catálogo inteiro em quatro cópias, ~25 min (158 medidos em 24/10; em série eram 120, `137`) | `MUTANTES OK`, sem órfão |
+| **o código de um alvo do catálogo, ou uma suíte** | `python3 tools/conferir_mutantes.py --godot "$G" --trabalhadores 4` — o catálogo inteiro em quatro cópias, ~30 min (191 em 31 min em 24/10, `138`; em série seriam ~2 h, `137`) | `MUTANTES OK`, sem órfão |
 | `BR_Port_GDD_V7.jsx` | `python3 tools/gerar_gdd_md.py` | `GDD OK`, e `git diff -- docs/gdd` limpo |
 | qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |
 

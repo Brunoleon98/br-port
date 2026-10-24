@@ -26,7 +26,7 @@ fazer à mão — base verde antes e depois, o original por bytes, a guarda
 DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
 — e o CI reinjeta o catálogo inteiro a cada PR (job «Defeitos já provados»),
 em três fatias de quatro cópias, que um job final exige somarem o catálogo
-(`137`). Aqui: `--trabalhadores 4`, ~25 min.
+(`137`). Aqui: `--trabalhadores 4`, ~30 min (191 em 24/10).
 
 - **Guarda nova:** escreva o `[[mutante]]` sem `reprova`, rode
   `--explorar --so <id> --suites <a suíte>`, e declare a asserção que É a

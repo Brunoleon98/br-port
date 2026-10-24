@@ -1,4 +1,4 @@
-# BR Port — as treze lacunas graves fechadas (`138`); a próxima conversa são os sprites de detalhes
+# BR Port — as lacunas fechadas (`138`) e as suítes em paralelo (`139`); a próxima conversa são os sprites de detalhes
 
 **24/10/2026.** Branch `claude/upbeat-meitner-fkfkne`, avançada para a da
 `137` (`claude/zealous-heisenberg-dtqner`, **PR #150**), que esta conversa
