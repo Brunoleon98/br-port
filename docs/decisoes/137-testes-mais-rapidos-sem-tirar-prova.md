@@ -91,15 +91,16 @@ tempo de mutante) e o laço do D35 (−4,5 s por `teste_design`).
 
 ## Os defeitos injetados
 
-Quinze, cada um entre bases verdes, o original guardado com `cp` e conferido
+Dezassete, cada um entre bases verdes, o original guardado com `cp` e conferido
 por sha256 na volta, e cada um reprovado pelo caso que o nomeia: o código de
 saída do trabalhador ignorado; o marcador dele ignorado; o relatório dele
 ignorado; o marcador repassado sem neutralizar; o `--juntar` sem a fatia em
 falta, sem recalcular a partilha, sem conferir a aprovação, aceitando a fatia
 repetida; o relógio do CI não conferido; o `fatia.json` escrito antes do
 verde; a partilha sem ordenar; a cópia que leva o `.git`; o `grep` da fatia
-sem âncora; a matriz de duas com a fatia `/3`; e o `testes.yml` real sem o
-relógio no `run_tests`. Este último passou o primeiro autoteste — o caso do
+sem âncora; a matriz de duas com a fatia `/3`; o `testes.yml` real sem o
+relógio no `run_tests`; e os dois da cópia recusada com trabalhadores vivos
+(abaixo, na prova). Este último passou o primeiro autoteste — o caso do
 relógio usava um workflow falso —, e o executor de verdade já o reprovava no
 job das fatias (seis queixas, nada injetado); o autoteste passou a conferir
 também o arquivo real.
@@ -117,7 +118,27 @@ saía com 2 e deixaria o CI vermelho. Uma sonda de uma linha reproduziu-o;
 
 ## A prova
 
-<!-- preenchido no fecho -->
+- **O catálogo inteiro pelo executor novo, como o CI o corre:** as três
+  fatias, cada uma em quatro cópias, `MUTANTES OK` em 645, 685 e 645 s
+  (56 + 55 + 55), e o `--juntar` das três pastas: *«MUTANTES OK — 166
+  defeito(s) do catálogo em 3 fatia(s)»*. Em série, aqui, seriam ~2 h.
+- **A bateria de fotos:** 107 de 107 iguais ao byte entre `PARALELO=1` e
+  `PARALELO=4`, e outra vez numa segunda corrida em paralelo; código 0 e
+  254 s com a máquina livre.
+- **O autoteste:** `EXECUTOR PROVADO`, doze casos; `GUARDAS OK`; `DOCS OK`.
+- **O CI do PR** é a medida do runner, que este contêiner não dá.
+
+**E a cerca da cópia reprovou de verdade no dia em que nasceu.** A regra de
+testes foi editada enquanto o pai copiava a árvore para a fatia 3: os hashes
+eram de antes e a t3 já trazia a edição, e o executor recusou provar uma
+árvore que não era a pedida — e o `--juntar` deu pela fatia em falta. Só que
+a t1 e a t2 já corriam, e o pai saiu sem as parar: dois órfãos a escrever
+nas pastas da corrida seguinte (o `rm` dela bateu num). Hoje todas as cópias
+se fazem e conferem antes de o primeiro trabalhador arrancar, e a pasta de
+cada um começa vazia; o autoteste reinjeta o executor de antes e a recusa
+que segue em frente, e reprova os dois. A fatia 3 correu outra vez, limpa.
+(O contêiner reiniciou a meio dela uma vez antes disso; a 1 e a 2 ficaram
+no disco, e o `--juntar` leu-as — a fatia também serve para retomar.)
 
 ## As lacunas
 

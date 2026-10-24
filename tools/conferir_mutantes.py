@@ -363,17 +363,29 @@ def em_paralelo(args, mutantes: list[dict]) -> int:
     original = digerir(RAIZ, ignorar)
     print(f"Em paralelo: {len(mutantes)} mutante(s) em {len(partes)} cópia(s) "
           f"de {len(original)} arquivo(s).")
-    trabalhos = []
-    for k, parte in enumerate(partes, 1):
+    # ⚠️ TODAS AS CÓPIAS FEITAS E CONFERIDAS ANTES DE O PRIMEIRO TRABALHADOR
+    # ARRANCAR. Até 24/10 cada cópia lançava o seu logo a seguir, e quando a
+    # t3 foi recusada (a árvore mudou a meio da cópia) o pai saiu com t1 e t2
+    # vivos: dois órfãos a escrever em `tN/` por baixo da corrida seguinte.
+    for k in range(1, len(partes) + 1):
         destino = copias / f"t{k}"
         shutil.copytree(RAIZ, destino, symlinks=True, ignore=ignorar)
         # ⚠️ A CÓPIA TEM DE SER A ÁRVORE QUE SE QUER PROVAR, byte a byte —
         # inclusive o que ainda não foi commitado, que é o que um agente
         # corre antes do commit. Uma cópia velha provaria outra coisa, verde.
+        # Mordeu no dia em que nasceu: a regra de testes editada enquanto o
+        # pai copiava, e a t3 recusada.
         diferentes = sorted(set(original.items()) ^ set(digerir(destino, ignorar).items()))
         if diferentes:
             print(f"::error::a cópia t{k} não é igual à árvore: {diferentes[:3]}")
+            shutil.rmtree(copias, ignore_errors=True)
             return 1
+    trabalhos = []
+    for k, parte in enumerate(partes, 1):
+        destino = copias / f"t{k}"
+        # E a saída do trabalhador começa vazia: um relatório de outra
+        # corrida, deixado ali, não pode passar por este.
+        shutil.rmtree(saida / f"t{k}", ignore_errors=True)
         cmd = [sys.executable, str(destino / "tools" / "conferir_mutantes.py"),
                "--godot", args.godot, "--catalogo", str(args.catalogo.resolve()),
                "--saida", str(saida / f"t{k}"), "--so", *[m["id"] for m in parte]]

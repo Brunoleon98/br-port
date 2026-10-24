@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 23/10/2026 — estradas (`136`); RB5 (`134`, `135`)
+> **Atualização:** 24/10/2026 — testes mais rápidos (`137`); estradas (`136`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -120,16 +120,13 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
 (`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).
-**RB6 (`129`, #143):** Reduzir movimento nos Ajustes de início/pausa, por aparelho;
-fundo parado e transições diretas, operação e resultados preservados.
-Telefone/aceite visual pendentes; partida/save intactos.
+**RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
 **RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
 persistência independente do movimento; telefone pendente.
-**Início/fundo (`132`/`133`, #146/#147):** V3 só na inicial, celular com
-degradê.
 **A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
-(`136`) **aceites**. A seguir (Bruno, 23/10): acelerar os testes das IAs e
-do GitHub; depois, os detalhes.
+(`136`) **aceites**. **Testes acelerados (`137`):** catálogo em quatro
+cópias e três fatias no CI, suítes a `--fixed-fps 60`, fotos quatro a quatro;
+lacunas medidas (99 de 205 defeitos passam; 13 graves). A seguir: §7.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
@@ -234,14 +231,14 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/despejar_constantes.gd` | Despeja as constantes que o Godot avalia de verdade, em JSON. Espera `CONSTANTES OK` |
 | `tools/projetar_parcelas.py` | Projeta as Parcelas 2 e 3 a partir da Fase 1 MEDIDA. Recusa-se a projetar se o modelo não reconstruir a Fase 1 |
 | `docs/design/` | GDD 7, guias, e o Roadmap v2.1 + Plano da Fase 2 (superados, mantidos como registro) |
-| `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato; é a evidência visual do CI |
+| `tools/capturar_evidencia.sh` | Fotografias determinísticas de jogo, painéis e folhas de contato, quatro de cada vez (`137`); é a evidência visual do CI |
 | `brport_vs/tools/folha_frota.gd` | **A folha da frota** — cascos e camiões percorrendo as tabelas: foto de jogo só mostra o que o sorteio escolheu. Os cascos e uma folha por transportadora (`070`) |
 | `brport_vs/tools/folha_trabalhadores.gd` | **Os 30 rostos em cartões de verdade**, pelo `Retratos.TRABALHADORES`: reprova o cartão com outro arquivo ou sem desenho (`059`) |
 | `.github/workflows/testes.yml` | A suíte, a tabela dos números, os sons, as âncoras, o export do APK e do Web, e o Web no Pages (`099`) |
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
-| `tools/conferir_mutantes.py` + `mutantes.toml` | Defeitos reinjetados no CI (`117`, `120`); pré-PR e renumeração em `conferir_colaboracao.py` / `renumerar_decisao.py` (`119`) |
+| `tools/conferir_mutantes.py` + `mutantes.toml` | Defeitos reinjetados no CI (`117`, `120`), em cópias e fatias (`137`); pré-PR e renumeração em `conferir_colaboracao.py` / `renumerar_decisao.py` (`119`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 | `tools/conferir_cobertura_paineis.py` | Fotos dos painéis abertos, por tempo/cara (`039`, `051`, `060`); `COBERTURA OK`, sem lacuna |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |

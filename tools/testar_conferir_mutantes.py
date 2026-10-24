@@ -14,6 +14,7 @@ que correu os mutantes de outra, um mutante sem prova ao juntar, o
 
     python3 tools/testar_conferir_mutantes.py      # espera EXECUTOR PROVADO
 """
+import argparse
 import importlib.util
 import json
 import os
@@ -24,6 +25,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 EXECUTOR = Path(__file__).with_name("conferir_mutantes.py")
 
@@ -171,6 +173,34 @@ class Executor(unittest.TestCase):
         self.assertEqual(rc, 1, out)
         self.assertRegex(out, r"o relatório traz 2 mutante\(s\), e couberam-lhe 3")
         self.assertNotRegex(out, r"(?m)^MUTANTES OK")
+
+    def test_a_copia_recusada_nao_deixa_trabalhador_vivo(self):
+        # Medido no dia em que o paralelo nasceu: a t3 recusada, e a t1 e a t2
+        # já a correr, órfãs, por baixo da corrida seguinte. Aqui a t2 sai
+        # diferente da árvore, e nenhum trabalhador pode ter arrancado.
+        spec = importlib.util.spec_from_file_location(
+            "cm_falso", self.raiz / "tools" / "conferir_mutantes.py")
+        cm = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cm)
+        verdadeiro = cm.digerir
+
+        def digerir(raiz, ignorar):
+            d = verdadeiro(raiz, ignorar)
+            if Path(raiz).name == "t2":
+                d["intruso.gd"] = "outro"
+            return d
+
+        lancados = []
+        args = argparse.Namespace(saida=self.tmp / "recusa", trabalhadores=3,
+                                  godot=str(self.motor),
+                                  catalogo=self.raiz / "tools" / "mutantes.toml")
+        with mock.patch.object(cm, "digerir", digerir), \
+                mock.patch.object(cm.subprocess, "Popen",
+                                  lambda *a, **k: lancados.append(a)):
+            rc = cm.em_paralelo(args, cm.carregar_catalogo(args.catalogo))
+        self.assertEqual(rc, 1)
+        self.assertEqual(lancados, [], "um trabalhador arrancou antes de a cópia dele ser recusada")
+        self.assertFalse((self.tmp / "recusa" / "copias").exists())
 
     def test_o_relogio_do_ci_tem_de_ser_o_do_executor(self):
         (self.raiz / ".github" / "workflows" / "testes.yml").write_text(workflow(relogio=""))

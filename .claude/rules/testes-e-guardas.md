@@ -43,7 +43,8 @@ em três fatias de quatro cópias, que um job final exige somarem o catálogo
   repassa a saída de cada cópia com `[tN]` à frente e não repassa o
   `MUTANTES OK` deles; o CI procura-o no início da linha. Sem as duas
   coisas, dois trabalhadores verdes e um furado davam o job por verde
-  (`137`; `tools/testar_conferir_mutantes.py` reinjeta este e mais 14).
+  (`137`; `tools/testar_conferir_mutantes.py` reinjeta este e os outros
+  defeitos da camada paralela).
 - ⚠️ **O FIM DO CATÁLOGO É ONDE OS DOIS AGENTES COLIDEM.** Os dois
   acrescentam mutantes lá, a junção conflita, e o pré-PR acusa órfãos que
   são só os dois catálogos por juntar (`136`, contra o PR #148). Mutantes de
@@ -90,6 +91,23 @@ subida» do mapa certo de 3,9 a 7,3 (sair de uma faixa escura também é
 subir), e a inclinação do degradê invertido de +0,13 a −0,17. Guarda raster
 sobre arte que ainda se está a desenhar re-mede o PAR — o certo e o defeito
 do catálogo — a cada passagem, antes do `--so` (`124`).
+
+## O que as suítes executam e não conferem (`137`)
+
+Medido em 24/10: as seis suítes executam 741 das 757 funções do jogo, e de
+205 defeitos plausíveis sorteados NESSAS funções, 99 passam verdes (15
+equivalentes). A lógica perguntada está guardada; o que escapa é outra coisa:
+
+- ⚠️ **PAINEL QUE ABRE E CABE NÃO PROVA O QUE MOSTRA NEM O QUE O BOTÃO FAZ.**
+  O bloco «Entrou» do caixa só com receita zero, o confirmar do cancelamento
+  que some ou que cancela duas vezes, a meta e a parcela sem botão de fechar,
+  o cartão da doca sem o valor — todos verdes. Guarda de painel abre-o pela
+  porta do jogador e pergunta pelo TEXTO e pela AÇÃO, não só pelo encaixe.
+- **E o que se GRAVA, se AGENDA e se CONTA:** o volume que não grava, o som do
+  mar que nunca toca, a telemetria do playtest com o contador trocado.
+- **Executar não é conferir.** A cobertura por função diz que a linha correu;
+  só um defeito posto nela diz se alguém olhou. A medição e o instrumentador
+  estão em `docs/arquivo/MEDICOES_VELOCIDADE_TESTES_2026-10-24/`.
 
 ## O jogador ao acaso (T26, `118`)
 
