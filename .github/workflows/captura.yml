@@ -20,6 +20,12 @@ on:
   pull_request:
     branches: [main]
 
+# O push novo de um PR cancela a corrida do anterior DESSE PR; na main nada se
+# cancela. A razão está no `testes.yml` (`docs/decisoes/137`).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   captura:
     name: Evidência visual
@@ -93,6 +99,8 @@ jobs:
         run: python3 tools/sentinela_do_jogador.py plantar brport_vs
 
       - name: Fotografar este commit
+        # Quatro tiros de cada vez, cada um com o seu `user://` e a sua tela
+        # (`PARALELO`, no script); a base abaixo corre com o script DELA.
         run: |
           set -euo pipefail
           tools/capturar_evidencia.sh brport_vs "$PWD/fotos/depois" \

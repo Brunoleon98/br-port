@@ -32,7 +32,7 @@ extends SceneTree
 # metade das asserções por correr — já aconteceu neste projeto, no bloco T5g.
 #
 # Rodar:
-#   Godot --headless --path brport_vs --script res://tests/teste_registro.gd
+#   Godot --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_registro.gd
 # ============================================================
 
 var _falhas := 0

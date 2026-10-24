@@ -59,6 +59,7 @@ if [ ! -x "$GODOT" ]; then
 fi
 
 mkdir -p "$SAIDA"
+RAIZ_REPO=$(cd "$(dirname "$0")/.." && pwd)
 
 # A tela é retrato travado (720x1280); pedir outra resolução devolve a folha
 # de ícones espremida — está escrito no cabeçalho do folha_icones.gd.
@@ -93,11 +94,48 @@ comum=(--path "$PROJETO" --resolution 720x1280 --rendering-driver opengl3
 # nome do tiro.
 TETO_SEGUNDOS=180
 
-tirar() {
+# ⚠️ OS TIROS CORREM QUATRO DE CADA VEZ, e cada um tem o SEU `user://` e a SUA
+# tela. Em série a bateria levava 8,4 min por lado no CI, 18 com a base do PR
+# (`docs/decisoes/137`). O que impedia o paralelo era a pasta partilhada: as
+# ferramentas gravam em `user://ferramentas/`, e em 27/09 um tiro leu o save
+# inválido que o `teste_fumaca` planta (`069`). Com o `XDG_DATA_HOME` de cada
+# tiro numa pasta própria, nenhum vê o disco de outro — que é também o que a
+# regra «foto que depende do disco não compara nada» pedia (`captura.md`).
+#
+# A SENTINELA DO JOGADOR É PLANTADA EM CADA PASTA E CONFERIDA DEPOIS DO TIRO:
+# a prova de que nenhuma ferramenta escreve no lugar do jogador (`061`) passa
+# a ser por tiro, em vez de uma só no fim da bateria.
+#
+# E A TELA VIRTUAL TEM NÚMERO PRÓPRIO: o `xvfb-run -a` concorrente escolhe o
+# mesmo número em dois tiros e um deles não arranca (bug 521075 do Debian,
+# lido pela busca); aqui cada tiro começa a procurar num número só dele.
+#
+# `PARALELO=1` volta à série — é assim que se prova que as fotos são as
+# mesmas, byte a byte, nas duas maneiras.
+PARALELO="${PARALELO:-4}"
+TEMPORARIA=$(mktemp -d)
+# ⚠️ O `|| true` não é enfeite: sem tiro nenhum vivo, `kill` sem argumento sai
+# com 2, e o `set -e` vale DENTRO do trap — a bateria inteira verde saía com 2.
+trap 'kill $(jobs -p) 2>/dev/null || true; rm -rf "$TEMPORARIA"' EXIT
+LANCADOS=()
+TELA=99
+
+_tirar_agora() {
 	local nome="$1"; local paineis="$2"; local turno="$3"; shift 3
 	local log="$SAIDA/$nome.log"
-	timeout "$TETO_SEGUNDOS" xvfb-run -a "$GODOT" "${comum[@]}" "$@" > "$log" 2>&1 || {
+	local usuario="$TEMPORARIA/usuario/$nome"
+	mkdir -p "$usuario"
+	XDG_DATA_HOME="$usuario" APPDATA="$usuario" \
+		python3 "$RAIZ_REPO/tools/sentinela_do_jogador.py" plantar "$PROJETO" > /dev/null || {
+		echo "::error::a captura '$nome' não conseguiu plantar a sentinela do jogador."; return 1
+	}
+	XDG_DATA_HOME="$usuario" APPDATA="$usuario" timeout "$TETO_SEGUNDOS" \
+		xvfb-run -a -n "$TELA" "$GODOT" "${comum[@]}" "$@" > "$log" 2>&1 || {
 		echo "::error::a captura '$nome' falhou (código $?):"; cat "$log"; return 1
+	}
+	XDG_DATA_HOME="$usuario" APPDATA="$usuario" \
+		python3 "$RAIZ_REPO/tools/sentinela_do_jogador.py" conferir "$PROJETO" > /dev/null || {
+		echo "::error::a captura '$nome' tocou no que é do jogador (sentinela)."; return 1
 	}
 	# LOG AUSENTE OU VAZIO É REPROVAÇÃO, e não "nada a relatar". Tudo o que vem
 	# a seguir são perguntas AO LOG: sem ele, cada uma delas responderia "não
@@ -192,6 +230,42 @@ tirar() {
 			echo "::error::'$nome' esperava parar no turno $turno e parou no ${visto_turno:-nenhuma leitura}." >&2
 			return 1
 		fi
+	fi
+}
+
+# tirar <nome> <painéis> <turno> <args...> — lança o tiro e volta logo; quem
+# o julga é o `_tirar_agora`, e quem lê o veredicto é o `esperar`.
+tirar() {
+	local nome="$1" n
+	for n in "${LANCADOS[@]}"; do
+		if [ "$n" = "$nome" ]; then
+			echo "::error::o tiro '$nome' aparece duas vezes — o segundo apagaria a foto do primeiro." >&2
+			exit 1
+		fi
+	done
+	LANCADOS+=("$nome")
+	TELA=$((TELA + 1))
+	while [ "$(jobs -rp | wc -l)" -ge "$PARALELO" ]; do wait -n || true; done
+	( set +e; _tirar_agora "$@" > "$TEMPORARIA/$nome.saida" 2>&1
+	  echo $? > "$TEMPORARIA/$nome.codigo" ) &
+}
+
+# A barreira: espera todos os tiros lançados e reprova com o nome e a saída de
+# cada um que falhou — e de cada um que nem chegou a escrever o código, que é
+# a forma de um tiro morrer calado.
+esperar() {
+	wait
+	local nome falhas=0
+	for nome in "${LANCADOS[@]}"; do
+		if [ "$(cat "$TEMPORARIA/$nome.codigo" 2>/dev/null)" != "0" ]; then
+			cat "$TEMPORARIA/$nome.saida" 2>/dev/null >&2 || true
+			echo "::error::o tiro '$nome' não acabou bem (código $(cat "$TEMPORARIA/$nome.codigo" 2>/dev/null || echo 'nenhum'))." >&2
+			falhas=$((falhas + 1))
+		fi
+	done
+	if [ "$falhas" -gt 0 ]; then
+		echo "::error::$falhas tiro(s) falharam." >&2
+		exit 1
 	fi
 }
 
@@ -419,10 +493,12 @@ tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scene
 tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 "--tocar=Configurações" --tocar=Ajustes
 tirar ajustes_movimento_ligado - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes_movimento_ligado.png" espacos=1,3 "--tocar=Configurações" --tocar=Ajustes "--tocar=Reduzir movimento"
 tirar movimento_normal - - --script res://tools/capturar_movimento.gd -- normal "$SAIDA/movimento_normal.png"
+tirar movimento_reduzido - - --script res://tools/capturar_movimento.gd -- reduzido "$SAIDA/movimento_reduzido.png"
+# A comparação lê as fotos e os logs dos dois tiros acima: espera-os.
+esperar
 # Cada par nasce na mesma execução: o log registra os dois nomes de saída.
 # Anexá-lo também ao segundo quadro conserva a guarda de log por PNG.
 cp "$SAIDA/movimento_normal.log" "$SAIDA/movimento_normal_t1.log"
-tirar movimento_reduzido - - --script res://tools/capturar_movimento.gd -- reduzido "$SAIDA/movimento_reduzido.png"
 cp "$SAIDA/movimento_reduzido.log" "$SAIDA/movimento_reduzido_t1.log"
 python3 tools/comparar_movimento.py "$SAIDA" > "$SAIDA/movimento_comparacao.log"
 grep -q "COMPARACAO TEMPORAL CONFERIDA" "$SAIDA/movimento_comparacao.log"
@@ -734,6 +810,9 @@ tirar prancha - -  --script res://tools/prancha_prop.gd  --    "$SAIDA/prancha.p
 # qual o CLAUDE.md avisa. Medido: um PNG 720x1280 de cor única pesa 2,7 KB
 # (preto) a 4,5 KB (cinza); as imagens de verdade pesam 87 KB a 517 KB.
 # O corte fica em 20 KB, com quatro vezes de folga para o lado que interessa.
+# Daqui para baixo tudo lê o que os tiros deixaram.
+esperar
+
 MINIMO=20000
 for png in "$SAIDA"/*.png; do
 	tam=$(wc -c < "$png")
@@ -775,7 +854,6 @@ done
 # Corre por último porque precisa dos logs de todos os tiros, e em Python
 # porque aqui uma exceção sai com código ≠ 0 — o mesmo motivo do
 # `conferir_escopo_ui.py` e do `conferir_guardas_ci.py`.
-RAIZ_REPO=$(cd "$(dirname "$0")/.." && pwd)
 python3 "$RAIZ_REPO/tools/conferir_cobertura_paineis.py" "$SAIDA"
 
 ls -la "$SAIDA"

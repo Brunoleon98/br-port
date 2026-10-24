@@ -1,0 +1,2746 @@
+{
+"tempo_real": {
+"paredes_por_copia_s": [
+1781.7,
+1780.0,
+1845.5,
+1819.5
+],
+"corridas": [
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 35.68,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 56.26,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 17.41,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "equipe-do-pier-ignorada-run_tests",
+"suite": "run_tests",
+"segundos": 34.33,
+"t_guarda": 2.14,
+"t_primeira_falha": 2.14
+},
+{
+"log": "save-fila-sem-teto-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.68,
+"t_guarda": 2.68,
+"t_primeira_falha": 2.68
+},
+{
+"log": "fecho-sem-reabrir-o-turno-run_tests",
+"suite": "run_tests",
+"segundos": 34.04,
+"t_guarda": 2.03,
+"t_primeira_falha": 2.03
+},
+{
+"log": "antecipacao-abate-capital-run_tests",
+"suite": "run_tests",
+"segundos": 36.51,
+"t_guarda": 6.56,
+"t_primeira_falha": 6.56
+},
+{
+"log": "save-obra-na-vespera-run_tests",
+"suite": "run_tests",
+"segundos": 33.93,
+"t_guarda": 7.03,
+"t_primeira_falha": 7.03
+},
+{
+"log": "aviso-de-obra-um-dia-cedo-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.39,
+"t_guarda": 13.55,
+"t_primeira_falha": 13.55
+},
+{
+"log": "cargueiro-sem-piso-run_tests",
+"suite": "run_tests",
+"segundos": 33.45,
+"t_guarda": 7.68,
+"t_primeira_falha": 7.68
+},
+{
+"log": "rosto-gasta-o-sorteio-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 14.93,
+"t_guarda": 4.55,
+"t_primeira_falha": 4.55
+},
+{
+"log": "privado-lido-por-string-renomeado-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.23,
+"t_guarda": 14.01,
+"t_primeira_falha": 14.01
+},
+{
+"log": "devolver-deixa-o-trabalhador-run_tests",
+"suite": "run_tests",
+"segundos": 15.92,
+"t_guarda": 2.02,
+"t_primeira_falha": 2.02
+},
+{
+"log": "fila-guarda-quem-desistiu-run_tests",
+"suite": "run_tests",
+"segundos": 20.73,
+"t_guarda": 16.31,
+"t_primeira_falha": 1.99
+},
+{
+"log": "cancelamento-prende-o-trabalhador-run_tests",
+"suite": "run_tests",
+"segundos": 34.38,
+"t_guarda": 7.74,
+"t_primeira_falha": 7.74
+},
+{
+"log": "cancelamento-sem-registro-run_tests",
+"suite": "run_tests",
+"segundos": 32.55,
+"t_guarda": 7.27,
+"t_primeira_falha": 7.27
+},
+{
+"log": "ajuda-multa-dobrada-run_tests",
+"suite": "run_tests",
+"segundos": 32.71,
+"t_guarda": 7.65,
+"t_primeira_falha": 7.65
+},
+{
+"log": "obra-longa-sem-repartir-teste_design",
+"suite": "teste_design",
+"segundos": 56.47,
+"t_guarda": 40.68,
+"t_primeira_falha": 40.68
+},
+{
+"log": "obra-patio-sem-sinalizacao-teste_design",
+"suite": "teste_design",
+"segundos": 55.47,
+"t_guarda": 39.91,
+"t_primeira_falha": 39.91
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.96
+},
+{
+"log": "vila-torre-da-cor-das-vizinhas-teste_design",
+"suite": "teste_design",
+"segundos": 54.62,
+"t_guarda": 4.41,
+"t_primeira_falha": 4.41
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.46
+},
+{
+"log": "restinga-pe-na-areia-teste_design",
+"suite": "teste_design",
+"segundos": 54.85,
+"t_guarda": 39.72,
+"t_primeira_falha": 3.55
+},
+{
+"log": "mata-sobre-a-pedra-teste_design",
+"suite": "teste_design",
+"segundos": 57.08,
+"t_guarda": 44.52,
+"t_primeira_falha": 44.52
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.26
+},
+{
+"log": "copa-no-telhado-teste_design",
+"suite": "teste_design",
+"segundos": 55.04,
+"t_guarda": 43.03,
+"t_primeira_falha": 43.03
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 5.88
+},
+{
+"log": "mata-gira-fora-do-pe-teste_design",
+"suite": "teste_design",
+"segundos": 54.89,
+"t_guarda": 41.68,
+"t_primeira_falha": 41.68
+},
+{
+"log": "retomada-regrava-save-run_tests",
+"suite": "run_tests",
+"segundos": 32.83,
+"t_guarda": 28.4,
+"t_primeira_falha": 28.4
+},
+{
+"log": "retomada-receita-sem-bonus-run_tests",
+"suite": "run_tests",
+"segundos": 33.19,
+"t_guarda": 28.92,
+"t_primeira_falha": 28.92
+},
+{
+"log": "retomada-recusa-inicia-nova-run_tests",
+"suite": "run_tests",
+"segundos": 33.63,
+"t_guarda": 30.07,
+"t_primeira_falha": 30.07
+},
+{
+"log": "diagnostico-copia-diferente-run_tests",
+"suite": "run_tests",
+"segundos": 34.02,
+"t_guarda": 30.94,
+"t_primeira_falha": 30.94
+},
+{
+"log": "diagnostico-sem-marca-modificado-run_tests",
+"suite": "run_tests",
+"segundos": 34.2,
+"t_guarda": 30.96,
+"t_primeira_falha": 30.96
+},
+{
+"log": "movimento-preferencia-no-jogador-run_tests",
+"suite": "run_tests",
+"segundos": 33.83,
+"t_guarda": 31.25,
+"t_primeira_falha": 31.25
+},
+{
+"log": "movimento-folha-ainda-espera-run_tests",
+"suite": "run_tests",
+"segundos": 33.83,
+"t_guarda": 32.38,
+"t_primeira_falha": 32.38
+},
+{
+"log": "movimento-duplica-ajustes-run_tests",
+"suite": "run_tests",
+"segundos": 32.8,
+"t_guarda": 30.39,
+"t_primeira_falha": 30.39
+},
+{
+"log": "movimento-fauna-continua-andando-run_tests",
+"suite": "run_tests",
+"segundos": 33.37,
+"t_guarda": 31.89,
+"t_primeira_falha": 31.89
+},
+{
+"log": "texto-bancada-acumula-teste_design",
+"suite": "teste_design",
+"segundos": 55.28,
+"t_guarda": 43.54,
+"t_primeira_falha": 43.54
+},
+{
+"log": "inicio-consulta-sem-retorno-run_tests",
+"suite": "run_tests",
+"segundos": 32.97,
+"t_guarda": 32.13,
+"t_primeira_falha": 32.13
+},
+{
+"log": "inicio-fundo-vaza-celular-teste_design",
+"suite": "teste_design",
+"segundos": 59.72,
+"t_guarda": 48.04,
+"t_primeira_falha": 48.04
+},
+{
+"log": "texto-no-tardio-ignorado-teste_design",
+"suite": "teste_design",
+"segundos": 55.92,
+"t_guarda": 45.32,
+"t_primeira_falha": 45.32
+},
+{
+"log": "texto-doca-libera-ao-premir-teste_design",
+"suite": "teste_design",
+"segundos": 56.95,
+"t_guarda": 46.11,
+"t_primeira_falha": 46.11
+},
+{
+"log": "movimento-apaga-texto-teste_design",
+"suite": "teste_design",
+"segundos": 54.35,
+"t_guarda": 42.82,
+"t_primeira_falha": 42.81
+},
+{
+"log": "texto-esconde-falha-de-gravacao-teste_design",
+"suite": "teste_design",
+"segundos": 54.94,
+"t_guarda": 44.8,
+"t_primeira_falha": 44.8
+},
+{
+"log": "texto-rolo-rouba-painel-teste_design",
+"suite": "teste_design",
+"segundos": 56.24,
+"t_guarda": 45.11,
+"t_primeira_falha": 45.11
+},
+{
+"log": "texto-captura-fila-antiga-teste_design",
+"suite": "teste_design",
+"segundos": 55.45,
+"t_guarda": 44.44,
+"t_primeira_falha": 44.44
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 33.06,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 56.03,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.69,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 35.69,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 56.54,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.52,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 17.24,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_registro",
+"suite": "teste_registro",
+"segundos": 0.72,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "atracagem-conta-um-berco-run_tests",
+"suite": "run_tests",
+"segundos": 33.98,
+"t_guarda": 2.28,
+"t_primeira_falha": 2.28
+},
+{
+"log": "save-oferta-fora-da-fila-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.49,
+"t_guarda": 2.35,
+"t_primeira_falha": 2.35
+},
+{
+"log": "nivel-do-porto-pelo-maior-run_tests",
+"suite": "run_tests",
+"segundos": 31.67,
+"t_guarda": 2.2,
+"t_primeira_falha": 2.19
+},
+{
+"log": "segunda-chance-sem-limite-run_tests",
+"suite": "run_tests",
+"segundos": 34.5,
+"t_guarda": 7.31,
+"t_primeira_falha": 7.31
+},
+{
+"log": "save-obra-sem-cobranca-run_tests",
+"suite": "run_tests",
+"segundos": 35.14,
+"t_guarda": 7.36,
+"t_primeira_falha": 7.36
+},
+{
+"log": "mensagem-da-obra-sempre-verde-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.84,
+"t_guarda": 13.96,
+"t_primeira_falha": 13.96
+},
+{
+"log": "migracao-15-esquece-a-vitoria-run_tests",
+"suite": "run_tests",
+"segundos": 34.76,
+"t_guarda": 7.47,
+"t_primeira_falha": 7.47
+},
+{
+"log": "save-rosto-repetido-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.43,
+"t_guarda": 4.76,
+"t_primeira_falha": 4.76
+},
+{
+"log": "registro-sem-obra-pronta-teste_registro",
+"suite": "teste_registro",
+"segundos": 0.67,
+"t_guarda": 0.55,
+"t_primeira_falha": 0.55
+},
+{
+"log": "moeda-ao-gastar-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.47,
+"t_guarda": 0.38,
+"t_primeira_falha": 0.38
+},
+{
+"log": "som-sem-espera-minima-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.47,
+"t_guarda": 0.39,
+"t_primeira_falha": 0.39
+},
+{
+"log": "som-nunca-repete-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.57,
+"t_guarda": 0.49,
+"t_primeira_falha": 0.49
+},
+{
+"log": "recusa-da-obra-cobra-run_tests",
+"suite": "run_tests",
+"segundos": 20.15,
+"t_guarda": 15.65,
+"t_primeira_falha": 6.48
+},
+{
+"log": "cancelamento-nunca-disponivel-run_tests",
+"suite": "run_tests",
+"segundos": 33.01,
+"t_guarda": 28.44,
+"t_primeira_falha": 6.91
+},
+{
+"log": "cancelamento-fora-da-semana-run_tests",
+"suite": "run_tests",
+"segundos": 34.42,
+"t_guarda": 7.96,
+"t_primeira_falha": 7.96
+},
+{
+"log": "ajuda-voltar-fecha-o-artigo-run_tests",
+"suite": "run_tests",
+"segundos": 29.09,
+"t_guarda": 8.05,
+"t_primeira_falha": 8.05
+},
+{
+"log": "ajuda-empilha-run_tests",
+"suite": "run_tests",
+"segundos": 29.36,
+"t_guarda": 9.8,
+"t_primeira_falha": 9.8
+},
+{
+"log": "obra-patio-copia-velha-teste_design",
+"suite": "teste_design",
+"segundos": 55.35,
+"t_guarda": 39.51,
+"t_primeira_falha": 39.51
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.93
+},
+{
+"log": "vila-coreto-sem-telhado-teste_design",
+"suite": "teste_design",
+"segundos": 55.58,
+"t_guarda": 4.39,
+"t_primeira_falha": 4.39
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 7.74
+},
+{
+"log": "fauna-cao-em-cima-da-casa-teste_design",
+"suite": "teste_design",
+"segundos": 56.74,
+"t_guarda": 4.25,
+"t_primeira_falha": 4.25
+},
+{
+"log": "destaque-debaixo-da-barra-teste_design",
+"suite": "teste_design",
+"segundos": 54.92,
+"t_guarda": 42.81,
+"t_primeira_falha": 42.81
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.57
+},
+{
+"log": "ipe-sem-flor-teste_design",
+"suite": "teste_design",
+"segundos": 55.38,
+"t_guarda": 43.42,
+"t_primeira_falha": 43.42
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.91
+},
+{
+"log": "mata-contorno-cego-teste_design",
+"suite": "teste_design",
+"segundos": 55.6,
+"t_guarda": 40.61,
+"t_primeira_falha": 40.61
+},
+{
+"log": "mata-fora-da-profundidade-teste_design",
+"suite": "teste_design",
+"segundos": 54.73,
+"t_guarda": 2.44,
+"t_primeira_falha": 2.44
+},
+{
+"log": "retomada-cobra-quitada-run_tests",
+"suite": "run_tests",
+"segundos": 31.3,
+"t_guarda": 26.98,
+"t_primeira_falha": 26.98
+},
+{
+"log": "retomada-meta-esquecida-run_tests",
+"suite": "run_tests",
+"segundos": 33.17,
+"t_guarda": 28.84,
+"t_primeira_falha": 28.84
+},
+{
+"log": "retomada-dia-pendente-adiantado-run_tests",
+"suite": "run_tests",
+"segundos": 33.74,
+"t_guarda": 29.33,
+"t_primeira_falha": 29.33
+},
+{
+"log": "diagnostico-falso-sucesso-run_tests",
+"suite": "run_tests",
+"segundos": 33.37,
+"t_guarda": 30.14,
+"t_primeira_falha": 30.14
+},
+{
+"log": "movimento-padrao-ativado-run_tests",
+"suite": "run_tests",
+"segundos": 34.4,
+"t_guarda": 31.88,
+"t_primeira_falha": 31.88
+},
+{
+"log": "movimento-nao-pausa-fundo-run_tests",
+"suite": "run_tests",
+"segundos": 34.27,
+"t_guarda": 32.81,
+"t_primeira_falha": 32.79
+},
+{
+"log": "movimento-folha-perde-callback-run_tests",
+"suite": "run_tests",
+"segundos": 34.29,
+"t_guarda": 32.79,
+"t_primeira_falha": 32.79
+},
+{
+"log": "movimento-grava-a-partida-run_tests",
+"suite": "run_tests",
+"segundos": 33.86,
+"t_guarda": 31.66,
+"t_primeira_falha": 31.66
+},
+{
+"log": "movimento-esconde-falha-de-gravacao-run_tests",
+"suite": "run_tests",
+"segundos": 33.2,
+"t_guarda": 30.77,
+"t_primeira_falha": 30.77
+},
+{
+"log": "texto-bancada-caixa-cega-teste_design",
+"suite": "teste_design",
+"segundos": 57.28,
+"t_guarda": 45.71,
+"t_primeira_falha": 45.71
+},
+{
+"log": "inicio-continuar-sem-partida-run_tests",
+"suite": "run_tests",
+"segundos": 32.42,
+"t_guarda": 31.41,
+"t_primeira_falha": 31.41
+},
+{
+"log": "texto-tema-ignora-maior-teste_design",
+"suite": "teste_design",
+"segundos": 57.01,
+"t_guarda": 46.56,
+"t_primeira_falha": 45.88
+},
+{
+"log": "texto-painel-sem-rolagem-teste_design",
+"suite": "teste_design",
+"segundos": 55.87,
+"t_guarda": 54.98,
+"t_primeira_falha": 45.74
+},
+{
+"log": "texto-perde-leitura-teste_design",
+"suite": "teste_design",
+"segundos": 56.1,
+"t_guarda": 46.21,
+"t_primeira_falha": 46.21
+},
+{
+"log": "texto-nao-persiste-teste_design",
+"suite": "teste_design",
+"segundos": 54.99,
+"t_guarda": 43.44,
+"t_primeira_falha": 43.44
+},
+{
+"log": "texto-nome-longo-sem-quebra-teste_design",
+"suite": "teste_design",
+"segundos": 55.86,
+"t_guarda": 46.3,
+"t_primeira_falha": 46.3
+},
+{
+"log": "texto-consulta-selecao-ausente-teste_design",
+"suite": "teste_design",
+"segundos": 56.26,
+"t_guarda": 46.46,
+"t_primeira_falha": 46.46
+},
+{
+"log": "texto-botao-horizontal-sem-largura-teste_design",
+"suite": "teste_design",
+"segundos": 54.47,
+"t_guarda": 46.74,
+"t_primeira_falha": 46.74
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 32.73,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 56.46,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.47,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.29,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_registro",
+"suite": "teste_registro",
+"segundos": 0.67,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 35.78,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 56.0,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 16.96,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "espera-com-dois-espacos-teste_design",
+"suite": "teste_design",
+"segundos": 57.52,
+"t_guarda": 3.8,
+"t_primeira_falha": 3.8
+},
+{
+"log": "trabalhador-em-duas-docas-run_tests",
+"suite": "run_tests",
+"segundos": 33.83,
+"t_guarda": 2.05,
+"t_primeira_falha": 2.05
+},
+{
+"log": "derrota-sem-fechar-a-semana-run_tests",
+"suite": "run_tests",
+"segundos": 33.1,
+"t_guarda": 2.24,
+"t_primeira_falha": 2.24
+},
+{
+"log": "save-armazem-no-dia-9-run_tests",
+"suite": "run_tests",
+"segundos": 21.06,
+"t_guarda": 7.05,
+"t_primeira_falha": 6.71
+},
+{
+"log": "passagem-sem-recomecar-reputacao-run_tests",
+"suite": "run_tests",
+"segundos": 31.31,
+"t_guarda": 7.01,
+"t_primeira_falha": 7.01
+},
+{
+"log": "rosto-sem-filtro-dos-usados-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.88,
+"t_guarda": 4.75,
+"t_primeira_falha": 4.75
+},
+{
+"log": "atalho-s-nao-e-ferramenta-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.03,
+"t_guarda": 5.07,
+"t_primeira_falha": 5.07
+},
+{
+"log": "load-esquece-a-paciencia-do-cliente-run_tests",
+"suite": "run_tests",
+"segundos": 51.36,
+"t_guarda": 46.82,
+"t_primeira_falha": 46.82
+},
+{
+"log": "reputacao-sem-teto-run_tests",
+"suite": "run_tests",
+"segundos": 64.48,
+"t_guarda": 59.95,
+"t_primeira_falha": 7.29
+},
+{
+"log": "cancelamento-sem-reputacao-run_tests",
+"suite": "run_tests",
+"segundos": 33.44,
+"t_guarda": 7.16,
+"t_primeira_falha": 7.16
+},
+{
+"log": "cancelamento-de-outro-barco-run_tests",
+"suite": "run_tests",
+"segundos": 33.01,
+"t_guarda": 7.3,
+"t_primeira_falha": 7.3
+},
+{
+"log": "ajuda-grava-a-partida-run_tests",
+"suite": "run_tests",
+"segundos": 32.27,
+"t_guarda": 7.21,
+"t_primeira_falha": 7.21
+},
+{
+"log": "obra-nao-redesenha-na-compra-teste_design",
+"suite": "teste_design",
+"segundos": 54.68,
+"t_guarda": 38.96,
+"t_primeira_falha": 38.96
+},
+{
+"log": "obra-uv-sem-razao-teste_design",
+"suite": "teste_design",
+"segundos": 56.01,
+"t_guarda": 40.44,
+"t_primeira_falha": 40.44
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 7.11
+},
+{
+"log": "mar-largo-clareia-teste_design",
+"suite": "teste_design",
+"segundos": 54.59,
+"t_guarda": 39.06,
+"t_primeira_falha": 39.06
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.89
+},
+{
+"log": "mata-copia-desalinhada-teste_design",
+"suite": "teste_design",
+"segundos": 55.82,
+"t_guarda": 40.35,
+"t_primeira_falha": 40.35
+},
+{
+"log": "destaque-tapado-teste_design",
+"suite": "teste_design",
+"segundos": 55.98,
+"t_guarda": 44.28,
+"t_primeira_falha": 40.43
+},
+{
+"log": "fauna-em-cima-da-arvore-teste_design",
+"suite": "teste_design",
+"segundos": 54.71,
+"t_guarda": 41.72,
+"t_primeira_falha": 41.72
+},
+{
+"log": "restinga-tapa-coqueiro-teste_design",
+"suite": "teste_design",
+"segundos": 54.93,
+"t_guarda": 42.03,
+"t_primeira_falha": 42.03
+},
+{
+"log": "retomada-consome-rng-run_tests",
+"suite": "run_tests",
+"segundos": 33.28,
+"t_guarda": 28.74,
+"t_primeira_falha": 28.74
+},
+{
+"log": "retomada-adianta-progresso-run_tests",
+"suite": "run_tests",
+"segundos": 33.1,
+"t_guarda": 28.73,
+"t_primeira_falha": 28.73
+},
+{
+"log": "retomada-carrega-espaco-errado-run_tests",
+"suite": "run_tests",
+"segundos": 33.85,
+"t_guarda": 29.76,
+"t_primeira_falha": 29.76
+},
+{
+"log": "retomada-promete-apos-encerrar-run_tests",
+"suite": "run_tests",
+"segundos": 33.68,
+"t_guarda": 29.38,
+"t_primeira_falha": 29.38
+},
+{
+"log": "diagnostico-consulta-grava-run_tests",
+"suite": "run_tests",
+"segundos": 33.64,
+"t_guarda": 30.54,
+"t_primeira_falha": 30.54
+},
+{
+"log": "movimento-sem-aviso-aos-abertos-run_tests",
+"suite": "run_tests",
+"segundos": 34.0,
+"t_guarda": 32.49,
+"t_primeira_falha": 32.49
+},
+{
+"log": "movimento-novos-ignoram-escolha-run_tests",
+"suite": "run_tests",
+"segundos": 33.0,
+"t_guarda": 31.7,
+"t_primeira_falha": 31.7
+},
+{
+"log": "movimento-apaga-realce-da-fila-run_tests",
+"suite": "run_tests",
+"segundos": 32.55,
+"t_guarda": 30.95,
+"t_primeira_falha": 30.95
+},
+{
+"log": "movimento-resultado-nao-termina-run_tests",
+"suite": "run_tests",
+"segundos": 31.79,
+"t_guarda": 30.7,
+"t_primeira_falha": 30.7
+},
+{
+"log": "texto-bancada-janela-cega-teste_design",
+"suite": "teste_design",
+"segundos": 56.75,
+"t_guarda": 45.16,
+"t_primeira_falha": 45.16
+},
+{
+"log": "inicio-consultas-sobrepostas-run_tests",
+"suite": "run_tests",
+"segundos": 32.25,
+"t_guarda": 31.3,
+"t_primeira_falha": 31.3
+},
+{
+"log": "inicio-extras-na-inicial-run_tests",
+"suite": "run_tests",
+"segundos": 32.62,
+"t_guarda": 31.56,
+"t_primeira_falha": 31.56
+},
+{
+"log": "texto-override-ignorado-teste_design",
+"suite": "teste_design",
+"segundos": 56.54,
+"t_guarda": 45.36,
+"t_primeira_falha": 45.36
+},
+{
+"log": "texto-acoes-fora-da-tela-teste_design",
+"suite": "teste_design",
+"segundos": 55.11,
+"t_guarda": 44.07,
+"t_primeira_falha": 44.07
+},
+{
+"log": "texto-perde-cursor-teste_design",
+"suite": "teste_design",
+"segundos": 54.49,
+"t_guarda": 44.75,
+"t_primeira_falha": 44.75
+},
+{
+"log": "texto-sinal-ignorado-teste_design",
+"suite": "teste_design",
+"segundos": 54.7,
+"t_guarda": 44.43,
+"t_primeira_falha": 44.43
+},
+{
+"log": "texto-celular-sem-medida-teste_design",
+"suite": "teste_design",
+"segundos": 56.58,
+"t_guarda": 49.57,
+"t_primeira_falha": 49.41
+},
+{
+"log": "texto-cartao-guarda-faixa-vazia-teste_design",
+"suite": "teste_design",
+"segundos": 55.31,
+"t_guarda": 45.15,
+"t_primeira_falha": 45.15
+},
+{
+"log": "texto-consulta-nasce-sem-leitura-teste_design",
+"suite": "teste_design",
+"segundos": 55.27,
+"t_guarda": 51.5,
+"t_primeira_falha": 51.5
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 33.3,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 57.04,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 14.57,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 35.69,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 56.61,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 17.41,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "atracar-sem-trabalhador-run_tests",
+"suite": "run_tests",
+"segundos": 16.98,
+"t_guarda": 2.02,
+"t_primeira_falha": 2.02
+},
+{
+"log": "desistencia-de-graca-run_tests",
+"suite": "run_tests",
+"segundos": 33.58,
+"t_guarda": 2.19,
+"t_primeira_falha": 2.19
+},
+{
+"log": "receita-sem-a-estrutura-run_tests",
+"suite": "run_tests",
+"segundos": 34.23,
+"t_guarda": 6.8,
+"t_primeira_falha": 6.8
+},
+{
+"log": "obra-pronta-um-dia-cedo-run_tests",
+"suite": "run_tests",
+"segundos": 35.51,
+"t_guarda": 6.5,
+"t_primeira_falha": 6.5
+},
+{
+"log": "reparos-uma-semana-depois-run_tests",
+"suite": "run_tests",
+"segundos": 30.56,
+"t_guarda": 5.53,
+"t_primeira_falha": 2.16
+},
+{
+"log": "obra-recusada-um-dia-cedo-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.97,
+"t_guarda": 14.03,
+"t_primeira_falha": 13.99
+},
+{
+"log": "plural-da-obra-a-mao-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.68,
+"t_guarda": 2.98,
+"t_primeira_falha": 2.98
+},
+{
+"log": "armazem-sem-criar-a-pasta-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.08,
+"t_guarda": 4.96,
+"t_primeira_falha": 4.96
+},
+{
+"log": "progresso-com-dois-espacos-teste_design",
+"suite": "teste_design",
+"segundos": 56.84,
+"t_guarda": 3.78,
+"t_primeira_falha": 3.78
+},
+{
+"log": "save-recusa-a-fila-cheia-run_tests",
+"suite": "run_tests",
+"segundos": 20.62,
+"t_guarda": 15.92,
+"t_primeira_falha": 2.52
+},
+{
+"log": "cancelamento-sem-conferir-o-orcamento-run_tests",
+"suite": "run_tests",
+"segundos": 91.41,
+"t_guarda": 86.93,
+"t_primeira_falha": 8.99
+},
+{
+"log": "cancelamento-sem-multa-run_tests",
+"suite": "run_tests",
+"segundos": 32.84,
+"t_guarda": 7.58,
+"t_primeira_falha": 7.58
+},
+{
+"log": "migracao-18-inventa-multa-run_tests",
+"suite": "run_tests",
+"segundos": 32.2,
+"t_guarda": 7.1,
+"t_primeira_falha": 7.1
+},
+{
+"log": "ajuda-gasta-o-sorteio-run_tests",
+"suite": "run_tests",
+"segundos": 31.29,
+"t_guarda": 7.7,
+"t_primeira_falha": 7.7
+},
+{
+"log": "ajuda-deixa-o-toque-passar-run_tests",
+"suite": "run_tests",
+"segundos": 32.77,
+"t_guarda": 7.24,
+"t_primeira_falha": 7.24
+},
+{
+"log": "obra-um-dia-adiantada-teste_design",
+"suite": "teste_design",
+"segundos": 54.93,
+"t_guarda": 39.36,
+"t_primeira_falha": 39.27
+},
+{
+"log": "obra-cartao-diz-ruinas-teste_design",
+"suite": "teste_design",
+"segundos": 54.53,
+"t_guarda": 38.69,
+"t_primeira_falha": 38.69
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 7.43
+},
+{
+"log": "mar-mancha-rasa-ao-largo-teste_design",
+"suite": "teste_design",
+"segundos": 55.14,
+"t_guarda": 39.58,
+"t_primeira_falha": 39.58
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.76
+},
+{
+"log": "mata-arvore-maior-teste_design",
+"suite": "teste_design",
+"segundos": 54.69,
+"t_guarda": 40.0,
+"t_primeira_falha": 40.0
+},
+{
+"log": "mata-sobre-a-orla-teste_design",
+"suite": "teste_design",
+"segundos": 55.43,
+"t_guarda": 43.37,
+"t_primeira_falha": 43.37
+},
+{
+"log": "mata-parada-teste_design",
+"suite": "teste_design",
+"segundos": 43.33,
+"t_guarda": 23.82,
+"t_primeira_falha": 3.74
+},
+{
+"log": "retomada-inventa-cobranca-fase2-run_tests",
+"suite": "run_tests",
+"segundos": 32.7,
+"t_guarda": 28.45,
+"t_primeira_falha": 28.45
+},
+{
+"log": "retomada-voltar-entra-run_tests",
+"suite": "run_tests",
+"segundos": 34.57,
+"t_guarda": 30.29,
+"t_primeira_falha": 30.29
+},
+{
+"log": "retomada-conta-obra-como-pronta-run_tests",
+"suite": "run_tests",
+"segundos": 34.9,
+"t_guarda": 30.47,
+"t_primeira_falha": 30.47
+},
+{
+"log": "diagnostico-copia-ao-abrir-run_tests",
+"suite": "run_tests",
+"segundos": 33.32,
+"t_guarda": 30.13,
+"t_primeira_falha": 30.13
+},
+{
+"log": "movimento-nao-persiste-run_tests",
+"suite": "run_tests",
+"segundos": 33.94,
+"t_guarda": 31.36,
+"t_primeira_falha": 31.36
+},
+{
+"log": "movimento-sem-pose-inteira-run_tests",
+"suite": "run_tests",
+"segundos": 33.18,
+"t_guarda": 31.71,
+"t_primeira_falha": 31.71
+},
+{
+"log": "movimento-barco-ainda-transita-run_tests",
+"suite": "run_tests",
+"segundos": 32.82,
+"t_guarda": 31.65,
+"t_primeira_falha": 31.65
+},
+{
+"log": "movimento-oculta-visita-operacional-run_tests",
+"suite": "run_tests",
+"segundos": 32.93,
+"t_guarda": 31.66,
+"t_primeira_falha": 31.66
+},
+{
+"log": "texto-bancada-sem-ampliacao-teste_design",
+"suite": "teste_design",
+"segundos": 55.51,
+"t_guarda": 43.92,
+"t_primeira_falha": 43.92
+},
+{
+"log": "inicio-movimento-sem-fundo-run_tests",
+"suite": "run_tests",
+"segundos": 33.08,
+"t_guarda": 32.16,
+"t_primeira_falha": 32.16
+},
+{
+"log": "inicio-saves-sem-porta-run_tests",
+"suite": "run_tests",
+"segundos": 32.51,
+"t_guarda": 31.5,
+"t_primeira_falha": 31.5
+},
+{
+"log": "inicio-fundo-provisorio-teste_design",
+"suite": "teste_design",
+"segundos": 56.06,
+"t_guarda": 44.4,
+"t_primeira_falha": 44.4
+},
+{
+"log": "texto-padrao-nao-restaura-teste_design",
+"suite": "teste_design",
+"segundos": 54.73,
+"t_guarda": 44.28,
+"t_primeira_falha": 44.28
+},
+{
+"log": "texto-arrasto-executa-acao-teste_design",
+"suite": "teste_design",
+"segundos": 53.87,
+"t_guarda": 43.21,
+"t_primeira_falha": 43.21
+},
+{
+"log": "texto-apaga-movimento-teste_design",
+"suite": "teste_design",
+"segundos": 54.97,
+"t_guarda": 43.48,
+"t_primeira_falha": 43.47
+},
+{
+"log": "texto-tamanho-invalido-teste_design",
+"suite": "teste_design",
+"segundos": 55.85,
+"t_guarda": 44.15,
+"t_primeira_falha": 44.15
+},
+{
+"log": "texto-fita-alarga-celular-teste_design",
+"suite": "teste_design",
+"segundos": 55.15,
+"t_guarda": 48.3,
+"t_primeira_falha": 48.3
+},
+{
+"log": "texto-rouba-posicao-inicial-teste_design",
+"suite": "teste_design",
+"segundos": 58.0,
+"t_guarda": 50.82,
+"t_primeira_falha": 50.82
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 32.73,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 55.54,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.27,
+"t_guarda": null,
+"t_primeira_falha": null
+}
+]
+},
+"fixed_fps_60": {
+"paredes_por_copia_s": [
+1425.3,
+1424.3,
+1490.9,
+1456.4
+],
+"corridas": [
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 25.62,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 47.61,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 14.73,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "equipe-do-pier-ignorada-run_tests",
+"suite": "run_tests",
+"segundos": 25.53,
+"t_guarda": 2.25,
+"t_primeira_falha": 2.25
+},
+{
+"log": "save-fila-sem-teto-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.16,
+"t_guarda": 2.56,
+"t_primeira_falha": 2.56
+},
+{
+"log": "fecho-sem-reabrir-o-turno-run_tests",
+"suite": "run_tests",
+"segundos": 24.86,
+"t_guarda": 1.89,
+"t_primeira_falha": 1.89
+},
+{
+"log": "antecipacao-abate-capital-run_tests",
+"suite": "run_tests",
+"segundos": 26.17,
+"t_guarda": 5.97,
+"t_primeira_falha": 5.97
+},
+{
+"log": "save-obra-na-vespera-run_tests",
+"suite": "run_tests",
+"segundos": 23.84,
+"t_guarda": 6.48,
+"t_primeira_falha": 6.48
+},
+{
+"log": "aviso-de-obra-um-dia-cedo-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 12.86,
+"t_guarda": 11.19,
+"t_primeira_falha": 11.19
+},
+{
+"log": "cargueiro-sem-piso-run_tests",
+"suite": "run_tests",
+"segundos": 25.51,
+"t_guarda": 7.83,
+"t_primeira_falha": 7.83
+},
+{
+"log": "rosto-gasta-o-sorteio-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.41,
+"t_guarda": 3.94,
+"t_primeira_falha": 3.94
+},
+{
+"log": "privado-lido-por-string-renomeado-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 14.02,
+"t_guarda": 12.98,
+"t_primeira_falha": 12.98
+},
+{
+"log": "devolver-deixa-o-trabalhador-run_tests",
+"suite": "run_tests",
+"segundos": 2.13,
+"t_guarda": 1.99,
+"t_primeira_falha": 1.99
+},
+{
+"log": "fila-guarda-quem-desistiu-run_tests",
+"suite": "run_tests",
+"segundos": 11.46,
+"t_guarda": 9.72,
+"t_primeira_falha": 2.04
+},
+{
+"log": "cancelamento-prende-o-trabalhador-run_tests",
+"suite": "run_tests",
+"segundos": 23.86,
+"t_guarda": 7.38,
+"t_primeira_falha": 7.38
+},
+{
+"log": "cancelamento-sem-registro-run_tests",
+"suite": "run_tests",
+"segundos": 24.74,
+"t_guarda": 8.18,
+"t_primeira_falha": 8.18
+},
+{
+"log": "ajuda-multa-dobrada-run_tests",
+"suite": "run_tests",
+"segundos": 23.4,
+"t_guarda": 7.11,
+"t_primeira_falha": 7.11
+},
+{
+"log": "obra-longa-sem-repartir-teste_design",
+"suite": "teste_design",
+"segundos": 47.3,
+"t_guarda": 40.11,
+"t_primeira_falha": 40.11
+},
+{
+"log": "obra-patio-sem-sinalizacao-teste_design",
+"suite": "teste_design",
+"segundos": 49.71,
+"t_guarda": 42.52,
+"t_primeira_falha": 42.52
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 7.08
+},
+{
+"log": "vila-torre-da-cor-das-vizinhas-teste_design",
+"suite": "teste_design",
+"segundos": 47.32,
+"t_guarda": 4.48,
+"t_primeira_falha": 4.48
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.91
+},
+{
+"log": "restinga-pe-na-areia-teste_design",
+"suite": "teste_design",
+"segundos": 47.36,
+"t_guarda": 40.37,
+"t_primeira_falha": 3.66
+},
+{
+"log": "mata-sobre-a-pedra-teste_design",
+"suite": "teste_design",
+"segundos": 47.32,
+"t_guarda": 43.07,
+"t_primeira_falha": 43.07
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.07
+},
+{
+"log": "copa-no-telhado-teste_design",
+"suite": "teste_design",
+"segundos": 46.19,
+"t_guarda": 42.68,
+"t_primeira_falha": 42.68
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.37
+},
+{
+"log": "mata-gira-fora-do-pe-teste_design",
+"suite": "teste_design",
+"segundos": 47.29,
+"t_guarda": 42.73,
+"t_primeira_falha": 42.73
+},
+{
+"log": "retomada-regrava-save-run_tests",
+"suite": "run_tests",
+"segundos": 23.4,
+"t_guarda": 21.83,
+"t_primeira_falha": 21.83
+},
+{
+"log": "retomada-receita-sem-bonus-run_tests",
+"suite": "run_tests",
+"segundos": 24.05,
+"t_guarda": 22.54,
+"t_primeira_falha": 22.54
+},
+{
+"log": "retomada-recusa-inicia-nova-run_tests",
+"suite": "run_tests",
+"segundos": 24.31,
+"t_guarda": 23.31,
+"t_primeira_falha": 23.31
+},
+{
+"log": "diagnostico-copia-diferente-run_tests",
+"suite": "run_tests",
+"segundos": 24.62,
+"t_guarda": 23.76,
+"t_primeira_falha": 23.76
+},
+{
+"log": "diagnostico-sem-marca-modificado-run_tests",
+"suite": "run_tests",
+"segundos": 26.01,
+"t_guarda": 24.94,
+"t_primeira_falha": 24.94
+},
+{
+"log": "movimento-preferencia-no-jogador-run_tests",
+"suite": "run_tests",
+"segundos": 25.87,
+"t_guarda": 25.05,
+"t_primeira_falha": 25.05
+},
+{
+"log": "movimento-folha-ainda-espera-run_tests",
+"suite": "run_tests",
+"segundos": 23.69,
+"t_guarda": 23.29,
+"t_primeira_falha": 23.29
+},
+{
+"log": "movimento-duplica-ajustes-run_tests",
+"suite": "run_tests",
+"segundos": 23.85,
+"t_guarda": 23.17,
+"t_primeira_falha": 23.17
+},
+{
+"log": "movimento-fauna-continua-andando-run_tests",
+"suite": "run_tests",
+"segundos": 24.67,
+"t_guarda": 24.26,
+"t_primeira_falha": 24.26
+},
+{
+"log": "texto-bancada-acumula-teste_design",
+"suite": "teste_design",
+"segundos": 50.83,
+"t_guarda": 47.53,
+"t_primeira_falha": 47.53
+},
+{
+"log": "inicio-consulta-sem-retorno-run_tests",
+"suite": "run_tests",
+"segundos": 23.45,
+"t_guarda": 23.3,
+"t_primeira_falha": 23.3
+},
+{
+"log": "inicio-fundo-vaza-celular-teste_design",
+"suite": "teste_design",
+"segundos": 53.26,
+"t_guarda": 49.81,
+"t_primeira_falha": 49.81
+},
+{
+"log": "texto-no-tardio-ignorado-teste_design",
+"suite": "teste_design",
+"segundos": 46.33,
+"t_guarda": 43.77,
+"t_primeira_falha": 43.77
+},
+{
+"log": "texto-doca-libera-ao-premir-teste_design",
+"suite": "teste_design",
+"segundos": 46.17,
+"t_guarda": 43.51,
+"t_primeira_falha": 43.51
+},
+{
+"log": "movimento-apaga-texto-teste_design",
+"suite": "teste_design",
+"segundos": 47.77,
+"t_guarda": 44.69,
+"t_primeira_falha": 44.68
+},
+{
+"log": "texto-esconde-falha-de-gravacao-teste_design",
+"suite": "teste_design",
+"segundos": 46.27,
+"t_guarda": 43.67,
+"t_primeira_falha": 43.67
+},
+{
+"log": "texto-rolo-rouba-painel-teste_design",
+"suite": "teste_design",
+"segundos": 46.82,
+"t_guarda": 44.14,
+"t_primeira_falha": 44.14
+},
+{
+"log": "texto-captura-fila-antiga-teste_design",
+"suite": "teste_design",
+"segundos": 47.69,
+"t_guarda": 45.01,
+"t_primeira_falha": 45.01
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 22.66,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 48.06,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.3,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 25.26,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 47.86,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.47,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 15.12,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_registro",
+"suite": "teste_registro",
+"segundos": 0.67,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "atracagem-conta-um-berco-run_tests",
+"suite": "run_tests",
+"segundos": 24.41,
+"t_guarda": 2.19,
+"t_primeira_falha": 2.19
+},
+{
+"log": "save-oferta-fora-da-fila-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.81,
+"t_guarda": 2.29,
+"t_primeira_falha": 2.29
+},
+{
+"log": "nivel-do-porto-pelo-maior-run_tests",
+"suite": "run_tests",
+"segundos": 23.11,
+"t_guarda": 2.45,
+"t_primeira_falha": 2.44
+},
+{
+"log": "segunda-chance-sem-limite-run_tests",
+"suite": "run_tests",
+"segundos": 27.13,
+"t_guarda": 7.51,
+"t_primeira_falha": 7.51
+},
+{
+"log": "save-obra-sem-cobranca-run_tests",
+"suite": "run_tests",
+"segundos": 25.67,
+"t_guarda": 6.54,
+"t_primeira_falha": 6.54
+},
+{
+"log": "mensagem-da-obra-sempre-verde-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.07,
+"t_guarda": 11.39,
+"t_primeira_falha": 11.39
+},
+{
+"log": "migracao-15-esquece-a-vitoria-run_tests",
+"suite": "run_tests",
+"segundos": 24.86,
+"t_guarda": 7.51,
+"t_primeira_falha": 7.51
+},
+{
+"log": "save-rosto-repetido-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.91,
+"t_guarda": 4.37,
+"t_primeira_falha": 4.37
+},
+{
+"log": "registro-sem-obra-pronta-teste_registro",
+"suite": "teste_registro",
+"segundos": 0.67,
+"t_guarda": 0.54,
+"t_primeira_falha": 0.54
+},
+{
+"log": "moeda-ao-gastar-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.47,
+"t_guarda": 0.38,
+"t_primeira_falha": 0.38
+},
+{
+"log": "som-sem-espera-minima-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.62,
+"t_guarda": 0.49,
+"t_primeira_falha": 0.49
+},
+{
+"log": "som-nunca-repete-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.52,
+"t_guarda": 0.43,
+"t_primeira_falha": 0.43
+},
+{
+"log": "recusa-da-obra-cobra-run_tests",
+"suite": "run_tests",
+"segundos": 11.78,
+"t_guarda": 10.0,
+"t_primeira_falha": 6.67
+},
+{
+"log": "cancelamento-nunca-disponivel-run_tests",
+"suite": "run_tests",
+"segundos": 25.52,
+"t_guarda": 23.51,
+"t_primeira_falha": 7.97
+},
+{
+"log": "cancelamento-fora-da-semana-run_tests",
+"suite": "run_tests",
+"segundos": 23.77,
+"t_guarda": 7.32,
+"t_primeira_falha": 7.32
+},
+{
+"log": "ajuda-voltar-fecha-o-artigo-run_tests",
+"suite": "run_tests",
+"segundos": 22.67,
+"t_guarda": 7.29,
+"t_primeira_falha": 7.29
+},
+{
+"log": "ajuda-empilha-run_tests",
+"suite": "run_tests",
+"segundos": 22.0,
+"t_guarda": 7.44,
+"t_primeira_falha": 7.44
+},
+{
+"log": "obra-patio-copia-velha-teste_design",
+"suite": "teste_design",
+"segundos": 47.39,
+"t_guarda": 39.7,
+"t_primeira_falha": 39.7
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.05
+},
+{
+"log": "vila-coreto-sem-telhado-teste_design",
+"suite": "teste_design",
+"segundos": 48.26,
+"t_guarda": 4.38,
+"t_primeira_falha": 4.38
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.53
+},
+{
+"log": "fauna-cao-em-cima-da-casa-teste_design",
+"suite": "teste_design",
+"segundos": 46.19,
+"t_guarda": 4.52,
+"t_primeira_falha": 4.52
+},
+{
+"log": "destaque-debaixo-da-barra-teste_design",
+"suite": "teste_design",
+"segundos": 46.35,
+"t_guarda": 42.72,
+"t_primeira_falha": 42.72
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 7.46
+},
+{
+"log": "ipe-sem-flor-teste_design",
+"suite": "teste_design",
+"segundos": 47.54,
+"t_guarda": 43.58,
+"t_primeira_falha": 43.58
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 5.89
+},
+{
+"log": "mata-contorno-cego-teste_design",
+"suite": "teste_design",
+"segundos": 46.38,
+"t_guarda": 39.53,
+"t_primeira_falha": 39.53
+},
+{
+"log": "mata-fora-da-profundidade-teste_design",
+"suite": "teste_design",
+"segundos": 47.13,
+"t_guarda": 2.46,
+"t_primeira_falha": 2.46
+},
+{
+"log": "retomada-cobra-quitada-run_tests",
+"suite": "run_tests",
+"segundos": 24.4,
+"t_guarda": 22.74,
+"t_primeira_falha": 22.74
+},
+{
+"log": "retomada-meta-esquecida-run_tests",
+"suite": "run_tests",
+"segundos": 23.75,
+"t_guarda": 21.88,
+"t_primeira_falha": 21.88
+},
+{
+"log": "retomada-dia-pendente-adiantado-run_tests",
+"suite": "run_tests",
+"segundos": 24.22,
+"t_guarda": 22.58,
+"t_primeira_falha": 22.58
+},
+{
+"log": "diagnostico-falso-sucesso-run_tests",
+"suite": "run_tests",
+"segundos": 25.92,
+"t_guarda": 24.88,
+"t_primeira_falha": 24.88
+},
+{
+"log": "movimento-padrao-ativado-run_tests",
+"suite": "run_tests",
+"segundos": 23.57,
+"t_guarda": 22.93,
+"t_primeira_falha": 22.93
+},
+{
+"log": "movimento-nao-pausa-fundo-run_tests",
+"suite": "run_tests",
+"segundos": 24.62,
+"t_guarda": 24.14,
+"t_primeira_falha": 24.14
+},
+{
+"log": "movimento-folha-perde-callback-run_tests",
+"suite": "run_tests",
+"segundos": 24.9,
+"t_guarda": 24.49,
+"t_primeira_falha": 24.49
+},
+{
+"log": "movimento-grava-a-partida-run_tests",
+"suite": "run_tests",
+"segundos": 24.47,
+"t_guarda": 23.78,
+"t_primeira_falha": 23.78
+},
+{
+"log": "movimento-esconde-falha-de-gravacao-run_tests",
+"suite": "run_tests",
+"segundos": 24.51,
+"t_guarda": 23.77,
+"t_primeira_falha": 23.77
+},
+{
+"log": "texto-bancada-caixa-cega-teste_design",
+"suite": "teste_design",
+"segundos": 48.35,
+"t_guarda": 45.1,
+"t_primeira_falha": 45.1
+},
+{
+"log": "inicio-continuar-sem-partida-run_tests",
+"suite": "run_tests",
+"segundos": 24.31,
+"t_guarda": 24.18,
+"t_primeira_falha": 24.18
+},
+{
+"log": "texto-tema-ignora-maior-teste_design",
+"suite": "teste_design",
+"segundos": 46.74,
+"t_guarda": 44.3,
+"t_primeira_falha": 44.21
+},
+{
+"log": "texto-painel-sem-rolagem-teste_design",
+"suite": "teste_design",
+"segundos": 46.34,
+"t_guarda": 46.04,
+"t_primeira_falha": 44.0
+},
+{
+"log": "texto-perde-leitura-teste_design",
+"suite": "teste_design",
+"segundos": 45.79,
+"t_guarda": 43.23,
+"t_primeira_falha": 43.23
+},
+{
+"log": "texto-nao-persiste-teste_design",
+"suite": "teste_design",
+"segundos": 48.4,
+"t_guarda": 45.12,
+"t_primeira_falha": 45.12
+},
+{
+"log": "texto-nome-longo-sem-quebra-teste_design",
+"suite": "teste_design",
+"segundos": 46.52,
+"t_guarda": 43.9,
+"t_primeira_falha": 43.9
+},
+{
+"log": "texto-consulta-selecao-ausente-teste_design",
+"suite": "teste_design",
+"segundos": 46.07,
+"t_guarda": 43.61,
+"t_primeira_falha": 43.61
+},
+{
+"log": "texto-botao-horizontal-sem-largura-teste_design",
+"suite": "teste_design",
+"segundos": 46.53,
+"t_guarda": 44.24,
+"t_primeira_falha": 44.24
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 22.95,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 48.48,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_audio",
+"suite": "teste_audio",
+"segundos": 0.47,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.36,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_registro",
+"suite": "teste_registro",
+"segundos": 0.67,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 26.19,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 48.07,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 14.77,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "espera-com-dois-espacos-teste_design",
+"suite": "teste_design",
+"segundos": 48.26,
+"t_guarda": 4.52,
+"t_primeira_falha": 4.52
+},
+{
+"log": "trabalhador-em-duas-docas-run_tests",
+"suite": "run_tests",
+"segundos": 24.81,
+"t_guarda": 2.04,
+"t_primeira_falha": 2.04
+},
+{
+"log": "derrota-sem-fechar-a-semana-run_tests",
+"suite": "run_tests",
+"segundos": 25.52,
+"t_guarda": 2.11,
+"t_primeira_falha": 2.11
+},
+{
+"log": "save-armazem-no-dia-9-run_tests",
+"suite": "run_tests",
+"segundos": 12.96,
+"t_guarda": 7.02,
+"t_primeira_falha": 6.69
+},
+{
+"log": "passagem-sem-recomecar-reputacao-run_tests",
+"suite": "run_tests",
+"segundos": 24.71,
+"t_guarda": 6.24,
+"t_primeira_falha": 6.24
+},
+{
+"log": "rosto-sem-filtro-dos-usados-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 12.97,
+"t_guarda": 3.87,
+"t_primeira_falha": 3.87
+},
+{
+"log": "atalho-s-nao-e-ferramenta-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.06,
+"t_guarda": 4.1,
+"t_primeira_falha": 4.1
+},
+{
+"log": "load-esquece-a-paciencia-do-cliente-run_tests",
+"suite": "run_tests",
+"segundos": 40.32,
+"t_guarda": 38.55,
+"t_primeira_falha": 38.55
+},
+{
+"log": "reputacao-sem-teto-run_tests",
+"suite": "run_tests",
+"segundos": 54.77,
+"t_guarda": 52.77,
+"t_primeira_falha": 7.76
+},
+{
+"log": "cancelamento-sem-reputacao-run_tests",
+"suite": "run_tests",
+"segundos": 23.96,
+"t_guarda": 7.15,
+"t_primeira_falha": 7.15
+},
+{
+"log": "cancelamento-de-outro-barco-run_tests",
+"suite": "run_tests",
+"segundos": 22.92,
+"t_guarda": 6.94,
+"t_primeira_falha": 6.94
+},
+{
+"log": "ajuda-grava-a-partida-run_tests",
+"suite": "run_tests",
+"segundos": 24.3,
+"t_guarda": 7.02,
+"t_primeira_falha": 7.02
+},
+{
+"log": "obra-nao-redesenha-na-compra-teste_design",
+"suite": "teste_design",
+"segundos": 46.35,
+"t_guarda": 38.98,
+"t_primeira_falha": 38.98
+},
+{
+"log": "obra-uv-sem-razao-teste_design",
+"suite": "teste_design",
+"segundos": 46.84,
+"t_guarda": 39.78,
+"t_primeira_falha": 39.78
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.06
+},
+{
+"log": "mar-largo-clareia-teste_design",
+"suite": "teste_design",
+"segundos": 47.04,
+"t_guarda": 39.6,
+"t_primeira_falha": 39.6
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.9
+},
+{
+"log": "mata-copia-desalinhada-teste_design",
+"suite": "teste_design",
+"segundos": 46.84,
+"t_guarda": 39.99,
+"t_primeira_falha": 39.99
+},
+{
+"log": "destaque-tapado-teste_design",
+"suite": "teste_design",
+"segundos": 46.8,
+"t_guarda": 43.72,
+"t_primeira_falha": 40.02
+},
+{
+"log": "fauna-em-cima-da-arvore-teste_design",
+"suite": "teste_design",
+"segundos": 47.95,
+"t_guarda": 43.26,
+"t_primeira_falha": 43.26
+},
+{
+"log": "restinga-tapa-coqueiro-teste_design",
+"suite": "teste_design",
+"segundos": 48.4,
+"t_guarda": 44.05,
+"t_primeira_falha": 44.05
+},
+{
+"log": "retomada-consome-rng-run_tests",
+"suite": "run_tests",
+"segundos": 25.62,
+"t_guarda": 23.95,
+"t_primeira_falha": 23.95
+},
+{
+"log": "retomada-adianta-progresso-run_tests",
+"suite": "run_tests",
+"segundos": 24.52,
+"t_guarda": 22.96,
+"t_primeira_falha": 22.96
+},
+{
+"log": "retomada-carrega-espaco-errado-run_tests",
+"suite": "run_tests",
+"segundos": 24.77,
+"t_guarda": 23.44,
+"t_primeira_falha": 23.44
+},
+{
+"log": "retomada-promete-apos-encerrar-run_tests",
+"suite": "run_tests",
+"segundos": 23.87,
+"t_guarda": 22.31,
+"t_primeira_falha": 22.31
+},
+{
+"log": "diagnostico-consulta-grava-run_tests",
+"suite": "run_tests",
+"segundos": 24.2,
+"t_guarda": 23.43,
+"t_primeira_falha": 23.43
+},
+{
+"log": "movimento-sem-aviso-aos-abertos-run_tests",
+"suite": "run_tests",
+"segundos": 25.16,
+"t_guarda": 24.73,
+"t_primeira_falha": 24.73
+},
+{
+"log": "movimento-novos-ignoram-escolha-run_tests",
+"suite": "run_tests",
+"segundos": 24.52,
+"t_guarda": 24.17,
+"t_primeira_falha": 24.17
+},
+{
+"log": "movimento-apaga-realce-da-fila-run_tests",
+"suite": "run_tests",
+"segundos": 22.95,
+"t_guarda": 22.55,
+"t_primeira_falha": 22.55
+},
+{
+"log": "movimento-resultado-nao-termina-run_tests",
+"suite": "run_tests",
+"segundos": 24.26,
+"t_guarda": 24.03,
+"t_primeira_falha": 24.03
+},
+{
+"log": "texto-bancada-janela-cega-teste_design",
+"suite": "teste_design",
+"segundos": 47.12,
+"t_guarda": 43.99,
+"t_primeira_falha": 43.99
+},
+{
+"log": "inicio-consultas-sobrepostas-run_tests",
+"suite": "run_tests",
+"segundos": 23.3,
+"t_guarda": 23.15,
+"t_primeira_falha": 23.15
+},
+{
+"log": "inicio-extras-na-inicial-run_tests",
+"suite": "run_tests",
+"segundos": 22.64,
+"t_guarda": 22.48,
+"t_primeira_falha": 22.48
+},
+{
+"log": "texto-override-ignorado-teste_design",
+"suite": "teste_design",
+"segundos": 47.51,
+"t_guarda": 44.83,
+"t_primeira_falha": 44.83
+},
+{
+"log": "texto-acoes-fora-da-tela-teste_design",
+"suite": "teste_design",
+"segundos": 46.27,
+"t_guarda": 43.65,
+"t_primeira_falha": 43.65
+},
+{
+"log": "texto-perde-cursor-teste_design",
+"suite": "teste_design",
+"segundos": 48.18,
+"t_guarda": 45.74,
+"t_primeira_falha": 45.74
+},
+{
+"log": "texto-sinal-ignorado-teste_design",
+"suite": "teste_design",
+"segundos": 46.36,
+"t_guarda": 43.74,
+"t_primeira_falha": 43.74
+},
+{
+"log": "texto-celular-sem-medida-teste_design",
+"suite": "teste_design",
+"segundos": 46.68,
+"t_guarda": 44.49,
+"t_primeira_falha": 44.45
+},
+{
+"log": "texto-cartao-guarda-faixa-vazia-teste_design",
+"suite": "teste_design",
+"segundos": 47.84,
+"t_guarda": 45.24,
+"t_primeira_falha": 45.24
+},
+{
+"log": "texto-consulta-nasce-sem-leitura-teste_design",
+"suite": "teste_design",
+"segundos": 49.52,
+"t_guarda": 48.2,
+"t_primeira_falha": 48.2
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 24.22,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 47.85,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 12.41,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-run_tests",
+"suite": "run_tests",
+"segundos": 26.29,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_design",
+"suite": "teste_design",
+"segundos": 47.37,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "base-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 14.83,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "atracar-sem-trabalhador-run_tests",
+"suite": "run_tests",
+"segundos": 9.05,
+"t_guarda": 2.06,
+"t_primeira_falha": 2.06
+},
+{
+"log": "desistencia-de-graca-run_tests",
+"suite": "run_tests",
+"segundos": 24.86,
+"t_guarda": 2.04,
+"t_primeira_falha": 2.04
+},
+{
+"log": "receita-sem-a-estrutura-run_tests",
+"suite": "run_tests",
+"segundos": 24.87,
+"t_guarda": 5.99,
+"t_primeira_falha": 5.99
+},
+{
+"log": "obra-pronta-um-dia-cedo-run_tests",
+"suite": "run_tests",
+"segundos": 26.28,
+"t_guarda": 6.44,
+"t_primeira_falha": 6.44
+},
+{
+"log": "reparos-uma-semana-depois-run_tests",
+"suite": "run_tests",
+"segundos": 21.25,
+"t_guarda": 5.16,
+"t_primeira_falha": 2.09
+},
+{
+"log": "obra-recusada-um-dia-cedo-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 12.71,
+"t_guarda": 11.15,
+"t_primeira_falha": 11.13
+},
+{
+"log": "plural-da-obra-a-mao-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.41,
+"t_guarda": 2.85,
+"t_primeira_falha": 2.85
+},
+{
+"log": "armazem-sem-criar-a-pasta-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.26,
+"t_guarda": 4.23,
+"t_primeira_falha": 4.23
+},
+{
+"log": "progresso-com-dois-espacos-teste_design",
+"suite": "teste_design",
+"segundos": 47.49,
+"t_guarda": 3.68,
+"t_primeira_falha": 3.68
+},
+{
+"log": "save-recusa-a-fila-cheia-run_tests",
+"suite": "run_tests",
+"segundos": 10.81,
+"t_guarda": 9.24,
+"t_primeira_falha": 2.06
+},
+{
+"log": "cancelamento-sem-conferir-o-orcamento-run_tests",
+"suite": "run_tests",
+"segundos": 79.31,
+"t_guarda": 77.73,
+"t_primeira_falha": 7.82
+},
+{
+"log": "cancelamento-sem-multa-run_tests",
+"suite": "run_tests",
+"segundos": 23.66,
+"t_guarda": 7.1,
+"t_primeira_falha": 7.1
+},
+{
+"log": "migracao-18-inventa-multa-run_tests",
+"suite": "run_tests",
+"segundos": 24.16,
+"t_guarda": 7.18,
+"t_primeira_falha": 7.18
+},
+{
+"log": "ajuda-gasta-o-sorteio-run_tests",
+"suite": "run_tests",
+"segundos": 22.9,
+"t_guarda": 7.05,
+"t_primeira_falha": 7.05
+},
+{
+"log": "ajuda-deixa-o-toque-passar-run_tests",
+"suite": "run_tests",
+"segundos": 22.92,
+"t_guarda": 6.68,
+"t_primeira_falha": 6.68
+},
+{
+"log": "obra-um-dia-adiantada-teste_design",
+"suite": "teste_design",
+"segundos": 47.6,
+"t_guarda": 40.56,
+"t_primeira_falha": 40.48
+},
+{
+"log": "obra-cartao-diz-ruinas-teste_design",
+"suite": "teste_design",
+"segundos": 46.83,
+"t_guarda": 39.44,
+"t_primeira_falha": 39.44
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.79
+},
+{
+"log": "mar-mancha-rasa-ao-largo-teste_design",
+"suite": "teste_design",
+"segundos": 47.8,
+"t_guarda": 40.46,
+"t_primeira_falha": 40.46
+},
+{
+"log": "reimport-porto_mapa_iso.svg",
+"suite": "--import",
+"segundos": 6.37
+},
+{
+"log": "mata-arvore-maior-teste_design",
+"suite": "teste_design",
+"segundos": 46.33,
+"t_guarda": 40.04,
+"t_primeira_falha": 40.04
+},
+{
+"log": "mata-sobre-a-orla-teste_design",
+"suite": "teste_design",
+"segundos": 46.83,
+"t_guarda": 43.22,
+"t_primeira_falha": 43.22
+},
+{
+"log": "mata-parada-teste_design",
+"suite": "teste_design",
+"segundos": 37.56,
+"t_guarda": 24.72,
+"t_primeira_falha": 3.74
+},
+{
+"log": "retomada-inventa-cobranca-fase2-run_tests",
+"suite": "run_tests",
+"segundos": 23.87,
+"t_guarda": 22.18,
+"t_primeira_falha": 22.18
+},
+{
+"log": "retomada-voltar-entra-run_tests",
+"suite": "run_tests",
+"segundos": 25.17,
+"t_guarda": 23.11,
+"t_primeira_falha": 23.11
+},
+{
+"log": "retomada-conta-obra-como-pronta-run_tests",
+"suite": "run_tests",
+"segundos": 23.51,
+"t_guarda": 21.94,
+"t_primeira_falha": 21.94
+},
+{
+"log": "diagnostico-copia-ao-abrir-run_tests",
+"suite": "run_tests",
+"segundos": 23.96,
+"t_guarda": 23.05,
+"t_primeira_falha": 23.05
+},
+{
+"log": "movimento-nao-persiste-run_tests",
+"suite": "run_tests",
+"segundos": 24.8,
+"t_guarda": 24.05,
+"t_primeira_falha": 24.05
+},
+{
+"log": "movimento-sem-pose-inteira-run_tests",
+"suite": "run_tests",
+"segundos": 23.67,
+"t_guarda": 23.25,
+"t_primeira_falha": 23.25
+},
+{
+"log": "movimento-barco-ainda-transita-run_tests",
+"suite": "run_tests",
+"segundos": 25.42,
+"t_guarda": 25.24,
+"t_primeira_falha": 25.24
+},
+{
+"log": "movimento-oculta-visita-operacional-run_tests",
+"suite": "run_tests",
+"segundos": 24.61,
+"t_guarda": 24.28,
+"t_primeira_falha": 24.28
+},
+{
+"log": "texto-bancada-sem-ampliacao-teste_design",
+"suite": "teste_design",
+"segundos": 48.29,
+"t_guarda": 44.97,
+"t_primeira_falha": 44.97
+},
+{
+"log": "inicio-movimento-sem-fundo-run_tests",
+"suite": "run_tests",
+"segundos": 23.4,
+"t_guarda": 23.25,
+"t_primeira_falha": 23.25
+},
+{
+"log": "inicio-saves-sem-porta-run_tests",
+"suite": "run_tests",
+"segundos": 22.9,
+"t_guarda": 22.77,
+"t_primeira_falha": 22.77
+},
+{
+"log": "inicio-fundo-provisorio-teste_design",
+"suite": "teste_design",
+"segundos": 46.55,
+"t_guarda": 43.29,
+"t_primeira_falha": 43.29
+},
+{
+"log": "texto-padrao-nao-restaura-teste_design",
+"suite": "teste_design",
+"segundos": 46.57,
+"t_guarda": 43.87,
+"t_primeira_falha": 43.87
+},
+{
+"log": "texto-arrasto-executa-acao-teste_design",
+"suite": "teste_design",
+"segundos": 46.54,
+"t_guarda": 43.1,
+"t_primeira_falha": 43.1
+},
+{
+"log": "texto-apaga-movimento-teste_design",
+"suite": "teste_design",
+"segundos": 47.49,
+"t_guarda": 44.49,
+"t_primeira_falha": 44.49
+},
+{
+"log": "texto-tamanho-invalido-teste_design",
+"suite": "teste_design",
+"segundos": 46.64,
+"t_guarda": 43.49,
+"t_primeira_falha": 43.49
+},
+{
+"log": "texto-fita-alarga-celular-teste_design",
+"suite": "teste_design",
+"segundos": 45.82,
+"t_guarda": 43.68,
+"t_primeira_falha": 43.68
+},
+{
+"log": "texto-rouba-posicao-inicial-teste_design",
+"suite": "teste_design",
+"segundos": 50.38,
+"t_guarda": 48.13,
+"t_primeira_falha": 48.13
+},
+{
+"log": "fim-run_tests",
+"suite": "run_tests",
+"segundos": 24.33,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_design",
+"suite": "teste_design",
+"segundos": 47.41,
+"t_guarda": null,
+"t_primeira_falha": null
+},
+{
+"log": "fim-teste_fumaca",
+"suite": "teste_fumaca",
+"segundos": 13.16,
+"t_guarda": null,
+"t_primeira_falha": null
+}
+]
+}
+}

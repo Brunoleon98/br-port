@@ -1,0 +1,7309 @@
+[
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_ready",
+"linha": 87,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_agora",
+"linha": 115,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "tocar",
+"linha": 122,
+"suites": [
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_process",
+"linha": 134,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_voz_livre",
+"linha": 157,
+"suites": [
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "volume",
+"linha": 167,
+"suites": [
+"run_tests",
+"teste_audio",
+"teste_design"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "definir_volume",
+"linha": 176,
+"suites": [
+"teste_audio"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_carregar_config",
+"linha": 187,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_gravar_config",
+"linha": 195,
+"suites": [
+"teste_audio"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_ligar_game_state",
+"linha": 207,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_ao_mensagem",
+"linha": 217,
+"suites": [
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_ao_caixa",
+"linha": 230,
+"suites": [
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_ao_nascer_no",
+"linha": 238,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_varrer_botoes",
+"linha": 243,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Audio.gd",
+"funcao": "_ligar_botao",
+"linha": 250,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "arquivo_do_espaco",
+"linha": 712,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_apontar_espaco",
+"linha": 716,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "usar_espaco",
+"linha": 723,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "comecar_no_espaco",
+"linha": 731,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "apagar_espaco",
+"linha": 741,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "resumo_do_espaco",
+"linha": 763,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "espaco_mais_recente",
+"linha": 788,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "linha_do_espaco",
+"linha": 809,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "rotulo_do_dia",
+"linha": 819,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "primeiro_espaco_livre",
+"linha": 826,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "novo_trabalhador",
+"linha": 1017,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "rostos",
+"linha": 1023,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_rosto_livre",
+"linha": 1027,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_ready",
+"linha": 1042,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "new_game",
+"linha": 1052,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_set_phase",
+"linha": 1103,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "moeda",
+"linha": 1114,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "texto",
+"linha": 1146,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "precisa_dos_nomes",
+"linha": 1157,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "definir_nomes",
+"linha": 1164,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "week_of",
+"linha": 1172,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "current_week",
+"linha": 1176,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "dados_da_fase",
+"linha": 1191,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "fase_tem_prazo",
+"linha": 1197,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "semanas_da_fase",
+"linha": 1204,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "turnos_da_fase",
+"linha": 1208,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "inicio_da_fase",
+"linha": 1215,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "ultimo_dia_da_fase",
+"linha": 1224,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "ultima_semana_da_fase",
+"linha": 1229,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "parcelas_na_fase",
+"linha": 1236,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "tem_cobranca",
+"linha": 1244,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "valor_da_parcela",
+"linha": 1248,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "juros_da_parcela",
+"linha": 1252,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "dia_da_parcela",
+"linha": 1256,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "total_das_parcelas",
+"linha": 1263,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "reparos_da_fase",
+"linha": 1271,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "bercos_no_mapa",
+"linha": 1281,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "reputacao_inicial",
+"linha": 1285,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "calendario",
+"linha": 1299,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "assign_worker",
+"linha": 1341,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "berco_livre",
+"linha": 1384,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "bercos_livres",
+"linha": 1391,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "barco_pronto",
+"linha": 1400,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "barcos_ao_largo",
+"linha": 1410,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "atracagem_pendente",
+"linha": 1421,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "atracar",
+"linha": 1437,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "desatracar",
+"linha": 1473,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "tocar_doca",
+"linha": 1500,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "custos_do_cancelamento",
+"linha": 1512,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "cancelar_servico",
+"linha": 1534,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_trabalhador_sem_doca",
+"linha": 1564,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_valor_do_barco",
+"linha": 1577,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "caixa_curto",
+"linha": 1596,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "dinheiro_curto_na_fase_livre",
+"linha": 1601,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "worker_dock_index",
+"linha": 1609,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_find_worker",
+"linha": 1617,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "barco_da_oferta",
+"linha": 1635,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "negotiate_rival",
+"linha": 1641,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_negociar",
+"linha": 1648,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_chance_com_reputacao",
+"linha": 1705,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "resolve_rival_offer",
+"linha": 1711,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_close_rival_offer",
+"linha": 1726,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_fechar_negocio",
+"linha": 1732,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_perder_para_rival",
+"linha": 1745,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "advance_turn",
+"linha": 1760,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_custos_da_semana",
+"linha": 1875,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_process_week_end",
+"linha": 1887,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_fechar_resumo_da_semana",
+"linha": 1916,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "resumo_da_semana",
+"linha": 1927,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "resumo_do_dia",
+"linha": 1976,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "resultado_do_dia",
+"linha": 1982,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_registrar_dia",
+"linha": 1991,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_registrar_negocio",
+"linha": 2003,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "recordes",
+"linha": 2013,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "receita_da_doca",
+"linha": 2029,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "projecao_do_dia",
+"linha": 2036,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_check_end",
+"linha": 2077,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_passar_de_fase",
+"linha": 2126,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_end_game",
+"linha": 2145,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "pay_debt",
+"linha": 2161,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_retomar_depois_da_cobranca",
+"linha": 2178,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "pode_pedir_segunda_chance",
+"linha": 2196,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "emprestimo_da_segunda_chance",
+"linha": 2206,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "devolucao_da_segunda_chance",
+"linha": 2213,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "aceitar_segunda_chance",
+"linha": 2217,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "desconto_por_antecipacao",
+"linha": 2255,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "valor_da_parcela_hoje",
+"linha": 2269,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "principal_da_parcela",
+"linha": 2278,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "vencimento_da_parcela",
+"linha": 2287,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_seguir_cobranca",
+"linha": 2293,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "pode_pagar_parcela_adiantado",
+"linha": 2299,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "pagar_parcela_adiantado",
+"linha": 2319,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_baixar_parcela",
+"linha": 2335,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "fail_debt",
+"linha": 2352,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "tem_estrutura",
+"linha": 2369,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "nivel_pier",
+"linha": 2381,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "nivel_guindaste",
+"linha": 2387,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_limpar_guindaste_da_bancada",
+"linha": 2398,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "impedimento_estrutura",
+"linha": 2405,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "abertura_do_reparo",
+"linha": 2448,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "desbloqueio_da_estrutura",
+"linha": 2462,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "comprar_estrutura",
+"linha": 2474,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "dias_da_obra",
+"linha": 2495,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "obra_termina_na_fase",
+"linha": 2508,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "obra_sem_uso_na_fase",
+"linha": 2524,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "prazo_da_obra",
+"linha": 2534,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "prazo_curto_da_obra",
+"linha": 2543,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "dias_restantes_da_obra",
+"linha": 2549,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "id_do_pier",
+"linha": 2559,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "quadro_da_obra",
+"linha": 2578,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_concluir_obra_se_pronta",
+"linha": 2587,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_lancar_receita",
+"linha": 2630,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "nivel_do_porto",
+"linha": 2646,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "cargueiros_suspensos",
+"linha": 2663,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "regra_dos_cargueiros",
+"linha": 2667,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "progresso_da_meta",
+"linha": 2676,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_contar_dia_da_meta",
+"linha": 2690,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "classes_disponiveis",
+"linha": 2702,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_sortear_classe",
+"linha": 2717,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_sortear_motivo",
+"linha": 2737,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_turnos_de_operacao",
+"linha": 2755,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_make_boat",
+"linha": 2763,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_spawn_boats",
+"linha": 2783,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_change_reputation",
+"linha": 2809,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "reputation_label",
+"linha": 2814,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "rotulo_da_reputacao",
+"linha": 2820,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "save_game",
+"linha": 2834,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "load_game",
+"linha": 2876,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_save_aceite",
+"linha": 2977,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_migrar",
+"linha": 3180,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "cadeia_de_migracao",
+"linha": 3194,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_migrar_um_passo",
+"linha": 3211,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_de_14_para_15",
+"linha": 3231,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_de_15_para_16",
+"linha": 3251,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_de_16_para_17",
+"linha": 3270,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_de_17_para_18",
+"linha": 3277,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "docas_esperadas",
+"linha": 3291,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "trabalhadores_esperados",
+"linha": 3299,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "_reconciliar_roster",
+"linha": 3311,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/GameState.gd",
+"funcao": "clear_save",
+"linha": 3337,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ready",
+"linha": 131,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "armar",
+"linha": 166,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "armado",
+"linha": 225,
+"suites": [
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "desarmar",
+"linha": 241,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_gravar",
+"linha": 250,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_podar",
+"linha": 272,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_arquivos",
+"linha": 281,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_zerar_turno",
+"linha": 294,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_turno",
+"linha": 309,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_fim_de_semana",
+"linha": 345,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_comprar",
+"linha": 358,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_concluir",
+"linha": 385,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_abrir_oferta",
+"linha": 391,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_atracar",
+"linha": 401,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_cancelar_servico",
+"linha": 409,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_negociar",
+"linha": 419,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_vencer_parcela",
+"linha": 432,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_aceitar_segunda_chance",
+"linha": 439,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_fim",
+"linha": 444,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_passar_de_fase",
+"linha": 453,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_desfecho",
+"linha": 461,
+"suites": [
+"run_tests",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "_ao_mensagem",
+"linha": 481,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "texto_para_exportar",
+"linha": 492,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "linhas_gravadas",
+"linha": 505,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "autoload/Registro.gd",
+"funcao": "caminho_legivel",
+"linha": 509,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDeLeitura.gd",
+"funcao": "aplicar",
+"linha": 11,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDeLeitura.gd",
+"funcao": "_compactar_fita",
+"linha": 41,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDeLeitura.gd",
+"funcao": "_acomodar_aparelhos",
+"linha": 53,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDeLeitura.gd",
+"funcao": "_enrolar",
+"linha": 65,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDeLeitura.gd",
+"funcao": "_acomodar_cartao",
+"linha": 86,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDeLeitura.gd",
+"funcao": "_restaurar",
+"linha": 121,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDeLeitura.gd",
+"funcao": "restaurar_grelhas",
+"linha": 148,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDoPorto.gd",
+"funcao": "_init",
+"linha": 20,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDoPorto.gd",
+"funcao": "_guardar",
+"linha": 39,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDoPorto.gd",
+"funcao": "aplicar",
+"linha": 51,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDoPorto.gd",
+"funcao": "_atualizar_valores",
+"linha": 117,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AcomodacaoDoPorto.gd",
+"funcao": "_restaurar",
+"linha": 123,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/AmbienteCosteiro.gd",
+"funcao": "_ready",
+"linha": 14,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AmbienteCosteiro.gd",
+"funcao": "_configurar",
+"linha": 23,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AmbienteCosteiro.gd",
+"funcao": "_programar",
+"linha": 30,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/AmbienteCosteiro.gd",
+"funcao": "_ao_mar",
+"linha": 34,
+"suites": []
+},
+{
+"arquivo": "scripts/AmbienteCosteiro.gd",
+"funcao": "_ao_gaivota",
+"linha": 39,
+"suites": []
+},
+{
+"arquivo": "scripts/ArmazemLocal.gd",
+"funcao": "sob_ferramenta",
+"linha": 55,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "scripts/ArmazemLocal.gd",
+"funcao": "caminho",
+"linha": 69,
+"suites": [
+"asset_validator",
+"run_tests",
+"teste_audio",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "setup",
+"linha": 59,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "_ready",
+"linha": 65,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "_ao_movimento",
+"linha": 71,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "barco",
+"linha": 76,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "nome_do_barco",
+"linha": 83,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "refresh",
+"linha": 91,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "texto_da_carga",
+"linha": 167,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "texto_da_espera",
+"linha": 179,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "escala_dos_cascos",
+"linha": 194,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "_pulsar",
+"linha": 208,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "_draw",
+"linha": 224,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "_contorno",
+"linha": 259,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/BarcoFila.gd",
+"funcao": "_gui_input",
+"linha": 274,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/ConteudoComoJogar.gd",
+"funcao": "artigos",
+"linha": 5,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/ConteudoMeuPorto.gd",
+"funcao": "resumir",
+"linha": 5,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/ConteudoMeuPorto.gd",
+"funcao": "_cobranca",
+"linha": 53,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/ConteudoMeuPorto.gd",
+"funcao": "_meta",
+"linha": 71,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/CopiaDoDiagnostico.gd",
+"funcao": "copiar",
+"linha": 10,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/CopiaDoDiagnostico.gd",
+"funcao": "_terminar_web",
+"linha": 34,
+"suites": []
+},
+{
+"arquivo": "scripts/CopiaDoDiagnostico.gd",
+"funcao": "_terminar",
+"linha": 38,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "setup",
+"linha": 55,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "_build_ui",
+"linha": 64,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "texto_da_fala",
+"linha": 182,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "_barra_de_chance",
+"linha": 186,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "_valor_barco",
+"linha": 204,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "_negociar",
+"linha": 208,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "_despedida",
+"linha": 233,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/CounterOfferPanel.gd",
+"funcao": "_refresh",
+"linha": 264,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "setup",
+"linha": 56,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_montar",
+"linha": 62,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_montar_decisao",
+"linha": 111,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_on_pagar",
+"linha": 131,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_on_falhar",
+"linha": 137,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_mostrar_oferta",
+"linha": 150,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_on_aceitar",
+"linha": 179,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_on_recusar",
+"linha": 185,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DebtPaymentPanel.gd",
+"funcao": "_mostrar_resposta",
+"linha": 202,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DiagnosticoDoJogo.gd",
+"funcao": "validar",
+"linha": 8,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/DiagnosticoDoJogo.gd",
+"funcao": "identificacao",
+"linha": 22,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DiagnosticoDoJogo.gd",
+"funcao": "versao",
+"linha": 28,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DiagnosticoDoJogo.gd",
+"funcao": "texto",
+"linha": 35,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DiarioFase2.gd",
+"funcao": "setup",
+"linha": 5,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "setup",
+"linha": 49,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "_ready",
+"linha": 55,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "_ao_movimento",
+"linha": 61,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "esta_construida",
+"linha": 65,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "refresh",
+"linha": 69,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "texto_do_progresso",
+"linha": 164,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "texto_do_berco_livre",
+"linha": 174,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "texto_do_trabalhador",
+"linha": 188,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "_pulsar",
+"linha": 199,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "_pintar_retrato",
+"linha": 219,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/DocaCartao.gd",
+"funcao": "_gui_input",
+"linha": 236,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "pose_n2",
+"linha": 352,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "tipo_de_carga",
+"linha": 366,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "pose_da_ida",
+"linha": 405,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "duracao_da_ida",
+"linha": 421,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "instante_da_solta",
+"linha": 586,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "janela_n3",
+"linha": 598,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "pose_n3",
+"linha": 613,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "pose_do_guindaste",
+"linha": 652,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "duracao_do_ciclo",
+"linha": 662,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "sexo_do_trabalhador",
+"linha": 670,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "porte_do_barco",
+"linha": 684,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "arte_do_barco",
+"linha": 698,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "setup",
+"linha": 787,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_ready",
+"linha": 795,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_ao_movimento",
+"linha": 807,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "camiao_no_berco",
+"linha": 822,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "esta_construida",
+"linha": 830,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "refresh",
+"linha": 834,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_refresh_cena",
+"linha": 847,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_guindaste_opera",
+"linha": 935,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_gui_input",
+"linha": 951,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_mostrar_barco",
+"linha": 979,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "concluir_troca",
+"linha": 1011,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "centro_do_barco",
+"linha": 1020,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "em_troca",
+"linha": 1025,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_entrar_barco",
+"linha": 1029,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_pousar_barco",
+"linha": 1035,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_iniciar_balanco",
+"linha": 1045,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_acender_realce",
+"linha": 1067,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_animar_trabalho",
+"linha": 1095,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_aplicar_guindaste",
+"linha": 1123,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_animar_n2",
+"linha": 1138,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_animar_ida",
+"linha": 1170,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_aplicar_ida",
+"linha": 1186,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_aplicar_n2",
+"linha": 1193,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_animar_n3",
+"linha": 1213,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_destino_da_empilhadeira",
+"linha": 1261,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_aplicar_n3",
+"linha": 1270,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_parar_trabalho",
+"linha": 1306,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Dock.gd",
+"funcao": "_mostrar_lanca",
+"linha": 1326,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "setup",
+"linha": 61,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_mostrar_narracao",
+"linha": 74,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_linhas_do_recibo",
+"linha": 114,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_vao",
+"linha": 121,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_virar_pagina",
+"linha": 127,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_na_segunda_pagina",
+"linha": 138,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_ver_balanco",
+"linha": 149,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_mostrar_balanco",
+"linha": 159,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/EndGame.gd",
+"funcao": "_metrica",
+"linha": 241,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_ready",
+"linha": 89,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_ao_movimento",
+"linha": 101,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_process",
+"linha": 115,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "estado_atual",
+"linha": 145,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "esta_presente",
+"linha": 149,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "aparecer_agora",
+"linha": 155,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "sumir_agora",
+"linha": 203,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_preparar_gaivota",
+"linha": 230,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_entrar_presente",
+"linha": 253,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_entrar_espera",
+"linha": 275,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_concluir_ciclo",
+"linha": 287,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_mudar_estado",
+"linha": 291,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_restaurar_sprite",
+"linha": 298,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_aparicao",
+"linha": 309,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_presenca",
+"linha": 348,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_voo",
+"linha": 364,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_maria_farinha",
+"linha": 385,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_deslocamento_maria",
+"linha": 397,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_tartaruga",
+"linha": 414,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_cachorro",
+"linha": 430,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_deslocamento_cachorro",
+"linha": 447,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_quero_quero",
+"linha": 464,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_deslocamento_quero",
+"linha": 479,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_capivara",
+"linha": 492,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_deslocamento_capivara",
+"linha": 507,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_animar_saida",
+"linha": 520,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_ao_input",
+"linha": 563,
+"suites": []
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "reagir",
+"linha": 574,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_sortear",
+"linha": 587,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_suave",
+"linha": 591,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Fauna.gd",
+"funcao": "_draw",
+"linha": 595,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "tempo_minimo",
+"linha": 96,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "enfileirar",
+"linha": 119,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "registrar",
+"linha": 138,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "retirar",
+"linha": 152,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "_guardar",
+"linha": 167,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "avancar",
+"linha": 174,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "pendentes",
+"linha": 187,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "atual",
+"linha": 191,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "_duplicata",
+"linha": 199,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "_inserir_por_prioridade",
+"linha": 208,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "_peso",
+"linha": 217,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FilaDeMensagens.gd",
+"funcao": "_mostrar",
+"linha": 221,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_ready",
+"linha": 75,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "pautar_por",
+"linha": 79,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "passo_de",
+"linha": 89,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_notification",
+"linha": 95,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_draw",
+"linha": 100,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_costura_das_folhas",
+"linha": 125,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_orelha",
+"linha": 140,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_pauta",
+"linha": 167,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_sublinhar_data",
+"linha": 192,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_fita",
+"linha": 214,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_sombra_da_folha",
+"linha": 235,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_dobra",
+"linha": 247,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_ready",
+"linha": 280,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_notification",
+"linha": 299,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_acertar",
+"linha": 305,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_ready",
+"linha": 328,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "capa_de",
+"linha": 333,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_draw",
+"linha": 338,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_folhas",
+"linha": 348,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_costura",
+"linha": 359,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_cantos",
+"linha": 380,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_ready",
+"linha": 413,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_notification",
+"linha": 416,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/FolhaDoCaderno.gd",
+"funcao": "_draw",
+"linha": 420,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Icones.gd",
+"funcao": "imagem",
+"linha": 97,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Icones.gd",
+"funcao": "rotulo",
+"linha": 114,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Icones.gd",
+"funcao": "no_botao",
+"linha": 140,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_ready",
+"linha": 175,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_depois_da_abertura",
+"linha": 270,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_recuperar_fase",
+"linha": 280,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_pintar_ancorados",
+"linha": 307,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_animar_ancorados",
+"linha": 327,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_animar_coqueiros",
+"linha": 363,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_animar_boias",
+"linha": 416,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_animar_espuma",
+"linha": 472,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_animar_luzes",
+"linha": 510,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_connect_game_state",
+"linha": 527,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_refresh_all",
+"linha": 559,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_refresh_estruturas",
+"linha": 568,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_refresh_hud",
+"linha": 609,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_refresh_meta",
+"linha": 653,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_refresh_docks",
+"linha": 712,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_clear",
+"linha": 730,
+"suites": []
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_refresh_fila",
+"linha": 741,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_repintar_fila",
+"linha": 748,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_refresh_titulo_fila",
+"linha": 768,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_docas_livres",
+"linha": 790,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_message",
+"linha": 806,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_pintar",
+"linha": 826,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_pintar_pendentes",
+"linha": 844,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_process",
+"linha": 849,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_faixa_input",
+"linha": 855,
+"suites": []
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_semana_fechada",
+"linha": 864,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_advance_pressed",
+"linha": 906,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_concluir_virada",
+"linha": 936,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "virada_em_curso",
+"linha": 948,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_mostrar_caixa",
+"linha": 960,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_pintar_caixa_f",
+"linha": 971,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_pintar_caixa",
+"linha": 975,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_subir_ganho",
+"linha": 982,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_aplicar_movimento",
+"linha": 1009,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_notification",
+"linha": 1028,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_abrir_painel",
+"linha": 1067,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_ao_falar",
+"linha": 1081,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_upgrade_pressed",
+"linha": 1085,
+"suites": []
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_gerenciar_servico",
+"linha": 1089,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_e_toque_de_soltar",
+"linha": 1104,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_caixa_pilula_input",
+"linha": 1109,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_dia_pilula_input",
+"linha": 1119,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_rep_pilula_input",
+"linha": 1125,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_docas_pilula_input",
+"linha": 1131,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_meta_cartao_input",
+"linha": 1143,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_pause_pressed",
+"linha": 1152,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_abrir_diagnostico",
+"linha": 1166,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_abrir_ajustes",
+"linha": 1173,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_abrir_como_jogar",
+"linha": 1180,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_sair_para_inicio",
+"linha": 1195,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_menu_pressed",
+"linha": 1212,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_menu_app_pedido",
+"linha": 1218,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_rival_offer_triggered",
+"linha": 1226,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_debt_due",
+"linha": 1242,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_game_over",
+"linha": 1249,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Main.gd",
+"funcao": "_on_fase_concluida",
+"linha": 1261,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MataNoMapa.gd",
+"funcao": "_init",
+"linha": 139,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MataNoMapa.gd",
+"funcao": "nos",
+"linha": 157,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MataNoMapa.gd",
+"funcao": "rajadas",
+"linha": 163,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MataNoMapa.gd",
+"funcao": "_indice_na_profundidade",
+"linha": 169,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MataNoMapa.gd",
+"funcao": "animar",
+"linha": 181,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MemoriaDeLeitura.gd",
+"funcao": "marcar",
+"linha": 6,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/MemoriaDeLeitura.gd",
+"funcao": "restaurar",
+"linha": 27,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/MovimentoDeFundo.gd",
+"funcao": "_ready",
+"linha": 9,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MovimentoDeFundo.gd",
+"funcao": "guardar",
+"linha": 13,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MovimentoDeFundo.gd",
+"funcao": "_limpar",
+"linha": 20,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/MovimentoDeFundo.gd",
+"funcao": "_aplicar",
+"linha": 25,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/MovimentoDeFundo.gd",
+"funcao": "_ajustar",
+"linha": 31,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_init",
+"linha": 43,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "conectar",
+"linha": 47,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_on_obra_concluida",
+"linha": 74,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_negociacao",
+"linha": 88,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_contrato",
+"linha": 104,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_rival",
+"linha": 134,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida",
+"linha": 141,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_agora",
+"linha": 149,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_reputacao",
+"linha": 166,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_passagem",
+"linha": 190,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_caixa",
+"linha": 202,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_cida_semana",
+"linha": 223,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_semana_nova",
+"linha": 253,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/NarradoraDaCida.gd",
+"funcao": "_obra_pronta",
+"linha": 293,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "_gs",
+"linha": 447,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "_vocativo",
+"linha": 454,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "ribeiro_entrada",
+"linha": 461,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "ribeiro_a_divida",
+"linha": 465,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "tom_do_boletim",
+"linha": 483,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "boletim",
+"linha": 507,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "expressao",
+"linha": 514,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "retrato",
+"linha": 523,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "por_extenso",
+"linha": 541,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "concordar",
+"linha": 574,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca",
+"teste_registro"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "lucro_ou_prejuizo",
+"linha": 592,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "_maiuscula",
+"linha": 604,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "fim_de_fase_paginas",
+"linha": 616,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "fim_de_fase_cabecalho",
+"linha": 626,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "ordinal",
+"linha": 633,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "abertura_do_porto",
+"linha": 639,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "missao_da_fase_2",
+"linha": 646,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "fim_da_fase_2",
+"linha": 651,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "fim_de_fase",
+"linha": 672,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "diario",
+"linha": 725,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "cida",
+"linha": 732,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Narrativa.gd",
+"funcao": "toninho",
+"linha": 737,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/ObraNoMapa.gd",
+"funcao": "_init",
+"linha": 71,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/ObraNoMapa.gd",
+"funcao": "tela",
+"linha": 78,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/ObraNoMapa.gd",
+"funcao": "poligonos_do_asfalto",
+"linha": 84,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/ObraNoMapa.gd",
+"funcao": "textura_do_armazem",
+"linha": 101,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/ObraNoMapa.gd",
+"funcao": "refresh",
+"linha": 110,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelAjustes.gd",
+"funcao": "setup",
+"linha": 30,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelAjustes.gd",
+"funcao": "_escolher_movimento",
+"linha": 84,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/PainelAjustes.gd",
+"funcao": "_mostrar_movimento",
+"linha": 90,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/PainelAjustes.gd",
+"funcao": "_escolher_texto",
+"linha": 94,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelAjustes.gd",
+"funcao": "_mostrar_texto",
+"linha": 100,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelAjustes.gd",
+"funcao": "_slider_de_volume",
+"linha": 107,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelAjustes.gd",
+"funcao": "_registro",
+"linha": 154,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelBoletim.gd",
+"funcao": "setup",
+"linha": 31,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelBoletim.gd",
+"funcao": "_resultado",
+"linha": 90,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelBoletim.gd",
+"funcao": "_comparacao",
+"linha": 98,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCaixa.gd",
+"funcao": "setup",
+"linha": 35,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCaixa.gd",
+"funcao": "_contas",
+"linha": 86,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCaixa.gd",
+"funcao": "_barcos",
+"linha": 113,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCaixa.gd",
+"funcao": "_recordes",
+"linha": 132,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCalendario.gd",
+"funcao": "setup",
+"linha": 69,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCalendario.gd",
+"funcao": "_celula",
+"linha": 142,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCalendario.gd",
+"funcao": "_linha_legenda",
+"linha": 186,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCancelarServico.gd",
+"funcao": "setup",
+"linha": 11,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelCancelarServico.gd",
+"funcao": "confirmar",
+"linha": 54,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/PainelCancelarServico.gd",
+"funcao": "numero_da_confirmacao",
+"linha": 66,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelCelular.gd",
+"funcao": "montar_celular",
+"linha": 69,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCelular.gd",
+"funcao": "acabar_celular",
+"linha": 124,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCelular.gd",
+"funcao": "_barra_de_status",
+"linha": 134,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCelular.gd",
+"funcao": "_hora_agora",
+"linha": 178,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCelular.gd",
+"funcao": "_barra_de_gesto",
+"linha": 185,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCelular.gd",
+"funcao": "_botoes_laterais",
+"linha": 199,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelCelular.gd",
+"funcao": "_botao_guardar",
+"linha": 228,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelComoJogar.gd",
+"funcao": "_ready",
+"linha": 20,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelComoJogar.gd",
+"funcao": "_mostrar",
+"linha": 27,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelComoJogar.gd",
+"funcao": "_restaurar_leitura",
+"linha": 91,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelComoJogar.gd",
+"funcao": "_fechar",
+"linha": 108,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/PainelConfiguracoes.gd",
+"funcao": "_ready",
+"linha": 10,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelConfiguracoes.gd",
+"funcao": "_opcao",
+"linha": 20,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelDiagnostico.gd",
+"funcao": "_ready",
+"linha": 15,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelDiagnostico.gd",
+"funcao": "_copiar_diagnostico",
+"linha": 49,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelDiagnostico.gd",
+"funcao": "_ao_copiar",
+"linha": 58,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelDiario.gd",
+"funcao": "_ready",
+"linha": 36,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelDiario.gd",
+"funcao": "escrever",
+"linha": 52,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelDocas.gd",
+"funcao": "setup",
+"linha": 34,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelDocas.gd",
+"funcao": "_tarja",
+"linha": 92,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelDocas.gd",
+"funcao": "_linha_da_doca",
+"linha": 111,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelDocas.gd",
+"funcao": "_apoio",
+"linha": 172,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "setup",
+"linha": 36,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "_esvaziar",
+"linha": 42,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "_lista",
+"linha": 48,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "_apoio",
+"linha": 67,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "_cartao_do_espaco",
+"linha": 76,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "_confirmar",
+"linha": 128,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "_com_maiuscula",
+"linha": 154,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelEspacos.gd",
+"funcao": "_escolher",
+"linha": 158,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "setup",
+"linha": 91,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_cabecalho",
+"linha": 173,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_avatar",
+"linha": 202,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_cara_de",
+"linha": 227,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_balao",
+"linha": 235,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_vestir_balao_da_conversa",
+"linha": 272,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_nota",
+"linha": 282,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_separador",
+"linha": 320,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_largura_do_balao",
+"linha": 337,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMensagens.gd",
+"funcao": "_esbatido",
+"linha": 355,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMenu.gd",
+"funcao": "setup",
+"linha": 107,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelMenu.gd",
+"funcao": "_widget_do_dia",
+"linha": 144,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelMenu.gd",
+"funcao": "_fita_dos_dias",
+"linha": 196,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelMenu.gd",
+"funcao": "_app",
+"linha": 231,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelMenu.gd",
+"funcao": "_selo_do_cadeado",
+"linha": 298,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelMenu.gd",
+"funcao": "_aviso_dos_fechados",
+"linha": 318,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelMeta.gd",
+"funcao": "setup",
+"linha": 5,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMeta.gd",
+"funcao": "_barra",
+"linha": 41,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMeuPorto.gd",
+"funcao": "setup",
+"linha": 13,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMeuPorto.gd",
+"funcao": "_linha",
+"linha": 55,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PainelMeuPorto.gd",
+"funcao": "_entrar",
+"linha": 66,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_ready",
+"linha": 71,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "montar",
+"linha": 94,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_escurecer",
+"linha": 128,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "paragrafo",
+"linha": 139,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "paragrafo_rolavel",
+"linha": 150,
+"suites": []
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "altura_do_texto",
+"linha": 178,
+"suites": []
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "secao",
+"linha": 201,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "total",
+"linha": 211,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "fala",
+"linha": 232,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "texto_da_fala",
+"linha": 242,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "linha_de_fala",
+"linha": 269,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_desenhar_rabicho",
+"linha": 325,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "escrever_fala",
+"linha": 344,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "texto_montado",
+"linha": 362,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_balao_de_fala",
+"linha": 371,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_vestir_balao",
+"linha": 397,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_vestir_placa",
+"linha": 426,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "retrato_da_fala",
+"linha": 439,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "fio",
+"linha": 445,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "titulo",
+"linha": 451,
+"suites": []
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "titulo_encorpado",
+"linha": 457,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "cabecalho_encorpado",
+"linha": 461,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "tarja",
+"linha": 492,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "detalhe_da_tarja",
+"linha": 501,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "escrever_detalhe",
+"linha": 508,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "tarja_solta",
+"linha": 516,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "tingir_tarja",
+"linha": 551,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "bloco_de_contas",
+"linha": 587,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "moeda",
+"linha": 622,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "linha_de_apoio",
+"linha": 630,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "grade_de_quadros",
+"linha": 654,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "quadro",
+"linha": 663,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "barra_do_hud",
+"linha": 694,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "barra_na_tarja",
+"linha": 707,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "montar_caderno",
+"linha": 754,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "pagina_do_caderno",
+"linha": 783,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "pagina_atual",
+"linha": 819,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_fibra_do_papel",
+"linha": 828,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "tinta_de_caneta",
+"linha": 846,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "entrada_do_diario",
+"linha": 869,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "impresso",
+"linha": 902,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "campo_a_mao",
+"linha": 919,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "etiqueta_da_folha",
+"linha": 951,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "recibo_colado",
+"linha": 989,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "foto_colada",
+"linha": 1049,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_ao_movimento_da_folha",
+"linha": 1113,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "virar_folha",
+"linha": 1123,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_fotografar_folha",
+"linha": 1151,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_montar_curva",
+"linha": 1171,
+"suites": []
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_curvar",
+"linha": 1194,
+"suites": []
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_virar",
+"linha": 1212,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "botao_abaixo_do_caderno",
+"linha": 1232,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "legenda_acima_do_caderno",
+"linha": 1257,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "botao_fechar",
+"linha": 1304,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelNarrativo.gd",
+"funcao": "_fechar",
+"linha": 1313,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelParcela.gd",
+"funcao": "_quando_vence",
+"linha": 36,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelParcela.gd",
+"funcao": "setup",
+"linha": 45,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelParcela.gd",
+"funcao": "_o_que_isso_compra",
+"linha": 123,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelReputacao.gd",
+"funcao": "setup",
+"linha": 50,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelReputacao.gd",
+"funcao": "_eixo_comercial",
+"linha": 126,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelReputacao.gd",
+"funcao": "_proximo_degrau",
+"linha": 156,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelReputacao.gd",
+"funcao": "_eixo_trancado",
+"linha": 166,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelReputacao.gd",
+"funcao": "_pontos",
+"linha": 194,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PainelReputacao.gd",
+"funcao": "_pontos_sem_sinal",
+"linha": 198,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PauseMenu.gd",
+"funcao": "_ready",
+"linha": 48,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PauseMenu.gd",
+"funcao": "_botao",
+"linha": 85,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PreferenciasDeApresentacao.gd",
+"funcao": "atual",
+"linha": 19,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PreferenciasDeApresentacao.gd",
+"funcao": "_init",
+"linha": 28,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PreferenciasDeApresentacao.gd",
+"funcao": "definir_reduzir_movimento",
+"linha": 44,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PreferenciasDeApresentacao.gd",
+"funcao": "definir_tamanho_do_texto",
+"linha": 58,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PreferenciasDeApresentacao.gd",
+"funcao": "fator_do_texto",
+"linha": 70,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PropIso.gd",
+"funcao": "escala",
+"linha": 42,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PropIso.gd",
+"funcao": "desenho",
+"linha": 50,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PropIso.gd",
+"funcao": "imagem",
+"linha": 65,
+"suites": [
+"asset_validator",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/PropIso.gd",
+"funcao": "recorte",
+"linha": 88,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/PropIso.gd",
+"funcao": "desenho_na_foto",
+"linha": 107,
+"suites": []
+},
+{
+"arquivo": "scripts/Retratos.gd",
+"funcao": "de",
+"linha": 91,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Retratos.gd",
+"funcao": "imagem",
+"linha": 105,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Retratos.gd",
+"funcao": "cabeca",
+"linha": 167,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Retratos.gd",
+"funcao": "_cabeca_no_desenho",
+"linha": 194,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/Retratos.gd",
+"funcao": "do_trabalhador",
+"linha": 257,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/Retratos.gd",
+"funcao": "sexo_do_rosto",
+"linha": 269,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/RolagemDaOperacao.gd",
+"funcao": "_input",
+"linha": 13,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/RolagemDaOperacao.gd",
+"funcao": "_arrastar",
+"linha": 50,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/RolagemDaOperacao.gd",
+"funcao": "contem",
+"linha": 58,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_ready",
+"linha": 51,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_montar_fundo",
+"linha": 61,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_montar_logo",
+"linha": 76,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_montar_cartao",
+"linha": 92,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_botao",
+"linha": 138,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_abrir_painel",
+"linha": 152,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_abrir_espacos",
+"linha": 158,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_abrir_como_jogar",
+"linha": 164,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_abrir_ajustes",
+"linha": 169,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_abrir_diagnostico",
+"linha": 176,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_abrir_configuracoes",
+"linha": 181,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_preparar_consulta",
+"linha": 193,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_ao_fechar_consulta",
+"linha": 203,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_continuar",
+"linha": 210,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_retomar",
+"linha": 214,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_nova_partida",
+"linha": 233,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_ao_escolher_espaco",
+"linha": 241,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_ir_para_o_porto",
+"linha": 249,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TelaInicial.gd",
+"funcao": "_notification",
+"linha": 258,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaNomes.gd",
+"funcao": "_ready",
+"linha": 71,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaNomes.gd",
+"funcao": "_vao_elastico",
+"linha": 117,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaNomes.gd",
+"funcao": "_campo",
+"linha": 123,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TelaNomes.gd",
+"funcao": "_fechar",
+"linha": 141,
+"suites": []
+},
+{
+"arquivo": "scripts/TelaNomes.gd",
+"funcao": "_depois_de_virar",
+"linha": 166,
+"suites": []
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "tema_atual",
+"linha": 22,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "acompanhar",
+"linha": 40,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_desligar",
+"linha": 59,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_novo_no",
+"linha": 66,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_mudou",
+"linha": 71,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "pedir",
+"linha": 76,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_aplicar",
+"linha": 86,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_vestir",
+"linha": 148,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_tema_mudou",
+"linha": 187,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_guardar_leitura",
+"linha": 192,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "_restaurar_leitura",
+"linha": 201,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TextoDaInterface.gd",
+"funcao": "descendentes",
+"linha": 207,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_init",
+"linha": 43,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_aplicar_movimento",
+"linha": 49,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_mostrar_trafego",
+"linha": 54,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "silhueta_do_trecho",
+"linha": 472,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "corte_da_curva",
+"linha": 505,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "trechos_de",
+"linha": 523,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "tela_da_rota",
+"linha": 550,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "mundo_do_no",
+"linha": 559,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_adiante",
+"linha": 569,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_pontos_da_rota",
+"linha": 575,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_pontos_entre",
+"linha": 586,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "s_na_rota",
+"linha": 600,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_projetar",
+"linha": 607,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_cruzamentos",
+"linha": 631,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_camioes",
+"linha": 642,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_boca_livre",
+"linha": 676,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_s_do_camiao",
+"linha": 701,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_curvas_livres",
+"linha": 729,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_arranque_livre",
+"linha": 749,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_pode_arrancar",
+"linha": 764,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_pode_sair",
+"linha": 771,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_esperar",
+"linha": 782,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_visita_da_doca",
+"linha": 794,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_pode_encostar",
+"linha": 814,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_tempo_da_rota",
+"linha": 825,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_motivo_da_estrada",
+"linha": 842,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_vez_zerada",
+"linha": 870,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_empresa_da_vez",
+"linha": 879,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_motivos_do_porto",
+"linha": 887,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_adiante_no_retorno",
+"linha": 913,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_pontos_do_retorno",
+"linha": 918,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_pontos_do_retorno_ate",
+"linha": 928,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_proxima_boca_do_retorno",
+"linha": 938,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_tempo_dos_pontos",
+"linha": 950,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_motivo_do_retorno",
+"linha": 963,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "animar_retorno",
+"linha": 973,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_subir",
+"linha": 1002,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_seguir_subida",
+"linha": 1024,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_retorno_na_boca",
+"linha": 1040,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "animar_caminhoes",
+"linha": 1057,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_lancar_volta",
+"linha": 1127,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_entrar_no_mapa",
+"linha": 1142,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_no_acesso",
+"linha": 1184,
+"suites": [
+"run_tests",
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_encostou",
+"linha": 1209,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_avisar_doca",
+"linha": 1223,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "portas_do_camiao",
+"linha": 1259,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_largar_berco",
+"linha": 1294,
+"suites": [
+"teste_design"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "docas_mudaram",
+"linha": 1337,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_no_do_caminhao",
+"linha": 1351,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_no_do_retorno",
+"linha": 1359,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_percorrer",
+"linha": 1369,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_percorrer_retorno",
+"linha": 1377,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_percorrer_de",
+"linha": 1389,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TrafegoDeCamioes.gd",
+"funcao": "_ordenar_por_profundidade",
+"linha": 1430,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_init",
+"linha": 69,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_ao_movimento",
+"linha": 75,
+"suites": [
+"run_tests"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "comecar",
+"linha": 85,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_dia_de_tutorial",
+"linha": 100,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_ver_se_ha_barco",
+"linha": 116,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_ao_mudar_a_fase",
+"linha": 127,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_ao_atracar",
+"linha": 136,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_ao_virar_o_dia",
+"linha": 145,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_dizer",
+"linha": 178,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_dizer_agora",
+"linha": 182,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_feito",
+"linha": 196,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_pulsar",
+"linha": 202,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/TutorialDoToninho.gd",
+"funcao": "_acabar",
+"linha": 224,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/UpgradePanel.gd",
+"funcao": "_ready",
+"linha": 35,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/UpgradePanel.gd",
+"funcao": "_pedir_rebuild",
+"linha": 43,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/UpgradePanel.gd",
+"funcao": "_rebuild",
+"linha": 50,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/UpgradePanel.gd",
+"funcao": "_build_ui",
+"linha": 58,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/UpgradePanel.gd",
+"funcao": "_linha_estrutura",
+"linha": 157,
+"suites": [
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/VezDasTelas.gd",
+"funcao": "_init",
+"linha": 39,
+"suites": [
+"run_tests",
+"teste_design",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/VezDasTelas.gd",
+"funcao": "na_vez",
+"linha": 81,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/VezDasTelas.gd",
+"funcao": "_dar_a_vez_ao_proximo",
+"linha": 89,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scripts/VezDasTelas.gd",
+"funcao": "_passar_a_vez",
+"linha": 98,
+"suites": [
+"run_tests",
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_ready",
+"linha": 147,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_ler_contrato",
+"linha": 156,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_tela",
+"linha": 176,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_tela_em",
+"linha": 183,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_celula",
+"linha": 189,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_montar",
+"linha": 197,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_montar_bancada",
+"linha": 256,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_area_de_selecao",
+"linha": 286,
+"suites": [
+"teste_fumaca"
+]
+},
+{
+"arquivo": "scenes/tests/AssetPlacementTest.gd",
+"funcao": "_draw",
+"linha": 301,
+"suites": []
+}
+]

@@ -890,3 +890,11 @@ chance (`102`) e progressão (`103`–`106`, `108`); medição na
 `economia.md`.»* — cada uma vive na sua decisão, e a medição na
 `economia.md`. E de «O jogo hoje», o PR #142 «rascunho» e «Claude parado»
 da versão e do diagnóstico (`128`): fundido pelo Bruno em 18/10.
+
+**E, para caber os testes acelerados (`137`),** saiu da fila do estado o
+detalhe do RB6 — *«Reduzir movimento nos Ajustes de início/pausa, por
+aparelho; fundo parado e transições diretas, operação e resultados
+preservados. Telefone/aceite visual pendentes; partida/save intactos.»* — e a
+linha *«**Início/fundo (`132`/`133`, #146/#147):** V3 só na inicial, celular
+com degradê.»*, fundidos pelo Bruno; o pendente do RB6 (o telefone) ficou no
+estado.

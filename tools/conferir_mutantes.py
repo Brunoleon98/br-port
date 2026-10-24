@@ -43,20 +43,38 @@ Uso:
       # roda o defeito contra AS SEIS suítes e diz quem reprovou — é assim que
       # se escreve o `reprova` de um mutante novo, medido e não suposto
   python3 tools/conferir_mutantes.py --listar
+  python3 tools/conferir_mutantes.py --godot "$G" --trabalhadores 4
+      # o catálogo em quatro CÓPIAS do repositório ao mesmo tempo
+  python3 tools/conferir_mutantes.py --godot "$G" --fatia 2/3 --trabalhadores 4
+      # só a segunda de três fatias — é o que cada job da matriz do CI corre
+  python3 tools/conferir_mutantes.py --juntar DIR1 DIR2 DIR3
+      # confere que as fatias somam o catálogo inteiro, sem falta nem repetição
 
-Espera `MUTANTES OK`. Não corra em paralelo com outra suíte: o defeito vive no
-arquivo do projeto enquanto a suíte dele corre.
+Espera `MUTANTES OK`, no início da linha. Em série, não corra em paralelo com
+outra suíte: o defeito vive no arquivo do projeto enquanto a suíte dele corre.
+
+⚠️ EM PARALELO, CADA TRABALHADOR É ESTE MESMO EXECUTOR, NUMA CÓPIA. Medido em
+24/10 (`docs/decisoes/137`): o catálogo de 158 levou 120 min de Godot somados
+e 30,8 min de parede em quatro cópias — 98% dos quatro núcleos —, com os 158
+reprovados pela guarda declarada. O pai copia a árvore (sem o `.git`), exige
+cada cópia igual à original byte a byte, reparte os mutantes em roda por
+suíte e corre em cada cópia o executor DELA, sem `--trabalhadores`: a lógica
+que julga um mutante é a de sempre, e o original nunca é tocado. Cada
+trabalhador tem o seu `user://` (`<saída>/tN/perfil`), como a série já tinha.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
+import shutil
 import signal
 import subprocess
 import sys
+import threading
 import time
 import tomllib
 from pathlib import Path
@@ -77,6 +95,15 @@ SUITES = {
     "teste_registro": ("res://tests/teste_registro.gd", "REGISTRO OK"),
     "asset_validator": ("res://scripts/validation/asset_validator.gd", "ASSET OK"),
 }
+
+# ⚠️ O RELÓGIO DAS SUÍTES É O DO CI, e confere-se contra ele. Com o passo
+# fixo, cada frame vale 1/60 s de jogo e o motor não dorme entre frames: as
+# seis suítes passaram de 118,1 s para 96,6 s, e os 158 mutantes do catálogo
+# reprovaram pela MESMA guarda declarada (`137`). Sem ele, em `--headless` o
+# laço dorme até 6,9 ms por frame e o delta é o do relógio de parede — e o
+# zero do sono sozinho já reprovou o F10, que conta frames. Um mutante provado
+# com um relógio e uma suíte corrida com outro seriam duas perguntas.
+MOTOR = ["--headless", "--fixed-fps", "60"]
 
 # As formas de uma asserção reprovada, uma por família de suíte:
 # `  FAIL  rótulo` (run_tests), `  FALHA rótulo` (design, fumaça, registro,
@@ -142,12 +169,20 @@ def carregar_catalogo(caminho: Path) -> list[dict]:
 
 def suites_batem_com_o_ci() -> list[str]:
     texto = WORKFLOW.read_text(encoding="utf-8")
+    # As continuações `\` partem a chamada em linhas (o `asset_validator` está
+    # assim): junta-se antes de procurar, senão a busca não casa nada e diz
+    # «falta» de um passo que existe (`gerais.md`, receita derivada).
+    corrido = re.sub(r"\s+", " ", re.sub(r"\\\n", " ", texto))
     queixas = []
     for nome, (script, marcador) in SUITES.items():
         if script not in texto:
             queixas.append(f"{nome}: {script} não está no testes.yml.")
         if f'grep -q "{marcador}"' not in texto:
             queixas.append(f"{nome}: o testes.yml não exige «{marcador}».")
+        chamada = " ".join(MOTOR + ["--path", "brport_vs", "--script", script])
+        if chamada not in corrido:
+            queixas.append(f"{nome}: o testes.yml não corre «{chamada}» — a suíte do "
+                           "CI e a do executor têm de ter o mesmo relógio.")
     return queixas
 
 
@@ -215,7 +250,7 @@ def rodar_suite(godot: str, suite: str, log: Path, teto: float, perfil: Path) ->
     inicio = time.monotonic()
     try:
         r = subprocess.run(
-            [godot, "--headless", "--path", str(PROJETO), "--script", script],
+            [godot, *MOTOR, "--path", str(PROJETO), "--script", script],
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=ambiente,
             timeout=teto)
         saida = r.stdout.decode("utf-8", "replace")
@@ -260,6 +295,246 @@ def julgar(r: dict, guarda: str | None, teto: float) -> tuple[bool, str]:
                    % (guarda, " | ".join(reprovadas[:6])))
 
 
+def repartir(mutantes: list[dict], n: int) -> list[list[dict]]:
+    """N partes, em roda, com a lista ordenada por suíte e por id.
+
+    Sem tempo medido nem peso escrito à mão: cada parte leva o mesmo número
+    de corridas de cada suíte (±1), e é isso que as iguala — um mutante custa
+    a suíte que o reprova (medido em 24/10: 34 s cada no CI, o tempo dela).
+    E é DETERMINÍSTICO: as fatias da matriz do CI calculam-se cada uma no seu
+    job, e o `--juntar` volta a calculá-las para conferir que cada job correu
+    a sua, e não outra.
+    """
+    ordem = sorted(mutantes, key=lambda m: (sorted(m.get("reprova", {})), m["id"]))
+    partes: list[list[dict]] = [[] for _ in range(n)]
+    for i, m in enumerate(ordem):
+        partes[i % n].append(m)
+    return partes
+
+
+def ler_fatia(texto: str) -> tuple[int, int]:
+    m = re.fullmatch(r"(\d+)/(\d+)", texto)
+    if not m or not 1 <= int(m.group(1)) <= int(m.group(2)):
+        raise SystemExit(f"--fatia {texto!r}: escreva I/K, com 1 ≤ I ≤ K.")
+    return int(m.group(1)), int(m.group(2))
+
+
+def _fora_da_copia(raiz: Path, saida: Path):
+    # O `.git` não é preciso (o executor lê arquivos, não o histórico), e a
+    # pasta de saída, se morar dentro da árvore, copiar-se-ia a si mesma.
+    def ignorar(pasta, nomes):
+        fora = {"__pycache__"}
+        if Path(pasta) == raiz:
+            fora.add(".git")
+        return [n for n in nomes if n in fora or Path(pasta, n) == saida]
+    return ignorar
+
+
+def digerir(raiz: Path, ignorar) -> dict[str, str]:
+    """O sha256 de cada arquivo da árvore, pelo caminho relativo."""
+    out = {}
+    for pasta, subpastas, nomes in os.walk(raiz):
+        tirar = set(ignorar(pasta, subpastas + nomes))
+        subpastas[:] = [s for s in subpastas if s not in tirar]
+        for n in nomes:
+            if n in tirar:
+                continue
+            p = Path(pasta, n)
+            if p.is_symlink():
+                out[str(p.relative_to(raiz))] = "->" + os.readlink(p)
+            elif p.is_file():
+                out[str(p.relative_to(raiz))] = hashlib.sha256(p.read_bytes()).hexdigest()
+    return out
+
+
+# A linha que faria um trabalhador verde passar por TODOS verdes. O CI pede
+# o marcador no início da linha, e as linhas repassadas começam por «[tN]»;
+# mesmo assim ele não é repassado, que um `grep` sem âncora num passo novo
+# casaria com ele (`gerais.md`, «um marcador novo pode conter um velho»).
+MARCADOR = "MUTANTES OK"
+
+
+def em_paralelo(args, mutantes: list[dict]) -> int:
+    saida = args.saida.resolve()
+    partes = [p for p in repartir(mutantes, args.trabalhadores) if p]
+    copias = saida / "copias"
+    shutil.rmtree(copias, ignore_errors=True)
+    ignorar = _fora_da_copia(RAIZ, saida)
+    original = digerir(RAIZ, ignorar)
+    print(f"Em paralelo: {len(mutantes)} mutante(s) em {len(partes)} cópia(s) "
+          f"de {len(original)} arquivo(s).")
+    # ⚠️ TODAS AS CÓPIAS FEITAS E CONFERIDAS ANTES DE O PRIMEIRO TRABALHADOR
+    # ARRANCAR. Até 24/10 cada cópia lançava o seu logo a seguir, e quando a
+    # t3 foi recusada (a árvore mudou a meio da cópia) o pai saiu com t1 e t2
+    # vivos: dois órfãos a escrever em `tN/` por baixo da corrida seguinte.
+    for k in range(1, len(partes) + 1):
+        destino = copias / f"t{k}"
+        shutil.copytree(RAIZ, destino, symlinks=True, ignore=ignorar)
+        # ⚠️ A CÓPIA TEM DE SER A ÁRVORE QUE SE QUER PROVAR, byte a byte —
+        # inclusive o que ainda não foi commitado, que é o que um agente
+        # corre antes do commit. Uma cópia velha provaria outra coisa, verde.
+        # Mordeu no dia em que nasceu: a regra de testes editada enquanto o
+        # pai copiava, e a t3 recusada.
+        diferentes = sorted(set(original.items()) ^ set(digerir(destino, ignorar).items()))
+        if diferentes:
+            print(f"::error::a cópia t{k} não é igual à árvore: {diferentes[:3]}")
+            shutil.rmtree(copias, ignore_errors=True)
+            return 1
+    trabalhos = []
+    for k, parte in enumerate(partes, 1):
+        destino = copias / f"t{k}"
+        # E a saída do trabalhador começa vazia: um relatório de outra
+        # corrida, deixado ali, não pode passar por este.
+        shutil.rmtree(saida / f"t{k}", ignore_errors=True)
+        cmd = [sys.executable, str(destino / "tools" / "conferir_mutantes.py"),
+               "--godot", args.godot, "--catalogo", str(args.catalogo.resolve()),
+               "--saida", str(saida / f"t{k}"), "--so", *[m["id"] for m in parte]]
+        trabalhos.append((k, parte, subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)))
+
+    saidas: dict[int, list[str]] = {k: [] for k, _, _ in trabalhos}
+
+    def repassar(k, proc):
+        for bruta in proc.stdout:
+            linha = bruta.decode("utf-8", "replace").rstrip("\n")
+            saidas[k].append(linha)
+            if linha.startswith(MARCADOR):
+                linha = linha.replace(MARCADOR, "trabalhador verde", 1)
+            if linha.startswith("::error::"):
+                # A anotação do GitHub só se lê no início da linha.
+                print(f"::error::[t{k}] {linha[len('::error::'):]}")
+            else:
+                print(f"[t{k}] {linha}")
+
+    leitores = [threading.Thread(target=repassar, args=(k, p)) for k, _, p in trabalhos]
+    for t in leitores:
+        t.start()
+    try:
+        for _, _, p in trabalhos:
+            p.wait()
+    except Interrompido:
+        # Cada trabalhador restaura a SUA cópia ao receber o sinal; o
+        # original nunca foi tocado.
+        print("\ninterrompido — a parar os trabalhadores.")
+        for _, _, p in trabalhos:
+            p.terminate()
+        for _, _, p in trabalhos:
+            p.wait()
+        return 130
+    for t in leitores:
+        t.join()
+
+    # O PAI SÓ DÁ VERDE COM AS TRÊS PROVAS DE CADA TRABALHADOR: o código de
+    # saída, o marcador DELE com a contagem certa, e o relatório com
+    # exactamente os mutantes que lhe couberam, cada um aprovado. Um
+    # trabalhador que morresse calado, ou que corresse menos do que recebeu,
+    # falharia uma delas.
+    falhas = []
+    resultado: dict[str, dict] = {}
+    for k, parte, p in trabalhos:
+        ids = {m["id"] for m in parte}
+        esperado = f"{MARCADOR} — {len(parte)} defeito(s)"
+        if p.returncode != 0:
+            falhas.append(f"t{k} saiu com {p.returncode}")
+            continue
+        if not any(l.startswith(esperado) for l in saidas[k]):
+            falhas.append(f"t{k} não imprimiu «{esperado}»")
+            continue
+        try:
+            rel = json.loads((saida / f"t{k}" / "relatorio.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            falhas.append(f"t{k} sem relatório legível ({e})")
+            continue
+        if set(rel) != ids:
+            falhas.append(f"t{k}: o relatório traz {len(rel)} mutante(s), "
+                          f"e couberam-lhe {len(ids)}")
+            continue
+        if not all(r["aprovado"] for v in rel.values() for r in v.values()):
+            falhas.append(f"t{k}: há mutante não aprovado no relatório")
+            continue
+        resultado.update(rel)
+    if set(resultado) != {m["id"] for m in mutantes} and not falhas:
+        falhas.append("a soma dos trabalhadores não é a seleção")
+    if falhas:
+        for f in falhas:
+            print(f"::error::{f}")
+        print(f"\n{len(falhas)} trabalhador(es) sem prova — veja a saída de cada um acima.")
+        return 1
+    (saida / "relatorio.json").write_text(
+        json.dumps(resultado, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # As cópias são do tamanho do repositório; os logs ficam em `tN/`.
+    shutil.rmtree(copias, ignore_errors=True)
+    return 0
+
+
+def escrever_fatia(saida: Path, fatia: tuple[int, int], mutantes: list[dict]) -> None:
+    (saida / "fatia.json").write_text(json.dumps(
+        {"fatia": list(fatia), "ids": sorted(m["id"] for m in mutantes)},
+        ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
+
+def juntar(pastas: list[Path], catalogo: list[dict]) -> int:
+    """Confere que as fatias da matriz somam o catálogo, sem falta nem repetição.
+
+    Cada job da matriz só responde pela SUA fatia; nenhum deles sabe se as
+    outras correram. É a regra de quem dá o total (`gerais.md`): uma fatia que
+    não chegasse a correr — job cancelado, matriz encolhida, artefato perdido
+    — deixava os outros verdes e um terço do catálogo sem prova nenhuma.
+    """
+    vistas: dict[int, set] = {}
+    total = None
+    aprovados: dict[str, dict] = {}
+    queixas = []
+    for pasta in pastas:
+        try:
+            f = json.loads((pasta / "fatia.json").read_text(encoding="utf-8"))
+            rel = json.loads((pasta / "relatorio.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            queixas.append(f"{pasta}: sem fatia.json/relatorio.json legíveis ({e}) — "
+                           "a fatia não acabou verde")
+            continue
+        i, k = f["fatia"]
+        if total is None:
+            total = k
+        if k != total:
+            queixas.append(f"{pasta}: fatia {i}/{k}, e as outras dizem /{total}")
+        if i in vistas:
+            queixas.append(f"a fatia {i}/{k} aparece duas vezes")
+        vistas[i] = set(f["ids"])
+        if set(rel) != set(f["ids"]):
+            queixas.append(f"fatia {i}/{k}: o relatório não traz os mesmos mutantes")
+        for mid, v in rel.items():
+            if not all(r["aprovado"] for r in v.values()):
+                queixas.append(f"fatia {i}/{k}: {mid} não foi aprovado")
+            aprovados[mid] = v
+    if total is None:
+        queixas.append("nenhuma fatia lida — nada a juntar")
+    else:
+        for i in range(1, total + 1):
+            if i not in vistas:
+                queixas.append(f"faltou a fatia {i}/{total}")
+        # Cada job tem de ter corrido A SUA fatia: recalcula-se a partilha.
+        esperadas = repartir(catalogo, total)
+        for i, ids in vistas.items():
+            if 1 <= i <= total and ids != {m["id"] for m in esperadas[i - 1]}:
+                queixas.append(f"a fatia {i}/{total} não correu os mutantes que lhe cabem")
+        faltam = {m["id"] for m in catalogo} - set(aprovados)
+        if faltam:
+            queixas.append(f"{len(faltam)} mutante(s) do catálogo sem prova: "
+                           f"{sorted(faltam)[:5]}")
+        for m in catalogo:
+            if m["id"] in aprovados and set(aprovados[m["id"]]) != set(m["reprova"]):
+                queixas.append(f"{m['id']}: o relatório não traz as suítes declaradas")
+    if queixas:
+        for q in queixas:
+            print(f"::error::{q}")
+        print(f"\n{len(queixas)} queixa(s) ao juntar as fatias.")
+        return 1
+    print(f"{MARCADOR} — {len(catalogo)} defeito(s) do catálogo em {total} fatia(s), "
+          "cada um reprovado pela guarda declarada.")
+    return 0
+
+
 def main() -> int:
     # Linha a linha, e não em bloco: num cano para `tee` o Python guarda a
     # saída até ao fim, e um catálogo de minutos parecia parado.
@@ -274,9 +549,17 @@ def main() -> int:
     ap.add_argument("--suites", nargs="+", choices=list(SUITES),
                     help="com --explorar, só estas suítes")
     ap.add_argument("--listar", action="store_true")
+    ap.add_argument("--trabalhadores", type=int, default=1, metavar="N",
+                    help="N cópias do repositório ao mesmo tempo (1 = em série)")
+    ap.add_argument("--fatia", metavar="I/K",
+                    help="só a I-ésima de K fatias do catálogo (a matriz do CI)")
+    ap.add_argument("--juntar", nargs="+", type=Path, metavar="DIR",
+                    help="confere que as pastas de saída das K fatias somam o catálogo")
     args = ap.parse_args()
 
     mutantes = carregar_catalogo(args.catalogo)
+    if args.juntar:
+        return juntar(args.juntar, mutantes)
     if args.listar:
         for m in mutantes:
             suites = ", ".join(f"{s}: «{g}»" for s, g in m.get("reprova", {}).items())
@@ -289,6 +572,13 @@ def main() -> int:
         if desconhecidos:
             raise SystemExit(f"não há no catálogo: {sorted(desconhecidos)}")
         mutantes = [m for m in mutantes if m["id"] in args.so]
+    fatia = ler_fatia(args.fatia) if args.fatia else None
+    if fatia:
+        mutantes = repartir(mutantes, fatia[1])[fatia[0] - 1]
+    if args.trabalhadores < 1:
+        raise SystemExit("--trabalhadores é pelo menos 1.")
+    if args.explorar and args.trabalhadores > 1:
+        raise SystemExit("--explorar corre em série: ele é para escrever UM mutante.")
 
     queixas = suites_batem_com_o_ci()
     if not args.explorar:
@@ -312,6 +602,18 @@ def main() -> int:
     perfil = saida / "perfil"
     perfil.mkdir(exist_ok=True)
     signal.signal(signal.SIGTERM, _ao_sinal)
+
+    if args.trabalhadores > 1:
+        rc = em_paralelo(args, mutantes)
+        if rc:
+            return rc
+        if fatia:
+            escrever_fatia(saida, fatia, mutantes)
+        n = len([p for p in repartir(mutantes, args.trabalhadores) if p])
+        print(f"\n{MARCADOR} — {len(mutantes)} defeito(s) reinjetado(s) em {n} cópia(s)"
+              + (f", fatia {fatia[0]}/{fatia[1]}" if fatia else "")
+              + ", cada um reprovado pela guarda declarada.")
+        return 0
 
     exploradas = args.suites or list(SUITES)
     plano = {m["id"]: (exploradas if args.explorar else list(m["reprova"]))
@@ -402,7 +704,9 @@ def main() -> int:
         print(f"\n{falhas} de {len(mutantes)} mutante(s) furado(s): a guarda que os "
               "provou deixou de os apanhar, ou a descrição envelheceu.")
         return 1
-    print(f"\nMUTANTES OK — {len(mutantes)} defeito(s) reinjetado(s), cada um "
+    if fatia:
+        escrever_fatia(saida, fatia, mutantes)
+    print(f"\n{MARCADOR} — {len(mutantes)} defeito(s) reinjetado(s), cada um "
           "reprovado pela guarda declarada.")
     return 0
 

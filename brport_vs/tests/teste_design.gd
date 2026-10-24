@@ -20,7 +20,7 @@ extends SceneTree
 #    justamente o que não acontece a cada commit.
 #
 # Rodar:
-#   Godot --headless --path brport_vs --script res://tests/teste_design.gd
+#   Godot --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_design.gd
 # ============================================================
 
 const ANCORAS := "res://art/porto_mapa_ancoras.json"

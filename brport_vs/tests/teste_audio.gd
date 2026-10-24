@@ -22,7 +22,7 @@ extends SceneTree
 # nenhum commit deve afirmar nada dela.
 #
 # Rodar:
-#   Godot --headless --path brport_vs --script res://tests/teste_audio.gd
+#   Godot --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_audio.gd
 # ============================================================
 
 const TAXA_ESPERADA := 32000
