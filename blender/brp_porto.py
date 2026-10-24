@@ -1401,10 +1401,14 @@ def poste_rua(M, est):
 
 
 # A chapa e o cano da placa, em unidades de mundo e pixels do mapa.
-# ⚠️ ENTRE AS DUAS PASSAGENS QUE O BRUNO RECUSOU (`140`): a 0,17 o PARE, a de
-# pedestres e a de 40 perdiam-se a 1080 (*«placas pequenas demais»*, segunda
-# passagem); a 0,204 sobravam (*«placas de trânsito muito grandes»*, quarta).
-PLACA_RAIO = 0.187
+# ⚠️ O GOSTO NÃO É MONÓTONO NO NÚMERO (`140`): a 0,17 o PARE, a de pedestres e
+# a de 40 perdiam-se a 1080 (*«placas pequenas demais»*, segunda passagem); a
+# 0,204 sobravam (*«placas de trânsito muito grandes»*, quarta), e a 0,187
+# também (*«a placa ainda está grande»*, sexta). Na sétima o Bruno escolheu
+# entre 0,165, 0,150 e 0,135 lado a lado no jogo, e ficou 0,150 — abaixo dos
+# 0,17 recusados, que viviam num cano 30% mais alto e na calçada do porto. A
+# 0,135 a de pedestres tem 9×7 px a 1080 e a figura some.
+PLACA_RAIO = 0.150
 # ⚠️ 30% MAIS BAIXA DESDE A SEGUNDA PASSAGEM (`140`): a 30 px a chapa da de
 # pedestres, que vive na calçada do porto logo depois da zebra, subia na tela
 # por cima da zebra de trás e lia como uma placa NO MEIO da travessia. Do
