@@ -133,7 +133,22 @@ saía com 2 e deixaria o CI vermelho. Uma sonda de uma linha reproduziu-o;
   `PARALELO=4`, e outra vez numa segunda corrida em paralelo; código 0 e
   254 s com a máquina livre.
 - **O autoteste:** `EXECUTOR PROVADO`, doze casos; `GUARDAS OK`; `DOCS OK`.
-- **O CI do PR** é a medida do runner, que este contêiner não dá.
+- **O CI do PR #150, a primeira corrida no runner** (`b88027b`, corrida
+  40061228980): o passo dos mutantes levou **8:30, 14:38 e 8:50** nas três
+  fatias (55 ou 56 cada, quatro cópias), e o `--juntar` 13 s — *«MUTANTES OK
+  — 166 defeito(s) do catálogo em 3 fatia(s)»*. O job dos mutantes acabou
+  aos **15:37** da corrida, contra 100,4 min no #149. A fatia 2 levou 1,7×
+  as outras com o mesmo número de mutantes, e os quatro trabalhadores dela
+  atrasaram-se juntos: lê como máquina mais lenta e não como partilha
+  torta, mas uma corrida só não o separa. As suítes no runner, com o
+  relógio fixo: 19 / 39 / 12 / 11 s (`run_tests` / `teste_design` /
+  `teste_fumaca` / `asset_validator`); o job «Godot headless» 7:18, o
+  export 1:27. **A captura em paralelo ganhou menos lá do que aqui:** este
+  commit fotografado em **6:17**, a base em série (o script dela) em 8:58 —
+  no #148 eram 8:26 e 8:25. Aqui o paralelo dava ~3×; no runner dá 1,4×,
+  com o rasterizador por software a dividir os mesmos núcleos. A «Evidência
+  visual» (16:16) passou a ser o job mais longo do PR, e encolhe quando a
+  base também fotografar em paralelo, no PR seguinte a este fundir.
 
 **E a cerca da cópia reprovou de verdade no dia em que nasceu.** A regra de
 testes foi editada enquanto o pai copiava a árvore para a fatia 3: os hashes
@@ -165,8 +180,7 @@ telemetria do playtest. Treze são de gravidade alta (a tabela está no README).
 - **As seis suítes em paralelo para os agentes** (118 → 56 s, medido): o
   Bruno disse «não agora»; é o próximo passo barato, com um `user://` por
   suíte.
-- **O runner do GitHub pode ter dois núcleos reais com SMT.** O teto de cada
-  fatia (45 min) é largo por isso; o tempo real mede-se na primeira corrida
-  do PR.
+- **O teto de cada fatia (45 min) fica largo**: a mais lenta da primeira
+  corrida levou 14:38 (acima, na prova).
 - **O catálogo continua a crescer**: a matriz escala por K, e o K vive em
   dois sítios do `testes.yml` que o autoteste exige iguais.
