@@ -24,7 +24,9 @@ e nada voltava a perguntar se a guarda ainda o apanhava. Quem o corre é
 `tools/conferir_mutantes.py`, que faz sozinho o que as lições abaixo mandam
 fazer à mão — base verde antes e depois, o original por bytes, a guarda
 DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
-— e o CI reinjeta o catálogo inteiro a cada PR (job «Defeitos já provados»).
+— e o CI reinjeta o catálogo inteiro a cada PR (job «Defeitos já provados»),
+em três fatias de quatro cópias, que um job final exige somarem o catálogo
+(`137`). Aqui: `--trabalhadores 4`, ~25 min.
 
 - **Guarda nova:** escreva o `[[mutante]]` sem `reprova`, rode
   `--explorar --so <id> --suites <a suíte>`, e declare a asserção que É a
@@ -37,6 +39,11 @@ DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
   e o defeito continua possível na forma nova. Reescreva-o contra ela e
   rode `--explorar`; apagar a entrada é apagar a prova, e só se faz quando
   o defeito deixou de poder existir, dito no commit.
+- ⚠️ **EM PARALELO, O MARCADOR DE UM TRABALHADOR NÃO É O DO JOB.** O pai
+  repassa a saída de cada cópia com `[tN]` à frente e não repassa o
+  `MUTANTES OK` deles; o CI procura-o no início da linha. Sem as duas
+  coisas, dois trabalhadores verdes e um furado davam o job por verde
+  (`137`; `tools/testar_conferir_mutantes.py` reinjeta este e mais 14).
 - ⚠️ **O FIM DO CATÁLOGO É ONDE OS DOIS AGENTES COLIDEM.** Os dois
   acrescentam mutantes lá, a junção conflita, e o pré-PR acusa órfãos que
   são só os dois catálogos por juntar (`136`, contra o PR #148). Mutantes de

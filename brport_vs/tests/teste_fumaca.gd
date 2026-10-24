@@ -34,7 +34,7 @@ extends SceneTree
 # sobrevive ao defeito que ele existe para nomear.
 #
 # Rodar:
-#   Godot --headless --path brport_vs --script res://tests/teste_fumaca.gd
+#   Godot --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_fumaca.gd
 # ============================================================
 
 const FONTE_ICONES := "res://scripts/Icones.gd"

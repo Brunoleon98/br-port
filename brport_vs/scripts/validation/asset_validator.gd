@@ -1,7 +1,7 @@
 extends SceneTree
 ## BRP — validação do lado do Godot. FASE 12 do prompt mestre.
 ##
-##   Godot --headless --path brport_vs --script res://scripts/validation/asset_validator.gd
+##   Godot --headless --fixed-fps 60 --path brport_vs --script res://scripts/validation/asset_validator.gd
 ##
 ## O validador do Blender (`blender/validate_brp_assets.py`) confere o que só
 ## existe com a cena montada: âncora, apoio, coleção, volume de seleção. Este

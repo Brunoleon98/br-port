@@ -107,7 +107,7 @@ fi
 SUITES=$(grep -oE 'res://(tests|scripts/validation)/[a-z_]+\.gd' \
            "$RAIZ/.github/workflows/testes.yml" 2>/dev/null | sort -u | tr '\n' ' ')
 if [ -n "$SUITES" ]; then
-  echo "  Suítes (do testes.yml): \$G --headless --path brport_vs --script <uma de> $SUITES"
+  echo "  Suítes (do testes.yml): \$G --headless --fixed-fps 60 --path brport_vs --script <uma de> $SUITES"
 else
   echo "  Suítes: veja os passos --script de .github/workflows/testes.yml"
 fi

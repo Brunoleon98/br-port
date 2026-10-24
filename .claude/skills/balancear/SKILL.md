@@ -213,7 +213,7 @@ python3 tools/projetar_parcelas.py --medicao /tmp/depois.json \
 # 4. As suítes — dois testes já reprovaram por dinheiro cravado
 for t in tests/run_tests tests/teste_design tests/teste_audio \
          tests/teste_fumaca scripts/validation/asset_validator; do
-  $G --headless --path brport_vs --script res://$t.gd
+  $G --headless --fixed-fps 60 --path brport_vs --script res://$t.gd
 done
 ```
 

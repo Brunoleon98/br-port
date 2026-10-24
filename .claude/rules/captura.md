@@ -34,7 +34,11 @@ O passo está no item 5 do núcleo. As armadilhas:
    sozinha, duas corridas do MESMO código davam 1.030 pixels diferentes,
    porque os tweens em laço andam por *delta* e não por frame. Quem tirar a
    captura à mão sem `--fixed-fps 60` tem uma foto para olhar, não uma para
-   comparar.
+   comparar. Uma só, à mão (veio do «Como rodar» do núcleo em 24/10, `137`):
+
+       xvfb-run -a $G --path brport_vs --resolution 720x1280 \
+         --rendering-driver opengl3 --audio-driver Dummy --fixed-fps 60 \
+         --script res://tools/capturar_tela.gd -- 12 foto.png completo
    ⚠️ **E FERRAMENTA DE EVIDÊNCIA QUE CONTA VOLTAS NÃO ENTREGA O QUE PROMETE.**
    O `capturar_tela.gd -- N` contava iterações de laço, e a oferta do rival
    gastava uma sem virar o dia: medido em 18/09, `-- 10` entregava o turno 9,

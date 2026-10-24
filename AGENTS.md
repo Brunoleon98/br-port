@@ -92,10 +92,15 @@ registada sem o Bruno pedir.
   fundir. Os documentos de fecho (`ESTADO_DO_PROJETO.md`, o índice do
   arquivo) conflitam sempre: fica o texto de quem fundiu, e reaplicam-se as
   próprias linhas.
-- As seis suítes do Godot, com a versão de `.godot-version`, e a linha final
-  de cada uma — o código de saída sozinho não prova nada (o `CLAUDE.md` e
-  `.claude/rules/testes-e-guardas.md` dizem porquê). A lista viva está em
-  `.github/workflows/testes.yml`.
+- As seis suítes do Godot, com a versão de `.godot-version`, com
+  `--headless --fixed-fps 60` (o relógio do CI, que o executor de mutantes
+  confere) e a linha final de cada uma — o código de saída sozinho não prova
+  nada (o `CLAUDE.md` e `.claude/rules/testes-e-guardas.md` dizem porquê). A
+  lista viva está em `.github/workflows/testes.yml`.
+- O catálogo inteiro de mutantes, quando o código de um alvo dele ou uma
+  suíte mudou: `python3 tools/conferir_mutantes.py --godot "$G"
+  --trabalhadores 4`, ~25 min em quatro cópias do repositório
+  (`docs/decisoes/137`).
 - `python3 tools/conferir_docs.py`, que espera `DOCS OK`, se mexeu em
   documento.
 - Escreveu uma guarda ou corrigiu um bug? O defeito que a prova entra em

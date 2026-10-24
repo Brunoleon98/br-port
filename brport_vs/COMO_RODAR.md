@@ -123,7 +123,7 @@ completas). Não é necessário para jogar — serve para pegar regressão quand
 código mudar. Para rodar pela linha de comando:
 
 ```
-Godot_v4.6.3-stable_win64.exe --headless --path . --script res://tests/run_tests.gd
+Godot_v4.6.3-stable_win64.exe --headless --fixed-fps 60 --path . --script res://tests/run_tests.gd
 ```
 
 Termina com `TODOS OS TESTES PASSARAM` (código de saída 0) ou lista o que falhou.

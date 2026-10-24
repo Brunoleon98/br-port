@@ -15,6 +15,15 @@ on:
   pull_request:
     branches: [main]
 
+# Um push novo num PR cancela a corrida do push anterior DESSE PR: a prova que
+# vale é a do head, e a matriz dos mutantes ocupa três dos 20 runners do plano
+# gratuito — medido em 24/10, três corridas do mesmo PR e da main corriam ao
+# mesmo tempo, cada uma com o catálogo inteiro (`docs/decisoes/137`). Na main
+# o grupo é o commit, e nada se cancela: cada merge publica o seu Pages.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   testes-godot:
     name: Godot headless
@@ -41,6 +50,16 @@ jobs:
         # A prova de 14/10 lia a chave num `--script`, e o `--import` não a
         # lia: a base do PR #144 caiu duas vezes na fonte (`106`).
         run: python3 tools/testar_importar_para_ci.py
+
+      - name: Provar o executor de mutantes em paralelo e em fatias
+        # Motor e repositório falsos, em segundos: um trabalhador furado entre
+        # verdes, a fatia que falta, a que correu os mutantes de outra, o
+        # relógio das suítes deste arquivo. As fatias de verdade correm no job
+        # `mutantes`, e quem as junta é o `mutantes-juntos` (`137`).
+        run: |
+          set -euo pipefail
+          python3 tools/testar_conferir_mutantes.py 2>&1 | tee /tmp/executor.txt
+          grep -q "^EXECUTOR PROVADO" /tmp/executor.txt
 
       - name: Nenhum passo de CI pode rodar --script sem guarda
         # Vem AQUI, antes do download do Godot, porque custa um segundo e
@@ -119,10 +138,15 @@ jobs:
         run: python3 tools/sentinela_do_jogador.py plantar brport_vs
 
       - name: Rodar os testes
+        # As seis suítes correm com `--fixed-fps 60`: cada frame vale 1/60 s
+        # de jogo e o motor não dorme entre frames. É o relógio da captura e
+        # o do executor de mutantes, que confere que este arquivo o usa —
+        # com ele as seis passaram de 118,1 s para 96,6 s, e os 158 mutantes
+        # reprovaram pela mesma guarda (`docs/decisoes/137`).
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs --script res://tests/run_tests.gd \
+            --headless --fixed-fps 60 --path brport_vs --script res://tests/run_tests.gd \
             2>&1 | tee /tmp/saida.txt
 
           # O script sai com código != 0 quando alguma asserção falha, mas um
@@ -178,7 +202,7 @@ jobs:
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs --script res://tests/teste_design.gd \
+            --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_design.gd \
             2>&1 | tee /tmp/design.txt
 
           if ! grep -q "DESIGN OK" /tmp/design.txt; then
@@ -203,7 +227,7 @@ jobs:
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs --script res://tests/teste_audio.gd \
+            --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_audio.gd \
             2>&1 | tee /tmp/audio.txt
 
           if ! grep -q "AUDIO OK" /tmp/audio.txt; then
@@ -234,7 +258,7 @@ jobs:
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs --script res://tests/teste_fumaca.gd \
+            --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_fumaca.gd \
             2>&1 | tee /tmp/fumaca.txt
 
           if ! grep -q "FUMACA OK" /tmp/fumaca.txt; then
@@ -261,7 +285,7 @@ jobs:
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs --script res://tests/teste_registro.gd \
+            --headless --fixed-fps 60 --path brport_vs --script res://tests/teste_registro.gd \
             2>&1 | tee /tmp/registro.txt
 
           if ! grep -q "REGISTRO OK" /tmp/registro.txt; then
@@ -333,7 +357,7 @@ jobs:
         run: |
           set -euo pipefail
           ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --headless --path brport_vs \
+            --headless --fixed-fps 60 --path brport_vs \
             --script res://scripts/validation/asset_validator.gd \
             2>&1 | tee /tmp/assets.txt
 
@@ -647,14 +671,26 @@ jobs:
   # suíte que o apanha, e somados passam dos 15 minutos daquele job. E o
   # sinal da suíte (o jogo está bem?) não deve esperar por este (as guardas
   # ainda guardam?).
+  #
+  # ⚠️ EM TRÊS FATIAS, E CADA UMA EM QUATRO CÓPIAS. Em série o catálogo
+  # chegou aos 90 min no PR #148 (158 mutantes, ~34 s cada, que é o tempo da
+  # suíte) e o teto subiu a 120 — e ele cresce perto de dez por dia. Cada
+  # fatia corre em quatro cópias do repositório nos quatro vCPU do runner
+  # (medido no contêiner: 98% dos quatro núcleos), e o job `mutantes-juntos`
+  # confere que as três somam o catálogo — sem falta, sem repetição, e cada
+  # uma com os mutantes que lhe cabem (`docs/decisoes/137`). Nenhum mutante
+  # sai: muda quem os corre ao mesmo tempo.
   mutantes:
-    name: Defeitos já provados
+    name: Defeitos já provados (fatia ${{ matrix.fatia }}/3)
     runs-on: ubuntu-latest
-    # No PR #148, o job 120606846893 detectou 155 dos 158 defeitos antes
-    # de atingir 90 min. Restavam três e a base final; 120 min dão folga
-    # para a bateria completa no runner, sem reduzir catálogo ou guardas.
-    # Os tetos por suíte continuam medidos pelo executor, sem cortar provas.
-    timeout-minutes: 120
+    # Em série eram 120 min; cada fatia leva um terço do catálogo em quatro
+    # cópias. O teto é largo de propósito: um runner de dois núcleos reais
+    # dobraria o tempo, e o executor ainda tem o teto por suíte.
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        fatia: [1, 2, 3]
 
     steps:
       - name: Baixar o repositório
@@ -693,15 +729,18 @@ jobs:
         run: python3 tools/sentinela_do_jogador.py plantar brport_vs
 
       - name: Reinjetar os defeitos já provados
-        # A ferramenta corre a base de cada suíte antes e depois, com a
-        # varredura de `SCRIPT ERROR` dela; aqui exige-se o marcador, porque
-        # o código de saída é do `tee` e não dela.
+        # A ferramenta corre a base de cada suíte antes e depois, em cada
+        # cópia, com a varredura de `SCRIPT ERROR` dela; aqui exige-se o
+        # marcador NO INÍCIO DA LINHA: as linhas dos trabalhadores vêm
+        # repassadas com «[tN]» à frente, e um trabalhador verde não pode
+        # passar pelo job verde.
         run: |
           set -euo pipefail
           python3 tools/conferir_mutantes.py \
             --godot ~/godot-bin/"Godot_v${GODOT_VERSION}-stable_linux.x86_64" \
-            --saida /tmp/mutantes 2>&1 | tee /tmp/mutantes.txt
-          if ! grep -q "MUTANTES OK" /tmp/mutantes.txt; then
+            --saida /tmp/mutantes --fatia ${{ matrix.fatia }}/3 --trabalhadores 4 \
+            2>&1 | tee /tmp/mutantes.txt
+          if ! grep -q "^MUTANTES OK" /tmp/mutantes.txt; then
             echo "::error::Um defeito já provado voltou a passar, ou o catálogo envelheceu (veja a saída acima)."
             exit 1
           fi
@@ -713,12 +752,45 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brport-mutantes
+          name: brport-mutantes-${{ matrix.fatia }}
           path: |
-            /tmp/mutantes/*.log
+            /tmp/mutantes/t*/*.log
             /tmp/mutantes/relatorio.json
+            /tmp/mutantes/fatia.json
           if-no-files-found: ignore
           retention-days: 14
+
+  # A PROVA DO TODO, que nenhuma fatia dá sozinha. Com o nome que o job único
+  # tinha, para quem o procura pelo nome. Corre mesmo com uma fatia vermelha
+  # (`!cancelled()`), e aí reprova por ela — e reprova também se as três
+  # verdes não somarem o catálogo inteiro. Só não corre quando a corrida toda
+  # foi cancelada por um push mais novo do mesmo PR.
+  mutantes-juntos:
+    name: Defeitos já provados
+    needs: mutantes
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Trazer o relatório de cada fatia
+        uses: actions/download-artifact@v4
+        with:
+          pattern: brport-mutantes-*
+          path: /tmp/fatias
+
+      - name: As três fatias somam o catálogo
+        run: |
+          set -euo pipefail
+          if [ "${{ needs.mutantes.result }}" != "success" ]; then
+            echo "::error::Uma fatia dos mutantes não acabou verde (${{ needs.mutantes.result }})."
+            exit 1
+          fi
+          python3 tools/conferir_mutantes.py --juntar /tmp/fatias/brport-mutantes-* \
+            2>&1 | tee /tmp/juntos.txt
+          grep -q "^MUTANTES OK" /tmp/juntos.txt
 
   # ── A BUILD QUE SAI DAQUI E VAI PARA UM TELEFONE ──
   #
