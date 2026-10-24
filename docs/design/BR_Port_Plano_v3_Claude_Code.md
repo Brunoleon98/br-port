@@ -843,8 +843,15 @@ passagem. **A fila que ele deu acabou**, e em 17/10 ele deu a seguinte
 Blender que balançam no morro e na restinga das pontas, e as mesmas
 embutidas no mapa entre as casas; não aceite em 17/10, aceite na segunda
 conversa, à sétima passagem, com a copa de FOLHAS, clareiras no morro e os
-destaques à vista; (2) **estradas** — a seguinte; (3) **sprites de
-detalhes**. Cada uma abre com a foto do jogo e a pergunta do escopo. Fora
+destaques à vista; (2) estradas — **fechado em 19/10 (`136`)**: a rua
+gasta no porto em ruínas e recapeada pela obra do pátio, um trecho por dia
+com cones, a linha central amarela, os acessos de terra que chegam
+asfaltados, e as curvas em arco, aceite à terceira passagem; (3) **sprites
+de detalhes** — depois de uma pausa que ele pediu em 23/10: a conversa
+seguinte **pesquisa e analisa como acelerar os testes** das IAs e do GitHub
+(o catálogo de mutantes levou 63 min no contêiner, e passou dos 90 min do
+job no PR #148), e a melhoria gráfica volta logo a seguir, por este item.
+Cada uma abre com a foto do jogo e a pergunta do escopo. Fora
 dela, para depois: animar as marolas e o fio diagonal da ponta norte do
 cais (`124`), os gates A4 e A7, e o galpão recuperado V3.
 

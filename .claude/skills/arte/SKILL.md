@@ -482,6 +482,14 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   destaques atrás do HUD) com as saídas dela. Ele escolheu as recomendadas
   nas duas e aceitou a passagem seguinte. Dois reinícios do worker
   apanharam uma pergunta pendente: refaz-se a pergunta, sozinha.
+  ⚠️ **E NAS ESTRADAS (`136`) O «OUTRO» DO ESCOPO TROUXE DOIS REQUISITOS QUE
+  NENHUMA OPÇÃO TINHA** — *«as sinalizações aparecem do nada»* e *«por
+  partes, como uma obra»* —, e foram eles que deram forma à conversa:
+  medido, o «do nada» eram 26.901 px fora da obra. A correção escrita numa
+  opção (*«o camião faz a curva em arco»*) foi medida e não servia; a
+  passagem entregou o efeito pedido por outro meio e a legenda disse-o.
+  Três passagens, aceite à terceira; a prancha seguida da pergunta no bloco
+  seguinte voltou nas três, com reinícios do worker pelo meio.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

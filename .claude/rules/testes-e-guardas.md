@@ -37,6 +37,10 @@ DECLARADA a reprovar, o mutante que não compila recusado, teto por corrida
   e o defeito continua possível na forma nova. Reescreva-o contra ela e
   rode `--explorar`; apagar a entrada é apagar a prova, e só se faz quando
   o defeito deixou de poder existir, dito no commit.
+- ⚠️ **O FIM DO CATÁLOGO É ONDE OS DOIS AGENTES COLIDEM.** Os dois
+  acrescentam mutantes lá, a junção conflita, e o pré-PR acusa órfãos que
+  são só os dois catálogos por juntar (`136`, contra o PR #148). Mutantes de
+  um tema novo vão numa secção própria, ao lado das irmãs dela.
 
 ⚠️ **E DEFEITO EM ARTE IMPORTADA SÓ CHEGA À SUÍTE PELO `--import`.** O
 `teste_design` lê o mapa pela textura do cache, de propósito (o `_mapa_lido`

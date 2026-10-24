@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 23/10/2026 — RB5 implementado localmente (`134`, `135`)
+> **Atualização:** 23/10/2026 — estradas (`136`); RB5 (`134`, `135`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -98,10 +98,12 @@ quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a 21).
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
 verdade** — parede desabada, meio telhado, portão fora do trilho.
 
-**O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, com linha
-central e passadeiras) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
+**O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, linha
+central amarela, curvas em arco) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
 e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
 e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
+**A rua é GASTA no porto em ruínas**; a obra do pátio recapeia-a por trechos,
+com cones (`136`, D49).
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
@@ -117,17 +119,17 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
-(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142 mesclado).
+(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).
 **RB6 (`129`, #143):** Reduzir movimento nos Ajustes de início/pausa, por aparelho;
 fundo parado e transições diretas, operação e resultados preservados.
 Telefone/aceite visual pendentes; partida/save intactos.
-**RB5 (`134`, `135`):** três colunas/+25% implementados localmente;
-Padrão/Maior nos Ajustes, persistência independente do movimento e provas
-no arquivo (`135`). PR #148 aberto; CI e telefone pendentes.
-**Início/fundo (`132`/`133`, #146/#147):** mesclados por Bruno. V3 só na
-inicial, celular com degradê. Pages `ed2c770`; CI pós-merge verde.
-**A fila da `126`** (§7): terreno e vegetação **aceite** em 18/10 (`127`,
-`130`); a seguir, estradas, depois detalhes.
+**RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
+persistência independente do movimento; telefone pendente.
+**Início/fundo (`132`/`133`, #146/#147):** V3 só na inicial, celular com
+degradê.
+**A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
+(`136`) **aceites**. A seguir (Bruno, 23/10): acelerar os testes das IAs e
+do GitHub; depois, os detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
@@ -197,7 +199,7 @@ histórico em `HISTORICO.md`.
 | `playtest/` | As partidas reais do A7, uma por `.jsonl`, sem o nome de quem jogou (`006`, `099`) |
 | `brport_vs/scripts/TrafegoDeCamioes.gd` | **Os camiões da rua** — rotas, cedência, visita ao berço; objeto do `Main`, lido pelo `trafego` (`095`) |
 | `brport_vs/scripts/MataNoMapa.gd` | **A mata que balança**, do morro e da restinga, entre os irmãos do `Cenario` pela profundidade (`127`) |
-| `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém e o pátio de cada dia; o asfalto é o mapa pronto recortado (`121`, D45). Foto de um dia de obra: `tools/capturar_obra.gd` (`122`) |
+| `brport_vs/scripts/ObraNoMapa.gd` | **A obra no mapa** — o armazém, o pátio e a rua de cada dia; o asfalto é o mapa pronto recortado (`121`, D45). Foto de um dia de obra: `tools/capturar_obra.gd` (`122`) |
 | `brport_vs/scripts/NarradoraDaCida.gd` | **A Dona Cida na faixa** — gatilhos, variantes e memórias; objeto do `Main` (`096`) |
 | `brport_vs/scripts/TutorialDoToninho.gd` | **O tutorial do dia 1** — atracar e avançar, por cima do jogo e sem save; objeto do `Main` (`101`) |
 | `brport_vs/scripts/VezDasTelas.gd` | **A vez das telas que abrem sozinhas**, uma de cada vez; objeto do `Main` (`054`, `097`) |
