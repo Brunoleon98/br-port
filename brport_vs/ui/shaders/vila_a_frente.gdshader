@@ -24,7 +24,10 @@ void vertex() {
 }
 
 void fragment() {
-	vec4 cor = texture(TEXTURE, UV) * COLOR;
+	// ⚠️ O `COLOR` do fragment JÁ É a textura vezes o `modulate`: multiplicar
+	// de novo pelo `texture(TEXTURE, UV)` elevava a cor ao quadrado, e o poste
+	// mascarado saiu escuro na foto da quinta passagem.
+	vec4 cor = COLOR;
 	int c = int(floor(mapa.x - x0));
 	if (c >= 0 && c < 81 && mapa.y >= teto[c]) {
 		cor.a = 0.0;
