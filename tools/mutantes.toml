@@ -1631,13 +1631,13 @@ o_que = "a tabela põe a subestação a meio caminho da praia: a cerca do lado d
 alvo = "brport_vs/art/porto_mapa_ancoras.json"
 antes = '''
   "centro": [
-   3.1,
-   -1.9
+   2.15,
+   -1.6
   ],'''
 depois = '''
   "centro": [
-   4.1,
-   -1.9
+   4.15,
+   -1.6
   ],'''
 
 [[mutante]]
@@ -1657,6 +1657,14 @@ o_que = "a cadeia dos postes põe a linha da subestação depois da rua: o últi
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '	return linha + ids'
 depois = '	return ids + linha'
+
+[[mutante]]
+id = "sombra-por-cima-da-igreja"
+de = "140"
+o_que = "o poste não leva a máscara da vila: a sombra dos postes da curva pinta-se por cima da igreja, que lhes fica à frente"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		no.material = _mascara(i, no.position)'
+depois = ''
 
 [[mutante]]
 id = "rede-por-cima-de-tudo"

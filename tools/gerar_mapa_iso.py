@@ -2301,8 +2301,43 @@ def arvores_da_restinga() -> list:
                 postas.append((variante, round(ax, 3), round(ay, 3), ALT_CAIS,
                                round(x, 1), round(y, 1), raio, (j, mx, my, nmx, nmy)))
                 feitas += 1
+    # ⚠️ A SUBESTAÇÃO MUDA DE SÍTIO A PLANTA QUE CAI NO LOTE DELA, DEPOIS DO
+    # SORTEIO (quinta passagem da `140`, *«fora da areia, no relvado»*): o
+    # relvado do campo norte é estreito, e ela só cabe inteira nele no sítio da
+    # aroeira, que o Bruno deixou mudar de lugar. Recusar o dardo DURANTE o
+    # sorteio mudaria todos os seguintes, nas duas pontas (`mapa.md`, o sorteio
+    # novo vem de um `Random` novo); mudada no fim, as outras ficam onde
+    # estavam. Vai para `PLANTA_FORA_DA_SUBESTACAO`, e o D47 confere-a como a
+    # qualquer outra.
+    tiradas = [o for o in postas if _no_lote_da_subestacao(o[1], o[2])]
+    if len(tiradas) > 1:
+        raise SystemExit("gerar_mapa_iso: %d plantas no lote da subestação, e só "
+                         "há sítio para uma" % len(tiradas))
+    postas = [o for o in postas if not _no_lote_da_subestacao(o[1], o[2])]
+    for o in tiradas:
+        ax, ay = PLANTA_FORA_DA_SUBESTACAO
+        x, y = tela(ax, ay, ALT_CAIS)
+        postas.append((o[0], ax, ay, ALT_CAIS, round(x, 1), round(y, 1)) + o[6:])
     postas.sort(key=lambda o: (o[1] + o[2], o[2]))
     return [o[:6] for o in postas]
+
+
+# O pé da planta que a subestação tira do lote dela (a aroeira): um ponto
+# que cumpre as regras do sorteio — a crista da praia à frente nas três
+# colunas do tronco, a folga da rua, o aperto e a pilha na tela contra as
+# outras plantas — e cuja copa não toca, na tela, a caixa da subestação, do
+# pórtico, da torre, dos postes nem a de um bicho (medido numa grelha de
+# 0,05). A sul da cerca, a (1,6, 0,5), faltava a crista; a leste, a (4,0,
+# −2,6), a copa caía no quero-quero: o D47 reprovou os dois. Fica a norte da
+# torre, a 3,2 de onde estava, no meio de uma faixa de 21 pontos válidos.
+PLANTA_FORA_DA_SUBESTACAO = (2.9, -5.0)
+
+
+def _no_lote_da_subestacao(mx: float, my: float) -> bool:
+    """O pé (mx, my) cai na caixa da subestação, com a folga de meia copa da
+    aroeira à volta (a `FOLGA_DA_PLANTA` do D45)?"""
+    (cx, cy), (lx, ly) = SUBESTACAO, SUBESTACAO_TAM
+    return abs(mx - cx) < lx / 2.0 + 0.3 and abs(my - cy) < ly / 2.0 + 0.3
 
 
 def recuos_das_praias() -> list:
@@ -4416,14 +4451,25 @@ AVISO_DA_ZEBRA = 1.0
 # A LINHA DA REDE E A SUBESTAÇÃO (quarta passagem): *«pode colocar postes até
 # um dos limites do mapa para mostrar que a energia vem de algum lugar, pode
 # até fazer uma subestação de energia lá»*; o Bruno escolheu o campo ao norte
-# do pátio. A subestação vai no relvado entre a calçada do porto e a praia, a
-# fugir das plantas da restinga (a aroeira a 1,6, os guriris a 3,9 e 4,4); a
-# linha chega-lhe de fora do quadro, pelo campo da reta 0, e o poste de saída
-# leva a energia por cima da rua até ao primeiro poste da vila. Ficam sempre
-# NOVOS (`quadro` −1): são da cidade, e a obra do porto não lhes toca.
-SUBESTACAO = (3.1, -1.9)
-SUBESTACAO_TAM = (1.6, 2.2)        # o `brp_porto.SUBESTACAO_LARG`/`_FUNDO`
-LINHA_DA_REDE = [("linha", 0.2, -8.6), ("linha", 2.0, -4.9), ("saida", 2.0, -1.3)]
+# do pátio. A linha chega-lhe de fora do quadro, pelo campo da reta 0, e o
+# poste de saída leva a energia por cima da rua até ao primeiro poste da
+# vila. Ficam sempre NOVOS (`quadro` −1): são da cidade, e a obra do porto
+# não lhes toca.
+# ⚠️ NO RELVADO, E A AROEIRA SAI (quinta passagem, *«fora da areia, no
+# relvado»*). Medido no raster do mapa sem props: o relvado vai da calçada a
+# ~3,0 em `mx` a meio do campo e a ~4,0 a sul, e as plantas da restinga
+# desenham-se por cima de todo prop (o D47 reprova qualquer caixa que lhes
+# toque). Com todas lá, a subestação inteira só cabia em relva com 1,3 × 1,6;
+# sem a aroeira, cabe com 1,4 × 1,9 no sítio dela, a 99%. O Bruno deixou-a
+# sair; quem a tira é o `_no_lote_da_subestacao()`, depois do sorteio.
+# A linha de alta tensão desce de fora do quadro por duas torres e pousa no
+# PÓRTICO, no lado norte da cerca; o poste de SAÍDA, dentro dela, fica no
+# `my` do primeiro poste da vila, e o ramal atravessa a rua de frente
+# (*«ramal reto sobre a rua»*).
+SUBESTACAO = (2.15, -1.6)
+SUBESTACAO_TAM = (1.4, 1.9)        # o `brp_porto.SUBESTACAO_LARG`/`_FUNDO`
+LINHA_DA_REDE = [("torre", -0.3, -8.2), ("torre", 2.2, -4.0), ("portico", 2.15, -2.45),
+                 ("saida", 1.62, -1.0)]
 
 
 def mobiliario_da_rua() -> list:
@@ -4496,7 +4542,7 @@ def mobiliario_da_rua() -> list:
 # Os tipos que são poste: os da linha, pela ordem da tabela, e depois os da
 # rua pela ordem de `my`, cada um ligado ao seguinte — como no jogo
 # (`cadeia_dos_postes()`): o de saída da subestação liga-se ao `ramal`.
-POSTES_DA_LINHA = ("linha", "saida")
+POSTES_DA_LINHA = ("torre", "portico", "saida")
 POSTES_DA_FIACAO = ("ramal", "poste", "curva_a", "curva_b", "quina")
 # O topo do isolador acima do chão, em px de DESENHO: o `POSTE_ISOLADOR` do
 # `brp_porto.py`, que o `ObraNoMapa.gd` também copia.
@@ -4545,6 +4591,45 @@ def fiacao_atras_da_vila() -> list:
             perto = perto or t < y_fio + FOLGA_DO_FIO
         if perto:
             out.append((a, b, x0, teto))
+    return out
+
+
+# ── O MOBILIÁRIO ATRÁS DA VILA (quinta passagem da `140`) ────────────────
+#
+# *«Veja as sombras dos postes, pois parecem estar sobrepondo edifícios, como
+# a igreja»*. É a regra da fiação um andar abaixo: o PNG do poste traz a
+# sombra de contacto, que desce para a direita do pé, e nos dois postes da
+# curva de fora dos cotovelos 2 e 3 ela cai na tela onde o lote da esquina —
+# a igreja, no 2 — lhe fica à frente; o mapa é chapado e o poste pinta-se por
+# cima (medido: 124 e 38 px no 2, 94 e 16 no 3, todos de sombra). O jogo
+# esconde, com um shader, o que da peça fica abaixo do topo do lote à frente
+# em cada coluna (`ui/shaders/vila_a_frente.gdshader`).
+#
+# Colunas de tela de cada lado do pé (a caixa da subestação, a maior peça,
+# vai a ±37), e o que a sombra desce abaixo dele, em px de tela.
+MASCARA_LADO = 40
+MASCARA_ABAIXO = 10.0
+
+
+def mascara_da_vila() -> list:
+    """(índice, x0, teto) de cada peça do `mobiliario_da_rua()` com um lote
+    da vila à frente do PÉ dela que chega à caixa dela na tela: o `y` de cima
+    do lote por coluna, de `x0` a `x0 + 2·MASCARA_LADO` (`SAIDA` onde nada
+    fica à frente). A conta da `fiacao_atras_da_vila()`, com o ponto do pé."""
+    pecas = pecas_da_vila()
+    out = []
+    for k, (_t, mx, my, _q) in enumerate(mobiliario_da_rua()):
+        x, y = tela(mx, my, ALT_CAIS)
+        x0 = int(round(x)) - MASCARA_LADO
+        teto = []
+        for c in range(x0, x0 + 2 * MASCARA_LADO + 1):
+            v = float(SAIDA)
+            for caixa, cols in pecas:
+                if c in cols and lote_a_frente(caixa, mx, my):
+                    v = min(v, cols[c])
+            teto.append(v)
+        if min(teto) < y + MASCARA_ABAIXO:
+            out.append((k, x0, teto))
     return out
 
 
@@ -8275,6 +8360,10 @@ def tabela_ancoras() -> dict:
         "fiacao_atras_da_vila": [{"vao": [a, b], "x0": x0,
                                   "teto": [round(t, 1) for t in teto]}
                                  for a, b, x0, teto in fiacao_atras_da_vila()],
+        # E o que ela tapa das peças, a sombra do poste incluída (quinta
+        # passagem): o jogo copia-o para o shader.
+        "mascara_da_vila": [{"peca": k, "x0": x0, "teto": [round(t, 1) for t in teto]}
+                            for k, x0, teto in mascara_da_vila()],
         "lotes_reservados": reservados,
         # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
         # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco

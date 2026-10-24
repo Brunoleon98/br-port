@@ -234,9 +234,9 @@ const MOBILIARIO: Array = [
 	["quina", Vector2(10.99, 24.21), 3], ["pare", Vector2(1.11, 2.23), 0],
 	["pare", Vector2(5.11, 10.23), 1], ["pare", Vector2(9.11, 18.23), 2],
 	["pedestres", Vector2(-0.91, 5.89), 0], ["pedestres", Vector2(3.09, 13.89), 1],
-	["velocidade", Vector2(9.11, 21.4), 2], ["subestacao", Vector2(3.1, -1.9), -1],
-	["linha", Vector2(0.2, -8.6), -1], ["linha", Vector2(2.0, -4.9), -1],
-	["saida", Vector2(2.0, -1.3), -1],
+	["velocidade", Vector2(9.11, 21.4), 2], ["subestacao", Vector2(2.15, -1.6), -1],
+	["torre", Vector2(-0.3, -8.2), -1], ["torre", Vector2(2.2, -4.0), -1],
+	["portico", Vector2(2.15, -2.45), -1], ["saida", Vector2(1.62, -1.0), -1],
 ]
 ## A arte de cada tipo: `[velha, nova]`.
 const ARTE_DO_MOBILIARIO := {
@@ -261,11 +261,14 @@ const ARTE_DO_MOBILIARIO := {
 		preload("res://art/props/placa_pedestres_nova.png")],
 	"velocidade": [preload("res://art/props/placa_velocidade_velha.png"),
 		preload("res://art/props/placa_velocidade_nova.png")],
-	# A subestação e a linha da borda do mapa: um estado só.
+	# A subestação, o pórtico onde pousa a linha de alta tensão, as torres
+	# dela e o poste de saída para a rua: um estado só.
 	"subestacao": [preload("res://art/props/subestacao.png"),
 		preload("res://art/props/subestacao.png")],
-	"linha": [preload("res://art/props/poste_linha.png"),
-		preload("res://art/props/poste_linha.png")],
+	"torre": [preload("res://art/props/torre_at.png"),
+		preload("res://art/props/torre_at.png")],
+	"portico": [preload("res://art/props/portico_subestacao.png"),
+		preload("res://art/props/portico_subestacao.png")],
 	"saida": [preload("res://art/props/poste_linha_saida.png"),
 		preload("res://art/props/poste_linha_saida.png")],
 }
@@ -290,10 +293,15 @@ const LUZ_DE_SODIO := {
 ## `POSTE_GIROS` do `brp_porto.py`. As chaves são os tipos que são poste,
 ## ligados pela fiação.
 const GIRO_DO_POSTE := {"poste": 0.0, "curva_a": 22.5, "quina": 45.0, "curva_b": 67.5,
-	"ramal": -45.0, "linha": 0.0, "saida": -45.0}
+	"ramal": -45.0, "torre": 0.0, "portico": 0.0, "saida": -45.0}
 ## Os da linha da subestação, que a fiação liga pela ordem da tabela antes
-## dos da rua (`cadeia_dos_postes()`).
-const POSTES_DA_LINHA := ["linha", "saida"]
+## dos da rua (`cadeia_dos_postes()`): as torres, o pórtico e o de saída.
+const POSTES_DA_LINHA := ["torre", "portico", "saida"]
+## A altura do topo do isolador (px do mapa) e o `x` de cada um na cruzeta,
+## dos tipos que não são o poste da rua: a torre de alta tensão é mais alta e
+## mais larga (`brp_porto.TORRE_ISOLADOR`, `TORRE_ISOLADORES`). O pórtico usa
+## os do poste, de propósito.
+const ISOLADOR_DO_TIPO := {"torre": [82.0, [-0.42, 0.0, 0.42]]}
 
 # A FIAÇÃO (`140`): dois fios de cruzeta a cruzeta, pousados nos isoladores
 # das pontas, de poste em poste pela calçada da vila — e, desde a terceira
@@ -347,6 +355,84 @@ const FIACAO_ATRAS_DA_VILA: Array = [
 		720.0, 720.0, 720.0
 	]],
 ]
+# O MOBILIÁRIO ATRÁS DA VILA (quinta passagem da `140`): *«veja as sombras
+# dos postes, pois parecem estar sobrepondo edifícios, como a igreja»*. A
+# regra da fiação um andar abaixo: o PNG do poste traz a sombra de contacto,
+# e nos postes da curva de fora dos cotovelos ela caía na tela em cima do
+# lote da esquina, que lhes fica à frente. Um shader esconde o que da peça
+# cai abaixo do topo do lote em cada coluna (`VILA_A_FRENTE`). `[índice no
+# MOBILIARIO, primeira coluna, o y de cima do que fica à frente]`: a lista
+# `mascara_da_vila` da tabela, copiada pela razão do `PATIO`.
+const MASCARA_DA_VILA: Array = [
+	[6, 139, [
+		130.1, 129.6, 129.1, 128.5, 128.1, 127.6, 127.3, 127.6, 128.3, 129.1,
+		129.8, 130.5, 131.2, 131.9, 132.6, 133.4, 134.1, 134.8, 135.5, 136.2,
+		136.9, 137.7, 138.4, 139.1, 139.8, 140.5, 141.2, 142.0, 142.7, 143.4,
+		144.1, 144.8, 145.5, 146.3, 154.9, 155.4, 155.9, 187.1, 187.6, 188.1,
+		188.6, 189.1, 189.6, 190.1, 190.6, 191.1, 191.6, 192.1, 192.6, 193.1,
+		193.6, 194.1, 202.5, 203.0, 203.5, 204.0, 204.5, 720.0, 720.0, 720.0,
+		720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0
+	]],
+	[9, 59, [
+		247.7, 254.4, 253.9, 253.5, 253.0, 252.5, 252.1, 252.2, 252.7, 253.2,
+		253.7, 254.2, 254.7, 255.2, 255.7, 256.2, 256.7, 257.2, 257.7, 258.2,
+		258.7, 259.2, 259.7, 260.2, 260.7, 261.2, 261.7, 262.2, 262.7, 268.5,
+		269.4, 270.3, 271.2, 274.4, 274.9, 275.4, 276.0, 287.3, 286.1, 284.9,
+		283.8, 282.6, 281.4, 280.3, 279.1, 277.9, 276.7, 276.4, 276.5, 276.7,
+		276.9, 267.5, 266.7, 266.0, 265.2, 264.4, 263.6, 262.9, 262.1, 261.3,
+		260.5, 255.7, 255.2, 253.8, 253.7, 253.9, 254.0, 260.3, 261.1, 261.9,
+		262.6, 263.4, 264.2, 265.0, 265.8, 266.5, 267.3, 268.1, 300.3, 300.8,
+		301.3
+	]],
+	[10, 59, [
+		309.7, 309.2, 308.7, 308.2, 307.7, 307.2, 306.7, 306.6, 307.0, 307.5,
+		307.1, 306.6, 306.1, 305.6, 305.1, 304.6, 304.1, 303.6, 303.1, 302.6,
+		302.1, 301.6, 301.1, 300.6, 300.1, 299.6, 299.1, 298.6, 298.1, 297.6,
+		297.1, 296.6, 296.5, 296.9, 297.4, 297.9, 288.5, 287.3, 286.1, 284.9,
+		283.8, 282.6, 281.4, 280.3, 279.1, 277.9, 276.7, 276.4, 276.5, 276.7,
+		276.9, 267.5, 266.7, 266.0, 265.2, 264.4, 263.6, 262.9, 262.1, 261.3,
+		260.5, 255.7, 255.2, 253.8, 253.7, 253.9, 254.0, 260.3, 261.1, 261.9,
+		262.6, 263.4, 264.2, 265.0, 265.8, 266.5, 267.3, 268.1, 300.3, 300.8,
+		301.3
+	]],
+	[12, -21, [
+		720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0, 379.2, 379.7, 380.2, 380.7, 381.2, 381.7, 382.2, 382.7, 383.2,
+		383.7, 384.2, 384.7, 385.2, 394.9, 395.4, 396.0, 413.7, 411.5, 411.1,
+		411.0, 411.0, 411.1, 410.9, 411.1, 410.1, 398.4, 395.5, 393.3, 393.3,
+		391.2, 391.2, 391.2, 390.4, 389.7, 388.3, 388.3, 388.3, 388.3, 388.3,
+		389.7, 389.7, 389.7, 389.7, 389.7, 391.2, 391.9, 391.9, 391.9, 391.9,
+		392.6, 395.5, 404.7, 405.2, 405.7, 406.2, 406.7, 407.2, 407.7, 408.2,
+		408.7
+	]],
+	[13, -21, [
+		720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0, 409.6, 412.3, 412.9, 414.9, 414.9, 414.9, 418.7, 418.2, 417.7,
+		417.2, 416.7, 416.2, 415.7, 415.2, 414.7, 414.2, 413.7, 411.5, 411.1,
+		411.0, 411.0, 411.1, 410.9, 411.1, 410.1, 398.4, 395.5, 393.3, 393.3,
+		391.2, 391.2, 391.2, 390.4, 389.7, 388.3, 388.3, 388.3, 388.3, 388.3,
+		389.7, 389.7, 389.7, 389.7, 389.7, 391.2, 391.9, 391.9, 391.9, 391.9,
+		392.6, 395.5, 404.7, 405.2, 405.7, 406.2, 406.7, 407.2, 407.7, 408.2,
+		408.7
+	]],
+	[19, 83, [
+		260.7, 261.2, 261.7, 262.2, 262.7, 268.5, 269.4, 270.3, 271.2, 274.4,
+		274.9, 275.4, 276.0, 287.3, 286.1, 284.9, 283.8, 282.6, 281.4, 280.3,
+		279.1, 277.9, 276.7, 276.4, 276.5, 276.7, 276.9, 267.5, 266.7, 266.0,
+		265.2, 264.4, 263.6, 262.9, 262.1, 261.3, 260.5, 255.7, 255.2, 253.8,
+		253.7, 253.9, 254.0, 260.3, 261.1, 261.9, 262.6, 263.4, 264.2, 265.0,
+		265.8, 266.5, 267.3, 268.1, 300.3, 300.8, 301.3, 301.8, 302.3, 302.8,
+		303.3, 299.1, 298.6, 298.5, 298.8, 299.3, 306.3, 306.8, 307.3, 307.8,
+		308.3, 308.8, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0, 720.0,
+		720.0
+	]],
+]
+const VILA_A_FRENTE := preload("res://ui/shaders/vila_a_frente.gdshader")
+
 ## O passo, em px de tela, a que se amostra o fio de um vão que a vila tapa:
 ## a cor muda de vértice em vértice, e é aí que o fio some.
 const PASSO_DO_TAPUME := 1.0
@@ -518,10 +604,12 @@ func _plantar_o_mobiliario() -> void:
 		no.name = _nome_da_peca(tipo) % i
 		_plantar(cenario, no)
 		_mobiliario.append(no)
+		no.material = _mascara(i, no.position)
 		var luz: TextureRect = null
 		if LUZ_DE_SODIO.has(tipo):
 			luz = _prop_no_chao(LUZ_DE_SODIO[tipo], peca[1])
 			luz.name = "PosteLuzDaRua%d" % i
+			luz.material = _mascara(i, luz.position)
 			rede.add_child(luz)
 		_luzes.append(luz)
 	var cadeia := cadeia_dos_postes()
@@ -536,6 +624,20 @@ func _plantar_o_mobiliario() -> void:
 			fio.antialiased = true
 			rede.add_child(fio)
 			_fios.append([a, b, k, fio])
+
+
+## A máscara da peça `i` do `MOBILIARIO`, num nó com o canto em `origem`, ou
+## `null` se nenhum lote da vila lhe fica à frente (`MASCARA_DA_VILA`).
+static func _mascara(i: int, origem: Vector2) -> ShaderMaterial:
+	for m in MASCARA_DA_VILA:
+		if int(m[0]) == i:
+			var mat := ShaderMaterial.new()
+			mat.shader = VILA_A_FRENTE
+			mat.set_shader_parameter("x0", float(m[1]))
+			mat.set_shader_parameter("origem", origem)
+			mat.set_shader_parameter("teto", PackedFloat32Array(m[2]))
+			return mat
+	return null
 
 
 ## O nome do nó de cada peça, com o índice dela no `MOBILIARIO`.
@@ -567,9 +669,13 @@ static func cadeia_dos_postes() -> Array:
 ## rua — a mesma rotação em Y do `_inclinar` do estúdio — e, nos das
 ## curvas, depois rodado em Z. No Blender `y = -my`, logo o giro em Z leva o `x` da
 ## cruzeta a `(x cos, -x sin)` no chão do mapa.
-static func ponta_do_fio(v: Vector2, k: int, velho: bool, giro := 0.0) -> Vector2:
+static func ponta_do_fio(v: Vector2, k: int, velho: bool, giro := 0.0,
+		tipo := "") -> Vector2:
 	var x := POSTE_ISOLADORES[k]
 	var h := POSTE_ISOLADOR_PX / ALTURA_PX
+	if ISOLADOR_DO_TIPO.has(tipo):
+		x = float(ISOLADOR_DO_TIPO[tipo][1][k])
+		h = float(ISOLADOR_DO_TIPO[tipo][0]) / ALTURA_PX
 	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)
 	var dx := x * cos(t) + h * sin(t)
 	var dz := -x * sin(t) + h * cos(t)
@@ -617,8 +723,8 @@ func _trocar_o_mobiliario(q: int) -> void:
 		var a: int = f[0]
 		var b: int = f[1]
 		var velho := not novos[a]
-		var pa := ponta_do_fio(MOBILIARIO[a][1], f[2], velho, _giro(a))
-		var pb := ponta_do_fio(MOBILIARIO[b][1], f[2], not novos[b], _giro(b))
+		var pa := ponta_do_fio(MOBILIARIO[a][1], f[2], velho, _giro(a), MOBILIARIO[a][0])
+		var pb := ponta_do_fio(MOBILIARIO[b][1], f[2], not novos[b], _giro(b), MOBILIARIO[b][0])
 		var barriga: float = FIO_BARRIGA[0 if velho else 1]
 		var teto := _teto_do_vao(a, b)
 		var n := FIO_PONTOS

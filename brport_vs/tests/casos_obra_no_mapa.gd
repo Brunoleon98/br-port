@@ -442,7 +442,7 @@ const PASSO_PARA_A_RUA := 0.15
 const TIPOS_DE_POSTE := ["ramal", "poste", "curva_a", "curva_b", "quina"]
 ## Os postes da linha que chega à subestação, ligados pela ordem da tabela,
 ## antes dos da rua, e sem luz (quarta passagem).
-const TIPOS_DA_LINHA := ["linha", "saida"]
+const TIPOS_DA_LINHA := ["torre", "portico", "saida"]
 ## Os que levam luminária, e a lâmpada de sódio quando velhos: todos os da
 ## rua. O da quina de dentro esteve uma passagem sem ela, e voltou a tê-la.
 const TIPOS_COM_LUZ := ["ramal", "poste", "curva_a", "curva_b", "quina"]
@@ -453,7 +453,11 @@ const LUGAR_DO_TIPO := {"ramal": "reta", "poste": "reta", "curva_a": "curva",
 	"curva_b": "curva", "quina": "quina", "pedestres": "reta"}
 ## O que não é da rua e pousa no campo ao norte do pátio: a subestação e a
 ## linha que lhe chega (`_no_campo()`).
-const NO_CAMPO := ["subestacao", "linha", "saida"]
+const NO_CAMPO := ["subestacao", "torre", "portico", "saida"]
+## As colunas de tela de cada lado do pé que a máscara da vila cobre (o
+## `MASCARA_LADO` do gerador), e o fundo do mapa, que é «nada à frente».
+const MASCARA_LADO := 40
+const FUNDO_DO_MAPA := 720.0
 ## A distância mínima do pé de um poste da linha, ou da caixa da subestação,
 ## ao pé de uma planta da restinga: meia copa da aroeira, que é a maior ali.
 const FOLGA_DA_PLANTA := 0.3
@@ -506,6 +510,19 @@ func _contrato_do_mobiliario() -> void:
 		for k in range(mini(tt.size(), ct.size())):
 			atras_igual = atras_igual and absf(float(tt[k]) - float(ct[k])) < 0.05
 	conferir("o que a vila tapa da fiação (%d vãos) é o da tabela" % atras_t.size(), atras_igual)
+	var masc_t: Array = _ancoras.get("mascara_da_vila", [])
+	var masc_c: Array = _ok["MASCARA_DA_VILA"]
+	var masc_igual := not masc_t.is_empty() and masc_t.size() == masc_c.size()
+	for i in range(mini(masc_t.size(), masc_c.size())):
+		var t: Dictionary = masc_t[i]
+		var c: Array = masc_c[i]
+		var tt: Array = t["teto"]
+		var ct: Array = c[2]
+		masc_igual = masc_igual and int(t["peca"]) == int(c[0]) and int(t["x0"]) == int(c[1]) \
+			and tt.size() == ct.size()
+		for k in range(mini(tt.size(), ct.size())):
+			masc_igual = masc_igual and absf(float(tt[k]) - float(ct[k])) < 0.05
+	conferir("o que a vila tapa das peças (%d) é o da tabela" % masc_t.size(), masc_igual)
 
 	# NA CALÇADA DO LADO DELA. O D2 isenta-os de «fora do asfalto» pelo nome,
 	# porque a calçada é rua para ele — é aqui que se pergunta onde eles
@@ -788,6 +805,26 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 		elif luz == null or luz.visible == nova or luz.position != no.position:
 			luz_certa = false
 	conferir("cada peça do mobiliário mostra a arte do trecho dela %s" % dia, certo, onde)
+	# ATRÁS DA VILA, ESCONDIDA (quinta passagem): a sombra do poste da curva
+	# pintava-se por cima da igreja, que lhe fica à frente. Cada pixel opaco
+	# de cada peça (e da lâmpada dela) que cai abaixo do topo do lote à frente
+	# do PÉ, refeito aqui dos `pecas_da_vila` da tabela, tem de estar debaixo
+	# de uma máscara com esse mesmo topo; e o controle de que há algum.
+	var mascara := {"erros": 0, "tapados": 0, "onde": ""}
+	for i in range(tabela.size()):
+		var t: Dictionary = tabela[i]
+		var pe := Vector2(float(t["ponto"][0]), float(t["ponto"][1]))
+		var nome := "PosteDaRua%d" if (TIPOS_DE_POSTE.has(String(t["tipo"]))
+			or TIPOS_DA_LINHA.has(String(t["tipo"]))) else "PlacaDaRua%d"
+		if String(t["tipo"]) == "subestacao":
+			nome = "SubestacaoDaRede%d"
+		for no in [cenario.get_node_or_null(nome % i), rede.get_node_or_null("PosteLuzDaRua%d" % i)]:
+			if no is TextureRect:
+				_mascara_da_peca(no as TextureRect, pe, mascara)
+	conferir("cada peça do mobiliário some atrás do lote da vila que lhe fica à frente %s" % dia,
+		int(mascara["erros"]) == 0, String(mascara["onde"]))
+	conferir("a vila tapa pixels de alguma peça (%d) %s" % [mascara["tapados"], dia],
+		int(mascara["tapados"]) > 0)
 	conferir("a lâmpada de sódio acende só no poste velho, no quadro dele, %s" % dia, luz_certa)
 
 	# Os vãos, pela TABELA: os postes da linha pela ordem dela, da borda do
@@ -849,6 +886,55 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 	for v in vistos.values():
 		cada_vao = cada_vao and int(v) == FIOS_POR_VAO
 	conferir("cada vão leva os seus dois fios %s" % dia, cada_vao, "%s" % [vistos])
+
+
+## Os pixels opacos do nó `no` (uma peça do mobiliário, de pé em `pe`) que
+## caem abaixo do topo de um lote da vila à frente dele — a conta do
+## `mascara_da_vila()` do gerador, refeita dos `pecas_da_vila` — e, se há
+## algum, a máscara do nó tem de ter esse topo, coluna a coluna. Soma em
+## `conta`.
+func _mascara_da_peca(no: TextureRect, pe: Vector2, conta: Dictionary) -> void:
+	var x := _tela(pe.x, pe.y).x
+	var x0 := roundi(x) - MASCARA_LADO
+	var teto: Array = []
+	for c in range(x0, x0 + 2 * MASCARA_LADO + 1):
+		var v := FUNDO_DO_MAPA
+		for peca in _ancoras["pecas_da_vila"]:
+			var caixa: Array = peca["caixa"]
+			var topo: Array = peca["topo"]
+			var k := c - int(peca["x0"])
+			if k < 0 or k >= topo.size() or pe.x >= float(caixa[1]) or pe.y >= float(caixa[3]):
+				continue
+			v = minf(v, float(topo[k]))
+		teto.append(v)
+	if teto.min() >= FUNDO_DO_MAPA:
+		return
+	var img := PropIso.imagem(no.texture)
+	var esc := PropIso.escala(no.texture)
+	var tapados := 0
+	var usado := img.get_used_rect()
+	for py in range(usado.position.y, usado.end.y):
+		for px in range(usado.position.x, usado.end.x):
+			if img.get_pixel(px, py).a < 0.1:
+				continue
+			var m := no.position + Vector2(px, py) * esc
+			var c := floori(m.x) - x0
+			if c >= 0 and c < teto.size() and m.y >= float(teto[c]):
+				tapados += 1
+	if tapados == 0:
+		return
+	conta["tapados"] = int(conta["tapados"]) + tapados
+	var mat := no.material as ShaderMaterial
+	var certo := mat != null and absf(float(mat.get_shader_parameter("x0")) - x0) < 0.5
+	if certo:
+		var dele: PackedFloat32Array = mat.get_shader_parameter("teto")
+		var origem: Vector2 = mat.get_shader_parameter("origem")
+		certo = dele.size() == teto.size() and origem.distance_to(no.position) < 0.05
+		for k in range(mini(dele.size(), teto.size())):
+			certo = certo and absf(dele[k] - float(teto[k])) < 0.05
+	if not certo:
+		conta["erros"] = int(conta["erros"]) + 1
+		conta["onde"] = "%s: %d px abaixo do lote à frente, máscara %s" % [no.name, tapados, mat]
 
 
 ## Confere cada vértice do fio `linha`, do poste `ta` ao `tb` (as linhas da

@@ -1522,24 +1522,36 @@ def cavalete_obra(M, est):
     est.registrar("cavalete_obra", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
 
 
-# A LINHA DA REDE E A SUBESTAÇÃO (quarta passagem da `140`): *«pode colocar
-# postes até um dos limites do mapa para mostrar que a energia vem de algum
-# lugar, pode até fazer uma subestação de energia lá»*. O Bruno pôs a
-# subestação no campo ao norte do pátio, entre a rua de cima e a praia; a
-# linha chega-lhe da borda de cima do mapa, e um poste de saída leva a
-# energia por cima da rua até ao primeiro poste da vila. Os postes da linha
-# são os da rua sem luminária e sempre NOVOS — a cidade fora da obra do
-# porto —, um com a cruzeta de través à linha (`poste_linha`) e o de saída
-# rodado −45°, de través à curva em que a linha vira para a rua.
-POSTE_LINHA_GIROS = (("poste_linha", 0.0), ("poste_linha_saida", -45.0))
+# A LINHA DA REDE E A SUBESTAÇÃO (quarta e quinta passagens da `140`):
+# *«pode colocar postes até um dos limites do mapa para mostrar que a energia
+# vem de algum lugar, pode até fazer uma subestação de energia lá»*. O Bruno
+# pôs a subestação no relvado do campo ao norte do pátio; a linha de ALTA
+# TENSÃO chega-lhe da borda de cima do mapa em torres treliçadas, mais altas
+# e de outra forma que os postes da rua (*«torres ou postes maiores e
+# diferentes»*), e pousa no pórtico; dentro da cerca, o poste de saída leva
+# a energia por cima da rua, de frente, até ao primeiro poste da vila. São
+# sempre NOVOS: são da cidade, e a obra do porto não lhes toca.
+#
+# O poste de saída é o da rua sem luminária, rodado −45°: a cruzeta de
+# través à curva em que a linha, que desce do pórtico, vira para a rua.
+POSTE_LINHA_GIROS = (("poste_linha_saida", -45.0),)
 
 # A subestação, em unidades de mundo (`x` = `mx`, `y` = `-my`): o
 # `gerar_mapa_iso.SUBESTACAO` publica a mesma caixa, e o D45 confere que ela
 # cabe no campo. A esta escala lê-se pelo que só uma subestação tem: os
-# transformadores de radiador, o pórtico com isoladores e a cerca de grade,
-# que é FIO e não pano — um pano opaco na face que se vê tapava o resto.
-SUBESTACAO_LARG = 1.6
-SUBESTACAO_FUNDO = 2.2
+# transformadores de radiador e a cerca de grade, que é FIO e não pano — um
+# pano opaco na face que se vê tapava o resto. ⚠️ 1,4 × 1,9, e não 1,6 × 2,2
+# (quinta passagem, *«fora da areia, no relvado»*): o relvado do campo é
+# estreito, e só cabe inteira nele no sítio da aroeira, que saiu.
+SUBESTACAO_LARG = 1.4
+SUBESTACAO_FUNDO = 1.9
+
+# A torre de alta tensão: treliça de quatro pernas a afinar, e a mísula larga
+# no topo com os isoladores. Altura e isoladores em px do mapa e unidades de
+# mundo, como os do poste; o `ObraNoMapa.gd` copia-os (`ISOLADOR_DO_TIPO`).
+TORRE_ALTURA = 84.0
+TORRE_ISOLADOR = 82.0
+TORRE_ISOLADORES = (-0.42, 0.0, 0.42)
 
 
 def linha_da_rede(M, est):
@@ -1549,6 +1561,72 @@ def linha_da_rede(M, est):
             _inclinar(p, giro_z=giro)
         origem(nome)
         est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+    torre_at(M, est)
+    portico_subestacao(M, est)
+
+
+def torre_at(M, est):
+    """A torre da linha que chega à subestação. A treliça não se vê a esta
+    escala — a torre tem 7 px de pé —, mas a SILHUETA sim: quatro pernas
+    que afinam, aros de travamento e as diagonais em X nas duas faces que a
+    câmara vê, e a mísula larga lá em cima, que é o que a separa de um poste."""
+    aco = M["metal_claro"]
+    topo = z(TORRE_ALTURA - 6.0)
+    p = []
+    base, cima = 0.18, 0.06
+    def canto(sx, sy, h):
+        f = h / topo
+        r = base + (cima - base) * f
+        return (sx * r, sy * r, h)
+    cantos = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
+    for i, (sx, sy) in enumerate(cantos):
+        p.append(barra("at_perna%d" % i, canto(sx, sy, 0.0), canto(sx, sy, topo), 0.03, aco))
+    niveis = [0.0, topo * 0.22, topo * 0.44, topo * 0.64, topo * 0.82, topo]
+    for n, h in enumerate(niveis[1:], start=1):
+        for i in range(4):
+            a, b = cantos[i], cantos[(i + 1) % 4]
+            p.append(barra("at_aro%d_%d" % (n, i), canto(*a, h), canto(*b, h), 0.018, aco))
+    for n in range(len(niveis) - 1):
+        h0, h1 = niveis[n], niveis[n + 1]
+        for i in range(4):
+            a, b = cantos[i], cantos[(i + 1) % 4]
+            p.append(barra("at_diag%d_%da" % (n, i), canto(*a, h0), canto(*b, h1), 0.014, aco))
+            p.append(barra("at_diag%d_%db" % (n, i), canto(*b, h0), canto(*a, h1), 0.014, aco))
+    # A mísula: a viga ao longo de `x` (de través à linha, que corre em `my`)
+    # e dois tirantes até ao corpo, e os isoladores de pé por cima, como os
+    # do poste, para o fio pousar no topo deles.
+    viga = topo + z(2.0)
+    p.append(caixa("at_misula", (0.0, 0.0, viga), (1.0, 0.06, z(2.4)), aco))
+    for lado in (-1, 1):
+        p.append(barra("at_tirante%d" % lado, (lado * 0.48, 0.0, viga),
+                       canto(lado, 1, topo * 0.82), 0.014, aco))
+    p.append(cone("at_ponta", (0.0, 0.0, viga + z(3.0)), 0.04, 0.008, z(4.0), 4, aco))
+    for i, x in enumerate(TORRE_ISOLADORES):
+        p.append(cone("at_isolador%d" % i, (x, 0.0, viga + z(1.2) + z(1.2)),
+                      0.028, 0.018, z(2.4), 6, M["cabine"]))
+    origem("torre_at")
+    est.registrar("torre_at", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
+def portico_subestacao(M, est):
+    """O pórtico onde a linha pousa, à parte da subestação para ser ponta de
+    fio como um poste: dois pilares, a viga ao longo de `x` e os isoladores
+    à altura e no `x` dos do poste da rua (`POSTE_ISOLADOR`,
+    `POSTE_ISOLADORES`), e o `ObraNoMapa.ponta_do_fio()` serve-lhe sem
+    mudar. Fica no lado norte da cerca, por onde a linha entra."""
+    aco = M["metal"]
+    alt = z(POSTE_ALTURA)
+    viga = alt - z(POSTE_ALTURA - POSTE_ISOLADOR + 2.6)
+    p = []
+    for lado in (-1, 1):
+        p.append(barra("pt_pilar%d" % lado, (lado * 0.36, 0.0, 0.0),
+                       (lado * 0.36, 0.0, viga), 0.045, aco))
+    p.append(caixa("pt_viga", (0.0, 0.0, viga), (0.86, 0.07, z(2.4)), aco))
+    for i, x in enumerate(POSTE_ISOLADORES):
+        p.append(cone("pt_isolador%d" % i, (x, 0.0, viga + z(1.2) + z(1.2)),
+                      0.026, 0.016, z(2.4), 6, M["cabine"]))
+    origem("portico_subestacao")
+    est.registrar("portico_subestacao", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
 
 
 def subestacao(M, est):
@@ -1573,34 +1651,23 @@ def subestacao(M, est):
                            0.012, M["rede"]))
     # Dois transformadores de radiador, a olhar para `+x`, que é a face que
     # se vê, com as buchas brancas em cima.
-    for t, y in enumerate((-0.45, 0.35)):
-        p += [caixa("sub_trafo%d" % t, (-0.12, y, z(6.2)), (0.42, 0.36, z(10.0)),
+    for t, y in enumerate((-0.38, 0.30)):
+        p += [caixa("sub_trafo%d" % t, (0.05, y, z(6.2)), (0.40, 0.34, z(10.0)),
                     M["metal_claro"]),
-              caixa("sub_tampa%d" % t, (-0.12, y, z(11.4)), (0.46, 0.40, z(0.8)),
+              caixa("sub_tampa%d" % t, (0.05, y, z(11.4)), (0.44, 0.38, z(0.8)),
                     M["metal"])]
-        for r, dy in enumerate((-0.12, -0.04, 0.04, 0.12)):
-            p.append(caixa("sub_aleta%d_%d" % (t, r), (0.13, y + dy, z(6.0)),
+        for r, dy in enumerate((-0.11, -0.04, 0.03, 0.10)):
+            p.append(caixa("sub_aleta%d_%d" % (t, r), (0.29, y + dy, z(6.0)),
                            (0.08, 0.025, z(8.0)), M["metal"]))
-        for b, dy in enumerate((-0.11, 0.0, 0.11)):
-            p.append(cone("sub_bucha%d_%d" % (t, b), (-0.18, y + dy, z(13.6)),
+        for b, dy in enumerate((-0.10, 0.0, 0.10)):
+            p.append(cone("sub_bucha%d_%d" % (t, b), (-0.01, y + dy, z(13.6)),
                           0.03, 0.018, z(3.6), 6, M["cabine"]))
-    # O pórtico de entrada, onde a linha chega: dois pilares de metal, a
-    # viga e três isoladores pendurados.
-    vy = 0.75
-    for lado, y in (("a", -vy), ("b", vy)):
-        p.append(barra("sub_pilar_" + lado, (-0.55, y, z(1.2)), (-0.55, y, z(30.0)),
-                       0.05, M["metal"]))
-    p.append(barra("sub_viga", (-0.55, -vy - 0.05, z(30.0)), (-0.55, vy + 0.05, z(30.0)),
-                   0.05, M["metal"]))
-    for i, y in enumerate((-0.4, 0.0, 0.4)):
-        p.append(cone("sub_isolador%d" % i, (-0.55, y, z(27.2)), 0.026, 0.016,
-                      z(4.0), 6, M["cabine"]))
     # A casa de comando, branca de porta a `+x`, e a placa de perigo na
     # cerca da face `-y`, que é a que se vê.
-    p += [caixa("sub_casa", (0.45, 0.72, z(6.6)), (0.5, 0.5, z(10.8)), M["parede"]),
-          caixa("sub_casa_teto", (0.45, 0.72, z(12.4)), (0.58, 0.58, z(1.0)), M["zinco"]),
-          caixa("sub_casa_porta", (0.705, 0.72, z(4.8)), (0.02, 0.16, z(7.0)), M["porta"]),
-          caixa("sub_perigo", (0.25, my_ + 0.02, z(5.0)), (0.2, 0.012, z(4.0)),
+    p += [caixa("sub_casa", (0.38, -0.66, z(6.6)), (0.44, 0.44, z(10.8)), M["parede"]),
+          caixa("sub_casa_teto", (0.38, -0.66, z(12.4)), (0.52, 0.52, z(1.0)), M["zinco"]),
+          caixa("sub_casa_porta", (0.605, -0.66, z(4.8)), (0.02, 0.15, z(7.0)), M["porta"]),
+          caixa("sub_perigo", (-0.25, -my_ - 0.02, z(5.0)), (0.2, 0.012, z(4.0)),
                 M["placa_amarela"])]
     origem("subestacao")
     est.registrar("subestacao", p, celulas=(2, 2), zenite=ZENITE_DO_MOBILIARIO)
