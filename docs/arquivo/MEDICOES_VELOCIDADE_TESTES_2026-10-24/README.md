@@ -150,3 +150,30 @@ olhar, e não reprova.
 é o que os painéis MOSTRAM e o que os botões FAZEM (as suítes perguntam se o
 painel abre e cabe), as preferências que se gravam, o som que se agenda e a
 telemetria do playtest.
+
+## Depois da `138` — as mesmas 205, com as guardas novas
+
+A `138` fechou as treze graves e treze das médias. A mesma amostra (os 209
+de `amostra_mutacao.json`, `ferramentas/amostra.py rodar`, sem mudar nada),
+na árvore com as guardas, em quatro cópias (77 min):
+
+| | Antes (`137`) | Depois (`138`) |
+|---|---|---|
+| apanhados, dos 205 válidos | 106 (52%) | **131 (64%)** |
+| sem os equivalentes | 56% (15) | **69%** (16 — o calendário era um) |
+| perdidos | — | 0 |
+| graves que sobrevivem | 13 | **0** |
+| médias que sobrevivem | 28 | 16 (as quinze de fora e o calendário) |
+| baixas que sobrevivem | 43 | 43 |
+
+Os 25 novos são os treze graves e os doze médios, cada um pela guarda que
+se escreveu para ele. A comparação é `ferramentas/comparar.py`, provada antes
+de a usar: o antes contra si próprio dá 106 → 106, e um ganho e uma perda
+plantados à mão aparecem os dois. Os resultados estão em
+`amostra_depois_da_138.json` e `comparacao_depois_da_138.json`, e a saída do
+`--explorar` dos 25 em `explorar_138.txt`.
+
+**As suítes não ficaram mais lentas que o ruído**, em série e emparelhadas
+com a `main`, duas voltas: 101,5 e 105,9 s na `main`, 103,2 e 101,7 s com as
+guardas. E as seis ao mesmo tempo, pelo `tools/correr_suites.py` (`139`):
+99,3 / 102,8 s em série contra 53 / 50 s, emparelhado.

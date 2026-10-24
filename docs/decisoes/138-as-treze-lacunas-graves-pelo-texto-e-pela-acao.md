@@ -79,7 +79,23 @@ ramo do dedo partido e o mutante passaria; reprovou, e só na guarda do dedo.
 
 ## A prova
 
-PROVA
+- **As seis suítes verdes** com as guardas todas, e nenhuma mais lenta do
+  que o ruído: em série, emparelhadas com a `main` em duas voltas, 101,5 e
+  105,9 s lá, 103,2 e 101,7 s aqui.
+- **O catálogo inteiro**, duas vezes, em quatro cópias: *«MUTANTES OK — 179
+  defeito(s)»* em 30 min com as graves, e *«MUTANTES OK — 191 defeito(s)»*
+  em 31 min com as médias. No CI, as três fatias crescem com ele — a medir
+  no PR.
+- **A mesma amostra da `137`**, os 205 válidos, na árvore final: **106 → 131
+  apanhados (52% → 64%; 56% → 69% sem os equivalentes, que passaram de 15 a
+  16)**, nenhum perdido, e nenhum grave a sobreviver. Os 25 novos são os 13
+  graves e os 12 médios; ficam as quinze médias de fora, o calendário e as 43
+  baixas. A régua da comparação foi provada antes de a usar: o antes contra
+  si próprio dá 106 → 106, e um ganho e uma perda plantados aparecem os
+  dois. Os números e os resultados estão em
+  `docs/arquivo/MEDICOES_VELOCIDADE_TESTES_2026-10-24/`.
+- **E o PR #150, a `137`, chegou à `main`** pelas mãos do Bruno (`10b9d7c`),
+  com os tempos do runner registados lá.
 
 ## As de gravidade média: treze, escolha do Bruno
 

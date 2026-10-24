@@ -854,8 +854,9 @@ a quatro, nenhuma prova a menos —; e **as treze lacunas graves que a `137`
 mediu**, **fechadas em 24/10 (`138`)** — cada uma com a guarda pelo texto e
 pela ação e o defeito no catálogo —, e com elas treze das 28 de gravidade
 média, que o Bruno pediu a seguir (lógica, telemetria, painéis e
-preferências; as visuais ficaram de fora). **A seguir, os sprites de
-detalhes**, que abrem com a foto do jogo e a pergunta do escopo. Fora
+preferências; as visuais ficaram de fora), e as seis suítes em paralelo
+para os agentes (`139`). **A seguir, os sprites de detalhes**, que abrem com
+a foto do jogo e a pergunta do escopo. Fora
 dela, para depois: animar as marolas e o fio diagonal da ponta norte do
 cais (`124`), os gates A4 e A7, e o galpão recuperado V3.
 

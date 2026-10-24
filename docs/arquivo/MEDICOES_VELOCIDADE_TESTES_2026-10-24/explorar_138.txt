@@ -1,0 +1,342 @@
+Base:
+  verde     run_tests (27 s)
+  verde     teste_design (50 s)
+  verde     teste_audio (0 s)
+  verde     teste_fumaca (14 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+3 mutante(s):
+  servir-sem-reputacao  (138)
+      run_tests        2 reprovada(s): T31: atender um barco sobe a reputação em 0.8 | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  arranque-troca-o-save  (138)
+      run_tests        3 reprovada(s): T31: o arranque abre a partida gravada, e não uma nova | T31: sem save, o arranque abre partida nova | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  caixa-entrou-ao-contrario  (138)
+      run_tests        2 reprovada(s): T31: o caixa diz o que entrou ontem (R$8.000), com o total de cada dia | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explorar1/relatorio.json.
+Base:
+  verde     run_tests (28 s)
+  verde     teste_design (50 s)
+  verde     teste_audio (0 s)
+  verde     teste_fumaca (15 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+3 mutante(s):
+  cancelar-sem-botao  (138)
+      run_tests        2 reprovada(s): T24: a confirmação mostra o botão Cancelar serviço | T24: cancelamento, contas, migração, interface e registro
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  cancelar-recusa-esquecida  (138)
+      run_tests        4 reprovada(s): T24: recusa pede reabrir: confirmar outra vez não cancela | T24: confirmação real cobra uma vez | T24: registro 5 observa uma vez, sem identidade pessoal | T24: cancelamento, contas, migração, interface e registro
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  meta-cedo-sem-fechar  (138)
+      run_tests        2 reprovada(s): T31: antes da Fase 2 a meta diz quando abre e deixa fechar | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explorar2/relatorio.json.
+Base:
+  verde     run_tests (28 s)
+  verde     teste_design (49 s)
+  verde     teste_audio (0 s)
+  verde     teste_fumaca (15 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+3 mutante(s):
+  parcela-falta-sem-fechar  (138)
+      run_tests        2 reprovada(s): T31: a parcela com falta deixa fechar | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  doca-sem-valor  (138)
+      run_tests        3 reprovada(s): T31: o cartão da doca mostra o valor do barco atracado | T31: e, com o acordo, o valor acordado | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  ajustes-rotulos-trocados  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     1 reprovada(s): RB5: o botao que diz Maior aplica o maior e o que diz Padrao volta
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explorar3/relatorio.json.
+Base:
+  verde     run_tests (28 s)
+  verde     teste_design (49 s)
+  verde     teste_audio (0 s)
+  verde     teste_fumaca (14 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+4 mutante(s):
+  volume-nao-grava  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      1 reprovada(s): e o 0,5 fica gravado no arquivo de volume  — o arquivo diz -1.000
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  ambiente-sem-relogio  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      3 reprovada(s): o relógio do mar pede o som do mar  — pediu «» | e o relógio do mar volta a armar-se entre 6.5 e 9.5 s  — 2.00 s | o relógio da gaivota pede o som da gaivota  — pediu «»
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  rolo-ignora-o-dedo  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     1 reprovada(s): RB5: arrasto com um dedo rola sem executar acao da partida
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  fila-cascos-a-zero  (138)
+      run_tests        2 reprovada(s): T31: cada barco ao largo tem casco à vista ([0, 0, 0] px) | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explorar4/relatorio.json.
+Base:
+  verde     run_tests (26 s)
+  verde     teste_design (48 s)
+  verde     teste_audio (0 s)
+  verde     teste_fumaca (15 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+3 mutante(s):
+  recordes-vazam-no-load  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  alocar-fora-do-array  (138)
+      run_tests        2 reprovada(s): T31: alocar fora do array recusa sem erro do motor | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  registro-partida-nova-retomada  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   1 reprovada(s): a partida nova do dia 1 grava-se como nova, não retomada  — [{ "caixa_inicial": 400000.0, "e": "abriu", "jogo": "", "numero_da_fase": 1.0, "parcela": 140000.0, "plataforma": "Linux", "quando": "2026-10-24T06:14:40", "retomada": true, "t_inicial": 1.0, "turnos_por_semana": 7.0, "turnos_totais": 84.0, "versao": 5.0 }]
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explE1/relatorio.json.
+Base:
+  verde     run_tests (26 s)
+  verde     teste_design (49 s)
+  verde     teste_audio (0 s)
+  verde     teste_fumaca (14 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+3 mutante(s):
+  registro-turno-nasce-com-aviso  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   2 reprovada(s): o turno sem aviso vermelho conta zero avisos  — [{ "alocados": 2.0, "avisos_ruins": 1.0, "barcos": 2.0, "caixa": 400000.0, "docas": 2.0, "e": "turno", "ms": 0.0, "perdidos": 0.0, "rep": 65.0, "s": 1.0, "servidos": 0.0, "t": 2.0, "trab": 2.0 }] | e um aviso vermelho no turno conta um  — [{ "alocados": 2.0, "avisos_ruins": 1.0, "barcos": 2.0, "caixa": 400000.0, "docas": 2.0, "e": "turno", "ms": 0.0, "perdidos": 0.0, "rep": 65.0, "s": 1.0, "servidos": 0.0, "t": 2.0, "trab": 2.0 }, { "alocados": 2.0, "avisos_ruins": 2.0, "barcos": 2.0, "caixa": 400000.0, "docas": 2.0, "e": "turno", "ms": 1.0, "perdidos": 0.0, "rep": 66.0, "s": 1.0, "servidos": 0.0, "t": 3.0, "trab": 2.0 }]
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  registro-docas-ao-contrario  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   1 reprovada(s): o turno conta as duas docas com trabalhador  — [{ "alocados": 0.0, "avisos_ruins": 0.0, "barcos": 2.0, "caixa": 400000.0, "docas": 2.0, "e": "turno", "ms": 1.0, "perdidos": 0.0, "rep": 65.0, "s": 1.0, "servidos": 0.0, "t": 2.0, "trab": 2.0 }]
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  diario-fase-2-sem-legenda  (138)
+      run_tests        2 reprovada(s): T31: a página da Fase 2 relida diz que a fase acabou | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explE2/relatorio.json.
+Base:
+  verde     run_tests (26 s)
+  verde     teste_design (48 s)
+  verde     teste_audio (1 s)
+  verde     teste_fumaca (15 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+3 mutante(s):
+  docas-sem-quem-opera  (138)
+      run_tests        2 reprovada(s): T31: o painel das docas diz a classe, quando paga e quem opera | T31: reputação, arranque e o que os painéis mostram e fazem
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  espacos-nova-sem-titulo  (138)
+      run_tests        2 reprovada(s): T27: Nova partida com espaços ocupados pergunta onde, com o título | T27: resumo de retomada e consulta sem efeitos
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  meu-porto-sem-dia  (138)
+      run_tests        2 reprovada(s): T27: o resumo escreve o dia e a semana | T27: resumo de retomada e consulta sem efeitos
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explE3/relatorio.json.
+Base:
+  verde     run_tests (26 s)
+  verde     teste_design (48 s)
+  verde     teste_audio (0 s)
+  verde     teste_fumaca (15 s)
+  verde     teste_registro (1 s)
+  verde     asset_validator (11 s)
+
+3 mutante(s):
+  leitura-maior-nao-acomoda  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     1 reprovada(s): RB5: o Construir no Maior cabe na tela baixa e rola por dentro
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  doca-realce-some-reduzido  (138)
+      run_tests        2 reprovada(s): T29: doca com barco à espera mantém realce fixo | T29: preferência, movimento, informação e isolamento
+      teste_design     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+  memoria-marca-inicio  (138)
+      run_tests        SOBREVIVEU — a suíte passou com o defeito posto
+      teste_design     1 reprovada(s): RB5: a marca e o primeiro caractere a vista no paragrafo cortado
+      teste_audio      SOBREVIVEU — a suíte passou com o defeito posto
+      teste_fumaca     SOBREVIVEU — a suíte passou com o defeito posto
+      teste_registro   SOBREVIVEU — a suíte passou com o defeito posto
+      asset_validator  SOBREVIVEU — a suíte passou com o defeito posto
+
+Base no fim:
+  verde     run_tests
+  verde     teste_design
+  verde     teste_audio
+  verde     teste_fumaca
+  verde     teste_registro
+  verde     asset_validator
+
+Explorado — relatório em <rascunho>/explE4/relatorio.json.
+e3 rc=0
+e4 rc=0
+e2 rc=0
+e1 rc=0
+Base:
+  verde     run_tests (25 s)
+
+1 mutante(s):
+  recordes-vazam-no-load  (138)
+      run_tests        2 reprovada(s): T31: o recorde malformado no save carrega a zero, sem herdar o da partida viva | T31: reputação, arranque e o que os painéis mostram e fazem
+
+Base no fim:
+  verde     run_tests
+
+Explorado — relatório em <rascunho>/explR/relatorio.json.

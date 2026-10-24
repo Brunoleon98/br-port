@@ -20,7 +20,15 @@ própria do catálogo, com o id da amostra ao lado.
 preferências; as visuais ficaram de fora): doze com guarda e defeito no
 catálogo, numa secção própria, e o calendário registado como equivalente.
 
-PROVA-BRIEFING
+**A prova:** as seis suítes verdes, nenhuma mais lenta do que o ruído; o
+catálogo inteiro, *«MUTANTES OK — 191 defeito(s)»* em 31 min com quatro
+cópias; e a mesma amostra da `137` na árvore final: **106 → 131 apanhados dos
+205 (52% → 64%)**, nenhum perdido e nenhum grave a sobreviver.
+
+**Decisão `139` — as seis suítes em paralelo para os agentes**, a pedido do
+Bruno no fim: `python3 tools/correr_suites.py --godot "$G"`, que espera
+`SUITES OK`, cada suíte com o seu `user://`; 99–103 s em série contra
+50–53 s, emparelhado. O CI corre o autoteste dele (`ATALHO PROVADO`).
 
 ⚠️ Botão de painel escolhe-se pelo que ele diz, e o toque do telefone prova-se
 com `ScreenTouch`/`ScreenDrag` no `push_input`
@@ -43,6 +51,9 @@ conferem»).
 
 ⚠️ A captura em paralelo ganha 1,4× no runner, contra ~3× aqui (`137`, «A
 prova»).
+
+⚠️ O tempo de cada processo em paralelo é o do fim DELE, não a vez de ser
+esperado (o comentário de `fins` em `tools/correr_suites.py`).
 
 **Pendente:** o PR desta branch, que é decisão do Bruno. As quinze médias
 que ficaram de fora (treze visuais, uma de texto, uma fora do headless)
