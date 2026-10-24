@@ -114,7 +114,9 @@ TETO_SEGUNDOS=180
 # mesmas, byte a byte, nas duas maneiras.
 PARALELO="${PARALELO:-4}"
 TEMPORARIA=$(mktemp -d)
-trap 'kill $(jobs -p) 2>/dev/null; rm -rf "$TEMPORARIA"' EXIT
+# ⚠️ O `|| true` não é enfeite: sem tiro nenhum vivo, `kill` sem argumento sai
+# com 2, e o `set -e` vale DENTRO do trap — a bateria inteira verde saía com 2.
+trap 'kill $(jobs -p) 2>/dev/null || true; rm -rf "$TEMPORARIA"' EXIT
 LANCADOS=()
 TELA=99
 
