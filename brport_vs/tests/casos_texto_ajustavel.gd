@@ -340,6 +340,28 @@ func _leitura_e_campos() -> void:
 	ajuda._mostrar("glossario")
 	await assentar()
 	var rolo: ScrollContainer = ajuda._rolo
+	# ⚠️ A MARCA É O PRIMEIRO CARACTERE À VISTA, NÃO O INÍCIO DO PARÁGRAFO
+	# (`138`). O caso de baixo confere que a marca se conserva — e conserva-se
+	# seja qual for o caractere marcado. Com o topo a cortar um parágrafo a
+	# meio, o caractere 0 está acima da dobra, e a marca tem de cair depois.
+	var paragrafo: Label = null
+	for no in TextoDaInterface.descendentes(rolo):
+		if no is Label and no.get_line_count() >= 4 and (paragrafo == null or no.size.y > paragrafo.size.y):
+			paragrafo = no
+	var corte := false
+	if paragrafo != null:
+		rolo.scroll_vertical += roundi(paragrafo.global_position.y - rolo.global_position.y
+			+ paragrafo.size.y / 2.0)
+		await assentar()
+		var meio := MemoriaDeLeitura.marcar(rolo)
+		var topo := rolo.global_position.y
+		if not meio.is_empty() and meio.no == paragrafo and meio.caractere > 0:
+			var marcada: Rect2 = paragrafo.get_character_bounds(meio.caractere)
+			var anterior: Rect2 = paragrafo.get_character_bounds(meio.caractere - 1)
+			corte = paragrafo.global_position.y < topo \
+				and paragrafo.global_position.y + marcada.end.y > topo \
+				and paragrafo.global_position.y + anterior.end.y <= topo + 1.0
+	conferir("a marca e o primeiro caractere a vista no paragrafo cortado", corte)
 	rolo.scroll_vertical = 280
 	await assentar()
 	var marca := MemoriaDeLeitura.marcar(rolo)

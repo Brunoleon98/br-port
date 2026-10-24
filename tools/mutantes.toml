@@ -632,6 +632,177 @@ depois = '''
 '''
 reprova = { run_tests = "T31: cada barco ao largo tem casco à vista" }
 
+# ── AS LACUNAS MÉDIAS QUE O BRUNO ESCOLHEU (`138`) ─────────────────────────
+# Da mesma amostra; lógica, telemetria, painéis e preferências. O do calendário
+# (`GameState:1305:bool`) não entra: é equivalente — o `calendario()` pergunta
+# `vencimentos.has(t)`, e o `false` deixa a chave lá.
+
+# amostra: GameState:2952:apagar
+[[mutante]]
+id = "recordes-vazam-no-load"
+de = "138"
+o_que = "o save sem recordes carrega com os recordes da partida que estava viva"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+	# chave, e um campo que falte fica em «ainda não houve».
+	_recordes = RECORDES_ZERADOS.duplicate(true)
+'''
+depois = '''
+	# chave, e um campo que falte fica em «ainda não houve».
+	pass
+'''
+
+# amostra: GameState:1344:rel
+[[mutante]]
+id = "alocar-fora-do-array"
+de = "138"
+o_que = "alocar na doca de índice igual ao total passa a guarda e rebenta no array"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool:
+	if phase != ESTADO_JOGANDO:
+		return false
+	if dock_index < 0 or dock_index >= docks.size():
+'''
+depois = '''
+func assign_worker(worker_id: int, dock_index: int, avisar: bool = true) -> bool:
+	if phase != ESTADO_JOGANDO:
+		return false
+	if dock_index < 0 or dock_index > docks.size():
+'''
+
+# amostra: Registro:203:rel
+[[mutante]]
+id = "registro-partida-nova-retomada"
+de = "138"
+o_que = "o registro grava toda partida nova como retomada"
+alvo = "brport_vs/autoload/Registro.gd"
+antes = '''
+		"retomada": _GS.turn > 1,
+'''
+depois = '''
+		"retomada": _GS.turn >= 1,
+'''
+
+# amostra: Registro:295:const
+[[mutante]]
+id = "registro-turno-nasce-com-aviso"
+de = "138"
+o_que = "cada turno do registro começa com um aviso vermelho contado"
+alvo = "brport_vs/autoload/Registro.gd"
+antes = '''
+	_mensagens_ruins = 0
+'''
+depois = '''
+	_mensagens_ruins = 1
+'''
+
+# amostra: Registro:316:rel
+[[mutante]]
+id = "registro-docas-ao-contrario"
+de = "138"
+o_que = "o registro conta as docas sem trabalhador no lugar das com trabalhador"
+alvo = "brport_vs/autoload/Registro.gd"
+antes = '''
+			if d["worker_id"] != null:
+'''
+depois = '''
+			if d["worker_id"] == null:
+'''
+
+# amostra: DiarioFase2:9:apagar
+[[mutante]]
+id = "diario-fase-2-sem-legenda"
+de = "138"
+o_que = "a página do fim da Fase 2 perde a legenda «Fase 2 concluída»"
+alvo = "brport_vs/scripts/DiarioFase2.gd"
+antes = '''
+	legenda_acima_do_caderno("Fase 2 concluída", "O porto continua em jogo livre.", Icones.VITORIA)
+'''
+depois = '''
+	pass
+'''
+
+# amostra: PainelDocas:159:apagar
+[[mutante]]
+id = "docas-sem-quem-opera"
+de = "138"
+o_que = "o painel das docas perde a linha de classe, prazo e trabalhador"
+alvo = "brport_vs/scripts/PainelDocas.gd"
+antes = '''
+		_apoio(coluna, "%s · %s · #%d" % [classe, quando, int(doca["worker_id"])])
+'''
+depois = '''
+		pass
+'''
+
+# amostra: PainelEspacos:52:apagar
+[[mutante]]
+id = "espacos-nova-sem-titulo"
+de = "138"
+o_que = "a escolha de espaço para partida nova perde o título"
+alvo = "brport_vs/scripts/PainelEspacos.gd"
+antes = '''
+		titulo_encorpado(Icones.RECOMECAR, "Nova partida")
+'''
+depois = '''
+		pass
+'''
+
+# amostra: PainelMeuPorto:26:apagar
+[[mutante]]
+id = "meu-porto-sem-dia"
+de = "138"
+o_que = "o «Meu porto agora» perde o dia e a semana"
+alvo = "brport_vs/scripts/PainelMeuPorto.gd"
+antes = '''
+	tarja(resumo["dia"], resumo["semana"])
+'''
+depois = '''
+	pass
+'''
+
+# amostra: AcomodacaoDeLeitura:88:not
+[[mutante]]
+id = "leitura-maior-nao-acomoda"
+de = "138"
+o_que = "no texto Maior, o cartão alto não ganha rolo nem se acomoda"
+alvo = "brport_vs/scripts/AcomodacaoDeLeitura.gd"
+antes = '''
+	var conteudo: Control = cartao.get_meta(&"cartao_rolavel_rb5")
+	if not is_instance_valid(conteudo):
+'''
+depois = '''
+	var conteudo: Control = cartao.get_meta(&"cartao_rolavel_rb5")
+	if is_instance_valid(conteudo):
+'''
+
+# amostra: DocaCartao:206:apagar
+[[mutante]]
+id = "doca-realce-some-reduzido"
+de = "138"
+o_que = "com «reduzir movimento», o realce do cartão da doca à espera some"
+alvo = "brport_vs/scripts/DocaCartao.gd"
+antes = '''
+		modulate = Color(1.3, 1.18, 0.8)
+'''
+depois = '''
+		pass
+'''
+
+# amostra: MemoriaDeLeitura:18:logico
+[[mutante]]
+id = "memoria-marca-inicio"
+de = "138"
+o_que = "a memória de leitura marca o início do parágrafo, e não o que está à vista"
+alvo = "brport_vs/scripts/MemoriaDeLeitura.gd"
+antes = '''
+				if letra.size.y > 0 and no.global_position.y + letra.end.y > topo:
+'''
+depois = '''
+				if letra.size.y > 0 or no.global_position.y + letra.end.y > topo:
+'''
+
 # ── O JOGADOR AO ACASO (`118`) ─────────────────────────────────────────────
 # Defeitos que nenhum bloco montava o estado para ver; o T26 joga até lá.
 

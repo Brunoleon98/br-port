@@ -19,6 +19,11 @@ extends RefCounted
 # Os outros seis vivem ao lado das irmãs deles: o cancelamento no T24, os
 # Ajustes e o arrasto com o dedo no RB5 do `teste_design`, o volume e o mar no
 # `teste_audio`.
+#
+# E quatro das de gravidade MÉDIA, que o Bruno pediu a seguir: os recordes
+# que vazam para a partida carregada, a alocação fora do array, a linha de
+# quem opera no painel das docas e a legenda da página do fim da Fase 2. As
+# outras médias vivem no T27, no T29, no RB5 e no R9 do `teste_registro`.
 # ============================================================
 
 const CENA := "res://scenes/Main.tscn"
@@ -27,6 +32,18 @@ var gs
 var arvore: SceneTree
 var falhas := 0
 var completo := false
+
+
+# Os erros do motor que caem dentro de uma janela. Uma função tipada que
+# rebenta devolve o zero do tipo a quem chamou (`gdscript.md`), e o `false`
+# de uma recusa e o de um índice fora do array são o mesmo valor: só o erro
+# os separa, e até ao `Logger` do 4.5 uma suíte não o via.
+class Escuta extends Logger:
+	var erros: Array = []
+
+	func _log_error(_funcao: String, _arquivo: String, _linha: int, codigo: String,
+			_razao: String, _editor: bool, _tipo: int, _pilha: Array[ScriptBacktrace]) -> void:
+		erros.append(codigo)
 
 
 func conferir(nome: String, condicao: bool) -> void:
@@ -105,6 +122,8 @@ func rodar(estado, tree: SceneTree) -> void:
 	arvore = tree
 	reputacao_ao_servir()
 	await arranque_carrega_o_save()
+	recordes_nao_vazam()
+	alocar_fora_do_array()
 	montar()
 	var main: Node = load(CENA).instantiate()
 	arvore.root.add_child(main)
@@ -114,6 +133,8 @@ func rodar(estado, tree: SceneTree) -> void:
 	await meta_deixa_fechar(main)
 	await doca_mostra_o_valor(main)
 	await cascos_da_fila_a_vista(main)
+	await painel_das_docas_diz_quem_opera(main)
+	await diario_da_fase_2_diz_que_concluiu(main)
 	main.queue_free()
 	await assentar()
 	arvore.root.get_node("Registro").desarmar()
@@ -319,3 +340,82 @@ func cascos_da_fila_a_vista(main: Node) -> void:
 		a_vista = a_vista and h >= 20 and h <= 70
 	conferir("cada barco ao largo tem casco à vista (%s px)" % str(alturas), a_vista)
 	await limpar_overlay(main)
+
+
+# ⚠️ O `load_game()` ZERA OS RECORDES ANTES DE OS LER, e é essa linha que
+# separa as duas partidas: sem ela, o que o save não trouxer fica com o valor
+# da partida que estava viva. Nenhum save que o jogo grava hoje vem sem eles —
+# o que esta guarda defende é a leitura escrita ao lado dela, «um campo que
+# falte fica em ainda não houve», e é por isso que o save se monta sem a chave.
+func recordes_nao_vazam() -> void:
+	montar()
+	gs.docks[0] = {"boat": barco(907, 8800), "worker_id": int(gs.workers[0]["id"])}
+	gs.workers[0]["busy_turns"] = 1
+	gs.advance_turn()
+	var vivo: int = int(gs.recordes()["maior_negocio"]["valor"])
+	gs.save_game()
+	var dados: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(gs.save_path))
+	dados.erase("recordes")
+	var f := FileAccess.open(gs.save_path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(dados))
+	f.close()
+	var carregou: bool = gs.load_game()
+	var negocio: Dictionary = gs.recordes()["maior_negocio"]
+	conferir("o save sem recordes carrega sem herdar os da partida viva", vivo == 8800
+		and carregou and int(negocio["valor"]) == 0 and int(negocio["turno"]) == 0)
+
+
+# A LINHA DE QUEM OPERA é o que o painel das docas diz a mais do que o
+# cartão do rodapé: a classe, quando paga e o número do trabalhador.
+func painel_das_docas_diz_quem_opera(main: Node) -> void:
+	montar()
+	var trabalhador: int = int(gs.workers[0]["id"])
+	gs.docks[0] = {"boat": barco(908, 7000), "worker_id": trabalhador}
+	gs.workers[0]["busy_turns"] = 1
+	main._refresh_all()
+	main.get_node("HudBar/DocasPilula").gui_input.emit(soltar())
+	var painel: Node = ultimo_painel(main)
+	conferir("o painel das docas diz a classe, quando paga e quem opera",
+		painel != null and painel.scene_file_path.ends_with("PainelDocas.tscn")
+		and textos(painel).has("Pesqueiro · paga ao avançar o dia · #%d" % trabalhador))
+	await limpar_overlay(main)
+
+
+# A PÁGINA DO FIM DA FASE 2 relê-se pela meta conquistada, e a legenda acima
+# do caderno é o que diz que a fase acabou: sem ela, a página é um texto do
+# diário como outro qualquer.
+func diario_da_fase_2_diz_que_concluiu(main: Node) -> void:
+	montar()
+	gs.numero_da_fase = 2
+	gs.turn = 100
+	gs.meta_concluida = true
+	gs.primeiro_cargueiro = true
+	gs.dias_de_reputacao = 3
+	gs.estruturas = ["pier_2", "trelica", "pier_3"]
+	main._refresh_all()
+	main.get_node("MetaCartao").gui_input.emit(soltar())
+	var meta: Node = ultimo_painel(main)
+	var reler: Button = botao(meta, "Reler a página do diário") if meta != null else null
+	if reler != null:
+		reler.pressed.emit()
+	var diario: Node = null
+	for painel in main.get_node("Overlay").get_children():
+		if painel.scene_file_path.ends_with("DiarioFase2.tscn"):
+			diario = painel
+	conferir("a página da Fase 2 relida diz que a fase acabou", reler != null
+		and diario != null and textos(diario).has("Fase 2 concluída"))
+	await limpar_overlay(main)
+
+
+# ⚠️ O ÍNDICE IGUAL AO TOTAL É O QUE A GUARDA DE LIMITES SEPARA (`138`). O
+# jogo já não chama o `assign_worker()` — atracar leva o trabalhador junto —,
+# mas as suítes montam estados com ele, e com o `>=` trocado por `>` a doca
+# de índice igual ao total passava a guarda e rebentava no array: a recusa
+# continuava a ser `false`, e só o erro dizia a diferença.
+func alocar_fora_do_array() -> void:
+	montar()
+	var escuta := Escuta.new()
+	OS.add_logger(escuta)
+	var aceitou: bool = gs.assign_worker(int(gs.workers[0]["id"]), gs.docks.size(), false)
+	OS.remove_logger(escuta)
+	conferir("alocar fora do array recusa sem erro do motor", not aceitou and escuta.erros.is_empty())
