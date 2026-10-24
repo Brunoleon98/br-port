@@ -1452,6 +1452,54 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_poste_linha_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_linha.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_linha_saida_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_linha_saida.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_poste_luz_base",
       "category": "porto",
       "stage": "base",
@@ -1686,6 +1734,35 @@
       "habitat": "terra",
       "godot_scene": "",
       "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_quina_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_quina_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
     },
     {
       "id": "BRP_porto_poste_rua_quina_novo_base",
@@ -2079,6 +2156,30 @@
       "habitat": "terra",
       "godot_scene": "",
       "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_subestacao_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "subestacao.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
     },
     {
       "id": "BRP_fauna_tartaruga_verde_base",
