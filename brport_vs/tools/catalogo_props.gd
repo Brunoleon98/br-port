@@ -340,8 +340,8 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 		for peca in obra["MOBILIARIO"]:
 			for t in obra["ARTE_DO_MOBILIARIO"][peca[0]]:
 				pecas.append([t, peca[1]])
-			if peca[0] == "poste":
-				pecas.append([obra["LUZ_DE_SODIO"], peca[1]])
+			if (obra["LUZ_DE_SODIO"] as Dictionary).has(peca[0]):
+				pecas.append([obra["LUZ_DE_SODIO"][peca[0]], peca[1]])
 		for dia in obra["CAVALETES"]:
 			for v in dia[1]:
 				pecas.append([obra["CAVALETE"], v])

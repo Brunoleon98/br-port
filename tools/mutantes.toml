@@ -1527,6 +1527,28 @@ antes = '	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)'
 depois = '	var t := deg_to_rad(0.0)'
 
 [[mutante]]
+id = "quina-sem-giro"
+de = "140"
+o_que = "a fiação pousa no poste da quina como se a cruzeta dele corresse em mx, e não rodada 45°: os fios que viram com a rua saem do ar"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	return POSTE_QUINA_GIRO if MOBILIARIO[i][0] == "quina" else 0.0'
+depois = '	return 0.0'
+
+[[mutante]]
+id = "quina-fora-do-arco"
+de = "140"
+o_que = "a tabela põe o poste da quina do primeiro cotovelo dentro do asfalto da curva, e não no arco da calçada de fora"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -0.474,
+    7.674
+'''
+depois = '''
+    0.0,
+    7.2
+'''
+
+[[mutante]]
 id = "rede-por-cima-de-tudo"
 de = "140"
 o_que = "a rede da rua desenha-se depois das docas: os fios e as lâmpadas passam por cima dos camiões e dos prédios"

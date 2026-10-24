@@ -429,6 +429,8 @@ const RAIO_DO_ISOLADOR := 2
 ## o isolador dá 0,72 a 0,74, e a peça clara seguinte, o concreto novo, 0,60
 ## no p90 — o corte vai a meio.
 const LUZ_DO_ISOLADOR := 0.66
+## Os fios de cada vão (`140`, terceira passagem: eram três e liam pesados).
+const FIOS_POR_VAO := 2
 
 
 func _contrato_do_mobiliario() -> void:
@@ -464,6 +466,23 @@ func _contrato_do_mobiliario() -> void:
 	for t in tabela:
 		var x := float(t["ponto"][0])
 		var y := float(t["ponto"][1])
+		if String(t["tipo"]) == "quina":
+			# O poste da quina vive no arco da calçada de fora do cotovelo:
+			# concêntrico com o do asfalto, entre o raio dele e o raio mais a
+			# calçada, e no quadrante da quina (`mx` baixo, `my` alto).
+			var na_quina := false
+			for cot in _ancoras["cotovelos"]:
+				var r := float(cot["raio"])
+				var largura := float(cot["asfalto_mx"][0]) - float(cot["mx"][0])
+				var centro := Vector2(float(cot["asfalto_mx"][0]) + r,
+					float(cot["asfalto_my"][1]) - r)
+				var dist := Vector2(x, y).distance_to(centro)
+				if dist > r and dist < r + largura and x < centro.x and y > centro.y:
+					na_quina = true
+			if not na_quina:
+				na_calcada = false
+				onde = "quina em (%.2f, %.2f) fora do arco da calçada de fora de um cotovelo" % [x, y]
+			continue
 		var faixa := _faixa_de(y)
 		var rua: Array = faixa["rua"]
 		var asf: Array = faixa["asfalto"]
@@ -486,21 +505,27 @@ func _contrato_do_mobiliario() -> void:
 	conferir("cada peça do mobiliário pousa na calçada do lado dela, fora do cotovelo e da guia do acesso",
 		na_calcada, onde)
 
-	# E NO DIA DO TRECHO ONDE POUSA: o poste troca no dia em que o asfalto da
-	# reta dele troca. A reta é um pedaço de quatro cantos da obra da rua, que
-	# vai até ao meio das duas calçadas.
+	# E NO DIA DO TRECHO ONDE POUSA: o poste troca no dia em que o asfalto do
+	# pedaço de rua debaixo dele troca — a reta, ou o cotovelo para o poste da
+	# quina. Cada pedaço da obra da rua vai até ao meio das duas calçadas, e a
+	# peça pousa nessa borda: conta o pedaço cuja caixa a contém, com 0,01 de
+	# folga, e todos os que a contêm têm de concordar.
 	var no_dia := true
 	for t in tabela:
 		var x := float(t["ponto"][0])
 		var y := float(t["ponto"][1])
 		var achou := -1
 		for pedaco in _ancoras["obra_da_rua"]:
-			var pts: Array = pedaco["pontos"]
-			if pts.size() != 4:
-				continue
-			var xs := [float(pts[0][0]), float(pts[1][0]), float(pts[2][0]), float(pts[3][0])]
-			var ys := [float(pts[0][1]), float(pts[1][1]), float(pts[2][1]), float(pts[3][1])]
-			if x >= xs.min() - 0.01 and x <= xs.max() + 0.01 and y >= ys.min() and y <= ys.max():
+			var xs: Array = []
+			var ys: Array = []
+			for pt in pedaco["pontos"]:
+				xs.append(float(pt[0]))
+				ys.append(float(pt[1]))
+			if x >= float(xs.min()) - 0.01 and x <= float(xs.max()) + 0.01 \
+					and y >= float(ys.min()) - 0.01 and y <= float(ys.max()) + 0.01:
+				if achou >= 0 and achou != int(pedaco["quadro"]):
+					achou = -2
+					break
 				achou = int(pedaco["quadro"])
 		if achou != int(t["quadro"]):
 			no_dia = false
@@ -539,15 +564,16 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 		var t: Dictionary = tabela[i]
 		var tipo := String(t["tipo"])
 		var nova := int(t["quadro"]) <= d
+		var e_poste := tipo == "poste" or tipo == "quina"
 		var no := cenario.get_node_or_null(
-			("PosteDaRua%d" if tipo == "poste" else "PlacaDaRua%d") % i) as TextureRect
+			("PosteDaRua%d" if e_poste else "PlacaDaRua%d") % i) as TextureRect
 		var pe := _tela(float(t["ponto"][0]), float(t["ponto"][1]))
 		if no == null or no.texture != arte[tipo][1 if nova else 0] \
 				or (no.position + Vector2(PropIso.MEIO, PropIso.MEIO)).distance_to(pe) > 0.05:
 			certo = false
 			onde = "peça %d (%s, quadro %d)" % [i, tipo, int(t["quadro"])]
 			continue
-		if tipo != "poste":
+		if not e_poste:
 			continue
 		postes[i] = no
 		var luz := rede.get_node_or_null("PosteLuzDaRua%d" % i) as TextureRect
@@ -556,26 +582,21 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 	conferir("cada peça do mobiliário mostra a arte do trecho dela %s" % dia, certo, onde)
 	conferir("a lâmpada de sódio acende só no poste velho, no quadro dele, %s" % dia, luz_certa)
 
-	# Os vãos: dois postes da mesma reta sem outro entre eles, pela TABELA.
+	# Os vãos, pela TABELA: os postes da calçada da vila em fila pelo `my` —
+	# a rua desce sempre, e o da quina fica entre a reta de cima e a de baixo
+	# —, cada um ligado ao seguinte.
 	var vaos := {}
-	var ids: Array = postes.keys()
-	for a in ids:
-		var melhor := -1
-		for b in ids:
-			if b == a or absf(float(tabela[a]["ponto"][0]) - float(tabela[b]["ponto"][0])) > 0.001:
-				continue
-			if float(tabela[b]["ponto"][1]) <= float(tabela[a]["ponto"][1]):
-				continue
-			if melhor < 0 or float(tabela[b]["ponto"][1]) < float(tabela[melhor]["ponto"][1]):
-				melhor = b
-		if melhor >= 0:
-			vaos["%d-%d" % [a, melhor]] = true
+	var fila: Array = postes.keys()
+	fila.sort_custom(func(a, b): return float(tabela[a]["ponto"][1]) < float(tabela[b]["ponto"][1]))
+	for j in range(fila.size() - 1):
+		vaos["%d-%d" % [mini(fila[j], fila[j + 1]), maxi(fila[j], fila[j + 1])]] = true
 	var fios: Array = []
 	for f in rede.get_children():
 		if f is Line2D:
 			fios.append(f)
-	conferir("três fios em cada vão entre dois postes da mesma reta (%d vãos) %s"
-		% [vaos.size(), dia], not vaos.is_empty() and fios.size() == vaos.size() * 3,
+	# Dois fios por vão, escolha do Bruno na terceira passagem (eram três).
+	conferir("dois fios em cada vão de poste a poste, a virar nas quinas (%d vãos) %s"
+		% [vaos.size(), dia], not vaos.is_empty() and fios.size() == vaos.size() * FIOS_POR_VAO,
 		"há %d fios" % fios.size())
 	var nos_isoladores := true
 	var vistos := {}
@@ -596,8 +617,8 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 		nos_isoladores, onde)
 	var cada_vao := vistos.size() == vaos.size()
 	for v in vistos.values():
-		cada_vao = cada_vao and int(v) == 3
-	conferir("cada vão leva os seus três fios %s" % dia, cada_vao, "%s" % [vistos])
+		cada_vao = cada_vao and int(v) == FIOS_POR_VAO
+	conferir("cada vão leva os seus dois fios %s" % dia, cada_vao, "%s" % [vistos])
 
 
 ## O poste de cujo ISOLADOR sai o ponto `p` (espaço do mapa), ou −1: o pixel

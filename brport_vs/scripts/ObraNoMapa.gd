@@ -228,6 +228,8 @@ const MOBILIARIO: Array = [
 	["poste", Vector2(3.09, 9.5), 1], ["poste", Vector2(3.09, 11.8), 1],
 	["poste", Vector2(7.09, 17.0), 2], ["poste", Vector2(7.09, 20.5), 2],
 	["poste", Vector2(11.09, 25.0), 3], ["poste", Vector2(11.09, 28.5), 3],
+	["quina", Vector2(-0.474, 7.674), 1], ["quina", Vector2(3.526, 15.674), 2],
+	["quina", Vector2(7.526, 23.674), 3],
 	["pare", Vector2(1.11, 2.23), 0], ["pare", Vector2(5.11, 10.23), 1],
 	["pare", Vector2(9.11, 18.23), 2],
 	["pedestres", Vector2(1.11, 5.89), 0], ["pedestres", Vector2(5.11, 13.89), 1],
@@ -237,6 +239,10 @@ const MOBILIARIO: Array = [
 const ARTE_DO_MOBILIARIO := {
 	"poste": [preload("res://art/props/poste_rua_velho.png"),
 		preload("res://art/props/poste_rua_novo.png")],
+	# O da quina de fora de cada cotovelo: o mesmo poste rodado 45°, com a
+	# cruzeta de frente para a câmara, e é nele que a fiação vira.
+	"quina": [preload("res://art/props/poste_rua_quina_velho.png"),
+		preload("res://art/props/poste_rua_quina_novo.png")],
 	"pare": [preload("res://art/props/placa_pare_velha.png"),
 		preload("res://art/props/placa_pare_nova.png")],
 	"pedestres": [preload("res://art/props/placa_pedestres_velha.png"),
@@ -254,16 +260,29 @@ var _rua_nova: Polygon2D
 ## começa por `PosteLuz`, e é por ele que o `_animar_luzes` do `Main` a acha,
 ## como à do poste do pátio — aqui na `RedeDaRua`, e não no `Cenario`. O
 ## poste novo é LED e não pisca.
-const LUZ_DE_SODIO := preload("res://art/props/poste_rua_luz.png")
+const LUZ_DE_SODIO := {
+	"poste": preload("res://art/props/poste_rua_luz.png"),
+	"quina": preload("res://art/props/poste_rua_quina_luz.png"),
+}
+## Os tipos que são poste: os da reta e os das quinas, ligados pela fiação.
+const POSTES := ["poste", "quina"]
+## Quanto o poste da quina está rodado em Z, em graus (`POSTE_QUINA_GIRO`).
+const POSTE_QUINA_GIRO := 45.0
 
-# A FIAÇÃO (`140`): três fios de cruzeta a cruzeta, entre os postes da mesma
-# reta, pousados nos isoladores. Os números são os do `brp_porto.py`
+# A FIAÇÃO (`140`): dois fios de cruzeta a cruzeta, pousados nos isoladores
+# das pontas, de poste em poste pela calçada da vila — e, desde a terceira
+# passagem, a virar com a rua no poste da quina de cada cotovelo. Eram três
+# fios quase pretos, e liam pesados por cima dos telhados (*«fios escuros
+# demais»*). Os números são os do `brp_porto.py`
 # (`POSTE_ISOLADOR`, `POSTE_ISOLADORES`, `POSTE_VELHO_TOMBO`) com a régua das
 # alturas do kit (`ALTURA_PX`, 36,74 px do mapa por unidade, a 2/3 no espaço
 # tela); o D45 confere no PNG que a ponta de cada fio cai em cima do desenho
 # do isolador, nos dois estados — se o poste mudar e isto não, reprova.
 const POSTE_ISOLADOR_PX := 50.0
 const POSTE_ISOLADORES: Array[float] = [-0.27, 0.13, 0.27]
+## Os isoladores que levam fio: os das pontas da cruzeta.
+const FIO_NOS_ISOLADORES: Array[int] = [0, 2]
+const FIO_COR := Color(0.24, 0.27, 0.30, 0.6)
 const POSTE_VELHO_TOMBO := 6.0
 const ALTURA_PX := 36.742346
 const ZOOM := 2.0 / 3.0
@@ -435,60 +454,54 @@ func _plantar_o_mobiliario() -> void:
 		var peca: Array = MOBILIARIO[i]
 		var tipo: String = peca[0]
 		var no := _prop_no_chao(ARTE_DO_MOBILIARIO[tipo][0], peca[1])
-		no.name = ("PosteDaRua%d" if tipo == "poste" else "PlacaDaRua%d") % i
+		no.name = ("PosteDaRua%d" if tipo in POSTES else "PlacaDaRua%d") % i
 		_plantar(cenario, no)
 		_mobiliario.append(no)
 		var luz: TextureRect = null
-		if tipo == "poste":
-			luz = _prop_no_chao(LUZ_DE_SODIO, peca[1])
+		if tipo in POSTES:
+			luz = _prop_no_chao(LUZ_DE_SODIO[tipo], peca[1])
 			luz.name = "PosteLuzDaRua%d" % i
 			rede.add_child(luz)
 		_luzes.append(luz)
-	for a in MOBILIARIO.size():
-		for b in range(a + 1, MOBILIARIO.size()):
-			if not _postes_vizinhos(a, b):
-				continue
-			for k in POSTE_ISOLADORES.size():
-				var fio := Line2D.new()
-				fio.name = "Fio%d_%d_%d" % [a, b, k]
-				fio.width = 1.0
-				fio.default_color = Color(0.13, 0.15, 0.17, 0.85)
-				fio.antialiased = true
-				rede.add_child(fio)
-				_fios.append([a, b, k, fio])
-			break
+	var cadeia := cadeia_dos_postes()
+	for j in range(cadeia.size() - 1):
+		var a: int = cadeia[j]
+		var b: int = cadeia[j + 1]
+		for k in FIO_NOS_ISOLADORES:
+			var fio := Line2D.new()
+			fio.name = "Fio%d_%d_%d" % [a, b, k]
+			fio.width = 1.0
+			fio.default_color = FIO_COR
+			fio.antialiased = true
+			rede.add_child(fio)
+			_fios.append([a, b, k, fio])
 
 
-## Dois postes ligam-se por fios quando estão na MESMA reta (o mesmo `mx`) e
-## nenhum outro poste fica entre eles — a fiação não vira nos cotovelos.
-static func _postes_vizinhos(a: int, b: int) -> bool:
-	var pa: Array = MOBILIARIO[a]
-	var pb: Array = MOBILIARIO[b]
-	if pa[0] != "poste" or pb[0] != "poste":
-		return false
-	if not is_equal_approx((pa[1] as Vector2).x, (pb[1] as Vector2).x):
-		return false
-	for c in MOBILIARIO.size():
-		var pc: Array = MOBILIARIO[c]
-		if c == a or c == b or pc[0] != "poste":
-			continue
-		var vc: Vector2 = pc[1]
-		if is_equal_approx(vc.x, (pa[1] as Vector2).x) \
-				and vc.y > minf(pa[1].y, pb[1].y) and vc.y < maxf(pa[1].y, pb[1].y):
-			return false
-	return true
+## Os postes pela ordem da calçada da vila, que é a ordem de `my`: a rua
+## desce sempre, e o poste da quina fica entre o último da reta de cima e o
+## primeiro da de baixo. A fiação liga cada um ao seguinte.
+static func cadeia_dos_postes() -> Array:
+	var ids: Array = []
+	for i in MOBILIARIO.size():
+		if MOBILIARIO[i][0] in POSTES:
+			ids.append(i)
+	ids.sort_custom(func(a, b): return (MOBILIARIO[a][1] as Vector2).y < (MOBILIARIO[b][1] as Vector2).y)
+	return ids
 
 
 ## Onde o fio pousa no isolador `k` de um poste em `v`, no espaço tela: o
 ## topo do isolador, rodado com o poste quando ele é o VELHO e pende para a
-## rua (`+mx`) — a mesma rotação em Y do `_inclinar` do estúdio.
-static func ponta_do_fio(v: Vector2, k: int, velho: bool) -> Vector2:
+## rua — a mesma rotação em Y do `_inclinar` do estúdio — e, no da quina,
+## depois rodado em Z. No Blender `y = -my`, logo o giro em Z leva o `x` da
+## cruzeta a `(x cos, -x sin)` no chão do mapa.
+static func ponta_do_fio(v: Vector2, k: int, velho: bool, giro := 0.0) -> Vector2:
 	var x := POSTE_ISOLADORES[k]
 	var h := POSTE_ISOLADOR_PX / ALTURA_PX
 	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)
 	var dx := x * cos(t) + h * sin(t)
 	var dz := -x * sin(t) + h * cos(t)
-	return tela(v.x + dx, v.y) - Vector2(0.0, dz * ALTURA_PX * ZOOM)
+	var g := deg_to_rad(giro)
+	return tela(v.x + dx * cos(g), v.y - dx * sin(g)) - Vector2(0.0, dz * ALTURA_PX * ZOOM)
 
 
 ## O mobiliário plantado, pela ordem de `MOBILIARIO` (o D45 lê-o).
@@ -506,6 +519,10 @@ func fios() -> Array:
 	return _fios
 
 
+static func _giro(i: int) -> float:
+	return POSTE_QUINA_GIRO if MOBILIARIO[i][0] == "quina" else 0.0
+
+
 ## A arte de cada peça no quadro `q` da obra do pátio: a nova onde o trecho
 ## dela já está recapeado. Fora da obra, quem decide é o pátio — pronto, a
 ## rua inteira é a nova; por fazer, é a gasta do porto em ruínas.
@@ -519,13 +536,14 @@ func _trocar_o_mobiliario(q: int) -> void:
 		_mobiliario[i].texture = ARTE_DO_MOBILIARIO[peca[0]][1 if nova else 0]
 		if _luzes[i] != null:
 			_luzes[i].visible = not nova
-	# Os dois postes de um vão são da mesma reta, logo do mesmo estado.
+	# Os dois postes de um vão podem estar em estados diferentes: o da quina
+	# troca com o cotovelo, um dia antes do primeiro da reta de baixo.
 	for f in _fios:
 		var a: int = f[0]
 		var b: int = f[1]
 		var velho := not novos[a]
-		var pa := ponta_do_fio(MOBILIARIO[a][1], f[2], velho)
-		var pb := ponta_do_fio(MOBILIARIO[b][1], f[2], velho)
+		var pa := ponta_do_fio(MOBILIARIO[a][1], f[2], velho, _giro(a))
+		var pb := ponta_do_fio(MOBILIARIO[b][1], f[2], not novos[b], _giro(b))
 		var barriga: float = FIO_BARRIGA[0 if velho else 1]
 		var pontos := PackedVector2Array()
 		for s in FIO_PONTOS:

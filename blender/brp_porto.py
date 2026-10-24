@@ -1345,20 +1345,39 @@ def _poste_da_rua(M, velho):
 ZENITE_DO_MOBILIARIO = 20.0
 
 
+# O POSTE DA QUINA (terceira passagem da `140`): *«a rede acaba no
+# cotovelo»*. Na quina de fora de cada cotovelo há um poste, e é nele que os
+# fios viram com a rua. É o mesmo poste RODADO 45° em Z, depois do tombo: a
+# cruzeta fica na diagonal do chão (`mx` contra `-my`), que na tela é
+# HORIZONTAL, e os fios que chegam da reta e os que partem pelo cotovelo
+# pousam lado a lado, sem se taparem. Com a cruzeta ao longo de `mx`, os do
+# cotovelo correriam por cima da própria cruzeta e leriam como um fio só. O
+# braço da luz vai com ela, para o centro do arco, que é a rua.
+POSTE_QUINA_GIRO = 45.0
+
+
 def poste_rua(M, est):
-    for velho, nome in ((True, "poste_rua_velho"), (False, "poste_rua_novo")):
-        p, luz = _poste_da_rua(M, velho)
-        origem(nome)
-        est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
-        if luz:
-            origem("poste_rua_luz", tipo="encaixe")
-            est.registrar("poste_rua_luz", luz, ancora="encaixe", celulas=(1, 1),
-                          animacoes={"light_flicker": {"tween": "modulate",
-                                                       "loop": True}})
+    for quina in (False, True):
+        for velho in (True, False):
+            p, luz = _poste_da_rua(M, velho)
+            if quina:
+                _inclinar(p + luz, giro_z=POSTE_QUINA_GIRO)
+            base_nome = "poste_rua_quina" if quina else "poste_rua"
+            nome = "%s_%s" % (base_nome, "velho" if velho else "novo")
+            origem(nome)
+            est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+            if luz:
+                origem(base_nome + "_luz", tipo="encaixe")
+                est.registrar(base_nome + "_luz", luz, ancora="encaixe",
+                              celulas=(1, 1),
+                              animacoes={"light_flicker": {"tween": "modulate",
+                                                           "loop": True}})
 
 
 # A chapa e o cano da placa, em unidades de mundo e pixels do mapa.
-PLACA_RAIO = 0.17
+# ⚠️ 20% MAIOR DESDE A TERCEIRA PASSAGEM (`140`): a 0,17 o PARE, a de
+# pedestres e a de 40 perdiam-se a 1080 (*«placas pequenas demais»*).
+PLACA_RAIO = 0.204
 # ⚠️ 30% MAIS BAIXA DESDE A SEGUNDA PASSAGEM (`140`): a 30 px a chapa da de
 # pedestres, que vive na calçada do porto logo depois da zebra, subia na tela
 # por cima da zebra de trás e lia como uma placa NO MEIO da travessia. Do
@@ -1438,26 +1457,39 @@ def placas_da_rua(M, est):
 
 
 def cavalete_obra(M, est):
-    """O cavalete de obra: duas tábuas listradas em dois pés em A.
+    """O cavalete de obra: duas tábuas brancas de listras vermelhas na
+    diagonal, em dois pés de ferro em A.
 
     Vai ENTRE os cones da obra da rua, no eixo e ao longo dele — e a rua do
     cotovelo corre em `mx`, por isso as tábuas correm em `x` e a face listrada
-    é a `-y`, que se vê. Mais baixo e mais curto do que a barreira do pátio,
-    que é de concreto e fecha um trecho: o cavalete é de madeira e mudável.
-    As listras são peças, como na barreira: a esta escala faixa pintada some."""
+    é a `-y`, que se vê.
+
+    ⚠️ TERCEIRA PASSAGEM (`140`): *«cavaletes misturados aos cones»*. Eram
+    tábuas laranja e brancas em pés de madeira, à altura do cone, e a fila
+    cone·cavalete·cone lia como um monte de laranja. Agora o cavalete separa-se
+    por tudo menos o comprimento: é VERMELHO e branco (o cone é laranja), as
+    listras correm na DIAGONAL (as do cone são cintas), é mais BAIXO do que o
+    cone e os pés são de ferro. Comprido não pode ficar: a fila tem de caber no
+    troço reto do cotovelo, entre as duas diagonais por onde o camião corta a
+    curva (1,0 a 3,2 do eixo, medido), e os cones já vão de 1,08 a 2,88 — o
+    cavalete encolheu de 0,44 para 0,40 para se afastar deles. As listras são
+    peças, como na barreira: a esta escala faixa pintada some."""
     p = []
-    comp, n = 0.44, 5
-    passo = comp / n
-    for j, zt in enumerate((z(6.5), z(11.0))):
-        for i in range(n):
-            mat = M["laranja"] if i % 2 == 0 else M["cabine"]
-            p.append(caixa("cav_tabua%d_%d" % (j, i),
-                           (-comp / 2.0 + passo * (i + 0.5), 0.0, zt),
-                           (passo, 0.035, z(2.6)), mat))
+    comp, alt_tabua = 0.40, z(2.8)
+    for j, zt in enumerate((z(4.4), z(7.8))):
+        p.append(caixa("cav_tabua%d" % j, (0.0, 0.0, zt),
+                       (comp, 0.035, alt_tabua), M["cabine"]))
+        # Três listras na diagonal, presas à face que se vê (`-y`) e
+        # afundadas meia espessura na tábua: nunca no mesmo plano dela.
+        for i, x0 in enumerate((-0.15, -0.04, 0.07)):
+            p.append(barra("cav_listra%d_%d" % (j, i),
+                           (x0, -0.026, zt - alt_tabua * 0.45),
+                           (x0 + 0.07, -0.026, zt + alt_tabua * 0.45),
+                           0.032, M["placa_vermelha"]))
     for lado, x in (("e", -comp / 2.0 + 0.03), ("d", comp / 2.0 - 0.03)):
         for k, dy in enumerate((-0.07, 0.07)):
             p.append(barra("cav_pe%s%d" % (lado, k), (x, dy, 0.0),
-                           (x, 0.0, z(12.4)), 0.026, M["madeira"]))
+                           (x, 0.0, z(9.4)), 0.024, M["metal"]))
     origem("cavalete_obra")
     est.registrar("cavalete_obra", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
 

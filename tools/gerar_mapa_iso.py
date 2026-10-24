@@ -4358,6 +4358,11 @@ def cavaletes_da_obra() -> list:
 # da reta 2 encostado ao primeiro porque a zebra do armazém lhe come o sítio.
 POSTES_DA_RUA = [(1, -1.0), (1, 2.5), (2, 9.5), (2, 11.8),
                  (3, 17.0), (3, 20.5), (4, 25.0), (4, 28.5)]
+# OS POSTES DAS QUINAS (terceira passagem da `140`, *«a rede acaba no
+# cotovelo»*): um no meio do arco da calçada da vila, na quina de fora de cada
+# cotovelo à vista, e a fiação vira nele com a rua. O 0 fica acima do quadro
+# e o 4 à esquerda dele.
+QUINAS_DA_RUA = [1, 2, 3]
 # (reta, my) da placa de velocidade: para quem sobe, a entrar na reta 3.
 VELOCIDADE_DA_RUA = [(3, 21.4)]
 # A placa fica fora da guia rebaixada do acesso (`ABA`) e da zebra, a esta
@@ -4370,8 +4375,8 @@ AVISO_DA_ZEBRA = 1.0
 
 def mobiliario_da_rua() -> list:
     """(tipo, mx, my, quadro) de cada peça do mobiliário, pela ordem: os
-    postes, os PARE, as de pedestres e a de velocidade. O `mx` é o MEIO da
-    calçada, que é igual nos dois mapas."""
+    postes, os das quinas, os PARE, as de pedestres e a de velocidade. O
+    ponto é o MEIO da calçada, que é igual nos dois mapas."""
     def reta_de(my):
         for i, (my0, my1, _b) in enumerate(DEGRAUS):
             if my0 <= my < my1:
@@ -4385,6 +4390,19 @@ def mobiliario_da_rua() -> list:
         return DEGRAUS[i][2] - RUA_RECUO + RUA_LARG + CALCADA / 2.0
 
     out = [("poste", vila(i), my, quadro_da_reta(i)) for i, my in POSTES_DA_RUA]
+    # A quina de fora do cotovelo `i` é um arco de raio `RAIO_COTOVELO` no
+    # asfalto, e a calçada é concêntrica com ele (`136`): o meio dela corre a
+    # `RAIO_COTOVELO + CALCADA/2` do mesmo centro — o arco que o
+    # `caminho_da_faixa(-CALCADA/2, arcos=True)` desenha. O poste vai a meio
+    # dele (135°), e chega com o cotovelo: o dia da reta SEGUINTE, que é o
+    # dia em que a `obra_da_rua()` o recapeia.
+    for i in QUINAS_DA_RUA:
+        a = vila(i)
+        y = DEGRAUS[i][1] + CALCADA / 2.0
+        ca = RAIO_COTOVELO + CALCADA / 2.0
+        ang = math.radians(135.0)
+        out.append(("quina", a + ca + ca * math.cos(ang), y - ca + ca * math.sin(ang),
+                    quadro_da_reta(i + 1)))
     for my0, my1, _b in PIERES:
         # Do lado de `-my` da boca, que é a direita do camião que sai do
         # acesso para a rua (a conta do `(-hy, hx)`, `052`).
