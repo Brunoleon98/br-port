@@ -208,6 +208,15 @@ func interface_e_registro() -> void:
 	gs.cash = 10001
 	painel.confirmar()
 	conferir("orçamento alterado exige nova confirmação", gs.cash == 10001 and gs.docks[0]["boat"] != null)
+	# ⚠️ E A RECUSA NÃO SE DESFAZ QUANDO O NÚMERO VOLTA (`138`). O painel pede
+	# para fechar e abrir de novo, e quem o promete é a bandeira `_respondido`:
+	# sem ela, o caixa de volta ao que o orçamento leu e uma segunda
+	# confirmação cancelavam com a conta que o jogador foi mandado reler. Pela
+	# tela o botão já fica desligado; a bandeira segura quem chama a ação por
+	# fora — a captura da Fase 2, e esta suíte.
+	gs.cash = 10000
+	painel.confirmar()
+	conferir("recusa pede reabrir: confirmar outra vez não cancela", gs.cash == 10000 and gs.docks[0]["boat"] != null)
 	repor_barco_apos_defeito()
 	painel.queue_free()
 	await arvore.process_frame
@@ -223,8 +232,20 @@ func interface_e_registro() -> void:
 	painel.free()
 	gs.tocar_doca(0)
 	painel = overlay.get_child(0)
-	painel.confirmar()
-	painel.confirmar()
+	# ⚠️ PELO BOTÃO, E NÃO PELA FUNÇÃO (`138`): até aqui o bloco inteiro
+	# chamava `confirmar()` direto, e o botão que o jogador prime podia sair
+	# da árvore com tudo verde. O que se prime é o que diz «Cancelar serviço».
+	var botao_cancelar: Button = null
+	for botao in painel.find_children("*", "Button", true, false):
+		if botao.text == "Cancelar serviço" and botao.is_visible_in_tree():
+			botao_cancelar = botao
+	conferir("a confirmação mostra o botão Cancelar serviço", botao_cancelar != null)
+	if botao_cancelar != null:
+		botao_cancelar.pressed.emit()
+		botao_cancelar.pressed.emit()
+	else:
+		painel.confirmar()
+		painel.confirmar()
 	conferir("confirmação real cobra uma vez", gs.cash == 9000 and gs.metrics["servicos_cancelados"] == 1)
 	var registro = arvore.root.get_node("Registro")
 	var linhas := String(registro.texto_para_exportar()).split("\n", false)

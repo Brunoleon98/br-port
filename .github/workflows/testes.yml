@@ -61,6 +61,16 @@ jobs:
           python3 tools/testar_conferir_mutantes.py 2>&1 | tee /tmp/executor.txt
           grep -q "^EXECUTOR PROVADO" /tmp/executor.txt
 
+      - name: Provar o atalho das seis suítes em paralelo
+        # O atalho dos agentes (`tools/correr_suites.py`, `139`): motor falso,
+        # em segundos — a suíte sem marcador, a que sai com 1, a que imprime
+        # SCRIPT ERROR e o user:// partilhado, cada defeito visto. O CI corre
+        # as suítes em série, nos passos abaixo, e é ele quem manda.
+        run: |
+          set -euo pipefail
+          python3 tools/correr_suites.py --autoteste 2>&1 | tee /tmp/atalho.txt
+          grep -q "^ATALHO PROVADO" /tmp/atalho.txt
+
       - name: Nenhum passo de CI pode rodar --script sem guarda
         # Vem AQUI, antes do download do Godot, porque custa um segundo e
         # responde a uma pergunta sobre este arquivo — não sobre o jogo. Um

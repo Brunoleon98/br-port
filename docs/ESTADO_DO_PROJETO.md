@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 24/10/2026 — testes mais rápidos (`137`); estradas (`136`)
+> **Atualização:** 24/10/2026 — lacunas (`138`); suítes em paralelo (`139`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -124,10 +124,9 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
 persistência independente do movimento; telefone pendente.
 **A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
-(`136`) **aceites**. **Testes acelerados (`137`):** catálogo em quatro
-cópias e três fatias no CI, suítes a `--fixed-fps 60`, fotos quatro a quatro;
-lacunas medidas (99 de 205 defeitos passam). A seguir (Bruno): as 13
-graves, depois os detalhes.
+(`136`) **aceites**. **Testes (`137`–`139`):** catálogo em cópias e
+fatias, `--fixed-fps 60`, fotos e suítes em paralelo; fechadas as 13
+lacunas graves e 13 médias. A seguir: os detalhes.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
@@ -153,7 +152,7 @@ histórico em `HISTORICO.md`.
 |---|---|
 | `brport_vs/` | Projeto Godot 4.6+ (GDScript) — o jogo |
 | `brport_vs/autoload/GameState.gd` | Toda a lógica e os números do jogo; o que é de cada fase na tabela `FASES`, lida por funções (`094`) |
-| `brport_vs/tests/run_tests.gd` | Lógica: Fase 2 T20–T23; cancelamento T24; ajuda T25; acaso T26 (`118`); retomada T27 (`125`) |
+| `brport_vs/tests/run_tests.gd` | Lógica: Fase 2 T20–T23; cancelamento T24; ajuda T25; acaso T26 (`118`); retomada T27 (`125`); o que os painéis mostram e fazem T31 (`138`) |
 | `brport_vs/autoload/Audio.gd` | **O ponto único que toca som** — prioridade por frame, espera mínima por som, volume por bus |
 | `tools/gerar_sons.py` | Gera os 14 efeitos de rascunho, inclusive mar e fauna. Só biblioteca padrão |
 | `brport_vs/tests/teste_audio.gd` | **Teste de áudio** — cobre o que dá para provar sem ouvir |
@@ -239,7 +238,7 @@ histórico em `HISTORICO.md`.
 | `.github/workflows/captura.yml` | As imagens anexadas a cada PR, e o antes/depois contra a base |
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
-| `tools/conferir_mutantes.py` + `mutantes.toml` | Defeitos reinjetados no CI (`117`, `120`), em cópias e fatias (`137`); pré-PR e renumeração em `conferir_colaboracao.py` / `renumerar_decisao.py` (`119`) |
+| `tools/conferir_mutantes.py` + `mutantes.toml` | Defeitos reinjetados no CI (`117`, `120`), em cópias e fatias (`137`); as seis suítes de uma vez em `correr_suites.py` (`139`); pré-PR em `conferir_colaboracao.py` (`119`) |
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 | `tools/conferir_cobertura_paineis.py` | Fotos dos painéis abertos, por tempo/cara (`039`, `051`, `060`); `COBERTURA OK`, sem lacuna |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |

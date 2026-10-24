@@ -96,10 +96,12 @@ registada sem o Bruno pedir.
   `--headless --fixed-fps 60` (o relógio do CI, que o executor de mutantes
   confere) e a linha final de cada uma — o código de saída sozinho não prova
   nada (o `CLAUDE.md` e `.claude/rules/testes-e-guardas.md` dizem porquê). A
-  lista viva está em `.github/workflows/testes.yml`.
+  lista viva está em `.github/workflows/testes.yml`. As seis de uma vez, cada
+  uma com o seu `user://`: `python3 tools/correr_suites.py --godot "$G"`,
+  que espera `SUITES OK` (`139`).
 - O catálogo inteiro de mutantes, quando o código de um alvo dele ou uma
   suíte mudou: `python3 tools/conferir_mutantes.py --godot "$G"
-  --trabalhadores 4`, ~25 min em quatro cópias do repositório
+  --trabalhadores 4`, ~30 min em quatro cópias do repositório
   (`docs/decisoes/137`).
 - `python3 tools/conferir_docs.py`, que espera `DOCS OK`, se mexeu em
   documento.

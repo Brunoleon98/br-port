@@ -898,3 +898,10 @@ preservados. Telefone/aceite visual pendentes; partida/save intactos.»* — e a
 linha *«**Início/fundo (`132`/`133`, #146/#147):** V3 só na inicial, celular
 com degradê.»*, fundidos pelo Bruno; o pendente do RB6 (o telefone) ficou no
 estado.
+
+**E, para caber as lacunas fechadas e as suítes em paralelo (`138`,
+`139`),** a linha dos testes do estado encolheu — *«catálogo em quatro
+cópias e três fatias no CI, suítes a `--fixed-fps 60`, fotos quatro a
+quatro; lacunas medidas (99 de 205 defeitos passam)»* vive na `137` —, e o
+inventário deixou de citar o `renumerar_decisao.py`, que continua na
+`gerais.md` e na `119`.
