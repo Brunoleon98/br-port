@@ -35,6 +35,7 @@ aqui.
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24c.md` | 24/10 | História e primeiras lojas (`141`), aceites, migração 19 e continuação local |
 | `VERIFICACAO_HISTORIA_LOJAS_2026-10-24/README.md` | 24/10 | História da Fase 1, Mercado e Delivery (`141`): compras, conversas, save 19, provas e limites |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24b.md` | 24/10 | As treze lacunas graves e treze médias fechadas (`138`), 106 → 131 da amostra; as suítes em paralelo (`139`); a seguir, os sprites de detalhes |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-25.md` | 25/10 | O mobiliário da rua aceite à oitava passagem (`140`): postes, fiação, placas, cavaletes e a rede de uma subestação; a fila da `126` acabou, e a seguinte é do Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24.md` | 24/10 | Testes mais rápidos (`137`): cópias, fatias e o relógio fixo, o PR aberto; a seguir, as treze lacunas graves, depois os detalhes |
 | `MEDICOES_VELOCIDADE_TESTES_2026-10-24/` | 24/10 | Para onde vai o tempo das suítes e dos mutantes, o catálogo em quatro cópias e com `--fixed-fps`, a bateria em paralelo igual ao byte, a cobertura por função e a mutação amostrada das lacunas (`137`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-23c.md` | 23/10 | Estradas aceites (`136`, D49, PR #149), renumeradas contra o #148; a seguir, acelerar os testes, depois os detalhes |

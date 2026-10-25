@@ -2004,3 +2004,32 @@ políticas de troca e varredura separada de multa/reputação; recomenda manter
 o candidato, ainda sem aceite para implementar ou migrar o save.
 Não se trata de cancelar obras. Mais trabalhadores por píer e crédito
 voluntário ficam para depois.
+
+## Da §7 — a fila da `126`, fechada em 25/10 (`140`)
+
+Como estava na §7 até ao fecho do terceiro item, palavra por palavra:
+
+**A fila que ele deu acabou**, e em 17/10 ele deu a seguinte
+(`126`), um item por conversa: (1) terreno e vegetação — **fechado em 18/10
+(`127`, `130`)**: chão com textura, um morro de mata atrás da vila, árvores do
+Blender que balançam no morro e na restinga das pontas, e as mesmas
+embutidas no mapa entre as casas; não aceite em 17/10, aceite na segunda
+conversa, à sétima passagem, com a copa de FOLHAS, clareiras no morro e os
+destaques à vista; (2) estradas — **fechado em 19/10 (`136`)**: a rua
+gasta no porto em ruínas e recapeada pela obra do pátio, um trecho por dia
+com cones, a linha central amarela, os acessos de terra que chegam
+asfaltados, e as curvas em arco, aceite à terceira passagem; (3) **sprites
+de detalhes** — depois de duas pausas que ele pediu: **acelerar os testes**
+das IAs e do GitHub, **fechada em 24/10 (`137`)** — o catálogo em quatro
+cópias e em três fatias no CI, as suítes a `--fixed-fps 60`, as fotos quatro
+a quatro, nenhuma prova a menos —; e **as treze lacunas graves que a `137`
+mediu**, **fechadas em 24/10 (`138`)** — cada uma com a guarda pelo texto e
+pela ação e o defeito no catálogo —, e com elas treze das 28 de gravidade
+média, que o Bruno pediu a seguir (lógica, telemetria, painéis e
+preferências; as visuais ficaram de fora), e as seis suítes em paralelo
+para os agentes (`139`). **A seguir, os sprites de detalhes**, que abrem com
+a foto do jogo e a pergunta do escopo. Fora
+dela, para depois: animar as marolas e o fio diagonal da ponta norte do
+cais (`124`), os gates A4 e A7, e o galpão recuperado V3.
+
+**O item 3 fechou em 25/10 (`140`)**, aceite à oitava passagem.

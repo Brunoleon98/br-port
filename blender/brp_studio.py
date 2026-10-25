@@ -144,6 +144,10 @@ class Estudio:
         # A transformada de cor de cada grupo que NÃO usa a do resto. Hoje só
         # os retratos de fala da `055` (Standard a −0,35 EV).
         self.cores: dict[str, tuple] = {}
+        # O sol da sombra de contato de cada asset, quando não é o de sempre
+        # (62° do zénite, `render_sombra`): o mobiliário da rua pede-o a pino
+        # (`140`), como as árvores, senão a sombra do poste risca a rua.
+        self.zenites: dict[str, float] = {}
         self.exportacao = bpy.data.collections.new("EXPORT")
         self.cena.collection.children.link(self.exportacao)
 
@@ -152,7 +156,8 @@ class Estudio:
                   ancora: str = "base", selecionavel: bool = False,
                   celulas: tuple = (1, 1), animacoes: dict | None = None,
                   habitat: str = "terra", cena_godot: str = "",
-                  cor: tuple | None = None) -> None:
+                  cor: tuple | None = None,
+                  zenite: float | None = None) -> None:
         """Põe um asset no catálogo, com a ficha que vai para o manifest.
 
         `cor` é (transformada, exposição) quando o asset não usa a do resto
@@ -162,6 +167,8 @@ class Estudio:
         self.grupos[nome] = objetos
         if cor is not None:
             self.cores[nome] = cor
+        if zenite is not None:
+            self.zenites[nome] = zenite
         self.fichas[nome] = {
             "id": brp_nome(self.categoria, nome, estagio),
             "category": self.categoria,
@@ -229,7 +236,8 @@ class Estudio:
             ficha = dict(self.fichas[nome])
             if ficha["origin"] == "base":
                 temp = os.path.join(saida, "_sombra_tmp.png")
-                base.render_sombra(self.cena, self.grupos[nome], temp)
+                base.render_sombra(self.cena, self.grupos[nome], temp,
+                                   self.zenites.get(nome, 62.0))
                 base.compor_sombra(alvo, temp)
                 os.remove(temp)
                 ficha["sombra_de_contato"] = True

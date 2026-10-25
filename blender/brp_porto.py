@@ -1240,9 +1240,471 @@ def retratos_de_fala(M, est):
             est.registrar(nome, pecas, ancora="retrato", cor=brp_retratos.COR_RETRATO)
 
 
+# ── O MOBILIÁRIO DA RUA (`140`) ─────────────────────────────────────────
+#
+# Escolha do Bruno: postes de luz na calçada da vila, placas na do porto e
+# cavaletes entre os cones da obra; a rua gasta do dia 1 leva os VELHOS, e a
+# obra do pátio troca-os pelos novos trecho a trecho, com o asfalto (`136`).
+#
+# ⚠️ A FACE QUE A CÂMARA VÊ DECIDE DE QUE LADO VIVE CADA PLACA. Só `+x` e
+# `-y` do Blender se veem, que no mapa são as faces viradas para `+mx` e
+# `+my`. Uma placa para quem DESCE a rua (`+my`) olha para `-my` e mostraria
+# o verso: as de pedestres e a de velocidade servem quem SOBE, na calçada do
+# porto, que é a direita de quem sobe; o PARE, do camião que sai do acesso ao
+# berço, olha para a CÂMARA desde a sétima passagem (`PARE_GIRO`): de
+# esguelha ele lia como um pirulito.
+#
+# ⚠️ E A ESCALA É A DO CONE E DA BARREIRA, não a da pessoa. A placa a 1,5x o
+# real teria 3 px de chapa a 720 — um ponto de cor sem forma. O cone da obra
+# já tem ~2,8x e a barreira ~2,2x; a placa vai a ~2,5x, a 2/3 da altura do
+# poste de luz, que fica no 1x dos camiões e do poste do pátio.
+
+def _inclinar(pecas, graus_x=0.0, graus_y=0.0, giro_z=0.0):
+    """Roda o grupo inteiro em volta do PÉ (a origem): a placa torta, o poste
+    a pender para a rua. Gira primeiro em Z (a chapa torcida no cano) e
+    depois tomba. Mexe na posição e na rotação de cada peça, e não no
+    `matrix_world`, que o arnês da montagem deixa velho (`080`)."""
+    r = (Matrix.Rotation(math.radians(graus_y), 3, "Y")
+         @ Matrix.Rotation(math.radians(graus_x), 3, "X")
+         @ Matrix.Rotation(math.radians(giro_z), 3, "Z"))
+    for o in pecas:
+        o.location = r @ Vector(o.location)
+        o.rotation_euler = (r @ o.rotation_euler.to_matrix()).to_euler()
+    return pecas
+
+
+# Altura do poste e da cruzeta em PIXELS DO MAPA, e o tombo do velho. O
+# `ObraNoMapa.gd` pendura a fiação nos isoladores e lê estes números de lá
+# (`POSTE_*`); o D45 confere que a ponta de cada fio cai em cima do desenho
+# do isolador, no PNG.
+POSTE_ALTURA = 52.0
+POSTE_ISOLADOR = 50.0          # o topo dos isoladores, onde o fio pousa
+# Ao longo da cruzeta, em `x` (`mx`): um em cada ponta e o do meio FORA da
+# haste — no x = 0 ficava dentro da ponta do poste e não se via.
+POSTE_ISOLADORES = (-0.27, 0.13, 0.27)
+POSTE_VELHO_TOMBO = 6.0        # graus, para a rua (`+x`)
+
+
+def _poste_da_rua(M, velho, luminaria=True):
+    """O poste de concreto da rede, com a cruzeta e a luminária da rua:
+    `(poste, luz)`, a luz à parte só no velho. Sem `luminaria`, só a rede.
+
+    A cruzeta com os três isoladores é o que diz «poste de rua brasileiro» a
+    esta escala, e é nela que a fiação pousa; o braço da luz aponta para
+    `+x`, a rua, que é também a face que se vê.
+
+    ⚠️ SEGUNDA PASSAGEM (`140`): na primeira os dois liam como palitos claros
+    e só se distinguiam pela cor. A haste engrossou e escureceu um degrau, a
+    cruzeta cresceu, e o velho passou a ser OUTRO poste: escuro de chuva, a
+    pender seis graus para a rua, cruzeta de madeira, braço curto, cúpula de
+    sódio — e a lâmpada de sódio é peça À PARTE, para piscar devagar como a
+    do poste do pátio (o `_animar_luzes` do `Main`); se fosse uma peça só,
+    piscava o concreto. O novo é claro, direito, com o braço longo e a chapa
+    da LED, e não pisca."""
+    pre = "pv" if velho else "pn"
+    conc = M["poste_concreto_velho" if velho else "poste_concreto"]
+    alt = z(POSTE_ALTURA)
+    cruzeta = alt - z(POSTE_ALTURA - POSTE_ISOLADOR + 2.6)
+    p = [caixa(pre + "_pe", (0.0, 0.0, z(1.2)), (0.17, 0.17, z(2.4)), conc),
+         # Quatro lados rodados 45°: a secção quadrada que afina, como o
+         # poste duplo T visto de longe.
+         cone(pre + "_haste", (0.0, 0.0, alt / 2.0), 0.10, 0.06, alt, 4,
+              conc, rot=(0, 0, 45)),
+         caixa(pre + "_cruzeta", (0.0, 0.0, cruzeta), (0.60, 0.07, z(2.4)),
+               M["madeira_velha" if velho else "metal_claro"])]
+    for i, x in enumerate(POSTE_ISOLADORES):
+        p.append(cone("%s_isolador%d" % (pre, i),
+                      (x, 0.0, cruzeta + z(1.2) + z(1.2)),
+                      0.026, 0.016, z(2.4), 6, M["cabine"]))
+    luz = []
+    if not luminaria:
+        if velho:
+            _inclinar(p, graus_y=POSTE_VELHO_TOMBO)
+        return p, luz
+    if velho:
+        p += [barra(pre + "_braco", (0.0, 0.0, alt - z(12.0)),
+                    (0.28, 0.0, alt - z(10.0)), 0.045, M["metal"]),
+              cone(pre + "_cupula", (0.33, 0.0, alt - z(11.0)), 0.085, 0.035,
+                   z(3.4), 10, M["metal"])]
+        luz = [cone(pre + "_sodio", (0.33, 0.0, alt - z(13.4)), 0.055, 0.075,
+                    z(1.8), 10, M["sodio"])]
+        _inclinar(p + luz, graus_y=POSTE_VELHO_TOMBO)
+        return p, luz
+    # ⚠️ O BRAÇO É GROSSO E A LUMINÁRIA CLARA, de propósito: na primeira
+    # prova o braço de 0,032 sumia no asfalto e a chapa LED escura flutuava
+    # sozinha ao lado do poste — a barra fina solta lê como risco (`122`).
+    p += [barra(pre + "_braco_a", (0.0, 0.0, alt - z(12.0)),
+                (0.24, 0.0, alt - z(8.0)), 0.055, conc),
+          barra(pre + "_braco_b", (0.24, 0.0, alt - z(8.0)),
+                (0.48, 0.0, alt - z(7.5)), 0.055, conc),
+          caixa(pre + "_led", (0.56, 0.0, alt - z(7.9)), (0.24, 0.12, z(1.8)),
+                M["metal_claro"]),
+          caixa(pre + "_led_luz", (0.57, 0.0, alt - z(8.9)), (0.19, 0.09, z(0.5)),
+                M["cabine"])]
+    return p, luz
+
+
+# O sol da sombra de contato do mobiliário: a pino, como o das árvores
+# (`127`). A 62° a sombra do poste saía um traço comprido na diagonal a
+# riscar o asfalto — *«sombras riscam a rua»*, primeira passagem da `140`.
+ZENITE_DO_MOBILIARIO = 20.0
+
+
+# OS POSTES QUE VIRAM COM A RUA (terceira e quarta passagens da `140`).
+# Na terceira, *«a rede acaba no cotovelo»*: um poste a meio do arco de
+# fora, RODADO 45° em Z depois do tombo — a cruzeta na diagonal do chão
+# (`mx` contra `-my`), que na tela é HORIZONTAL, e os fios que chegam da reta
+# e os que partem pelo cotovelo pousam lado a lado, sem se taparem. Com a
+# cruzeta ao longo de `mx`, os do cotovelo correriam por cima da própria
+# cruzeta e leriam como um fio só.
+# ⚠️ E UM POSTE SÓ NO ARCO DEIXA O FIO A CORTAR A CURVA (quarta passagem,
+# *«fio corta o cotovelo»*, *«fio por cima das casas»*): a corda dele até ao
+# poste seguinte atravessava o asfalto e o lote da esquina — a igreja. No
+# arco de fora vão DOIS, a 1/4 e a 3/4 dele (giros de 22,5° e 67,5°), e a
+# corda de 45° afasta-se 0,113 do meio da calçada, que tem 0,11 de meia
+# largura; a quina de DENTRO leva um a 45°. A cruzeta fica sempre de través
+# à rua, e o braço da luz aponta para o centro da curva de fora, que nas
+# duas quinas é a rua. O `ObraNoMapa.gd` lê o giro de cada tipo de lá
+# (`GIRO_DO_POSTE`) e o D45 confere que os fios pousam nos isoladores.
+# ⚠️ O DA QUINA DE DENTRO FICOU UMA PASSAGEM SEM LUMINÁRIA, e voltou a tê-la.
+# Ele fica na calçada da vila do lado de CÁ do cotovelo, à frente da rua na
+# tela, e na mesma coluna que o meio do troço onde a obra põe a sinalização:
+# o braço da luz, a 59-87% da altura do poste, é a faixa da tela do cavalete,
+# e tapava-o. Sem o braço, a haste encostava-lhe (*«poste junto ao
+# cavalete»*, *«quina de dentro sem luz»*). Escolha do Bruno: o cavalete saiu
+# do eixo para a calçada do pátio, e os dois cones ficam com o poste no vão
+# entre eles, longe do braço (`gerar_mapa_iso.cavaletes_da_obra`).
+# ⚠️ E O PRIMEIRO DA VILA RECEBE O RAMAL DA SUBESTAÇÃO (quarta passagem):
+# o ramal chega-lhe de `+mx`, por cima da rua, e a rede segue em `+my` — uma
+# curva de 90°, como a das quinas mas para o outro lado. Com a cruzeta ao
+# longo da rua, os dois fios do ramal pousavam um atrás do outro e liam como
+# um só; rodado −45°, ela fica de través à curva.
+POSTE_GIROS = (("poste_rua", 0.0, True), ("poste_rua_curva_a", 22.5, True),
+               ("poste_rua_quina", 45.0, True), ("poste_rua_curva_b", 67.5, True),
+               ("poste_rua_ramal", -45.0, True))
+
+
+def poste_rua(M, est):
+    for base_nome, giro, luminaria in POSTE_GIROS:
+        for velho in (True, False):
+            p, luz = _poste_da_rua(M, velho, luminaria)
+            if giro:
+                _inclinar(p + luz, giro_z=giro)
+            nome = "%s_%s" % (base_nome, "velho" if velho else "novo")
+            origem(nome)
+            est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+            if luz:
+                origem(base_nome + "_luz", tipo="encaixe")
+                est.registrar(base_nome + "_luz", luz, ancora="encaixe",
+                              celulas=(1, 1),
+                              animacoes={"light_flicker": {"tween": "modulate",
+                                                           "loop": True}})
+
+
+# A chapa e o cano da placa, em unidades de mundo e pixels do mapa.
+# ⚠️ O GOSTO NÃO É MONÓTONO NO NÚMERO (`140`): a 0,17 o PARE, a de pedestres e
+# a de 40 perdiam-se a 1080 (*«placas pequenas demais»*, segunda passagem); a
+# 0,204 sobravam (*«placas de trânsito muito grandes»*, quarta), e a 0,187
+# também (*«a placa ainda está grande»*, sexta). Na sétima o Bruno escolheu
+# entre 0,165, 0,150 e 0,135 lado a lado no jogo, e ficou 0,150 — abaixo dos
+# 0,17 recusados, que viviam num cano 30% mais alto e na calçada do porto. A
+# 0,135 a de pedestres tem 9×7 px a 1080 e a figura some.
+PLACA_RAIO = 0.150
+# ⚠️ 30% MAIS BAIXA DESDE A SEGUNDA PASSAGEM (`140`): a 30 px a chapa da de
+# pedestres, que vive na calçada do porto logo depois da zebra, subia na tela
+# por cima da zebra de trás e lia como uma placa NO MEIO da travessia. Do
+# outro lado da zebra o escritório e o armazém tapavam-na.
+PLACA_ALTURA = 21.0
+# O PARE é a placa que manda parar: a chapa um pouco maior do que as outras,
+# como na rua — e é a única que se lê só pela cor, sem símbolo.
+PLACA_PARE = 1.18
+# O PARE da sétima passagem (`140`): *«melhore essa placa vermelha que fica
+# no porto»*. A 8x ele lia como um PIRULITO — vista de esguelha, a chapa saía
+# uma elipse vermelha lisa, com um fio branco de menos de um pixel. Ficou a
+# candidata que o Bruno escolheu entre três no jogo: virada PARA A CÂMARA
+# (`PARE_GIRO`, a partir de `-y`), com o fio mais largo (`PARE_FIO`, o
+# vermelho dentro dele), um contorno escuro que separa o fio do asfalto e as
+# quatro letras — *«melhore o que está no centro dela, ao invés de deixar só
+# um risco»*. O octógono, a 13 px, sai redondo em todas: o PARE lê-se pelo
+# vermelho com a faixa branca das letras, como um de verdade visto de longe.
+PARE_GIRO = 45.0
+PARE_FIO = 0.86
+
+
+def _placa(M, nome, forma, velha):
+    """Uma placa de trânsito no cano: a chapa, a borda e o símbolo.
+
+    `forma` é `pare` (octógono vermelho de fio branco com as letras, a olhar
+    para a câmara),
+    `pedestres` (losango amarelo de borda preta com a figura, a olhar para
+    `-y`) ou `velocidade` (círculo branco de aro vermelho com o número em
+    preto, a olhar para `-y`). `-y` no estúdio é `+my` no mapa: a placa serve
+    quem SOBE a rua, que é a única face que a câmara vê de quem anda em `my`. A esta escala a palavra e o número não se
+    leem: lê-se a COR e a FORMA, e o símbolo é uma mancha preta a dizer que
+    há alguma coisa desenhada.
+
+    A velha é desbotada, com a chapa torcida no cano e o cano a pender."""
+    v = "_velha" if velha else ""
+    cano = M["metal_claro"]
+    h = z(PLACA_ALTURA)
+    raio = PLACA_RAIO * (PLACA_PARE if forma == "pare" else 1.0)
+    p = [cone(nome + "_cano", (0.0, 0.0, h / 2.0), 0.026, 0.026, h, 6, cano)]
+    # A chapa é um cilindro achatado com o eixo na direção para onde olha. A
+    # borda vai atrás (mais larga) e o símbolo à frente: nunca no mesmo plano.
+    if forma == "pare":
+        # ⚠️ O OCTÓGONO GIRA NO PRÓPRIO EIXO PELO `Y`, com a chapa a olhar
+        # para `-y`. Até à sétima passagem ele olhava para `+x` com
+        # `(22.5, 90, 0)`, e com `Y = 90` o Euler está em bloqueio: o `X` e o
+        # `Z` rodam os dois em torno do `z` do MUNDO. Os 22,5° não giravam o
+        # octógono, guinavam a chapa — e as letras, retas, ficavam enterradas
+        # nela de um lado (medido no PNG: o letreiro saía à esquerda).
+        eixo, rot, lados = "y", (90, 22.5, 0), 8
+    elif forma == "pedestres":
+        eixo, rot, lados = "y", (90, 0, 0), 4
+    else:
+        eixo, rot, lados = "y", (90, 0, 0), 16
+    frente = 1.0 if eixo == "x" else -1.0
+
+    def no_plano(nome_p, r, recuo, mat, esp=0.014):
+        c = (frente * recuo, 0.0, h) if eixo == "x" else (0.0, frente * recuo, h)
+        return cone(nome_p, c, r, r, esp, lados, mat, rot=rot)
+
+    branca = M["placa_branca" + v]
+    if forma == "pare":
+        p += [no_plano(nome + "_contorno", raio * 1.06, 0.006, M["placa_preta"]),
+              no_plano(nome + "_borda", raio, 0.020, branca),
+              no_plano(nome + "_chapa", raio * PARE_FIO, 0.034,
+                       M["placa_vermelha" + v])]
+        # As quatro letras, de ~1,6 px com frestas de ~0,9 px a 1080. Na
+        # primeira prova eram blocos largos e borravam numa mancha branca que
+        # lia como a placa de 40; um traço só lia como «sentido proibido».
+        for i, xl in enumerate((-0.57, -0.19, 0.19, 0.57)):
+            p.append(caixa(nome + "_letra%d" % i, (xl * raio, -0.046, h),
+                           (raio * 0.25, 0.010, z(3.0)), branca))
+        p = _inclinar(p, giro_z=PARE_GIRO)
+    elif forma == "pedestres":
+        p += [no_plano(nome + "_borda", raio * 1.10, 0.020, M["placa_preta"]),
+              no_plano(nome + "_chapa", raio * 0.96, 0.034,
+                       M["placa_amarela" + v]),
+              caixa(nome + "_figura", (0.0, -0.046, h - z(0.4)),
+                    (0.05, 0.010, z(4.0)), M["placa_preta"]),
+              cone(nome + "_cabeca", (0.0, -0.046, h + z(2.4)), 0.022, 0.022,
+                   0.010, 8, M["placa_preta"], rot=(90, 0, 0))]
+    else:
+        p += [no_plano(nome + "_aro", raio, 0.020, M["placa_vermelha" + v]),
+              no_plano(nome + "_chapa", raio * 0.74, 0.034, branca),
+              caixa(nome + "_numero_a", (-0.030, -0.046, h), (0.034, 0.010, z(3.4)),
+                    M["placa_preta"]),
+              caixa(nome + "_numero_b", (0.030, -0.046, h), (0.034, 0.010, z(3.4)),
+                    M["placa_preta"])]
+    if velha:
+        # Torcida no cano e a pender: o vento e o para-choque de alguém.
+        return _inclinar(p, graus_x=4.0, graus_y=-5.0, giro_z=14.0)
+    return p
+
+
+def placas_da_rua(M, est):
+    for forma in ("pare", "pedestres", "velocidade"):
+        for velha, sufixo in ((True, "velha"), (False, "nova")):
+            nome = "placa_%s_%s" % (forma, sufixo)
+            p = _placa(M, nome, forma, velha)
+            origem(nome)
+            est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
+def cavalete_obra(M, est):
+    """O cavalete de obra: duas tábuas brancas de listras vermelhas na
+    diagonal, em dois pés de ferro em A.
+
+    Vai ENTRE os cones da obra da rua, no eixo e ao longo dele — e a rua do
+    cotovelo corre em `mx`, por isso as tábuas correm em `x` e a face listrada
+    é a `-y`, que se vê.
+
+    ⚠️ TERCEIRA PASSAGEM (`140`): *«cavaletes misturados aos cones»*. Eram
+    tábuas laranja e brancas em pés de madeira, à altura do cone, e a fila
+    cone·cavalete·cone lia como um monte de laranja. Agora o cavalete separa-se
+    por tudo menos o comprimento: é VERMELHO e branco (o cone é laranja), as
+    listras correm na DIAGONAL (as do cone são cintas), é mais BAIXO do que o
+    cone e os pés são de ferro. Comprido não pode ficar: a fila tem de caber no
+    troço reto do cotovelo, entre as duas diagonais por onde o camião corta a
+    curva (1,0 a 3,2 do eixo, medido), e os cones já vão de 1,08 a 2,88 — o
+    cavalete encolheu de 0,44 para 0,40 para se afastar deles. As listras são
+    peças, como na barreira: a esta escala faixa pintada some."""
+    p = []
+    comp, alt_tabua = 0.40, z(2.8)
+    for j, zt in enumerate((z(4.4), z(7.8))):
+        p.append(caixa("cav_tabua%d" % j, (0.0, 0.0, zt),
+                       (comp, 0.035, alt_tabua), M["cabine"]))
+        # Três listras na diagonal, presas à face que se vê (`-y`) e
+        # afundadas meia espessura na tábua: nunca no mesmo plano dela.
+        for i, x0 in enumerate((-0.15, -0.04, 0.07)):
+            p.append(barra("cav_listra%d_%d" % (j, i),
+                           (x0, -0.026, zt - alt_tabua * 0.45),
+                           (x0 + 0.07, -0.026, zt + alt_tabua * 0.45),
+                           0.032, M["placa_vermelha"]))
+    for lado, x in (("e", -comp / 2.0 + 0.03), ("d", comp / 2.0 - 0.03)):
+        for k, dy in enumerate((-0.07, 0.07)):
+            p.append(barra("cav_pe%s%d" % (lado, k), (x, dy, 0.0),
+                           (x, 0.0, z(9.4)), 0.024, M["metal"]))
+    origem("cavalete_obra")
+    est.registrar("cavalete_obra", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
+# A LINHA DA REDE E A SUBESTAÇÃO (quarta e quinta passagens da `140`):
+# *«pode colocar postes até um dos limites do mapa para mostrar que a energia
+# vem de algum lugar, pode até fazer uma subestação de energia lá»*. O Bruno
+# pôs a subestação no relvado do campo ao norte do pátio; a linha de ALTA
+# TENSÃO chega-lhe da borda de cima do mapa em torres treliçadas, mais altas
+# e de outra forma que os postes da rua (*«torres ou postes maiores e
+# diferentes»*), e pousa no pórtico; dentro da cerca, o poste de saída leva
+# a energia por cima da rua, de frente, até ao primeiro poste da vila. São
+# sempre NOVOS: são da cidade, e a obra do porto não lhes toca.
+#
+# O poste de saída é o da rua sem luminária, rodado −45°: a cruzeta de
+# través à curva em que a linha, que desce do pórtico, vira para a rua.
+POSTE_LINHA_GIROS = (("poste_linha_saida", -45.0),)
+
+# A subestação, em unidades de mundo (`x` = `mx`, `y` = `-my`): o
+# `gerar_mapa_iso.SUBESTACAO` publica a mesma caixa, e o D45 confere que ela
+# cabe no campo. A esta escala lê-se pelo que só uma subestação tem: os
+# transformadores de radiador e a cerca de grade, que é FIO e não pano — um
+# pano opaco na face que se vê tapava o resto. ⚠️ 1,4 × 1,9, e não 1,6 × 2,2
+# (quinta passagem, *«fora da areia, no relvado»*): o relvado do campo é
+# estreito, e só cabe inteira nele no sítio da aroeira, que saiu.
+SUBESTACAO_LARG = 1.4
+SUBESTACAO_FUNDO = 1.9
+
+# A torre de alta tensão: treliça de quatro pernas a afinar, e a mísula larga
+# no topo com os isoladores. Altura e isoladores em px do mapa e unidades de
+# mundo, como os do poste; o `ObraNoMapa.gd` copia-os (`ISOLADOR_DO_TIPO`).
+TORRE_ALTURA = 84.0
+TORRE_ISOLADOR = 82.0
+TORRE_ISOLADORES = (-0.42, 0.0, 0.42)
+
+
+def linha_da_rede(M, est):
+    for nome, giro in POSTE_LINHA_GIROS:
+        p, _luz = _poste_da_rua(M, False, luminaria=False)
+        if giro:
+            _inclinar(p, giro_z=giro)
+        origem(nome)
+        est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+    torre_at(M, est)
+    portico_subestacao(M, est)
+
+
+def torre_at(M, est):
+    """A torre da linha que chega à subestação. A treliça não se vê a esta
+    escala — a torre tem 7 px de pé —, mas a SILHUETA sim: quatro pernas
+    que afinam, aros de travamento e as diagonais em X nas duas faces que a
+    câmara vê, e a mísula larga lá em cima, que é o que a separa de um poste."""
+    aco = M["metal_claro"]
+    topo = z(TORRE_ALTURA - 6.0)
+    p = []
+    base, cima = 0.18, 0.06
+    def canto(sx, sy, h):
+        f = h / topo
+        r = base + (cima - base) * f
+        return (sx * r, sy * r, h)
+    cantos = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
+    for i, (sx, sy) in enumerate(cantos):
+        p.append(barra("at_perna%d" % i, canto(sx, sy, 0.0), canto(sx, sy, topo), 0.03, aco))
+    niveis = [0.0, topo * 0.22, topo * 0.44, topo * 0.64, topo * 0.82, topo]
+    for n, h in enumerate(niveis[1:], start=1):
+        for i in range(4):
+            a, b = cantos[i], cantos[(i + 1) % 4]
+            p.append(barra("at_aro%d_%d" % (n, i), canto(*a, h), canto(*b, h), 0.018, aco))
+    for n in range(len(niveis) - 1):
+        h0, h1 = niveis[n], niveis[n + 1]
+        for i in range(4):
+            a, b = cantos[i], cantos[(i + 1) % 4]
+            p.append(barra("at_diag%d_%da" % (n, i), canto(*a, h0), canto(*b, h1), 0.014, aco))
+            p.append(barra("at_diag%d_%db" % (n, i), canto(*b, h0), canto(*a, h1), 0.014, aco))
+    # A mísula: a viga ao longo de `x` (de través à linha, que corre em `my`)
+    # e dois tirantes até ao corpo, e os isoladores de pé por cima, como os
+    # do poste, para o fio pousar no topo deles.
+    viga = topo + z(2.0)
+    p.append(caixa("at_misula", (0.0, 0.0, viga), (1.0, 0.06, z(2.4)), aco))
+    for lado in (-1, 1):
+        p.append(barra("at_tirante%d" % lado, (lado * 0.48, 0.0, viga),
+                       canto(lado, 1, topo * 0.82), 0.014, aco))
+    p.append(cone("at_ponta", (0.0, 0.0, viga + z(3.0)), 0.04, 0.008, z(4.0), 4, aco))
+    for i, x in enumerate(TORRE_ISOLADORES):
+        p.append(cone("at_isolador%d" % i, (x, 0.0, viga + z(1.2) + z(1.2)),
+                      0.028, 0.018, z(2.4), 6, M["cabine"]))
+    origem("torre_at")
+    est.registrar("torre_at", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
+def portico_subestacao(M, est):
+    """O pórtico onde a linha pousa, à parte da subestação para ser ponta de
+    fio como um poste: dois pilares, a viga ao longo de `x` e os isoladores
+    à altura e no `x` dos do poste da rua (`POSTE_ISOLADOR`,
+    `POSTE_ISOLADORES`), e o `ObraNoMapa.ponta_do_fio()` serve-lhe sem
+    mudar. Fica no lado norte da cerca, por onde a linha entra."""
+    aco = M["metal"]
+    alt = z(POSTE_ALTURA)
+    viga = alt - z(POSTE_ALTURA - POSTE_ISOLADOR + 2.6)
+    p = []
+    for lado in (-1, 1):
+        p.append(barra("pt_pilar%d" % lado, (lado * 0.36, 0.0, 0.0),
+                       (lado * 0.36, 0.0, viga), 0.045, aco))
+    p.append(caixa("pt_viga", (0.0, 0.0, viga), (0.86, 0.07, z(2.4)), aco))
+    for i, x in enumerate(POSTE_ISOLADORES):
+        p.append(cone("pt_isolador%d" % i, (x, 0.0, viga + z(1.2) + z(1.2)),
+                      0.026, 0.016, z(2.4), 6, M["cabine"]))
+    origem("portico_subestacao")
+    est.registrar("portico_subestacao", p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
+def subestacao(M, est):
+    lx, ly = SUBESTACAO_LARG, SUBESTACAO_FUNDO
+    p = [caixa("sub_base", (0.0, 0.0, z(0.6)), (lx, ly, z(1.2)), M["concreto_borda"]),
+         # A brita afunda na laje: nunca no mesmo plano dela.
+         caixa("sub_brita", (0.0, 0.0, z(1.3)), (lx - 0.14, ly - 0.14, z(0.6)),
+               M["piso_ruina"])]
+    # A cerca: postes a cada ~0,4 e três fios de grade, que deixam ver o pátio.
+    alt = z(9.0)
+    mx_, my_ = lx / 2.0 - 0.04, ly / 2.0 - 0.04
+    cantos = [(-mx_, -my_), (mx_, -my_), (mx_, my_), (-mx_, my_)]
+    for k, (a, b) in enumerate(zip(cantos, cantos[1:] + cantos[:1])):
+        n = max(2, int(round(math.dist(a, b) / 0.4)))
+        for j in range(n):
+            t = j / n
+            x, y = a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t
+            p.append(barra("sub_moirao%d_%d" % (k, j), (x, y, z(1.2)), (x, y, alt),
+                           0.022, M["metal_claro"]))
+        for f, zf in enumerate((z(3.6), z(6.2), alt)):
+            p.append(barra("sub_grade%d_%d" % (k, f), (a[0], a[1], zf), (b[0], b[1], zf),
+                           0.012, M["rede"]))
+    # Dois transformadores de radiador, a olhar para `+x`, que é a face que
+    # se vê, com as buchas brancas em cima.
+    for t, y in enumerate((-0.38, 0.30)):
+        p += [caixa("sub_trafo%d" % t, (0.05, y, z(6.2)), (0.40, 0.34, z(10.0)),
+                    M["metal_claro"]),
+              caixa("sub_tampa%d" % t, (0.05, y, z(11.4)), (0.44, 0.38, z(0.8)),
+                    M["metal"])]
+        for r, dy in enumerate((-0.11, -0.04, 0.03, 0.10)):
+            p.append(caixa("sub_aleta%d_%d" % (t, r), (0.29, y + dy, z(6.0)),
+                           (0.08, 0.025, z(8.0)), M["metal"]))
+        for b, dy in enumerate((-0.10, 0.0, 0.10)):
+            p.append(cone("sub_bucha%d_%d" % (t, b), (-0.01, y + dy, z(13.6)),
+                          0.03, 0.018, z(3.6), 6, M["cabine"]))
+    # A casa de comando, branca de porta a `+x`, e a placa de perigo na
+    # cerca da face `-y`, que é a que se vê.
+    p += [caixa("sub_casa", (0.38, -0.66, z(6.6)), (0.44, 0.44, z(10.8)), M["parede"]),
+          caixa("sub_casa_teto", (0.38, -0.66, z(12.4)), (0.52, 0.52, z(1.0)), M["zinco"]),
+          caixa("sub_casa_porta", (0.605, -0.66, z(4.8)), (0.02, 0.15, z(7.0)), M["porta"]),
+          caixa("sub_perigo", (-0.25, -my_ - 0.02, z(5.0)), (0.2, 0.012, z(4.0)),
+                M["placa_amarela"])]
+    origem("subestacao")
+    est.registrar("subestacao", p, celulas=(2, 2), zenite=ZENITE_DO_MOBILIARIO)
+
+
 CATALOGO = (_registrar_caminhoes, empilhadeira, cabeco, poste, pilha_caixotes,
             doca_concreto, pallet, pneus, cone_transito, barreira, bote,
-            guincho, trabalhador_retrato, retratos_de_fala)
+            guincho, trabalhador_retrato, retratos_de_fala,
+            poste_rua, placas_da_rua, cavalete_obra, linha_da_rede, subestacao)
 
 
 def montar(M, est):

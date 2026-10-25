@@ -2301,8 +2301,43 @@ def arvores_da_restinga() -> list:
                 postas.append((variante, round(ax, 3), round(ay, 3), ALT_CAIS,
                                round(x, 1), round(y, 1), raio, (j, mx, my, nmx, nmy)))
                 feitas += 1
+    # ⚠️ A SUBESTAÇÃO MUDA DE SÍTIO A PLANTA QUE CAI NO LOTE DELA, DEPOIS DO
+    # SORTEIO (quinta passagem da `140`, *«fora da areia, no relvado»*): o
+    # relvado do campo norte é estreito, e ela só cabe inteira nele no sítio da
+    # aroeira, que o Bruno deixou mudar de lugar. Recusar o dardo DURANTE o
+    # sorteio mudaria todos os seguintes, nas duas pontas (`mapa.md`, o sorteio
+    # novo vem de um `Random` novo); mudada no fim, as outras ficam onde
+    # estavam. Vai para `PLANTA_FORA_DA_SUBESTACAO`, e o D47 confere-a como a
+    # qualquer outra.
+    tiradas = [o for o in postas if _no_lote_da_subestacao(o[1], o[2])]
+    if len(tiradas) > 1:
+        raise SystemExit("gerar_mapa_iso: %d plantas no lote da subestação, e só "
+                         "há sítio para uma" % len(tiradas))
+    postas = [o for o in postas if not _no_lote_da_subestacao(o[1], o[2])]
+    for o in tiradas:
+        ax, ay = PLANTA_FORA_DA_SUBESTACAO
+        x, y = tela(ax, ay, ALT_CAIS)
+        postas.append((o[0], ax, ay, ALT_CAIS, round(x, 1), round(y, 1)) + o[6:])
     postas.sort(key=lambda o: (o[1] + o[2], o[2]))
     return [o[:6] for o in postas]
+
+
+# O pé da planta que a subestação tira do lote dela (a aroeira): um ponto
+# que cumpre as regras do sorteio — a crista da praia à frente nas três
+# colunas do tronco, a folga da rua, o aperto e a pilha na tela contra as
+# outras plantas — e cuja copa não toca, na tela, a caixa da subestação, do
+# pórtico, da torre, dos postes nem a de um bicho (medido numa grelha de
+# 0,05). A sul da cerca, a (1,6, 0,5), faltava a crista; a leste, a (4,0,
+# −2,6), a copa caía no quero-quero: o D47 reprovou os dois. Fica a norte da
+# torre, a 3,2 de onde estava, no meio de uma faixa de 21 pontos válidos.
+PLANTA_FORA_DA_SUBESTACAO = (2.9, -5.0)
+
+
+def _no_lote_da_subestacao(mx: float, my: float) -> bool:
+    """O pé (mx, my) cai na caixa da subestação, com a folga de meia copa da
+    aroeira à volta (a `FOLGA_DA_PLANTA` do D45)?"""
+    (cx, cy), (lx, ly) = SUBESTACAO, SUBESTACAO_TAM
+    return abs(mx - cx) < lx / 2.0 + 0.3 and abs(my - cy) < ly / 2.0 + 0.3
 
 
 def recuos_das_praias() -> list:
@@ -4260,9 +4295,9 @@ def cones_da_obra() -> list:
     *«Obra da rua sem sinalização»*, marcou o Bruno na segunda passagem da
     `136`: o trecho a recapear trocava de cor e mais nada. No dia `q` a obra
     está na FRENTE do trecho seguinte — onde a rua nova acaba e a gasta
-    continua —, e é lá que ficam três cones em fila no eixo, do lado da rua
-    gasta, no troço reto do cotovelo que a abre, a 0,9 uns dos outros — ali
-    a linha central fica a 0,45 de cada rota, e a carroçaria mais o cone cabem
+    continua —, e é lá que ficam dois cones no eixo, do lado da rua gasta,
+    no troço reto do cotovelo que a abre, com o cavalete entre eles — ali a
+    linha central fica a 0,45 de cada rota, e a carroçaria mais o cone cabem
     em 0,32; na curva o camião corta pela diagonal e passa a 0,2 do eixo.
     """
     pts, marcas = caminho_da_faixa(RUA_LARG / 2.0, arcos=True)
@@ -4273,11 +4308,21 @@ def cones_da_obra() -> list:
         # RETO dele, entre os dois arcos do eixo: depois do primeiro arco.
         reto = acc[marcas[q + 1][1]]
         cones = []
-        # ⚠️ A 0,9 UNS DOS OUTROS, NO RETO DO COTOVELO (terceira passagem). A
-        # 0,45 liam como um monte («cones amontoados»); antes da curva caíam
-        # na passadeira, que fica logo antes de cada cotovelo; e NA curva o
+        # ⚠️ NO RETO DO COTOVELO (terceira passagem). A 0,45 uns dos outros
+        # liam como um monte («cones amontoados»); antes da curva caíam na
+        # passadeira, que fica logo antes de cada cotovelo; e NA curva o
         # camião, que a corta pela diagonal, passa a 0,2 do eixo e pisá-los-ia.
-        for avanco in (0.5, 1.4, 2.3):
+        # ⚠️ E SÃO DOIS, A 1,9 UM DO OUTRO (quarta passagem, escolha do Bruno:
+        # cone, cavalete, cone). Com três cones e dois cavaletes a 0,9 sobrava
+        # 0,1 entre a base de um e o pé do outro, e a fila lia como uma
+        # barreira só (*«pode afastar o espaço entre os cones e cavaletes»*);
+        # assim sobra 0,6 de cada lado. O troço que o camião deixa livre vai de
+        # 1,0 a 3,2 do eixo (medido na terceira), e os dois cabem nele de
+        # ponta a ponta: a base de cada cone (0,15) encosta a um extremo.
+        # O poste da quina de dentro, sem luminária, fica na tela na coluna
+        # do eixo a 1,88: entre o primeiro cone e o cavalete, a tapar-lhe
+        # só a ponta com a haste (`brp_porto.POSTE_GIROS`).
+        for avanco in (0.57, 2.47):
             mx, my = _trecho(pts, acc, reto + avanco, reto + avanco + 1e-3)[0]
             cones.append((round(mx, 3), round(my, 3)))
         out.append((q, cones))
@@ -4312,9 +4357,280 @@ def obra_da_rua() -> list:
 
     pecas = [(0, reta(0)), (0, cotovelo(0))] + [(0, q) for q in dentro(0)] + [(0, reta(1))]
     for i in range(1, n - 1):
-        q = min(i, OBRA_DIAS)
+        q = quadro_da_reta(i + 1)
         pecas += [(q, cotovelo(i))] + [(q, d) for d in dentro(i)] + [(q, reta(i + 1))]
     return [(q, [(round(x, 3), round(y, 3)) for x, y in pol]) for q, pol in pecas]
+
+
+def quadro_da_reta(i: int) -> int:
+    """O dia da obra em que a reta `i` da rua fica recapeada: as duas de cima
+    no dia 0, cada uma das seguintes no dia a seguir, e o resto no fim
+    (`OBRA_DIAS`). Um lugar só, para a `obra_da_rua()` e o mobiliário que
+    troca com ela (`140`) não poderem discordar."""
+    return 0 if i <= 1 else min(i - 1, OBRA_DIAS)
+
+
+def cavaletes_da_obra() -> list:
+    """(quadro, pontos em mundo) dos cavaletes de cada dia da obra da rua.
+
+    ⚠️ NA CALÇADA DO PÁTIO, E NÃO NO EIXO (quarta passagem, escolha do
+    Bruno). Ele ia ENTRE os cones, e o poste da quina de dentro, na calçada
+    da vila do lado de cá do cotovelo, cai na tela na coluna do meio do troço
+    livre do eixo (a 1,88, entre 1,0 e 3,2): com o braço da luz tapava o
+    cavalete, sem ele encostava-lhe (*«poste junto ao cavalete»*), e não há
+    sítio do troço que fuja dele. Agora os dois cones ficam no eixo com o
+    poste no vão entre eles, e o cavalete fecha a calçada do pátio do mesmo
+    cotovelo, ao longo dela, como numa obra de passeio — a `FRACAO_DO_CAVALETE`
+    do troço reto dela, à direita do segundo cone na tela."""
+    out = []
+    for q, _cones in cones_da_obra():
+        i = q + 1
+        _my0, my1, borda = DEGRAUS[i]
+        de = borda - RUA_RECUO + RUA_LARG + RAIO_DE_DENTRO
+        ate = DEGRAUS[i + 1][2] - RUA_RECUO + RUA_LARG - RAIO_COTOVELO
+        mx = de + (ate - de) * FRACAO_DO_CAVALETE
+        out.append((q, [(round(mx, 3), round(my1 - RUA_LARG - CALCADA / 2.0, 3))]))
+    return out
+
+
+# Onde vai o cavalete no troço reto da calçada do pátio do cotovelo, da quina
+# de dentro para a curva de fora: aos 3/4, a ~1 px à direita do segundo cone
+# na tela e atrás dele, e longe do braço da luz do poste da quina.
+FRACAO_DO_CAVALETE = 0.75
+
+
+# ── O MOBILIÁRIO DA RUA (`140`) ──────────────────────────────────────────
+#
+# Escolha do Bruno: postes de luz só na calçada da VILA, e as placas — o PARE
+# na boca de cada acesso ao berço e uma de velocidade na do PORTO, a de
+# pedestres antes de cada zebra na da vila. Cada peça troca da velha para a
+# nova no dia em que o trecho dela é recapeado (`quadro_da_reta()`), como o
+# asfalto. E desde a quarta passagem a rede tem de onde vir: a subestação no
+# campo ao norte do pátio, com a linha que chega da borda de cima do mapa.
+#
+# ⚠️ AS PLACAS SERVEM QUEM SOBE A RUA POR CAUSA DA CÂMARA, e não por gosto.
+# Ela só vê as faces viradas para `+mx` e `+my`: uma placa para quem DESCE a
+# rua (`+my`) olha para `-my` e mostraria o verso. As de pedestres e a de
+# velocidade servem quem SOBE; o PARE olha para `+mx`, para o camião que sai
+# do acesso.
+#
+# O `my` dos postes das retas saiu da foto (`140`): um a cada ~3,5 de
+# calçada, contando os das curvas, e nenhum em frente a uma zebra. O último
+# fica fora do quadro, para a rede não acabar à vista; o primeiro recebe o
+# ramal da subestação, por cima da rua (`ramal`, a cruzeta a −45°).
+POSTES_DA_RUA = [(1, -1.0), (1, 2.5), (2, 11.8), (3, 19.7), (4, 27.2), (4, 30.7)]
+# OS POSTES DAS CURVAS, em cada cotovelo à vista (o 0 fica acima do quadro e
+# o 4 à esquerda dele). Terceira passagem, *«a rede acaba no cotovelo»*: um a
+# meio do arco de fora. Quarta, *«fio corta o cotovelo»* e *«fio por cima
+# das casas»*: a corda desse poste até ao primeiro da reta seguinte
+# atravessava o asfalto da curva e o lote da esquina, onde está a igreja.
+# Agora vão dois no arco de fora, a 1/4 e a 3/4 dele, e um na quina de
+# dentro: as cordas ficam no meio da calçada, a no máximo 0,113 dele (a corda
+# de um arco de 45°), e a calçada tem 0,11 de meia largura. O D45 confere-o.
+QUINAS_DA_RUA = [1, 2, 3]
+# Os ângulos, no arco de fora (de 180°, na reta, a 90°, no cotovelo), dos
+# dois postes da curva; o giro de cada um é o ângulo da cruzeta de través à
+# rua, que o `brp_porto.POSTE_GIROS` renderiza.
+ARCO_DOS_POSTES = [("curva_a", 157.5), ("curva_b", 112.5)]
+# (reta, my) da placa de velocidade: para quem sobe, a entrar na reta 3.
+VELOCIDADE_DA_RUA = [(3, 21.4)]
+# A placa fica fora da guia rebaixada do acesso (`ABA`) e da zebra, a esta
+# distância delas.
+FOLGA_DA_PLACA = 0.15
+# ⚠️ A DE PEDESTRES VIVE NA CALÇADA DA VILA (quarta passagem da `140`,
+# escolha do Bruno). Na do porto, a 1,0 do meio da zebra, a chapa subia na
+# tela por cima das barras (*«placa de pedestres sobre a zebra»*), e medido a
+# cada 0,1 ao longo daquela calçada os sítios que a zebra não apanha são os
+# que o escritório e o armazém tapam; a calçada do pátio do cotovelo também
+# não lhe serviu. Na da vila, a esta distância do meio da zebra para `+my`,
+# ela é «antes da travessia» para quem SOBE — à esquerda dele, que é a face
+# que a câmara vê — e a chapa sobe na tela sobre o lote de trás, 9 px ao lado
+# das barras.
+AVISO_DA_ZEBRA = 1.0
+
+# A LINHA DA REDE E A SUBESTAÇÃO (quarta passagem): *«pode colocar postes até
+# um dos limites do mapa para mostrar que a energia vem de algum lugar, pode
+# até fazer uma subestação de energia lá»*; o Bruno escolheu o campo ao norte
+# do pátio. A linha chega-lhe de fora do quadro, pelo campo da reta 0, e o
+# poste de saída leva a energia por cima da rua até ao primeiro poste da
+# vila. Ficam sempre NOVOS (`quadro` −1): são da cidade, e a obra do porto
+# não lhes toca.
+# ⚠️ NO RELVADO, E A AROEIRA SAI (quinta passagem, *«fora da areia, no
+# relvado»*). Medido no raster do mapa sem props: o relvado vai da calçada a
+# ~3,0 em `mx` a meio do campo e a ~4,0 a sul, e as plantas da restinga
+# desenham-se por cima de todo prop (o D47 reprova qualquer caixa que lhes
+# toque). Com todas lá, a subestação inteira só cabia em relva com 1,3 × 1,6;
+# sem a aroeira, cabe com 1,4 × 1,9 no sítio dela, a 99%. O Bruno deixou-a
+# sair; quem a tira é o `_no_lote_da_subestacao()`, depois do sorteio.
+# A linha de alta tensão desce de fora do quadro por duas torres e pousa no
+# PÓRTICO, no lado norte da cerca; o poste de SAÍDA, dentro dela, fica no
+# `my` do primeiro poste da vila, e o ramal atravessa a rua de frente
+# (*«ramal reto sobre a rua»*).
+SUBESTACAO = (2.15, -1.6)
+SUBESTACAO_TAM = (1.4, 1.9)        # o `brp_porto.SUBESTACAO_LARG`/`_FUNDO`
+LINHA_DA_REDE = [("torre", -0.3, -8.2), ("torre", 2.2, -4.0), ("portico", 2.15, -2.45),
+                 ("saida", 1.62, -1.0)]
+
+
+def mobiliario_da_rua() -> list:
+    """(tipo, mx, my, quadro) de cada peça do mobiliário, pela ordem: os
+    postes das retas (o primeiro é o `ramal`), os das curvas e quinas, os
+    PARE, as de pedestres e a de velocidade — no MEIO da calçada, que é igual
+    nos dois mapas —, e por fim a subestação e a linha que lhe chega, pela
+    ordem dos fios, com o `quadro` −1 de quem não muda com a obra."""
+    def reta_de(my):
+        for i, (my0, my1, _b) in enumerate(DEGRAUS):
+            if my0 <= my < my1:
+                return i
+        raise ValueError("my %.2f fora da rua" % my)
+
+    def vila(i):
+        return DEGRAUS[i][2] - RUA_RECUO - CALCADA / 2.0
+
+    def porto(i):
+        return DEGRAUS[i][2] - RUA_RECUO + RUA_LARG + CALCADA / 2.0
+
+    out = [("ramal" if k == 0 else "poste", vila(i), my, quadro_da_reta(i))
+           for k, (i, my) in enumerate(POSTES_DA_RUA)]
+    # A quina de fora do cotovelo `i` é um arco de raio `RAIO_COTOVELO` no
+    # asfalto, e a calçada é concêntrica com ele (`136`): o meio dela corre a
+    # `RAIO_COTOVELO + CALCADA/2` do mesmo centro — o arco que o
+    # `caminho_da_faixa(-CALCADA/2, arcos=True)` desenha. A quina de dentro é
+    # um arco de raio `RAIO_DE_DENTRO`, com o centro do lado do lote, e o meio
+    # da calçada dela corre a `RAIO_DE_DENTRO - CALCADA/2`; o poste vai a meio
+    # dele (−45°). Todos chegam com o cotovelo: o dia da reta SEGUINTE, que é
+    # o dia em que a `obra_da_rua()` o recapeia.
+    for i in QUINAS_DA_RUA:
+        a = vila(i)
+        y = DEGRAUS[i][1] + CALCADA / 2.0
+        ca = RAIO_COTOVELO + CALCADA / 2.0
+        q = quadro_da_reta(i + 1)
+        for tipo, graus in ARCO_DOS_POSTES:
+            ang = math.radians(graus)
+            out.append((tipo, a + ca + ca * math.cos(ang), y - ca + ca * math.sin(ang), q))
+        d = DEGRAUS[i + 1][2] - RUA_RECUO
+        cd = RAIO_DE_DENTRO - CALCADA / 2.0
+        ang = math.radians(-45.0)
+        out.append(("quina", d - RAIO_DE_DENTRO + cd * math.cos(ang),
+                    DEGRAUS[i][1] + RAIO_DE_DENTRO + cd * math.sin(ang), q))
+    for my0, my1, _b in PIERES:
+        # Do lado de `-my` da boca, que é a direita do camião que sai do
+        # acesso para a rua (a conta do `(-hy, hx)`, `052`).
+        my = (my0 + my1) / 2.0 - ACESSO_MEIA - ABA - FOLGA_DA_PLACA
+        i = reta_de(my)
+        out.append(("pare", porto(i), my, quadro_da_reta(i)))
+    for i, pmy in _zebras():
+        out.append(("pedestres", vila(i), pmy + AVISO_DA_ZEBRA, quadro_da_reta(i)))
+    for i, my in VELOCIDADE_DA_RUA:
+        out.append(("velocidade", porto(i), my, quadro_da_reta(i)))
+    out.append(("subestacao", SUBESTACAO[0], SUBESTACAO[1], -1))
+    out += [(t, mx, my, -1) for t, mx, my in LINHA_DA_REDE]
+    return [(t, round(mx, 3), round(my, 3), q) for t, mx, my, q in out]
+
+
+# ── A FIAÇÃO ATRÁS DA VILA (quarta passagem da `140`) ──────────────────────
+#
+# *«Tem fio passando por cima de construções, como a igreja»*. O fio da curva
+# do segundo cotovelo corre pela calçada da vila ao longo dele, e o lote da
+# esquina — a igreja — fica-lhe À FRENTE (`lote_a_frente`): a torre sobe na
+# tela por cima da altura do fio. Só que a vila é o MAPA, um fundo chapado, e
+# a fiação desenha-se por cima dele inteira. Pôr os postes noutro sítio não
+# chega (a rede vira com a rua, e a torre está na esquina); o jogo esconde o
+# fio onde o lote à frente o tapa, pelo contorno do lote, que é o que a mata
+# do morro já lê (`pecas_da_vila`, `130`).
+#
+# Os tipos que são poste: os da linha, pela ordem da tabela, e depois os da
+# rua pela ordem de `my`, cada um ligado ao seguinte — como no jogo
+# (`cadeia_dos_postes()`): o de saída da subestação liga-se ao `ramal`.
+POSTES_DA_LINHA = ("torre", "portico", "saida")
+POSTES_DA_FIACAO = ("ramal", "poste", "curva_a", "curva_b", "quina")
+# O topo do isolador acima do chão, em px de DESENHO: o `POSTE_ISOLADOR` do
+# `brp_porto.py`, que o `ObraNoMapa.gd` também copia.
+ALTURA_DO_FIO = 50.0
+# Quanto o fio pode descer abaixo da reta dos topos, em px de tela: a barriga
+# do velho (4,5), o tombo e a altura do isolador da ponta. Vão cujo lote à
+# frente não chegue a esta distância do fio não é publicado.
+FOLGA_DO_FIO = 12.0
+# Colunas a mais de cada lado do vão: os dois fios correm a ±7 px da reta dos
+# pés, nos isoladores das pontas da cruzeta.
+LADO_DO_FIO = 8
+
+
+def fiacao_atras_da_vila() -> list:
+    """(a, b, x0, teto) de cada vão da fiação que passa atrás de um lote da
+    vila: os índices dos dois postes no `mobiliario_da_rua()`, a primeira
+    coluna de TELA e, por coluna, o `y` de cima do que lhe fica à frente —
+    `SAIDA` onde nada fica. O ponto do chão de cada coluna é o da reta entre
+    os pés dos dois postes nessa coluna (as pontas, fora dela), e à frente
+    dele estão os lotes que o `lote_a_frente` diz. O D45 refaz a conta pelos
+    `pecas_da_vila` da tabela, e confere o fio desenhado contra ela."""
+    mob = mobiliario_da_rua()
+    ids = [i for i, m in enumerate(mob) if m[0] in POSTES_DA_LINHA] + sorted(
+        (i for i, m in enumerate(mob) if m[0] in POSTES_DA_FIACAO), key=lambda i: mob[i][2])
+    pecas = pecas_da_vila()
+    out = []
+    for a, b in zip(ids, ids[1:]):
+        (ax, ay), (bx, by) = mob[a][1:3], mob[b][1:3]
+        xa = tela(ax, ay)[0]
+        xb = tela(bx, by)[0]
+        x0 = int(math.floor(min(xa, xb))) - LADO_DO_FIO
+        x1 = int(math.ceil(max(xa, xb))) + LADO_DO_FIO
+        teto = []
+        perto = False
+        for c in range(x0, x1 + 1):
+            # O vão a 45° no chão (a corda entre os dois postes da curva) é
+            # VERTICAL na tela: todas as colunas são a do meio dele.
+            f = min(1.0, max(0.0, (c - xa) / (xb - xa))) if abs(xb - xa) >= 1.0 else 0.5
+            mx, my = ax + (bx - ax) * f, ay + (by - ay) * f
+            y_fio = tela(mx, my, ALT_CAIS + ALTURA_DO_FIO)[1]
+            t = float(SAIDA)
+            for caixa, cols in pecas:
+                if c in cols and lote_a_frente(caixa, mx, my):
+                    t = min(t, cols[c])
+            teto.append(t)
+            perto = perto or t < y_fio + FOLGA_DO_FIO
+        if perto:
+            out.append((a, b, x0, teto))
+    return out
+
+
+# ── O MOBILIÁRIO ATRÁS DA VILA (quinta passagem da `140`) ────────────────
+#
+# *«Veja as sombras dos postes, pois parecem estar sobrepondo edifícios, como
+# a igreja»*. É a regra da fiação um andar abaixo: o PNG do poste traz a
+# sombra de contacto, que desce para a direita do pé, e nos dois postes da
+# curva de fora dos cotovelos 2 e 3 ela cai na tela onde o lote da esquina —
+# a igreja, no 2 — lhe fica à frente; o mapa é chapado e o poste pinta-se por
+# cima (medido: 124 e 38 px no 2, 94 e 16 no 3, todos de sombra). O jogo
+# esconde, com um shader, o que da peça fica abaixo do topo do lote à frente
+# em cada coluna (`ui/shaders/vila_a_frente.gdshader`).
+#
+# Colunas de tela de cada lado do pé (a caixa da subestação, a maior peça,
+# vai a ±37), e o que a sombra desce abaixo dele, em px de tela.
+MASCARA_LADO = 40
+MASCARA_ABAIXO = 10.0
+
+
+def mascara_da_vila() -> list:
+    """(índice, x0, teto) de cada peça do `mobiliario_da_rua()` com um lote
+    da vila à frente do PÉ dela que chega à caixa dela na tela: o `y` de cima
+    do lote por coluna, de `x0` a `x0 + 2·MASCARA_LADO` (`SAIDA` onde nada
+    fica à frente). A conta da `fiacao_atras_da_vila()`, com o ponto do pé."""
+    pecas = pecas_da_vila()
+    out = []
+    for k, (_t, mx, my, _q) in enumerate(mobiliario_da_rua()):
+        x, y = tela(mx, my, ALT_CAIS)
+        x0 = int(round(x)) - MASCARA_LADO
+        teto = []
+        for c in range(x0, x0 + 2 * MASCARA_LADO + 1):
+            v = float(SAIDA)
+            for caixa, cols in pecas:
+                if c in cols and lote_a_frente(caixa, mx, my):
+                    v = min(v, cols[c])
+            teto.append(v)
+        if min(teto) < y + MASCARA_ABAIXO:
+            out.append((k, x0, teto))
+    return out
 
 
 # ── A VILA QUE CRESCE ────────────────────────────────────────────────────
@@ -7875,6 +8191,10 @@ def tabela_ancoras() -> dict:
             # O raio dos arcos das duas quinas salientes (`136`), que era
             # um chanfro: o D13 §7j reconstrói o desenho com ele.
             "raio": round(RAIO_COTOVELO, 3),
+            # O raio das duas quinas de DENTRO, centrado do lado do lote: o
+            # D45 reconstrói com ele a calçada da vila, por onde corre a
+            # fiação (`140`).
+            "raio_dentro": round(RAIO_DE_DENTRO, 3),
             # A diagonal de que o chanfro foi derivado, para o jogo a
             # poder conferir contra a dele (D13 §7i).
             "corte_da_curva": round(CORTE_DA_CURVA, 4),
@@ -7927,6 +8247,13 @@ def tabela_ancoras() -> dict:
                 for q, pol in obra_da_rua()]
     cones_obra = [{"quadro": q, "pontos": [[x, y] for x, y in pts]}
                   for q, pts in cones_da_obra()]
+    # E O MOBILIÁRIO DA RUA (`140`): os cavaletes entre os cones, e os postes
+    # e as placas, cada um com o dia em que o trecho dele fica pronto. O jogo
+    # copia-os como copia os cones, e o D45 confere a cópia.
+    cavaletes_obra = [{"quadro": q, "pontos": [[x, y] for x, y in pts]}
+                      for q, pts in cavaletes_da_obra()]
+    mobiliario = [{"tipo": t, "ponto": [x, y], "quadro": q}
+                  for t, x, y, q in mobiliario_da_rua()]
 
     # E OS LOTES RESERVADOS, publicados para o D13 §8 os poder conferir contra os
     # acessos. Um deles já esteve em cima de um; sem os números aqui, a única
@@ -8023,6 +8350,20 @@ def tabela_ancoras() -> dict:
         "obra_da_rua": obra_rua,
         "obra_dias": OBRA_DIAS,
         "cones_da_obra": cones_obra,
+        "cavaletes_da_obra": cavaletes_obra,
+        "mobiliario_da_rua": mobiliario,
+        # A caixa da subestação (quarta passagem da `140`), para o D45 a
+        # conferir contra o campo onde pousa.
+        "subestacao": {"centro": list(SUBESTACAO), "tam": list(SUBESTACAO_TAM)},
+        # O que a vila tapa da fiação (quarta passagem da `140`): o jogo copia-o
+        # para esconder o fio atrás da torre da igreja.
+        "fiacao_atras_da_vila": [{"vao": [a, b], "x0": x0,
+                                  "teto": [round(t, 1) for t in teto]}
+                                 for a, b, x0, teto in fiacao_atras_da_vila()],
+        # E o que ela tapa das peças, a sombra do poste incluída (quinta
+        # passagem): o jogo copia-o para o shader.
+        "mascara_da_vila": [{"peca": k, "x0": x0, "teto": [round(t, 1) for t in teto]}
+                            for k, x0, teto in mascara_da_vila()],
         "lotes_reservados": reservados,
         # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
         # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco

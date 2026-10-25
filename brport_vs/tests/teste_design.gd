@@ -412,7 +412,12 @@ func _rodar() -> void:
 #      posta como asserção: `PONTA_SUL = 24` (o degrau seguinte, que parecia o
 #      corte natural) derruba a costa visível de 233 para 49 px, porque é ali
 #      que ela sai do quadro — e nada, sem isto, o diria.
-const PRAIA_SO_PARA := ["Coqueiro", "Arvore"]
+#
+# ⚠️ E O MOBILIÁRIO DA RUA (`140`) acompanha a rua, que passa ao lado das duas
+# praias: os postes da vila e as placas do porto não são equipamento do
+# porto, nem a subestação da cidade no campo do norte, de onde a rede vem. A
+# pergunta 1 continua a valer para eles — nenhum pisa a areia.
+const PRAIA_SO_PARA := ["Coqueiro", "Arvore", "PosteDaRua", "PlacaDaRua", "SubestacaoDaRede"]
 
 # Medido em 04/09: a ponta norte tem 139 px de costa dentro do quadro e a sul
 # 233. O piso é generoso de propósito — ele existe para pegar uma praia que
@@ -1228,6 +1233,14 @@ func _d1_encaixe_das_docas() -> void:
 # dizia "ao lado da barreira" e a imagem dizia outra coisa. A régua responde se
 # ele PISA a rua; se ele se LÊ como parte do mesmo canteiro, só a foto responde.
 const PODEM_PISAR_A_RUA := ["Caminhao"]
+# ⚠️ E O MOBILIÁRIO DA RUA VIVE NA CALÇADA (`140`), que para este bloco é rua:
+# a faixa `rua` da tabela é o asfalto e as duas calçadas. Os postes e as
+# placas isentam-se pelo NOME — a espécie, nunca o sítio (`127`) — e a
+# pergunta de onde eles pousam de verdade (na calçada do lado deles, fora do
+# cotovelo e da guia do acesso) vive no D45 §7, contra a tabela. Continuam a
+# responder por «em terra» aqui. (A lâmpada de sódio do poste velho não está
+# no `Cenario`: vive na `RedeDaRua`, antes dele.)
+const VIVEM_NA_CALCADA := ["PosteDaRua", "PlacaDaRua"]
 const VIVEM_NA_AGUA := ["BarcoEspera", "Ancoragem", "Bote"]
 
 # Acima disto a âncora deixa de responder pelo prop e a pegada passa a ser
@@ -1321,7 +1334,7 @@ func _d2_cenario_em_terra() -> void:
 			pior = "a pegada entra no cotovelo da rua (mx %.2f..%.2f, my %.2f..%.2f)" \
 				% [float(cmx[0]), float(cmx[1]), float(cmy[0]), float(cmy[1])]
 
-		if not _comeca_com_algum(nome, PODEM_PISAR_A_RUA):
+		if not _comeca_com_algum(nome, PODEM_PISAR_A_RUA + VIVEM_NA_CALCADA):
 			_confere("%s fora do asfalto" % nome, not pisa_rua, pior)
 		_confere("%s em terra" % nome, not na_agua, pior)
 

@@ -490,6 +490,18 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   passagem entregou o efeito pedido por outro meio e a legenda disse-o.
   Três passagens, aceite à terceira; a prancha seguida da pergunta no bloco
   seguinte voltou nas três, com reinícios do worker pelo meio.
+  ⚠️ **E NO MOBILIÁRIO DA RUA (`140`), OITO PASSAGENS, E DUAS VEZES O
+  «AJUSTAR» CHEGOU SEM TEXTO** — na sexta e na sétima, depois de um reinício
+  ou do limite de uso dele. A pergunta seguinte separou as PEÇAS em opções e
+  pediu o texto no «Outro» em palavras («se não chegar, não tenho como
+  adivinhar»); voltou nas duas, com *«a placa ainda está grande»* e
+  *«melhore essa placa vermelha»*. E quando os vereditos CERCAM um número e o
+  seguinte sai do cerco (a placa: 0,17 pequena, 0,204 grande, 0,187 ainda
+  grande), mais uma passagem com um valor escolhido aqui é adivinhar: as
+  candidatas vão LADO A LADO no jogo, cada uma com a medida em px na
+  pergunta, e ele escolhe (ficou 0,150, abaixo do primeiro recusado). Pedido
+  de forma com uma opção já escolhida (*«siga com C, mas melhore o centro»*)
+  faz-se sem nova pergunta e mostra-se na prancha seguinte.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

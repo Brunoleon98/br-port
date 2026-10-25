@@ -849,28 +849,19 @@ formas de casa, terreno com muro, igreja com adro e praça da matriz, aceite à
 quinta passagem; (3) o mapa — **fechado em 17/10 (`124`)**: o mar escurece
 até ao largo, a sombra do muro esvai sem quina, e no lugar dos riscos «~»
 há marolas, correntes, arrebentação e cáusticas, aceite à terceira
-passagem. **A fila que ele deu acabou**, e em 17/10 ele deu a seguinte
-(`126`), um item por conversa: (1) terreno e vegetação — **fechado em 18/10
-(`127`, `130`)**: chão com textura, um morro de mata atrás da vila, árvores do
-Blender que balançam no morro e na restinga das pontas, e as mesmas
-embutidas no mapa entre as casas; não aceite em 17/10, aceite na segunda
-conversa, à sétima passagem, com a copa de FOLHAS, clareiras no morro e os
-destaques à vista; (2) estradas — **fechado em 19/10 (`136`)**: a rua
-gasta no porto em ruínas e recapeada pela obra do pátio, um trecho por dia
-com cones, a linha central amarela, os acessos de terra que chegam
-asfaltados, e as curvas em arco, aceite à terceira passagem; (3) **sprites
-de detalhes** — depois de duas pausas que ele pediu: **acelerar os testes**
-das IAs e do GitHub, **fechada em 24/10 (`137`)** — o catálogo em quatro
-cópias e em três fatias no CI, as suítes a `--fixed-fps 60`, as fotos quatro
-a quatro, nenhuma prova a menos —; e **as treze lacunas graves que a `137`
-mediu**, **fechadas em 24/10 (`138`)** — cada uma com a guarda pelo texto e
-pela ação e o defeito no catálogo —, e com elas treze das 28 de gravidade
-média, que o Bruno pediu a seguir (lógica, telemetria, painéis e
-preferências; as visuais ficaram de fora), e as seis suítes em paralelo
-para os agentes (`139`). **A seguir, os sprites de detalhes**, que abrem com
-a foto do jogo e a pergunta do escopo. Fora
-dela, para depois: animar as marolas e o fio diagonal da ponta norte do
-cais (`124`), os gates A4 e A7, e o galpão recuperado V3.
+passagem. **A fila que ele deu acabou**, e em 17/10 ele deu a seguinte (`126`), um
+item por conversa: terreno e vegetação (`127`, `130`), estradas (`136`) e
+os sprites de detalhes — **fechado em 25/10 (`140`)**, aceite à oitava
+passagem: postes com fiação e luz de sódio na calçada da vila, placas,
+cavaletes da obra e a rede desde uma subestação no relvado, velhos ou novos
+pelo trecho da obra —, com duas pausas pelo meio (`137`–`139`). **Ela
+também acabou**: o caminho está em `docs/arquivo/PLANO_V3_FECHADOS.md`, e o
+item seguinte é do Bruno — a próxima conversa abre a perguntar-lho, com
+opções. As quinze lacunas médias que a `138` deixou de fora (as visuais) e
+qualquer outra funcionalidade não se começam sem ele. Fora da fila, para
+depois: os carros estacionados (*«na rua, junto ao meio-fio»*, `140`),
+animar as marolas e o fio diagonal da ponta norte do cais (`124`), os gates
+A4 e A7, e o galpão recuperado V3.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da
