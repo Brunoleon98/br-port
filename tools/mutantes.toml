@@ -1868,6 +1868,100 @@ antes = '	return n >= int(carro[3])'
 depois = '	return n > int(carro[3])'
 reprova = { teste_design = "Fase 1, 0 reparo(s) da 1 e 0 da 2: estacionados os da tabela" }
 
+# ── AS MAROLAS QUE ROLAM E A QUINA NORTE (`142`) ─────────────────────────
+
+[[mutante]]
+id = "marolas-copia-velha"
+de = "142"
+o_que = "o jogo leva as marolas pelo caminho da primeira passagem, e não pelo que o gerador provou"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "const MAROLA_ROLA := 0.8"
+depois = "const MAROLA_ROLA := 0.4"
+
+[[mutante]]
+id = "marolas-em-terra"
+de = "142"
+o_que = "a camada 0 das marolas cai 2 u para terra, por cima do cais e da areia"
+alvo = "brport_vs/art/porto_mapa_marolas0.svg"
+antes = """
+  <g>
+"""
+depois = """
+  <g transform="translate(-60,-30)">
+"""
+
+[[mutante]]
+id = "marolas-para-o-mar"
+de = "142"
+o_que = "as marolas rolam do cais para o largo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "TrafegoDeCamioes.MEIA_ALT) * MAROLA_ROLA"
+depois = "TrafegoDeCamioes.MEIA_ALT) * -MAROLA_ROLA"
+
+[[mutante]]
+id = "marolas-em-fase"
+de = "142"
+o_que = "as duas camadas acendem e apagam juntas, e o mar fica sem marolas a cada ciclo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "passos = passos.slice(2) + passos.slice(0, 2)"
+depois = "passos = passos.slice(0)"
+
+[[mutante]]
+id = "marolas-troca-longa"
+de = "142"
+o_que = "a troca volta a ocupar o ciclo inteiro: as duas séries sempre fracas ao mesmo tempo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "const MAROLA_TROCA := 1.0 / 6.0"
+depois = "const MAROLA_TROCA := 0.5"
+
+[[mutante]]
+id = "marolas-repouso-trocado"
+de = "142"
+o_que = "com o movimento reduzido acende a camada nova, e o mar parado deixa de ser o de antes"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '"modulate:a": 1.0 if i == 0 else 0.0})'
+depois = '"modulate:a": 0.0 if i == 0 else 1.0})'
+
+[[mutante]]
+id = "espuma-nao-lava"
+de = "142"
+o_que = "o bug de sempre: set_parallel(true) junta os dois passos da lavagem, e a Espuma0 fica parada"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+			tw.tween_property(camada, "modulate:a", 1.0 if sobe else ESPUMA_BAIXA, dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.parallel().tween_property(camada, "position",
+'''
+depois = '''
+			tw.set_parallel(true)
+			tw.tween_property(camada, "modulate:a", 1.0 if sobe else ESPUMA_BAIXA, dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.tween_property(camada, "position",
+'''
+
+[[mutante]]
+id = "marolas-em-paralelo"
+de = "142"
+o_que = "o bug da primeira tentativa: os cinco passos das marolas correm ao mesmo tempo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+			tw.tween_property(camada, "position", passo[0], passo[2])
+			tw.parallel().tween_property(camada, "modulate:a", passo[1], passo[2]) \
+'''
+depois = '''
+			tw.set_parallel(true)
+			tw.tween_property(camada, "position", passo[0], passo[2])
+			tw.tween_property(camada, "modulate:a", passo[1], passo[2]) \
+'''
+
+[[mutante]]
+id = "quina-com-fresta"
+de = "142"
+o_que = "o chão da praia norte volta a fechar na crista, e a água vê-se na quina do pátio"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = '609.9,201.5 650.7,226.1 -9.3,-103.8" fill="#7b8f52"'
+depois = '609.9,201.5 608.1,204.8 -9.3,-103.8" fill="#7b8f52"'
+
 # ── MEU PORTO AGORA (`125`) ──────────────────────────────────────────────
 
 [[mutante]]

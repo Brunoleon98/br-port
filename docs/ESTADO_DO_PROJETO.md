@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 25/10/2026 — os carros da viela (`141`)
+> **Atualização:** 25/10/2026 — as marolas que rolam e a quina norte (`142`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -37,8 +37,9 @@ ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14
 42, fundo da terra em −16), senão o mapa ACABAVA à vista por três lados.
 
 **A água é tropical e escurece até ao largo** (`124`, **D46**) — campo de cor
-contínuo pela distância à costa, marolas em séries, correntes escuras,
-arrebentação e cáusticas nas praias; a sombra do muro esvai.
+contínuo pela distância à costa, correntes escuras, arrebentação e
+cáusticas nas praias; a sombra do muro esvai. **As marolas ROLAM para o
+cais**, duas camadas em contrafase, e a espuma lava (`142`, D51).
 
 **As duas pontas são costa desenhada** (`023`), com o cais reto. Água, baixio,
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
@@ -97,7 +98,7 @@ quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a 21).
 verdade** — parede desabada, meio telhado, portão fora do trilho.
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, linha
-central amarela, curvas em arco) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
+central amarela, curvas em arco) — **três camiões descem e dois sobem, pela DIREITA** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
 e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
 e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 **A rua é GASTA no porto em ruínas**; a obra do pátio recapeia-a por trechos,
@@ -120,12 +121,11 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
-**RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
-persistência independente do movimento; telefone pendente.
+**RB5 (`134`, `135`, #148):** Padrão/Maior nos Ajustes; telefone pendente.
 **A fila da `126`** (§7) **acabou** (`127`, `130`, `136`, `140`; testes
-em `137`–`139`), e o item que o Bruno escolheu a seguir também: os carros
-da viela (`141`). O próximo é dele; as 15 lacunas médias visuais, só com
-ele.
+em `137`–`139`), e os itens que o Bruno escolheu a seguir também: os carros
+da viela (`141`) e as marolas da `124` (`142`). O próximo é dele; as 15
+lacunas médias visuais, só com ele.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
@@ -315,9 +315,8 @@ os trinta do trabalhador saem de `blender/brp_retratos.py` (`056`, `059`).
 O cenário usa os props: **coqueiros de tronco ARQUEADO** (`028`) que oscilam em
 rajada, **guindaste** nas docas construídas, **carga no convés** e **boias +
 marcador** na Zona de Espera. **Os camiões levam a carga do porto** e
-**encostam de ré na doca** que tem barco e trabalhador (`011`, `077`); a
-**espuma lava a costa** no mesmo campo contínuo da água; o **enrocamento para
-nas duas pontas**.
+**encostam de ré na doca** que tem barco e trabalhador (`011`, `077`); o
+**enrocamento para nas duas pontas**.
 
 **E as chapas lisas acabaram**: tabuado com junta no n2, junta atravessada no
 n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela paleta.

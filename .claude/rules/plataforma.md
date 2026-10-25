@@ -24,6 +24,11 @@ custa isto ao pacote?" sem esperar uma corrida do CI:
 `$G --headless --path brport_vs --export-pack Android /tmp/brport.pck`. O APK e
 o `brport-web` continuam a ler-se dos artefatos, e o **antes** costuma já estar
 lá: a última corrida do `main` mediu-os no commit que a branch tem por base.
+⚠️ **E «LER DOS ARTEFATOS» QUER DIZER O BRUNO, OU O LOG.** O conector do
+GitHub devolve o endereço de download, mas o blob
+(`*.blob.core.windows.net`) responde 403 pelo proxy desta sessão (`142`, o
+relatório de uma fatia de mutantes). Daqui lê-se o log do job, pela cauda;
+o que só está no artefato pede-se a ele, ou mede-se de novo aqui.
 
 ⚠️ **E O DELTA DO `.pck` É O DELTA DO APK, medido** (`029`): a alavanca B fez os
 três crescerem os MESMOS ~1,87 MB, com o APK a 1,0009× e o web a 1,0025× do que

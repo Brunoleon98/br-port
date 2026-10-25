@@ -511,6 +511,15 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   rodovia»*), e a segunda pergunta, com o mapa medido numa prancha, separou-
   as. Quatro reinícios do worker caíram entre a prancha e a pergunta; a
   pergunta sozinha, no turno seguinte, voltou nas quatro.
+  ⚠️ **E NAS MAROLAS (`142`) O GIF NÃO ANIMOU NO APP.** Mandado com
+  `display` `render`, a resposta à pergunta foi *«Não consigo ver a animação,
+  me mande novamente o gif»*. O que voltou com veredito, duas vezes, foi o
+  **vídeo**: o ciclo em MP4 pelo `ffmpeg` (três voltas seguidas, H.264
+  `yuv420p`), com o GIF ao lado, os dois em `attach`. As fotos de cada
+  instante saem do `capturar_tela.gd` com `--frames=N`, que é tempo simulado
+  e reprodutível. Movimento de poucos px por segundo mostra-se a 1:1 do
+  telefone e num recorte a 2×. Reinícios do worker caíram outra vez entre o
+  envio e a pergunta, e a pergunta sozinha voltou.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do
