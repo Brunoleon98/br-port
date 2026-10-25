@@ -502,6 +502,15 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   pergunta, e ele escolhe (ficou 0,150, abaixo do primeiro recusado). Pedido
   de forma com uma opção já escolhida (*«siga com C, mas melhore o centro»*)
   faz-se sem nova pergunta e mostra-se na prancha seguinte.
+  ⚠️ **E NOS CARROS (`141`) O «OUTRO» DESFEZ UMA CORREÇÃO MARCADA.** Na
+  primeira passagem ele marcou «a moto some» com a correção escrita (tirá-
+  las); na segunda, com elas fora, pediu-as de volta no «Outro», melhores, sem
+  opção nenhuma marcada. A correção escrita diz o que ele aceita tentar, não o
+  que quer para sempre, e a lista não esgota a passagem. O escopo também veio
+  com duas leituras numa frase (*«duas rodas no meio-fio… ruas laterais…
+  rodovia»*), e a segunda pergunta, com o mapa medido numa prancha, separou-
+  as. Quatro reinícios do worker caíram entre a prancha e a pergunta; a
+  pergunta sozinha, no turno seguinte, voltou nas quatro.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

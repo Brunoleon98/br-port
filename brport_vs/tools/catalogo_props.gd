@@ -355,6 +355,21 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 				continue
 			r["ancoras"][caminho_m] = base + pe
 			r["vistas"].append([png, caminho_m])
+		# E OS CARROS DA VIELA (`141`): o `CarrosDaViela` planta-os em runtime,
+		# escondidos até a fase e as obras os trazerem. Cada PNG é um carro, e
+		# ancora-se no pé dele.
+		var viela: Dictionary = (load("res://scripts/CarrosDaViela.gd") as Script) \
+			.get_script_constant_map()
+		for carro in viela["CARROS"]:
+			var png_c := String(carro[0]) + ".png"
+			var caminho_c := "./MapaWrap/Cenario/CarrosDaViela/" + String(carro[0])
+			var vc: Vector2 = carro[1]
+			var pe_c := Vector2(float(obra["CX"]) + (vc.x - vc.y) * float(obra["MEIA_LARG"]),
+				float(obra["CY"]) + (vc.x + vc.y) * float(obra["MEIA_ALT"]) - float(obra["ALT_CAIS"]))
+			if r["ancoras"].has(caminho_c) or not _no_mapa(pe_c.x, pe_c.y):
+				continue
+			r["ancoras"][caminho_c] = base + pe_c
+			r["vistas"].append([png_c, caminho_c])
 		for caminho in fora:
 			var especie: String = fora[caminho][0]
 			if r["ancoras"].has(caminho) \

@@ -4616,20 +4616,105 @@ def mascara_da_vila() -> list:
     da vila à frente do PÉ dela que chega à caixa dela na tela: o `y` de cima
     do lote por coluna, de `x0` a `x0 + 2·MASCARA_LADO` (`SAIDA` onde nada
     fica à frente). A conta da `fiacao_atras_da_vila()`, com o ponto do pé."""
-    pecas = pecas_da_vila()
     out = []
     for k, (_t, mx, my, _q) in enumerate(mobiliario_da_rua()):
-        x, y = tela(mx, my, ALT_CAIS)
-        x0 = int(round(x)) - MASCARA_LADO
-        teto = []
-        for c in range(x0, x0 + 2 * MASCARA_LADO + 1):
-            v = float(SAIDA)
-            for caixa, cols in pecas:
-                if c in cols and lote_a_frente(caixa, mx, my):
-                    v = min(v, cols[c])
-            teto.append(v)
-        if min(teto) < y + MASCARA_ABAIXO:
-            out.append((k, x0, teto))
+        m = _mascara_do_pe(mx, my)
+        if m is not None:
+            out.append((k,) + m)
+    return out
+
+
+def _mascara_do_pe(mx: float, my: float):
+    """`(x0, teto)` de uma peça com o pé em (mx, my): o `y` de cima dos lotes
+    da vila que lhe ficam à frente, coluna a coluna, de `x0` a
+    `x0 + 2·MASCARA_LADO` — ou `None` se nenhum chega à caixa dela."""
+    pecas = pecas_da_vila()
+    x, y = tela(mx, my, ALT_CAIS)
+    # ⚠️ O MEIO ARREDONDA-SE PARA CIMA, COMO NO GODOT (`141`): o `round()`
+    # do Python leva 168,5 ao PAR (168) e o `roundi()` do jogo e do D50 a 169,
+    # e a máscara do carro com o pé nessa coluna saía um pixel ao lado.
+    x0 = int(math.floor(x + 0.5)) - MASCARA_LADO
+    teto = []
+    for c in range(x0, x0 + 2 * MASCARA_LADO + 1):
+        v = float(SAIDA)
+        for caixa, cols in pecas:
+            if c in cols and lote_a_frente(caixa, mx, my):
+                v = min(v, cols[c])
+        teto.append(v)
+    return (x0, teto) if min(teto) < y + MASCARA_ABAIXO else None
+
+
+# ── OS CARROS DA VIELA (`141`) ───────────────────────────────────────────
+#
+# *«Os carros estacionados»* que a `140` deixou de fora. Medido antes do
+# escopo: na rua não cabem — entre o camião e o meio-fio sobram 0,18, e um
+# carro tem ~0,3 —, e o Bruno pô-los na VIELA DE TERRA (`viela_da_vila()`),
+# com a rua do porto a ser rodovia: nenhum carro nela.
+#
+# ⚠️ A VIELA ESTÁ QUASE TODA ATRÁS DA FILEIRA DA FRENTE. Varrida a cada 0,1
+# em `my`, dos dois lados, a fração de um carro que se vê (os lotes à frente
+# e o topo do mapa, debaixo do HUD): a do degrau 1 vê-se de −3,3 a 6,6 do
+# lado das casas de trás, onde o vão do escritório tirou a fileira da
+# frente; a do 2 só de 8,5 a 9,1 e de 12,7 a 14,7; a do 3 de 16,5 a 19,4; a
+# do 4 quase nada. Os sítios abaixo estão todos acima de 80%, e a máscara
+# da vila esconde o resto, como ao poste (`mascara_dos_carros()`).
+#
+# `(prop, degrau, lado, my, fase, obras)`: o carro aparece desde a `fase`,
+# com `obras` reparos DESSA fase já prontos (os da Fase 1 são os três da
+# tabela dela, os da Fase 2 os que ela acrescenta) — escolha do Bruno: o
+# número cresce com a fase e com as obras do porto, e os da Fase 2 são os
+# novos. O `lado` é a margem da viela: `tras` junto às casas de trás.
+CARROS_DA_VIELA = (
+    ("carro_fusca_velho", 1, "tras", 1.2, 1, 0),
+    ("carro_kombi_velha", 2, "tras", 13.6, 1, 0),
+    ("carro_fusca_velho_b", 1, "tras", 2.5, 1, 0),
+    ("carro_picape_velha", 3, "tras", 17.6, 1, 1),
+    ("carro_hatch_velho", 1, "tras", 4.6, 1, 2),
+    ("carro_hatch_velho_b", 2, "tras", 8.8, 1, 3),
+    ("carro_hatch_novo", 1, "frente", 0.2, 2, 0),
+    ("carro_picape_nova", 1, "tras", 6.0, 2, 1),
+    ("carro_hatch_novo_b", 2, "frente", 14.2, 2, 2),
+    ("carro_hatch_novo_c", 3, "tras", 18.9, 2, 3),
+    # As motos voltaram na terceira passagem, do lado das casas da frente,
+    # nos trechos da viela que se veem (`_moto` no `brp_porto.py`).
+    ("carro_moto_velha", 1, "frente", 1.6, 1, 0),
+    ("carro_moto_nova", 2, "frente", 8.9, 2, 0),
+    # E mais duas na quarta passagem (*«mais motos»*).
+    ("carro_moto_velha_b", 3, "tras", 16.75, 1, 2),
+    ("carro_moto_nova_b", 1, "frente", 2.7, 2, 2),
+)
+# A meia largura do carro mais largo (a kombi, 0,31 × a `ESCALA_CARRO` de
+# 1,25 do `brp_porto.py`) e a folga dele à borda da terra batida.
+CARRO_MEIA_LARG = 0.195
+CARRO_FOLGA = 0.06
+
+
+def faixa_da_viela(i: int) -> tuple:
+    """`(mx0, mx1)` da viela de terra do degrau `i`."""
+    borda = DEGRAUS[i][2]
+    return borda - VILA_RECUO_2 + VILA_PROF + 0.12, borda - VILA_RECUO - 0.12
+
+
+def carros_da_viela() -> list:
+    """`(prop, mx, my, fase, obras)` de cada carro, com o `mx` da margem da
+    viela que o `lado` pede."""
+    out = []
+    for prop, i, lado, my, fase, obras in CARROS_DA_VIELA:
+        mx0, mx1 = faixa_da_viela(i)
+        d = CARRO_FOLGA + CARRO_MEIA_LARG
+        mx = mx0 + d if lado == "tras" else mx1 - d
+        out.append((prop, round(mx, 3), my, fase, obras))
+    return out
+
+
+def mascara_dos_carros() -> list:
+    """`(índice, x0, teto)` de cada carro com um lote da vila à frente dele
+    que chega à caixa dele na tela: a conta da `mascara_da_vila()`."""
+    out = []
+    for k, (_p, mx, my, _f, _o) in enumerate(carros_da_viela()):
+        m = _mascara_do_pe(mx, my)
+        if m is not None:
+            out.append((k,) + m)
     return out
 
 
@@ -7005,8 +7090,8 @@ def viela_da_vila(pavimentado: bool) -> str:
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         if i == 0:
             continue
-        mx0 = borda - VILA_RECUO_2 + VILA_PROF + 0.12
-        mx1 = borda - VILA_RECUO - 0.12
+        # A mesma faixa onde estacionam os carros (`141`).
+        mx0, mx1 = faixa_da_viela(i)
         if mx1 - mx0 < 0.4:
             continue
         # Ela acaba na última casa de trás do quarteirão, e não num `my`
@@ -8364,6 +8449,13 @@ def tabela_ancoras() -> dict:
         # passagem): o jogo copia-o para o shader.
         "mascara_da_vila": [{"peca": k, "x0": x0, "teto": [round(t, 1) for t in teto]}
                             for k, x0, teto in mascara_da_vila()],
+        # Os carros da viela (`141`) e o que os lotes da vila lhes tapam: o
+        # jogo copia os dois, e o D50 confere a cópia contra esta tabela.
+        "carros_da_viela": [{"prop": p, "ponto": [x, y], "fase": f, "obras": o}
+                            for p, x, y, f, o in carros_da_viela()],
+        "mascara_dos_carros": [{"carro": k, "x0": x0,
+                                "teto": [round(t, 1) for t in teto]}
+                               for k, x0, teto in mascara_dos_carros()],
         "lotes_reservados": reservados,
         # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
         # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco
