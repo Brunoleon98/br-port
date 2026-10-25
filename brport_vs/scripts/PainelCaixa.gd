@@ -68,6 +68,8 @@ func setup(resumo: Dictionary) -> void:
 	secao("SE AVANÇAR AGORA — DIA %d" % int(hoje["turno"]))
 	if int(hoje.get("cancelamento", 0)) > 0:
 		paragrafo("A multa abaixo já saiu do caixa hoje; não será cobrada de novo ao avançar.")
+	if int(hoje.get("lojas", 0)) > 0:
+		paragrafo("As compras abaixo já foram pagas hoje; avançar não cobra de novo.")
 	_contas(hoje)
 	total(Narrativa.lucro_ou_prejuizo(GameState.resultado_do_dia(hoje), GameState.moeda, true))
 	var barcos_hoje := _barcos(hoje)
@@ -86,7 +88,7 @@ func setup(resumo: Dictionary) -> void:
 func _contas(dia: Dictionary) -> void:
 	var receita: int = int(dia["docagens"]) + int(dia["armazem"]) \
 		+ int(dia["patio"]) + int(dia["pier"])
-	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"]) + int(dia.get("cancelamento", 0))
+	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"]) + int(dia.get("cancelamento", 0)) + int(dia.get("lojas", 0))
 	if receita != 0:
 		bloco_de_contas("Entrou", [
 			["Docagens", int(dia["docagens"])],
@@ -100,6 +102,7 @@ func _contas(dia: Dictionary) -> void:
 			["Manutenção", int(dia["manutencao"])],
 			["Parcela", int(dia["parcela"])],
 			["Cancelamento de serviço", int(dia.get("cancelamento", 0))],
+			["Compras nas lojas", int(dia.get("lojas", 0))],
 		], despesa)
 	if receita == 0 and despesa == 0:
 		var nada := paragrafo("Nada entra nem sai.")

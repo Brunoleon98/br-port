@@ -1,5 +1,7 @@
 extends PainelNarrativo
 
+signal ver_historia(id: String)
+
 # ============================================================
 # BR Port VS — o Boletim Financeiro da Dona Cida
 #
@@ -52,6 +54,7 @@ func setup(resumo: Dictionary) -> void:
 		["Manutenção", int(_resumo["manutencao"])],
 		["Parcela", int(_resumo["parcela"])],
 		["Cancelamento de serviço", int(_resumo.get("cancelamento", 0))],
+		["Compras nas lojas", int(_resumo.get("lojas", 0))],
 	], int(_resumo["despesa"]))
 
 	_resultado()
@@ -74,8 +77,19 @@ func setup(resumo: Dictionary) -> void:
 	var cara := Narrativa.retrato("cida", tom)
 	fala(texto_da_fala, cara, "cida")
 	falou.emit("cida", texto_da_fala, cara)
-
+	# A ação habitual permanece primeiro; o convite é uma segunda escolha.
+	# Ferramentas que seguem o boletim também não entram num ciclo de releitura.
 	botao_fechar("Fechar o boletim")
+	# Convite no momento de pausa; a conversa é uma escolha e pode ser relida
+	# pelas lojas. Não empilha telas sobre a cobrança nem consome a história.
+	var capitulo: String = GameState.proxima_historia_do_porto()
+	if fase == 1 and capitulo != "":
+		var historia := Button.new()
+		historia.text = "Ler história: %s" % VidaDoPorto.CAPITULOS[capitulo]
+		historia.custom_minimum_size.y = TOQUE_MIN
+		historia.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		historia.pressed.connect(func(): ver_historia.emit(capitulo))
+		_vbox.add_child(historia)
 
 
 # O bloco de contas — o total na linha do bloco e as parcelas por baixo, no

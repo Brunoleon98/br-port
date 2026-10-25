@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 24/10/2026 — lacunas (`138`); suítes em paralelo (`139`)
+> **Atualização:** 24/10/2026 — história e lojas da Fase 1 (`140`, local)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -63,8 +63,8 @@ do mapa (`069`).
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **18** na main (`111`, PR #133), com migração desde a 14
-(`098`) e um exemplo por versão;
+Save **19** local (`140`), com migração desde a 14 e exemplos preservados;
+a main permanece na 18 até publicar esta entrega;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
@@ -93,7 +93,8 @@ prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`, `066`): aparelho de
 400×680 (460×782 na conversa), com o **diário**, as **mensagens** (a conversa do porto, `067`) e
-quatro portas FECHADAS — cidade, lojas, missões, análise (itens 18 a 21).
+**Lojas** (`140`): Mercado e Delivery, visitas, compras únicas e releitura da
+história. Cidade, missões e análise continuam fechadas.
 
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
 verdade** — parede desabada, meio telhado, portão fora do trilho.
@@ -131,6 +132,9 @@ Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
+**História/lojas (`140`, local):** seis cenas de progresso e duas de compras;
+convite no boletim, Mercado/Delivery pelo celular, save 19. Leitura e telefone pendentes.
+
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
 
@@ -162,7 +166,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Fumaça** — cenas, ícones, save, tokens e falas; prazo prometido (F18), nomes lidos por string (F19), fases declaradas contra o alcançado (F20), exemplos de save (F21), tutorial (F22), Fase 2 e M9 (F23) |
-| `brport_vs/scripts/Narrativa.gd` | **Todo o texto de fala, num lugar só**, **e a expressão que cada fala pede**. Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
+| `brport_vs/scripts/Narrativa.gd` | Falas e expressões; arco da Fase 1 (`140`). Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
 | `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Doze bustos (`020`, `101`) |
@@ -215,12 +219,12 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tools/escala_props.gd` | **Os props a 1:1 com o pé na mesma linha**, o trabalhador de régua (`068`) |
 | `brport_vs/tools/folha_icones.gd` | Folha dos ícones nos 3 fundos, a 19px e ampliado — a cada ícone novo. **Reprova ao transbordar** |
 | `brport_vs/COMO_RODAR.md` | Passo a passo para abrir no Godot (Windows), e o link do Pages. O protótipo HTML original é o `index.html` da raiz, publicado em `/prototipo/` |
-| `tools/conferir_lote_de_arte.py` | Confere lote vindo de fora: alfa, tamanho e **ângulo da base contra os 26,57°**. Antes de qualquer PNG externo entrar |
+| `tools/conferir_lote_de_arte.py` | Porta de entrada dos PNGs externos: alfa, tamanho e projeção |
 | `docs/BRP_SPATIAL_CONTRACT.md` | **O contrato da projeção por escrito** — as constantes, os quatro participantes e o `ROT_X = 60°` |
 | `blender/brp_studio.py` | O estúdio compartilhado — importa a câmera de `gerar_props_iso.py` em vez de a duplicar |
 | `blender/gerar_brp.py` | Roda os quatro estúdios, exporta PNGs, salva `.blend` e junta o manifest |
 | `brport_vs/scripts/Fauna.gd` + `AmbienteCosteiro.gd` | Ciclos de seis espécies em nove pontos; habitats, toque, mar e gaivota |
-| `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
+| `blender/validate_brp_assets.py` | Validador Blender; depende de `bpy`, fora do CI |
 | `brport_vs/scripts/validation/asset_validator.gd` | Godot: quadro, alfa, recorte, projeção/âncoras e atlas (`049`); `ASSET OK` |
 | `.claude/rules/` | **As regras por tema** (`091`): o núcleo do `CLAUDE.md` e `gerais.md` carregam sempre; as de tema, ao abrir um arquivo delas. O índice está no núcleo |
 | `.claude/skills/` | **Os rituais**: `/fechar-sessao` (o fecho), `/arte` e `/balancear` (a medição e o rasto de cada frente) |
@@ -239,8 +243,8 @@ histórico em `HISTORICO.md`.
 | `.github/workflows/balanceamento.yml` | As 600 partidas por perfil, às segundas e sob demanda |
 | `tools/conferir_docs.py` | Confere as quatro camadas, referências, o teto do estado e o destino de cada aviso do briefing (`057`) |
 | `tools/conferir_mutantes.py` + `mutantes.toml` | Defeitos reinjetados no CI (`117`, `120`), em cópias e fatias (`137`); as seis suítes de uma vez em `correr_suites.py` (`139`); pré-PR em `conferir_colaboracao.py` (`119`) |
-| `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
-| `tools/conferir_cobertura_paineis.py` | Fotos dos painéis abertos, por tempo/cara (`039`, `051`, `060`); `COBERTURA OK`, sem lacuna |
+| `tools/conferir_guardas_ci.py` | Guarda saída, marcador e erros do workflow; `GUARDAS OK` |
+| `tools/conferir_cobertura_paineis.py` | Cobertura das fotos por painel/tempo/cara; `COBERTURA OK` |
 | `brport_vs/art/sprites/` | ⚠️ Referidos só por `scenes/proto/`, que o export exclui — destino do Bruno (revisão §2.9) |
 | `docs/REVISAO_GERAL_*.md` | Revisões gerais (17/09; 09/10 com plano de execução), com evidência |
 | `docs/arquivo/` | O que aconteceu em cada sessão que já fechou, e o que fechou nos dois planos (`092`). **Nada se apaga** — o índice está no `docs/arquivo/README.md` |
@@ -275,7 +279,7 @@ passa à Fase 2 (`104`).
   de cada vez, por ordem, com tempo mínimo na tela; tocar nela abre o histórico
   da sessão (`034`)
 - Autosave local a cada turno
-- **Sete telas narrativas**: o caderno (os nomes na folha de rosto e a
+- **Telas narrativas**: o caderno (os nomes na folha de rosto e a
   primeira página do diário), Boletim Financeiro semanal com os tons da Dona Cida, as 8
   falas de loop dela, as falas do Arlindo na negociação, a cena da parcela com
   o Sr. Ribeiro em dois tempos, e a narração de fim de Fase 1, entrada do

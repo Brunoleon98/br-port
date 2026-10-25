@@ -732,6 +732,15 @@ com a dor que pagou, desceu para `docs/arquivo/PLANO_V3_FECHADOS.md` (`092`).
 
 ## 7. A fila
 
+**24/10, frente do Codex — escolha nova do Bruno (`140`):** dar corpo à
+história da primeira fase e abrir lojas enquanto o Claude continua no gráfico.
+Ele escolheu Mercado e Delivery, com visitas/conversas e compras, e autorizou
+o save 19 com migração preservando progresso. O primeiro recorte está integrado
+localmente: seis cenas de progresso, duas de compras, arquivo pelas lojas e
+convite no boletim. Escrita/telefone e publicação pendentes; catálogo com
+bônus, estresse, carros e imóveis continuam para depois. Detalhe em
+`docs/RECORTE_HISTORIA_LOJAS_FASE_1.md`. A fila gráfica abaixo segue com Claude.
+
 **Prioridade em vigor desde 10/10, escolha do Bruno: a FILA DE MELHORIAS da
 revisão de 09/10, da mais crítica à mais tranquila, antes de voltar aos
 gráficos e ao jogo.** A fila, o critério e a prova de cada item estão na §6 de

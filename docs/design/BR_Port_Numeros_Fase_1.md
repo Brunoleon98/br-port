@@ -115,43 +115,43 @@ foi lida como regressão de balanceamento uma vez.
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
 | `SAVE_ARQUIVO` | `savegame.json` | regra | O NOME é constante; o CAMINHO decide-o o `ArmazemLocal`, por processo: … | `GameState.gd:598` |
-| `SAVE_VERSION` | 18 | regra | VERSÃO DO SAVE — subir quando a forma ou a interpretação do estado mudar. … | `GameState.gd:666` |
-| `SAVE_VERSAO_MINIMA` | 14 | regra | O PISO DA MIGRAÇÃO (`098`). … | `GameState.gd:684` |
+| `SAVE_VERSION` | 19 | regra | VERSÃO DO SAVE — subir quando a forma ou a interpretação do estado mudar. … | `GameState.gd:668` |
+| `SAVE_VERSAO_MINIMA` | 14 | regra | O PISO DA MIGRAÇÃO (`098`). … | `GameState.gd:686` |
 
 ## OS ESPAÇOS DE SAVE (`docs/decisoes/066`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:707` |
+| `ESPACOS` | 3 | regra | Três partidas lado a lado, «que nem é feito em outros jogos» — o pedido do Bruno no lugar do «Novo jogo (apaga progresso)» que vivia na pausa. … | `GameState.gd:709` |
 
 ## OS DOIS NOMES
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:839` |
-| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:846` |
-| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:851` |
+| `NOME_PORTO_PADRAO` | `Cais Mirim` | GDD 7 | O jogador escolhe-os na abertura, e a escolha é irrevogável (GDD 7). … | `GameState.gd:841` |
+| `NOME_JOGADOR_PADRAO` | `` | regra | Para o nome do jogador NÃO há padrão, e é de propósito: … | `GameState.gd:848` |
+| `NOME_MAX_CARACTERES` | 24 | regra | Limite de tamanho dos dois campos. … | `GameState.gd:853` |
 
 ## OS ESTADOS DO TURNO (M9, `104`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `ESTADO_JOGANDO` | `playing` | regra | O que o turno espera: … | `GameState.gd:865` |
-| `ESTADO_OFERTA` | `rival_offer` | regra | O que o turno espera: … | `GameState.gd:866` |
-| `ESTADO_COBRANCA` | `debt_payment` | regra | O que o turno espera: … | `GameState.gd:867` |
-| `ESTADO_FIM` | `game_over` | regra | O que o turno espera: … | `GameState.gd:868` |
+| `ESTADO_JOGANDO` | `playing` | regra | O que o turno espera: … | `GameState.gd:867` |
+| `ESTADO_OFERTA` | `rival_offer` | regra | O que o turno espera: … | `GameState.gd:868` |
+| `ESTADO_COBRANCA` | `debt_payment` | regra | O que o turno espera: … | `GameState.gd:869` |
+| `ESTADO_FIM` | `game_over` | regra | O que o turno espera: … | `GameState.gd:870` |
 
 ## A FASE EM JOGO (`094`, `104`)
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `CALENDARIO_SEM_PRAZO_SEMANAS` | 4 | regra | Quantas semanas o calendário mostra numa fase sem prazo: … | `GameState.gd:1331` |
+| `CALENDARIO_SEM_PRAZO_SEMANAS` | 4 | regra | Quantas semanas o calendário mostra numa fase sem prazo: … | `GameState.gd:1388` |
 
 ## TURN ADVANCE
 
 | Constante | Valor | Fonte | Por quê | Onde |
 |---|---:|---|---|---|
-| `MOTIVO_DA_FASE_1` | `Você quitou as três parcelas e manteve o porto no azul!` | regra | A frase do balanço de quem fecha a Fase 1. … | `GameState.gd:2108` |
+| `MOTIVO_DA_FASE_1` | `Você quitou as três parcelas e manteve o porto no azul!` | regra | A frase do balanço de quem fecha a Fase 1. … | `GameState.gd:2167` |
 
 ## As fases — o que muda de uma para a outra
 

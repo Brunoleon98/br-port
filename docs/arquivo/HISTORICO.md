@@ -905,3 +905,17 @@ cópias e três fatias no CI, suítes a `--fixed-fps 60`, fotos quatro a
 quatro; lacunas medidas (99 de 205 defeitos passam)»* vive na `137` —, e o
 inventário deixou de citar o `renumerar_decisao.py`, que continua na
 `gerais.md` e na `119`.
+
+
+## 24/10/2026 — história e lojas, inventário comprimido (`140`)
+
+Para caber o recorte novo no estado, estas descrições do inventário ficaram
+mais curtas; o detalhe anterior permanece aqui:
+
+| `tools/conferir_lote_de_arte.py` | Confere lote vindo de fora: alfa, tamanho e **ângulo da base contra os 26,57°**. Antes de qualquer PNG externo entrar |
+
+| `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
+
+| `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
+
+| `tools/conferir_cobertura_paineis.py` | Fotos dos painéis abertos, por tempo/cara (`039`, `051`, `060`); `COBERTURA OK`, sem lacuna |

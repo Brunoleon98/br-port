@@ -608,8 +608,9 @@ func _save_valido(versao: int) -> Dictionary:
 		"phase": "playing", "fila": [], "pending_rival": -1, "rival_attempts_left": 2,
 		"end_reason": "", "won": false,
 		"metrics": {"servicos_cancelados": 0, "multas_cancelamento": 0}, "uid": 9,
-		"dia_atual": {"cancelamento": 0}, "dia_anterior": {"cancelamento": 0},
-		"semana_atual": {"cancelamento": 0},
+		"dia_atual": {"cancelamento": 0, "lojas": 0}, "dia_anterior": {"cancelamento": 0, "lojas": 0},
+		"semana_atual": {"cancelamento": 0, "lojas": 0},
+		"vida_do_porto": VidaDoPorto.vazio(),
 	}
 
 

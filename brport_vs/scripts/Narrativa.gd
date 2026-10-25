@@ -736,3 +736,89 @@ static func cida(id: String) -> String:
 # Uma fala do Toninho por id, com a mesma regra: id desconhecido é silêncio.
 static func toninho(id: String) -> String:
 	return _gs().texto(String(TONINHO_FALAS.get(id, "")))
+
+
+# A história entre a primeira página e o fim da fase (`140`). Cada linha é
+# uma vez de quem fala; o painel só apresenta e não inventa acontecimentos.
+# As condições ficam no VidaDoPorto, incluindo o armazém PRONTO do envelope.
+const HISTORIA_DO_PORTO := {
+	"caneca": [
+		["toninho", "Toninho", "Separei uma caneca a mais de novo, chefia."],
+		["toninho", "Toninho", "A lascada na borda era do Seu Maneco. Ninguém mais pegava."],
+		["cida", "Dona Cida", "Eu lavava e punha no mesmo lugar. Todo dia."],
+		["toninho", "Toninho", "Pode deixar lá. Não tá ocupando tanto espaço assim."],
+	],
+	"chave": [
+		["toninho", "Toninho", "Olha, chefia... essa chave era do Seu Maneco. Do armário lá no galpão."],
+		["toninho", "Toninho", "Ele deixava comigo. Dizia que chave no bolso de quem carrega caixa sempre volta pro cais."],
+		["cida", "Dona Cida", "E voltou, com o bolso e tudo."],
+		["toninho", "Toninho", "Agora fica com você. O armário pode esperar o galpão estar seguro. A chave, não."],
+	],
+	"recibo": [
+		["cida", "Dona Cida", "A moça da padaria perguntou se era pra continuar mandando pão pra cá."],
+		["cida", "Dona Cida", "Ela não perguntou no começo. Ficou esperando ver se a gente ia durar."],
+		["toninho", "Toninho", "E você falou o quê?"],
+		["cida", "Dona Cida", "Que pode mandar. Fiado, não. Seu Maneco já me deu trabalho suficiente com isso."],
+	],
+	"envelope": [
+		["toninho", "Toninho", "A chave ainda serve, chefia. Achei esse envelope atrás dos livros do galpão."],
+		["cida", "Dona Cida", "Grupo Atlântico. Uma oferta de compra. Pelo cais inteiro."],
+		["toninho", "Toninho", "O Seu Maneco guardou a oferta e continuou vindo trabalhar."],
+		["cida", "Dona Cida", "A dívida antiga é uma história. O empréstimo que fizemos pra reconstruir é outra. Não mistura os papéis."],
+		["toninho", "Toninho", "No verso tem letra dele: enquanto tiver quem volte, eu fico."],
+	],
+	"mesa": [
+		["cida", "Dona Cida", "O Mané perguntou se já pode pôr o nome do nosso cais na lista das entregas fixas."],
+		["toninho", "Toninho", "Ele tem essa lista desde antes de ter telefone."],
+		["cida", "Dona Cida", "Pois é. Quem entra nela ganha um lugar na cidade. E uma conta no fim do mês."],
+		["toninho", "Toninho", "Lugar a gente aceita. A conta ele manda separada, chefia."],
+	],
+	"arlindo": [
+		["arlindo", "Capitão Arlindo", "Meu caro, tanta madeira velha pros dois cuidarem. Um dia a gente devia conversar sobre juntar esforços."],
+		["arlindo", "Capitão Arlindo", "Você continua aqui, claro. Conhece o pessoal. O nome na placa é que não precisa dar tanto trabalho."],
+		["toninho", "Toninho", "O Seu Maneco pintava aquela placa à mão. Dava trabalho mesmo."],
+		["arlindo", "Capitão Arlindo", "Pense com carinho. Saudade é bonita, mas não paga tinta."],
+	],
+	"cafe": [
+		["toninho", "Toninho", "Esse cheiro chega na ponta do píer, chefia."],
+		["toninho", "Toninho", "O Seu Maneco fazia café fraco. Dizia que era pra render. Todo mundo sabia que era pra conversa durar."],
+		["cida", "Dona Cida", "O café dele era ruim. A conversa, não."],
+		["toninho", "Toninho", "Então deixa a garrafa aqui. Ainda tem assunto."],
+	],
+	"almoco": [
+		["cida", "Dona Cida", "O Mané mandou a comida e perguntou quem senta na cabeceira agora."],
+		["toninho", "Toninho", "Ninguém. A mesa do cais é redonda."],
+		["cida", "Dona Cida", "Eu sei. Ele também sabe. Queria ver o que eu respondia."],
+		["toninho", "Toninho", "Diz que tem lugar. Se ele vier, traz a cadeira."],
+	],
+}
+
+const VISITAS_AS_LOJAS := {
+	"mercado": [
+		["biu", "Seu Biu", "Seu avô escolhia o café pelo cheiro. O preço ele perguntava depois."],
+		["biu", "Seu Biu", "Eu fazia o contrário. A gente acabava na mesma mesa."],
+	],
+	"delivery": [
+		["mane", "Mané", "Entrega no cais? Sei o caminho de olhos fechados. Seu Maneco me ensinou a não ir de olhos fechados."],
+		["mane", "Mané", "O pedido vem no seu nome agora. A panela continua a mesma."],
+	],
+}
+
+
+static func falas_da_historia(id: String) -> Array:
+	var falas: Array = HISTORIA_DO_PORTO.get(id, [])
+	var resolvidas := []
+	for linha in falas:
+		resolvidas.append([linha[0], linha[1], _gs().texto(String(linha[2]))])
+	return resolvidas
+
+
+static func retrato_da_historia(quem: String) -> Texture2D:
+	match quem:
+		"toninho":
+			return Retratos.de("toninho", "calmo")
+		"cida":
+			return Retratos.de("cida", "seria")
+		"arlindo":
+			return Retratos.de("arlindo", "sorriso")
+	return null

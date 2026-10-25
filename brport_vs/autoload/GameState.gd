@@ -663,7 +663,9 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # cargueiro e conquista. A 16 não conhecia o passado destes três marcos.
 # A 18 (`111`), aceite com migração, guarda multas e contadores do
 # cancelamento; a 17 sobe com esses campos a zero, sem recomeçar a partida.
-const SAVE_VERSION := 18
+# A 19 (`140`), autorizada com migração, guarda compras, capítulos lidos e
+# despesas das lojas. O porto da 18 permanece; estes campos começam vazios.
+const SAVE_VERSION := 19
 
 # O PISO DA MIGRAÇÃO (`098`). Até a 14, save de outra versão era descartado,
 # e servia ao protótipo, onde recomeçar custa uma partida de teste. Não serve
@@ -938,7 +940,7 @@ var nome_jogador: String = ""
 # `resumo_da_semana()` não o soma ao resultado, e o boletim mostra-o à parte.
 const SEMANA_ZERADA := {
 	"docagens": 0, "armazem": 0, "patio": 0, "pier": 0,
-	"salarios": 0, "manutencao": 0, "parcela": 0, "emprestimo": 0, "cancelamento": 0,
+	"salarios": 0, "manutencao": 0, "parcela": 0, "emprestimo": 0, "cancelamento": 0, "lojas": 0,
 }
 var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
 
@@ -951,7 +953,7 @@ var semana_atual: Dictionary = SEMANA_ZERADA.duplicate()
 # a meio de um turno mostraria uma soma parcial que muda enquanto se olha.
 const DIA_ZERADO := {
 	"docagens": 0, "armazem": 0, "patio": 0, "pier": 0,
-	"salarios": 0, "manutencao": 0, "parcela": 0, "cancelamento": 0,
+	"salarios": 0, "manutencao": 0, "parcela": 0, "cancelamento": 0, "lojas": 0,
 	"servidos": 0, "perdidos": 0, "turno": 0,
 }
 var dia_atual: Dictionary = DIA_ZERADO.duplicate()
@@ -961,6 +963,10 @@ var dia_anterior: Dictionary = DIA_ZERADO.duplicate()
 # a semana contra a média das anteriores para escolher o tom, e sem histórico
 # não há com que comparar — na semana 1 ela usa só o sinal do resultado.
 var historico_semanas: Array = []
+
+# Compras e leitura pertencem ao espaço da partida, não às preferências.
+# O degrau 18→19 mantém o porto e começa este histórico vazio (`140`).
+var vida_do_porto: Dictionary = VidaDoPorto.vazio()
 
 # ── OS RECORDES DA PARTIDA (`065`) ──
 # O painel do dinheiro mostra o melhor dia, o dia com mais barcos, o maior
@@ -1065,6 +1071,7 @@ func new_game() -> void:
 	dia_anterior = DIA_ZERADO.duplicate()
 	historico_semanas = []
 	_recordes = RECORDES_ZERADOS.duplicate(true)
+	vida_do_porto = VidaDoPorto.vazio()
 	cash = START_CASH
 	# A fase ANTES da reputação: é ela que diz onde a barra começa.
 	numero_da_fase = 1
@@ -1098,6 +1105,56 @@ func new_game() -> void:
 
 	_spawn_boats()
 	save_game()
+
+
+func capitulos_do_porto() -> Array[String]:
+	return VidaDoPorto.disponiveis(turn, numero_da_fase, TURNS_PER_WEEK,
+		estruturas, parcelas_quitadas, vida_do_porto["compras"])
+
+
+func proxima_historia_do_porto() -> String:
+	for id in capitulos_do_porto():
+		if not vida_do_porto["cenas_lidas"].has(id):
+			return id
+	return ""
+
+
+func concluir_capitulo(id: String) -> bool:
+	if not capitulos_do_porto().has(id) or vida_do_porto["cenas_lidas"].has(id):
+		return false
+	vida_do_porto["cenas_lidas"].append(id)
+	save_game()
+	return true
+
+
+func impedimento_compra_loja(id: String) -> String:
+	if not VidaDoPorto.PRODUTOS.has(id):
+		return "Este produto não está no catálogo."
+	if vida_do_porto["compras"].has(id):
+		return "Esta compra já foi feita."
+	if phase != ESTADO_JOGANDO:
+		return "Resolva a decisão do porto antes de comprar."
+	if cash < int(VidaDoPorto.PRODUTOS[id]["preco"]):
+		return "Dinheiro insuficiente para esta compra."
+	return ""
+
+
+func comprar_na_loja(id: String) -> bool:
+	if impedimento_compra_loja(id) != "":
+		return false
+	var produto: Dictionary = VidaDoPorto.PRODUTOS[id]
+	var preco := int(produto["preco"])
+	# O direito à conversa e o lançamento são feitos antes de emitir sinais:
+	# um segundo clique ou ouvinte não pode comprar nem cobrar outra vez.
+	vida_do_porto["compras"].append(id)
+	cash -= preco
+	dia_atual["lojas"] += preco
+	semana_atual["lojas"] += preco
+	save_game()
+	cash_changed.emit(cash)
+	message.emit("%s comprado por %s. Uma conversa nova está nas lojas." % [
+		String(produto["nome"]), moeda(preco)], "good", "dinheiro")
+	return true
 
 
 func _set_phase(new_phase: String) -> void:
@@ -1928,7 +1985,7 @@ func resumo_da_semana(semana: int) -> Dictionary:
 	var receita: int = int(semana_atual["docagens"]) + int(semana_atual["armazem"]) \
 		+ int(semana_atual["patio"]) + int(semana_atual["pier"])
 	var despesa: int = int(semana_atual["salarios"]) + int(semana_atual["manutencao"]) \
-		+ int(semana_atual["parcela"]) + int(semana_atual["cancelamento"])
+		+ int(semana_atual["parcela"]) + int(semana_atual["cancelamento"]) + int(semana_atual["lojas"])
 	var media := 0.0
 	for r in historico_semanas:
 		media += float(r)
@@ -1947,6 +2004,7 @@ func resumo_da_semana(semana: int) -> Dictionary:
 		"manutencao": int(semana_atual["manutencao"]),
 		"parcela": int(semana_atual["parcela"]),
 		"cancelamento": int(semana_atual["cancelamento"]),
+		"lojas": int(semana_atual["lojas"]),
 		# Fora do resultado, de propósito: ver `SEMANA_ZERADA`.
 		"emprestimo": int(semana_atual["emprestimo"]),
 		"receita": receita,
@@ -1982,7 +2040,7 @@ func resumo_do_dia() -> Dictionary:
 static func resultado_do_dia(dia: Dictionary) -> int:
 	var receita: int = int(dia["docagens"]) + int(dia["armazem"]) \
 		+ int(dia["patio"]) + int(dia["pier"])
-	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"]) + int(dia.get("cancelamento", 0))
+	var despesa: int = int(dia["salarios"]) + int(dia["manutencao"]) + int(dia["parcela"]) + int(dia.get("cancelamento", 0)) + int(dia.get("lojas", 0))
 	return receita - despesa
 
 
@@ -2037,6 +2095,7 @@ func projecao_do_dia() -> Dictionary:
 	var proj: Dictionary = DIA_ZERADO.duplicate()
 	# Já saiu do caixa hoje; aparece no resultado, sem nova cobrança no fecho.
 	proj["cancelamento"] = dia_atual["cancelamento"]
+	proj["lojas"] = dia_atual["lojas"]
 	proj["perdidos"] = dia_atual["perdidos"]
 	proj["turno"] = turn
 	if phase != ESTADO_JOGANDO:
@@ -2866,6 +2925,7 @@ func save_game() -> void:
 		"dia_atual": dia_atual,
 		"dia_anterior": dia_anterior,
 		"recordes": _recordes,
+		"vida_do_porto": vida_do_porto,
 	}
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file:
@@ -2887,6 +2947,7 @@ func load_game() -> bool:
 		return false
 
 	_limpar_guindaste_da_bancada()
+	vida_do_porto = parsed["vida_do_porto"].duplicate(true)
 	turn = int(parsed.get("turn", 1))
 	cash = int(parsed.get("cash", START_CASH))
 	# A fase ANTES da reputação, que lê dela o padrão. Acesso direto: o
@@ -3009,6 +3070,16 @@ func _save_aceite(texto: String) -> Dictionary:
 	parsed = _migrar(parsed)
 	if parsed.is_empty() or int(parsed["versao"]) != SAVE_VERSION:
 		return {}
+	if not VidaDoPorto.estado_valido(parsed.get("vida_do_porto")):
+		return {}
+	for grupo_loja in ["dia_atual", "dia_anterior", "semana_atual"]:
+		var contas_loja = parsed.get(grupo_loja)
+		if typeof(contas_loja) != TYPE_DICTIONARY:
+			return {}
+		var gasto_loja = contas_loja.get("lojas")
+		if typeof(gasto_loja) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(gasto_loja)) \
+				or float(gasto_loja) != int(gasto_loja) or int(gasto_loja) < 0:
+			return {}
 	# Campos novos obrigatórios: a 17 ganha zero no degrau; uma 18 truncada
 	# não pode apagar multas já pagas por uma leitura com omissão.
 	for grupo in ["dia_atual", "dia_anterior", "semana_atual", "metrics"]:
@@ -3062,6 +3133,16 @@ func _save_aceite(texto: String) -> Dictionary:
 			or float(dia) != int(dia) or int(dia) < inicio_da_fase(fase) \
 			or (fase_tem_prazo(fase) and int(dia) > ultimo_dia_da_fase(fase) + 1):
 		return {}
+	if typeof(parsed.get("estruturas")) != TYPE_ARRAY:
+		return {}
+	var quitadas_lidas = parsed.get("parcelas_quitadas")
+	if typeof(quitadas_lidas) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(quitadas_lidas)):
+		return {}
+	var capitulos_possiveis := VidaDoPorto.disponiveis(int(dia), fase, TURNS_PER_WEEK,
+		parsed["estruturas"], int(quitadas_lidas), parsed["vida_do_porto"]["compras"])
+	for capitulo_lido in parsed["vida_do_porto"]["cenas_lidas"]:
+		if not capitulos_possiveis.has(capitulo_lido):
+			return {}
 	# O ESTADO DO TURNO, que até à 15 entrava como texto qualquer: um valor
 	# fora dos quatro deixava o turno à espera de um painel que não existe.
 	if typeof(parsed.get("phase")) != TYPE_STRING or not ESTADOS_DO_TURNO.has(parsed["phase"]):
@@ -3218,6 +3299,8 @@ func _migrar_um_passo(de: int, dados: Dictionary) -> Dictionary:
 			return _de_16_para_17(dados)
 		17:
 			return _de_17_para_18(dados)
+		18:
+			return _de_18_para_19(dados)
 		_:
 			return {}
 
@@ -3271,6 +3354,15 @@ func _de_16_para_17(dados: Dictionary) -> Dictionary:
 	dados["dias_de_reputacao"] = 0
 	dados["primeiro_cargueiro"] = false
 	dados["meta_concluida"] = false
+	return dados
+
+
+func _de_18_para_19(dados: Dictionary) -> Dictionary:
+	dados["vida_do_porto"] = VidaDoPorto.vazio()
+	for grupo in ["dia_atual", "dia_anterior", "semana_atual"]:
+		if typeof(dados.get(grupo)) != TYPE_DICTIONARY:
+			return {}
+		dados[grupo]["lojas"] = 0
 	return dados
 
 

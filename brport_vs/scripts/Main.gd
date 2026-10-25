@@ -51,6 +51,7 @@ const EndGameScene := preload("res://scenes/EndGame.tscn")
 const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
 const PainelDiarioScene := preload("res://scenes/panels/PainelDiario.tscn")
 const PainelBoletimScene := preload("res://scenes/panels/PainelBoletim.tscn")
+const PainelLojasScene := preload("res://scenes/panels/PainelLojas.tscn")
 const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
 const PainelMensagensScene := preload("res://scenes/panels/PainelMensagens.tscn")
 const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn")
@@ -1075,7 +1076,14 @@ func _abrir_painel(cena: PackedScene) -> Control:
 	# chamador fazer `setup()`, que é onde a primeira fala sai.
 	if painel.has_signal("falou"):
 		painel.connect("falou", _ao_falar)
+	if painel.has_signal("ver_historia"):
+		painel.connect("ver_historia", _on_historia_pedida)
 	return painel
+
+
+func _on_historia_pedida(id: String) -> void:
+	var painel := _abrir_painel(PainelLojasScene)
+	painel.call("setup", id)
 
 
 # Grava sem mostrar: a fala já está na tela do painel, e passá-la também pela
