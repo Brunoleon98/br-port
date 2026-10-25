@@ -137,6 +137,14 @@ cavalete na calçada do pátio do mesmo cotovelo, ao longo dela.
   desenho que as duas folhas exigem. A dos props desceu o corte para 4,
   metade da menor, e reprova a lâmpada invisível com 0 px; a da escala
   conta-a pelo poste, como os quadros de animação.
+- **No CI do PR #152** (`e78e0ef`, corrida 40155987551, tudo verde), o
+  passo dos mutantes levou **10:00, 10:12 e 10:35** nas três fatias (71 +
+  71 + 70 defeitos, quatro cópias cada), contra 8:33, 13:41 e 9:37 com 191
+  no #151; o `--juntar` deu *«MUTANTES OK — 212 defeito(s) do catálogo em
+  3 fatia(s)»* aos **11:17** da corrida, contra 14:32. +11% de catálogo e o
+  job mais curto outra vez: a fatia 2, a lenta das duas corridas
+  anteriores, igualou as outras, e o tempo do job é o da mais lenta. O
+  «Godot headless» levou 7:00, a «Evidência visual» 12:10 e o export 1:53.
 - O PARE e o tamanho das placas não têm guarda: é arte que só a foto julga,
   e o defeito do Euler vive no Blender, que as suítes não correm.
 
