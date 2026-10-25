@@ -98,6 +98,8 @@ a janela da quina dá +10,5 na terra e +17,0 no pavimentado.
 - As seis suítes, *«SUITES OK»* em 61 s (o `teste_design`, o mais lento, com
   o D51); a bateria de capturas, sem erro, em 5:29, com a comparação
   temporal a 69.613 px de mapa a mudar em 2 s e 0 com o movimento reduzido.
+- O catálogo inteiro, em quatro cópias neste contêiner: *«MUTANTES OK — 230
+  defeito(s)»* em 48:28.
 
 ## Fora deste item
 
