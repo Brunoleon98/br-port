@@ -469,13 +469,16 @@ const ESPUMA_ENTRA := 1.6
 const ESPUMA_RECUA := 3.4
 
 ## Quanto a espuma avança sobre a terra no auge da lavagem. O sentido é o da
-## NORMAL DA COSTA: `+mx` move (+MEIA_LARG, +MEIA_ALT) por unidade na tela, e
-## 0,133 unidades disso é o suficiente para se ler sem descolar a espuma da
-## beira que ela desenha. Era `Vector2(4, 2)` cravado, que valia essas 0,133
-## unidades à escala antiga e valeria 0,2 à nova — a espuma a subir metade de
-## um passo a mais na areia por uma mudança de câmera.
+## NORMAL DA COSTA: `+mx` move (+MEIA_LARG, +MEIA_ALT) por unidade na tela.
+## Era `Vector2(4, 2)` cravado, que valia 0,133 unidades à escala antiga e
+## valeria 0,2 à nova — a espuma a subir metade de um passo a mais na areia por
+## uma mudança de câmera. E desde a `142` é METADE disso, 0,067, e o brilho
+## varia metade (`ESPUMA_BAIXA`): até lá a lavagem não corria (ver o laço), e
+## a primeira vez que correu de verdade o Bruno pediu-a mais calma.
 const ESPUMA_AVANCO := Vector2(TrafegoDeCamioes.MEIA_LARG,
-	TrafegoDeCamioes.MEIA_ALT) * 0.1333
+	TrafegoDeCamioes.MEIA_ALT) * 0.0667
+## O brilho da camada no fundo da lavagem; no auge é 1. Era 0,45 (`142`).
+const ESPUMA_BAIXA := 0.725
 
 
 func _animar_espuma() -> void:
@@ -488,7 +491,7 @@ func _animar_espuma() -> void:
 		# ponto do ciclo. Sem isto elas subiriam e desceriam juntas e a
 		# contrafase não existiria — duas camadas a fazer o trabalho de uma.
 		var alta := i == 1
-		camada.modulate.a = 1.0 if alta else 0.45
+		camada.modulate.a = 1.0 if alta else ESPUMA_BAIXA
 		camada.position = base + (ESPUMA_AVANCO if alta else Vector2.ZERO)
 		var tw := camada.create_tween().set_loops()
 		movimento_de_fundo.guardar(tw, camada, {"position": camada.position,
@@ -505,7 +508,7 @@ func _animar_espuma() -> void:
 			var sobe := (passo == 0) != alta
 			var dur := ESPUMA_ENTRA if sobe else ESPUMA_RECUA
 			var trans := Tween.TRANS_CUBIC if sobe else Tween.TRANS_SINE
-			tw.tween_property(camada, "modulate:a", 1.0 if sobe else 0.45, dur) \
+			tw.tween_property(camada, "modulate:a", 1.0 if sobe else ESPUMA_BAIXA, dur) \
 				.set_trans(trans).set_ease(Tween.EASE_OUT)
 			tw.parallel().tween_property(camada, "position",
 				base + (ESPUMA_AVANCO if sobe else Vector2.ZERO), dur) \
@@ -524,12 +527,19 @@ func _animar_espuma() -> void:
 ## constante; o que nasce e morre é a luz nela. Com o andar em ease ela
 ## pararia a meio do caminho, que é o pêndulo que a espuma ensinou a evitar.
 ##
-## A meio do ciclo a camada está onde o gerador a desenhou, que é onde ele
-## provou que cada marola cai em água à vista nas duas pontas do caminho. Em
-## REPOUSO (reduzir movimento) a 0 fica acesa ali e a 1 apagada — o mar de
-## antes da `142`, parado.
-const MAROLA_ROLA := 0.4        # cópia de `MAROLA_ROLA` do gerador; o D51 confere-a
-const MAROLA_CICLO := 7.0       # segundos de uma camada, de nascer a apagar-se
+## ⚠️ E A TROCA É CURTA: cada camada acende num sexto do ciclo, fica acesa
+## SOZINHA e apaga-se noutro sexto, e as duas só se cruzam nesses dois
+## sextos. Na primeira passagem o brilho era um seno do ciclo inteiro, e a
+## meio dele as duas séries apareciam fracas ao mesmo tempo — o Bruno marcou
+## «troca mais curta», e «andar mais» com ela (o caminho era 0,4).
+##
+## A meio do tempo à vista a camada está onde o gerador a desenhou, que é
+## onde ele provou que cada marola cai em água à vista nas duas pontas do
+## caminho. Em REPOUSO (reduzir movimento) a 0 fica acesa ali e a 1 apagada —
+## o mar de antes da `142`, parado.
+const MAROLA_ROLA := 0.8        # cópia de `MAROLA_ROLA` do gerador; o D51 confere-a
+const MAROLA_CICLO := 7.0       # segundos de uma camada, de nascer a voltar a nascer
+const MAROLA_TROCA := 1.0 / 6.0 # a fração do ciclo que ela leva a acender (e a apagar)
 ## `+mx` é o mar: (+MEIA_LARG, +MEIA_ALT) na tela por unidade, como na espuma.
 const MAROLA_CAMINHO := Vector2(TrafegoDeCamioes.MEIA_LARG,
 	TrafegoDeCamioes.MEIA_ALT) * MAROLA_ROLA
@@ -544,13 +554,20 @@ func _animar_marolas() -> void:
 		var largo := base + MAROLA_CAMINHO * 0.5
 		var cais := base - MAROLA_CAMINHO * 0.5
 		var meio := MAROLA_CICLO * 0.5
-		# Os três passos do ciclo, (posição, brilho, duração): nascer (largo →
-		# meio), apagar-se (meio → cais) e voltar invisível. A 0 começa a
-		# nascer e a 1 no auge — meio ciclo de distância, que é a contrafase.
-		var passos := [[base, 1.0, meio], [cais, 0.0, meio], [largo, 0.0, 0.0]]
+		var troca := MAROLA_CICLO * MAROLA_TROCA
+		# Anda o caminho inteiro no tempo À VISTA (meio ciclo e uma troca),
+		# a velocidade constante; o resto do ciclo espera invisível no largo.
+		var passo_por_s := MAROLA_CAMINHO / (meio + troca)
+		var acesa := largo - passo_por_s * troca
+		var a_apagar := cais + passo_por_s * troca
+		# Os cinco passos, (posição, brilho, duração): acender, acesa sozinha,
+		# apagar-se, voltar ao largo e esperar. A 0 começa a acender e a 1 a
+		# apagar-se — meio ciclo de distância, que é a contrafase.
+		var passos := [[acesa, 1.0, troca], [a_apagar, 1.0, meio - troca],
+			[cais, 0.0, troca], [largo, 0.0, 0.0], [largo, 0.0, meio - troca]]
 		if i == 1:
-			passos = [passos[1], passos[2], passos[0]]
-		camada.position = largo if i == 0 else base
+			passos = passos.slice(2) + passos.slice(0, 2)
+		camada.position = largo if i == 0 else a_apagar
 		camada.modulate.a = 0.0 if i == 0 else 1.0
 		var tw := camada.create_tween().set_loops()
 		movimento_de_fundo.guardar(tw, camada, {"position": base,

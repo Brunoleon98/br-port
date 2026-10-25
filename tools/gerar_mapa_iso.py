@@ -7559,10 +7559,11 @@ MAROLA_FOLGA_TERRA = 1.8      # nenhum ponto dela a menos disto do cais
 MAROLA_ESPACO = 0.95
 MAROLA_SERIE_FRACA = 0.72     # o que cada crista de trás guarda da da frente
 # O que cada marola anda para a costa enquanto se vê, em unidades de mundo: o
-# `Main.gd` leva-a de +metade (ao largo) a −metade (junto ao cais), e no meio,
-# no auge do brilho, ela está onde a camada a desenha. ~13 px num telefone de
-# 1080. O jogo leva uma CÓPIA (o pacote não leva a tabela), e o D51 confere-a.
-MAROLA_ROLA = 0.4
+# `Main.gd` leva-a de +metade (ao largo) a −metade (junto ao cais), e a meio
+# do tempo à vista ela está onde a camada a desenha. ~27 px num telefone de
+# 1080 (a 0,4 da primeira passagem «quase não se notava»). O jogo leva uma
+# CÓPIA (o pacote não leva a tabela), e o D51 confere-a.
+MAROLA_ROLA = 0.8
 # Na praia a margem é maior do que no cais: a arrebentação (`ARREBENTACAO`)
 # vai até 2,3 da linha de água, e é desenhada no mapa — por BAIXO da camada.
 MAROLA_FOLGA_PRAIA = 2.6
