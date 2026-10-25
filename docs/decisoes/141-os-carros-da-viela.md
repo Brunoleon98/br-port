@@ -89,6 +89,18 @@ Nenhum é castanho nem bege, que some na terra.
   claro, lê como carroceria aberta.
 - Render: os dez carros da primeira leva em 5:20, três motos em ~3 min. A
   folha dos props passou a 308 peças e 15 páginas.
+- **No CI do PR #153** (`26b2a21`, corrida 40175195329, tudo verde), o
+  passo dos mutantes levou **18:29, 11:22 e 13:29** nas três fatias (74 +
+  74 + 73 defeitos, quatro cópias cada), contra 10:00, 10:12 e 10:35 com 212
+  no #152; o `--juntar` deu *«MUTANTES OK — 221 defeito(s) do catálogo em
+  3 fatia(s)»* aos **19:18** da corrida, contra 11:17. +4% de catálogo e a
+  corrida 71% mais longa, toda pela fatia 1: o `repartir()` dá a cada fatia
+  o mesmo número de corridas de cada suíte (±1; a 1 leva 35 `teste_design`
+  e as outras 34), e dos nove D50 novos a 1 leva dois, a 2 quatro e a 3
+  três, logo os 7 min entre a 1 e a 2 não são da partilha. Na 1 cada
+  `teste_design` levou ~74 s nas quatro cópias; aponta para o runner dela,
+  e uma corrida só não o prova (`gerais.md`, tempo emparelhado). O «Godot
+  headless» levou 6:30, a «Evidência visual» 10:22 e o export 1:42.
 
 ## As provas
 
