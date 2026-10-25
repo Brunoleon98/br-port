@@ -28,7 +28,8 @@ contra a `main` e o veredito do Bruno.
 | 4 | Ajustar: fios na frente da igreja, poste junto ao cavalete, placa de pedestres no pátio, quina de dentro sem luz; *«as placas de trânsito ficaram muito grandes, e pode colocar postes até um dos limites do mapa para mostrar que a energia vem de algum lugar, pode até fazer uma subestação»*. Escolheu: subestação no campo ao norte do pátio; a rede *«vai até casas do sul do mapa»*; cavalete na calçada; pedestres na calçada da vila, antes da zebra |
 | 5 | Ajustar: a subestação *«fora da areia, no relvado»*; o ramal reto sobre a rua, a linha visível até a borda e de alta tensão; *«veja as sombras dos postes, pois parecem estar sobrepondo edifícios, como a igreja»* |
 | 6 | Ajustar: *«a placa ainda está grande»* |
-| 7 | (veredito por vir) |
+| 7 | Escolheu o tamanho das placas entre quatro, lado a lado no jogo: 0,150 (B). Depois, Ajustar: *«melhore essa placa vermelha que fica no porto»*; das três candidatas do PARE escolheu a C, de frente com o letreiro, *«mas melhore o que está no centro dela, ao invés de deixar só um risco»* |
+| 8 | **Aceitar** |
 
 ## O que ficou
 
@@ -52,7 +53,9 @@ com a cruzeta de través à rua: a corda de 45° afasta-se 0,113 do meio da
 calçada, que tem 0,11 de meia largura.
 
 **As placas** — PARE, pedestres e 40 — ficam velhas (desbotadas, tortas) ou
-novas pelo trecho. A câmara só vê as faces viradas para `+mx` e `+my`, logo
+novas pelo trecho, com a chapa de raio 0,150 (o PARE 18% maior). O PARE olha
+para a câmara, com o fio branco largo, um contorno escuro contra o asfalto e
+as quatro letras no centro: de esguelha, liso, lia como um pirulito. A câmara só vê as faces viradas para `+mx` e `+my`, logo
 servem quem SOBE a rua: uma para quem desce mostraria o verso. A de
 pedestres vive na calçada da vila, 1,0 depois da zebra no sentido de quem
 desce — antes dela para quem sobe, à esquerda dele —, e na tela a chapa
@@ -91,6 +94,19 @@ cavalete na calçada do pátio do mesmo cotovelo, ao longo dela.
   lote da frente, coluna a coluna, pelo mesmo contorno. ⚠️ O `COLOR` do
   fragment já traz a textura: multiplicá-la outra vez escureceu os postes
   mascarados na foto da quinta passagem.
+- **O tamanho da placa não se acerta pelo número dos vereditos.** A 0,17
+  eram *«pequenas demais»*, a 0,204 *«muito grandes»*, a 0,187 *«ainda
+  grandes»* — e ficou 0,150, abaixo do primeiro recusado, que vivia num
+  cano 30% mais alto e noutra calçada. A chapa do PARE mede 13 px de largura
+  a 1080 (eram 17); a de pedestres, 9. A 0,135 a figura dela some. Quando
+  dois vereditos cercam um número e o terceiro sai do cerco, as candidatas
+  vão lado a lado no jogo, e ele escolhe.
+- **O octógono do PARE nunca girou no próprio eixo.** A chapa olhava para
+  `+x` com o Euler `(22.5, 90, 0)`, e com `Y = 90` o `X` e o `Z` rodam os
+  dois em torno do `z` do mundo: os 22,5° guinavam a chapa em vez de girar
+  o octógono. Ninguém o via enquanto a chapa era lisa; as letras, retas,
+  saíram enterradas de um lado. Ela nasce a olhar para `-y`, gira pelo `Y`
+  e roda depois o grupo inteiro (`PARE_GIRO`).
 - **A lâmpada vive na `RedeDaRua`, e não no `Cenario` ao lado do poste**: lá
   o D30 lê todo par no mesmo quadro como duas metades empilhadas.
 - **A ponta do fio acha o isolador a 1 px** no PNG; sem o tombo do poste
@@ -109,8 +125,22 @@ cavalete na calçada do pátio do mesmo cotovelo, ao longo dela.
   cada fio num isolador lido no PNG, e cada vértice escondido onde um lote
   da vila lhe fica à frente, e só aí.
 - **D2 e D15** isentam o mobiliário pelo nome, e a subestação no D15.
-- Os mutantes da secção `140` do catálogo.
+- Os 21 mutantes da secção `140` do catálogo (212 ao todo), cada um a
+  reprovar o D45 na asserção do lugar dele; os da TABELA reprovam também a
+  cópia do jogo. O `--explorar` correu-os em série contra o `teste_design`,
+  ~1 min cada; o catálogo inteiro deu *«MUTANTES OK — 212»* em quatro
+  cópias, e as seis suítes *«SUITES OK»*. O fecho apanhou o F9 a reprovar um
+  `float(s)` do laço da fiação (`narrativa.md`).
+- **A bateria de capturas**, que as passagens não correram (`arte.md`, o
+  PNG novo entra na folha dos props): a folha pedia 14 páginas, e a
+  lâmpada de sódio, um bulbo de 9 a 18 px, ficava abaixo dos 19 px de
+  desenho que as duas folhas exigem. A dos props desceu o corte para 4,
+  metade da menor, e reprova a lâmpada invisível com 0 px; a da escala
+  conta-a pelo poste, como os quadros de animação.
+- O PARE e o tamanho das placas não têm guarda: é arte que só a foto julga,
+  e o defeito do Euler vive no Blender, que as suítes não correm.
 
 ## O veredito
 
-(por vir)
+**Aceito na oitava passagem**, 25/10. O PARE e o tamanho das placas foram as
+duas últimas; a rede, a subestação e a obra da rua vinham da sexta.

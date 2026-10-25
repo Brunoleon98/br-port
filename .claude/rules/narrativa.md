@@ -227,6 +227,9 @@ paths:
   dois sítios e a forma achou seis, um em CAIXA ALTA («%d BERÇOS»), mais um
   ternário de palavra inteira que a asserção «nenhum ternário à mão» não via —
   o nome dela prometia mais do que perguntava (`090`).
+  ⚠️ **E O F9 LÊ O CÓDIGO, NÃO SÓ O TEXTO:** um `float(s)` com o laço em `s`
+  reprovou-o como plural à mão (`140`, no `ObraNoMapa.gd`). Variável de laço
+  num script do jogo não se chama `s`.
 - **⚠️ QUEIXA DE ESTRANHEZA PODE SER LACUNA, e aí não há rótulo a corrigir.** A
   triagem leu *"é estranho o porto ter dívida mas o jogador começar com
   R$400.000"* como um nome errado e propôs chamar EMPRÉSTIMO ao caixa — que

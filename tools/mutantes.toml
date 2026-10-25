@@ -1511,6 +1511,7 @@ o_que = "os postes e as placas só trocam quando o pátio fica pronto, todos de 
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '		var nova := int(peca[2]) <= q if q >= 0 else pronto_fora_da_obra'
 depois = '		var nova := pronto_fora_da_obra'
+reprova = { teste_design = "cada peça do mobiliário mostra a arte do trecho dela" }
 
 [[mutante]]
 id = "sodio-aceso-no-poste-novo"
@@ -1519,6 +1520,7 @@ o_que = "a lâmpada de sódio do poste velho fica acesa por baixo da LED do post
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '			_luzes[i].visible = not nova'
 depois = '			_luzes[i].visible = true'
+reprova = { teste_design = "a lâmpada de sódio acende só no poste velho" }
 
 [[mutante]]
 id = "fio-sem-tombo"
@@ -1527,6 +1529,7 @@ o_que = "a fiação pousa no poste velho como se ele estivesse direito: os fios 
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)'
 depois = '	var t := deg_to_rad(0.0)'
+reprova = { teste_design = "pousa num isolador de cada" }
 
 [[mutante]]
 id = "curva-sem-giro"
@@ -1535,6 +1538,7 @@ o_que = "a fiação pousa nos postes das curvas como se a cruzeta deles corresse
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '	return float(GIRO_DO_POSTE[MOBILIARIO[i][0]])'
 depois = '	return 0.0'
+reprova = { teste_design = "pousa num isolador de cada" }
 
 [[mutante]]
 id = "curva-fora-do-arco"
@@ -1549,6 +1553,7 @@ depois = '''
     0.0,
     7.2
 '''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
 
 [[mutante]]
 id = "quina-dentro-do-lote"
@@ -1563,6 +1568,7 @@ depois = '''
     2.7,
     8.5
 '''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
 
 [[mutante]]
 id = "pedestres-sobre-a-zebra"
@@ -1577,6 +1583,7 @@ depois = '''
     5.11,
     13.89
 '''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
 
 [[mutante]]
 id = "fio-corta-a-curva"
@@ -1591,6 +1598,7 @@ depois = '''
     0.01,
     7.997
 '''
+reprova = { teste_design = "a fiação corre por cima da calçada da vila" }
 
 [[mutante]]
 id = "fio-corta-a-esquina"
@@ -1607,6 +1615,7 @@ depois = '''
     16.21
    ],
    "quadro": 2,'''
+reprova = { teste_design = "a fiação corre por cima da calçada da vila" }
 
 [[mutante]]
 id = "fio-por-cima-da-igreja"
@@ -1615,6 +1624,7 @@ o_que = "o fio da curva do segundo cotovelo desenha-se inteiro por cima da torre
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '		(f[3] as Line2D).gradient = _tapume(pontos, teto)'
 depois = '		(f[3] as Line2D).gradient = null'
+reprova = { teste_design = "cada fio some atrás do lote da vila que lhe fica à frente" }
 
 [[mutante]]
 id = "fio-some-sem-casa"
@@ -1623,6 +1633,7 @@ o_que = "o fio some doze pixels antes do topo do lote da frente: falta um pedaç
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '		var tapado := c >= 0 and c < colunas.size() and pontos[i].y >= float(colunas[c])'
 depois = '		var tapado := c >= 0 and c < colunas.size() and pontos[i].y >= float(colunas[c]) - 12.0'
+reprova = { teste_design = "cada fio some atrás do lote da vila que lhe fica à frente" }
 
 [[mutante]]
 id = "subestacao-na-areia"
@@ -1639,6 +1650,7 @@ depois = '''
    4.15,
    -1.6
   ],'''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
 
 [[mutante]]
 id = "linha-com-a-arte-velha"
@@ -1649,6 +1661,7 @@ antes = '''
 		if int(peca[2]) < 0:
 			nova = true'''
 depois = ''
+reprova = { teste_design = "pousa num isolador de cada" }
 
 [[mutante]]
 id = "linha-depois-da-rua"
@@ -1657,6 +1670,7 @@ o_que = "a cadeia dos postes põe a linha da subestação depois da rua: o últi
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '	return linha + ids'
 depois = '	return ids + linha'
+reprova = { teste_design = "pousa num isolador de cada" }
 
 [[mutante]]
 id = "sombra-por-cima-da-igreja"
@@ -1665,6 +1679,7 @@ o_que = "o poste não leva a máscara da vila: a sombra dos postes da curva pint
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '		no.material = _mascara(i, no.position)'
 depois = ''
+reprova = { teste_design = "cada peça do mobiliário some atrás do lote da vila" }
 
 [[mutante]]
 id = "rede-por-cima-de-tudo"
@@ -1673,6 +1688,7 @@ o_que = "a rede da rua desenha-se depois das docas: os fios e as lâmpadas passa
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '	cenario.get_parent().move_child(rede, cenario.get_index())'
 depois = ''
+reprova = { teste_design = "a rede da rua desenha-se logo antes do Cenario" }
 
 [[mutante]]
 id = "cavaletes-copia-velha"
@@ -1681,6 +1697,7 @@ o_que = "a cópia dos cavaletes do segundo dia no ObraNoMapa devolve o cavalete 
 alvo = "brport_vs/scripts/ObraNoMapa.gd"
 antes = '	[1, [Vector2(7.078, 14.09)]],'
 depois = '	[1, [Vector2(7.078, 15.1)]],'
+reprova = { teste_design = "os cavaletes ficam nos pontos da tabela" }
 
 [[mutante]]
 id = "placa-no-asfalto"
@@ -1695,6 +1712,7 @@ depois = '''
     4.7,
     10.23
 '''
+reprova = { teste_design = "fora do cotovelo e da guia do acesso" }
 
 [[mutante]]
 id = "placa-na-guia-do-acesso"
@@ -1709,6 +1727,7 @@ depois = '''
     5.11,
     10.45
 '''
+reprova = { teste_design = "fora do cotovelo e da guia do acesso" }
 
 [[mutante]]
 id = "poste-no-cotovelo"
@@ -1723,6 +1742,7 @@ depois = '''
     -0.91,
     7.0
 '''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
 
 [[mutante]]
 id = "poste-troca-fora-do-dia"
@@ -1739,6 +1759,7 @@ depois = '''
     11.8
    ],
    "quadro": 2,'''
+reprova = { teste_design = "troca no dia do trecho de rua onde pousa" }
 
 # ── MEU PORTO AGORA (`125`) ──────────────────────────────────────────────
 

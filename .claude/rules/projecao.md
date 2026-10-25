@@ -95,6 +95,10 @@ derivada delas.
   diferença é `expand_mode = 1` nos 31 nós de prop (a mesma linha dos três nós
   de mapa), a `scale` que o `Fauna.gd` escreve nos seis `Sprite2D`, e o
   `PropIso` para toda régua que leia `get_used_rect()`. O **D31** tranca-o.
+  ⚠️ **E O PIXEL DO PNG VALE `PropIso.escala()` DE COORDENADA (512/768):
+  MULTIPLICA-SE.** A guarda da máscara da vila (`140`) dividia, pôs cada
+  pixel 2,25× mais longe do que estava, e contou ZERO pixels tapados — que
+  se lia como «nada atrás da vila», a regra do zero a morder outra vez.
   ⚠️ **E A ALAVANCA B NÃO REDESENHA NADA, ao contrário do que o item previa.**
   A previsão era que "os props são desenhados nas unidades da SAÍDA", logo todo
   número em pixel do gerador teria de ser varrido. Medido: a geometria dele

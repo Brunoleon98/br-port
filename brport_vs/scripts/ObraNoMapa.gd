@@ -731,8 +731,8 @@ func _trocar_o_mobiliario(q: int) -> void:
 		if not teto.is_empty():
 			n = maxi(n, ceili(absf(pb.x - pa.x) / PASSO_DO_TAPUME) + 1)
 		var pontos := PackedVector2Array()
-		for s in n:
-			var t := float(s) / float(n - 1)
+		for k in n:
+			var t := float(k) / float(n - 1)
 			pontos.append(pa.lerp(pb, t) + Vector2(0.0, barriga * 4.0 * t * (1.0 - t)))
 		(f[3] as Line2D).points = pontos
 		(f[3] as Line2D).gradient = _tapume(pontos, teto)
