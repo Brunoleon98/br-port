@@ -88,7 +88,16 @@ a janela da quina dá +10,5 na terra e +17,0 no pavimentado.
   espumas a variar; §5 o repouso.
 - **D49 §3** mede também a janela da quina (+84,5 com a fresta; corte 54).
 - Os nove mutantes da secção `142` do catálogo, dois deles bugs que
-  existiram: a espuma em `set_parallel` e a quina com fresta.
+  existiram: a espuma em `set_parallel` e a quina com fresta. O
+  `--explorar` deu a cada um a asserção dele, e o `--so` em quatro cópias
+  *«MUTANTES OK — 9»* em 356 s.
+- **E o mutante `praia-norte-acaba-no-porto`, da `136`, ficou órfão**: o
+  `antes` dele era o polígono do chão do norte, que a quina mudou num
+  vértice. Reescrito contra a forma nova, ainda reprova a borda (+90,5) e
+  agora também a quina.
+- As seis suítes, *«SUITES OK»* em 61 s (o `teste_design`, o mais lento, com
+  o D51); a bateria de capturas, sem erro, em 5:29, com a comparação
+  temporal a 69.613 px de mapa a mudar em 2 s e 0 com o movimento reduzido.
 
 ## Fora deste item
 
