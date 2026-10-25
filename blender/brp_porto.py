@@ -1250,8 +1250,9 @@ def retratos_de_fala(M, est):
 # `-y` do Blender se veem, que no mapa são as faces viradas para `+mx` e
 # `+my`. Uma placa para quem DESCE a rua (`+my`) olha para `-my` e mostraria
 # o verso: as de pedestres e a de velocidade servem quem SOBE, na calçada do
-# porto, que é a direita de quem sobe; o PARE olha para `+mx`, para o camião
-# que sai do acesso ao berço.
+# porto, que é a direita de quem sobe; o PARE, do camião que sai do acesso ao
+# berço, olha para a CÂMARA desde a sétima passagem (`PARE_GIRO`): de
+# esguelha ele lia como um pirulito.
 #
 # ⚠️ E A ESCALA É A DO CONE E DA BARREIRA, não a da pessoa. A placa a 1,5x o
 # real teria 3 px de chapa a 720 — um ponto de cor sem forma. O cone da obra
@@ -1417,12 +1418,24 @@ PLACA_ALTURA = 21.0
 # O PARE é a placa que manda parar: a chapa um pouco maior do que as outras,
 # como na rua — e é a única que se lê só pela cor, sem símbolo.
 PLACA_PARE = 1.18
+# O PARE da sétima passagem (`140`): *«melhore essa placa vermelha que fica
+# no porto»*. A 8x ele lia como um PIRULITO — vista de esguelha, a chapa saía
+# uma elipse vermelha lisa, com um fio branco de menos de um pixel. Ficou a
+# candidata que o Bruno escolheu entre três no jogo: virada PARA A CÂMARA
+# (`PARE_GIRO`, a partir de `-y`), com o fio mais largo (`PARE_FIO`, o
+# vermelho dentro dele), um contorno escuro que separa o fio do asfalto e as
+# quatro letras — *«melhore o que está no centro dela, ao invés de deixar só
+# um risco»*. O octógono, a 13 px, sai redondo em todas: o PARE lê-se pelo
+# vermelho com a faixa branca das letras, como um de verdade visto de longe.
+PARE_GIRO = 45.0
+PARE_FIO = 0.86
 
 
 def _placa(M, nome, forma, velha):
     """Uma placa de trânsito no cano: a chapa, a borda e o símbolo.
 
-    `forma` é `pare` (octógono vermelho de fio branco, a olhar para `+x`),
+    `forma` é `pare` (octógono vermelho de fio branco com as letras, a olhar
+    para a câmara),
     `pedestres` (losango amarelo de borda preta com a figura, a olhar para
     `-y`) ou `velocidade` (círculo branco de aro vermelho com o número em
     preto, a olhar para `-y`). `-y` no estúdio é `+my` no mapa: a placa serve
@@ -1439,7 +1452,13 @@ def _placa(M, nome, forma, velha):
     # A chapa é um cilindro achatado com o eixo na direção para onde olha. A
     # borda vai atrás (mais larga) e o símbolo à frente: nunca no mesmo plano.
     if forma == "pare":
-        eixo, rot, lados = "x", (22.5, 90, 0), 8
+        # ⚠️ O OCTÓGONO GIRA NO PRÓPRIO EIXO PELO `Y`, com a chapa a olhar
+        # para `-y`. Até à sétima passagem ele olhava para `+x` com
+        # `(22.5, 90, 0)`, e com `Y = 90` o Euler está em bloqueio: o `X` e o
+        # `Z` rodam os dois em torno do `z` do MUNDO. Os 22,5° não giravam o
+        # octógono, guinavam a chapa — e as letras, retas, ficavam enterradas
+        # nela de um lado (medido no PNG: o letreiro saía à esquerda).
+        eixo, rot, lados = "y", (90, 22.5, 0), 8
     elif forma == "pedestres":
         eixo, rot, lados = "y", (90, 0, 0), 4
     else:
@@ -1452,12 +1471,17 @@ def _placa(M, nome, forma, velha):
 
     branca = M["placa_branca" + v]
     if forma == "pare":
-        # ⚠️ SEM A FAIXA DA PALAVRA: a primeira prova levava uma barra branca
-        # no meio, e o círculo vermelho com a barra é o «sentido proibido»
-        # (R-3). O PARE lê-se pelo vermelho cheio dentro do fio branco.
-        p += [no_plano(nome + "_borda", raio, 0.020, branca),
-              no_plano(nome + "_chapa", raio * 0.88, 0.034,
+        p += [no_plano(nome + "_contorno", raio * 1.06, 0.006, M["placa_preta"]),
+              no_plano(nome + "_borda", raio, 0.020, branca),
+              no_plano(nome + "_chapa", raio * PARE_FIO, 0.034,
                        M["placa_vermelha" + v])]
+        # As quatro letras, de ~1,6 px com frestas de ~0,9 px a 1080. Na
+        # primeira prova eram blocos largos e borravam numa mancha branca que
+        # lia como a placa de 40; um traço só lia como «sentido proibido».
+        for i, xl in enumerate((-0.57, -0.19, 0.19, 0.57)):
+            p.append(caixa(nome + "_letra%d" % i, (xl * raio, -0.046, h),
+                           (raio * 0.25, 0.010, z(3.0)), branca))
+        p = _inclinar(p, giro_z=PARE_GIRO)
     elif forma == "pedestres":
         p += [no_plano(nome + "_borda", raio * 1.10, 0.020, M["placa_preta"]),
               no_plano(nome + "_chapa", raio * 0.96, 0.034,
