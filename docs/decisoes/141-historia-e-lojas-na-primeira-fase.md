@@ -67,3 +67,18 @@ inclui catálogo, lojas, falta de dinheiro, confirmação e conversas.
 Medição, fotos, resultados das suítes e limites estão em
 `docs/arquivo/VERIFICACAO_HISTORIA_LOJAS_2026-10-24/README.md`.
 O aceite da escrita e o teste no telefone continuam com Bruno.
+
+## Revisão de 25/10
+
+Bruno priorizou mais vínculo com os personagens e aceitou a leitura final da
+chave e do almoço («Ficou bom»). As duas versões foram integradas: Toninho
+oferece ajuda ao entregar a chave e reserva um lugar para a chefia no almoço,
+com a brincadeira do prato da Cida. O restante de
+`docs/REVISAO_FALAS_LOJAS_FASE_1.md`, incluindo o retorno das lojas, continua
+proposta. Não se alteraram gatilhos, preços, save ou arte.
+
+A decisão, criada como 140 quando o número estava livre, foi renumerada para
+141 com `tools/renumerar_decisao.py`: o mobiliário da rua chegou à main como
+140 no PR #152. A branch incorporou `origin/main` em `3de1526`, preservando a
+frente gráfica e os dois registros. Provas desta revisão em
+`docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`.

@@ -750,9 +750,9 @@ const HISTORIA_DO_PORTO := {
 	],
 	"chave": [
 		["toninho", "Toninho", "Olha, chefia... essa chave era do Seu Maneco. Do armário lá no galpão."],
-		["toninho", "Toninho", "Ele deixava comigo. Dizia que chave no bolso de quem carrega caixa sempre volta pro cais."],
-		["cida", "Dona Cida", "E voltou, com o bolso e tudo."],
-		["toninho", "Toninho", "Agora fica com você. O armário pode esperar o galpão estar seguro. A chave, não."],
+		["toninho", "Toninho", "Ficava comigo. Ele sempre dizia que eu ia perder."],
+		["cida", "Dona Cida", "E nunca precisou pedir duas vezes."],
+		["toninho", "Toninho", "Agora fica com você. Se precisar, me chama."],
 	],
 	"recibo": [
 		["cida", "Dona Cida", "A moça da padaria perguntou se era pra continuar mandando pão pra cá."],
@@ -786,10 +786,10 @@ const HISTORIA_DO_PORTO := {
 		["toninho", "Toninho", "Então deixa a garrafa aqui. Ainda tem assunto."],
 	],
 	"almoco": [
-		["cida", "Dona Cida", "O Mané mandou a comida e perguntou quem senta na cabeceira agora."],
-		["toninho", "Toninho", "Ninguém. A mesa do cais é redonda."],
-		["cida", "Dona Cida", "Eu sei. Ele também sabe. Queria ver o que eu respondia."],
-		["toninho", "Toninho", "Diz que tem lugar. Se ele vier, traz a cadeira."],
+		["cida", "Dona Cida", "O Mané mandou a comida. Esses papéis podem esperar um pouco."],
+		["toninho", "Toninho", "Senta aqui, chefia. Deixei esse canto pra você."],
+		["cida", "Dona Cida", "E esse prato aí é meu, Toninho."],
+		["toninho", "Toninho", "Eu tava guardando, Cida. Vai que alguém pega."],
 	],
 }
 

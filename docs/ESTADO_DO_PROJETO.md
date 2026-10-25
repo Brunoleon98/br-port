@@ -132,9 +132,8 @@ Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
-**História/lojas (`141`, local):** seis cenas + duas de compras; save 19.
-Revisão para mais vínculo em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`, não aplicada.
-Leitura/telefone pendentes.
+**História/lojas (`141`):** save 19; chave/almoço aceitos e integrados.
+Revisão restante em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`; telefone pendente.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.

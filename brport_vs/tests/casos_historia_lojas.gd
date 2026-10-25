@@ -227,7 +227,7 @@ func _interface() -> void:
 	await tocar(painel, "Confirmar compra por R$240")
 	conferir("delivery entrega item e conversa próprios", gs.cash == antes - 240
 		and gs.vida_do_porto["compras"].has("almoco")
-		and rotulos(painel).contains("quem senta na cabeceira"))
+		and rotulos(painel).contains("O Mané mandou a comida"))
 	await assentar()
 	await assentar()
 	arvore.root.remove_child(main)

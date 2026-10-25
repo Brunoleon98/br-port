@@ -2,8 +2,9 @@
 
 Documento de trabalho sobre a implementação local da decisão `141`, no
 commit `2056dad`. Bruno escolheu **mais vínculo com os personagens** como
-prioridade desta revisão. Os trechos abaixo são versões para comparar na
-leitura; ainda não substituem as falas nem o percurso do jogo.
+prioridade desta revisão. **Chave e almoço foram aceitos em 25/10/2026 e
+aplicados ao jogo**, com a redação final abaixo. Os demais trechos e o retorno
+das lojas continuam como propostas para leitura.
 
 ## O que precisa melhorar primeiro
 
@@ -33,13 +34,13 @@ Referências verificadas: `brport_vs/scripts/Narrativa.gd`, linhas 744–804;
 | Cena | O que manter | O que revisar |
 |---|---|---|
 | A caneca que ficou | A caneca a mais, a borda lascada e «não tá ocupando tanto espaço assim». O gesto sustenta a ausência. | Manter nesta passagem. |
-| A chave do galpão | Toninho entregar algo que estava sob sua guarda. | Trocar a máxima sobre o bolso e o estado do galpão por uma lembrança breve e uma oferta de ajuda. |
+| A chave do galpão | Toninho entregar algo que estava sob sua guarda. | Aplicado: lembrança breve e oferta de ajuda, sem presumir o estado do galpão. |
 | O nome no recibo | A cidade começar a reconhecer quem ficou. | Fazer o recibo aparecer de fato na conversa; Toninho se oferece para buscar o pão. |
 | O envelope | A oferta antiga do Grupo Atlântico e a frase no verso. | Encontrar o envelope no armário da chave; trocar a explicação bancária por uma reação da equipe e disposição de olhar os papéis juntos. |
 | A mesa da esquina | Mané aproximar cidade e cais. | Fazer o encontro importar pelo lugar que ele tem entre as pessoas, sem anunciar entrega fixa ou conta mensal. |
 | Uma proposta informal | A simpatia interessada de Arlindo e «meu caro», escolha já registrada de Bruno. | Manter nesta passagem. É o contraponto à confiança da equipe; intensificar a ameaça não é a prioridade escolhida. |
 | Café no cais | O café fraco para a conversa durar, a resposta seca de Cida e a garrafa que fica. | Manter nesta passagem. Já cumpre o objetivo de vínculo. |
-| A mesa do cais | A compra resultar numa pausa compartilhada com a equipe. | Fazer a chefia participar do almoço, em vez de somente ouvir a troca sobre a cabeceira. |
+| A mesa do cais | A compra resultar numa pausa compartilhada com a equipe. | Aplicado: Toninho reserva um lugar para a chefia e brinca com Cida. |
 
 As condições, os ids persistentes e a ordem das cenas continuam os da `141`.
 Esta revisão não propõe respostas escolhidas pelo jogador, pontos de amizade
@@ -53,13 +54,16 @@ ou outro sistema de relacionamento.
 
 **Toninho:** Ficava comigo. Ele sempre dizia que eu ia perder.
 
-**Cida:** E quando ele precisava, já tava na mão dele.
+**Cida:** E nunca precisou pedir duas vezes.
 
-**Toninho:** Agora fica com você. Se alguma coisa emperrar, me chama.
+**Toninho:** Agora fica com você. Se precisar, me chama.
 
 A confiança passa do avô para a chefia; Toninho continua por perto. A última
 fala serve com o armazém pronto ou por reparar e não pede ao jogador uma ação
-de abrir armário que o jogo não oferece.
+de abrir armário que o jogo não oferece. Na leitura, «E quando ele precisava,
+já tava na mão dele» e «Se alguma coisa emperrar, me chama» foram simplificados
+para as falas acima. Bruno respondeu «Ficou bom» à versão final desta cena e
+do almoço; esse aceite não foi estendido às outras propostas.
 
 ### O nome no recibo
 
@@ -192,13 +196,14 @@ deixar uma prova de defeito no catálogo, como pedem as regras do projeto.
 
 ## O que esta revisão já permite avaliar
 
-A leitura pode começar pela chave e pelo almoço: são os exemplos mais curtos
-da direção escolhida por Bruno. A pergunta é se a equipe passa a acolher quem
-joga, se cada voz continua reconhecível e se o humor parece uma conversa.
-Isso ainda exige leitura humana; suíte verde não resolve gosto de escrita.
+A leitura da chave e do almoço foi aceita por Bruno. A continuação pode usar
+essas cenas como referência para o restante: a equipe acolher quem joga, cada
+voz continuar reconhecível e o humor parecer uma conversa. O aceite das outras
+cenas continua aberto; suíte verde não resolve gosto de escrita.
 
-A implementação e as provas da `141` continuam intactas. A revisão usou o
-código e as capturas já guardadas; não é novo playtest no telefone, nem prova
-visual dos textos propostos. Antes de integrar os trechos e o retorno, será
-preciso conferir a redação no painel real em Padrão/Maior, inclusive as linhas
-mais longas do envelope e do catálogo.
+A implementação da `141` recebeu somente as falas aceitas da chave e do
+almoço. Preços, save, gatilhos e percurso continuam iguais. Provas dessa
+integração em `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`.
+As capturas da entrega anterior não representam os textos novos. Telefone e
+as propostas restantes continuam por conferir; envelope e catálogo precisarão
+ser vistos no painel real em Padrão/Maior quando forem integrados.

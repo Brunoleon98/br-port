@@ -741,7 +741,8 @@ convite no boletim. Escrita/telefone e publicação pendentes; catálogo com
 bônus, estresse, carros e imóveis continuam para depois. Detalhe em
 `docs/RECORTE_HISTORIA_LOJAS_FASE_1.md`. Bruno priorizou mais vínculo com os
 personagens na revisão: versões para leitura e percurso das lojas em
-`docs/REVISAO_FALAS_LOJAS_FASE_1.md`, ainda não aplicados ao jogo.
+`docs/REVISAO_FALAS_LOJAS_FASE_1.md`. Em 25/10, aceitou chave/almoço;
+essas duas versões foram integradas. Demais falas e retorno continuam propostas.
 A fila gráfica abaixo segue com Claude.
 
 **Prioridade em vigor desde 10/10, escolha do Bruno: a FILA DE MELHORIAS da
