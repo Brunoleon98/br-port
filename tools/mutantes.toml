@@ -1495,6 +1495,272 @@ depois = '''
    "raio": 1.6'''
 reprova = { teste_design = "nenhuma carroçaria sai do asfalto nas curvas abertas" }
 
+# ── O MOBILIÁRIO DA RUA (`140`) ────────────────────────────────────────────
+#
+# Os postes, as placas, os cavaletes e a rede da rua, que trocam do velho
+# para o novo trecho a trecho com a obra do pátio. Quem os vê é o D45 §7; o
+# D2 isenta-os pelo nome, e os defeitos da tabela provam que a isenção não
+# engole a calçada de cada tipo, o cotovelo nem a guia do acesso. Os da
+# TABELA reprovam também a cópia do jogo, que é a mesma lista escrita à mão:
+# o executor troca um arquivo só, e a guarda declarada é a do lugar.
+
+[[mutante]]
+id = "mobiliario-ignora-a-obra"
+de = "140"
+o_que = "os postes e as placas só trocam quando o pátio fica pronto, todos de uma vez, e não trecho a trecho com o asfalto"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		var nova := int(peca[2]) <= q if q >= 0 else pronto_fora_da_obra'
+depois = '		var nova := pronto_fora_da_obra'
+reprova = { teste_design = "cada peça do mobiliário mostra a arte do trecho dela" }
+
+[[mutante]]
+id = "sodio-aceso-no-poste-novo"
+de = "140"
+o_que = "a lâmpada de sódio do poste velho fica acesa por baixo da LED do poste novo"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '			_luzes[i].visible = not nova'
+depois = '			_luzes[i].visible = true'
+reprova = { teste_design = "a lâmpada de sódio acende só no poste velho" }
+
+[[mutante]]
+id = "fio-sem-tombo"
+de = "140"
+o_que = "a fiação pousa no poste velho como se ele estivesse direito: os fios saem do ar ao lado dos isoladores"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	var t := deg_to_rad(POSTE_VELHO_TOMBO if velho else 0.0)'
+depois = '	var t := deg_to_rad(0.0)'
+reprova = { teste_design = "pousa num isolador de cada" }
+
+[[mutante]]
+id = "curva-sem-giro"
+de = "140"
+o_que = "a fiação pousa nos postes das curvas como se a cruzeta deles corresse em mx, e não rodada com a rua: os fios que viram saem do ar"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	return float(GIRO_DO_POSTE[MOBILIARIO[i][0]])'
+depois = '	return 0.0'
+reprova = { teste_design = "pousa num isolador de cada" }
+
+[[mutante]]
+id = "curva-fora-do-arco"
+de = "140"
+o_que = "a tabela põe o primeiro poste da curva do primeiro cotovelo dentro do asfalto dela, e não no arco da calçada de fora"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -0.797,
+    7.19
+'''
+depois = '''
+    0.0,
+    7.2
+'''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
+
+[[mutante]]
+id = "quina-dentro-do-lote"
+de = "140"
+o_que = "a tabela põe o poste da quina de dentro do primeiro cotovelo no lote da esquina, e não no arco da calçada dela"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    2.99,
+    8.21
+'''
+depois = '''
+    2.7,
+    8.5
+'''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
+
+[[mutante]]
+id = "pedestres-sobre-a-zebra"
+de = "140"
+o_que = "a tabela devolve a placa de pedestres do armazém à calçada do porto, logo depois da zebra, onde a chapa sobe por cima das barras"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    3.09,
+    13.89
+'''
+depois = '''
+    5.11,
+    13.89
+'''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
+
+[[mutante]]
+id = "fio-corta-a-curva"
+de = "140"
+o_que = "a tabela junta os dois postes da curva do primeiro cotovelo num só, a 3/4 do arco: o fio da reta de cima corta o asfalto da curva"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -0.797,
+    7.19
+'''
+depois = '''
+    0.01,
+    7.997
+'''
+reprova = { teste_design = "a fiação corre por cima da calçada da vila" }
+
+[[mutante]]
+id = "fio-corta-a-esquina"
+de = "140"
+o_que = "a tabela tira o poste da quina de dentro do primeiro cotovelo (vai para a do segundo): o fio da curva para a reta de baixo atravessa o lote da esquina"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    2.99,
+    8.21
+   ],
+   "quadro": 1,'''
+depois = '''
+    6.99,
+    16.21
+   ],
+   "quadro": 2,'''
+reprova = { teste_design = "a fiação corre por cima da calçada da vila" }
+
+[[mutante]]
+id = "fio-por-cima-da-igreja"
+de = "140"
+o_que = "o fio da curva do segundo cotovelo desenha-se inteiro por cima da torre da igreja, que lhe fica à frente"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		(f[3] as Line2D).gradient = _tapume(pontos, teto)'
+depois = '		(f[3] as Line2D).gradient = null'
+reprova = { teste_design = "cada fio some atrás do lote da vila que lhe fica à frente" }
+
+[[mutante]]
+id = "fio-some-sem-casa"
+de = "140"
+o_que = "o fio some doze pixels antes do topo do lote da frente: falta um pedaço de fio por cima da torre, onde não há nada a tapá-lo"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		var tapado := c >= 0 and c < colunas.size() and pontos[i].y >= float(colunas[c])'
+depois = '		var tapado := c >= 0 and c < colunas.size() and pontos[i].y >= float(colunas[c]) - 12.0'
+reprova = { teste_design = "cada fio some atrás do lote da vila que lhe fica à frente" }
+
+[[mutante]]
+id = "subestacao-na-areia"
+de = "140"
+o_que = "a tabela põe a subestação a meio caminho da praia: a cerca do lado do mar pisa a areia"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+  "centro": [
+   2.15,
+   -1.6
+  ],'''
+depois = '''
+  "centro": [
+   4.15,
+   -1.6
+  ],'''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
+
+[[mutante]]
+id = "linha-com-a-arte-velha"
+de = "140"
+o_que = "a linha da subestação, que é da cidade, envelhece com a rua: os fios pousam no poste como se ele pendesse, e saem do ar"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '''
+		if int(peca[2]) < 0:
+			nova = true'''
+depois = ''
+reprova = { teste_design = "pousa num isolador de cada" }
+
+[[mutante]]
+id = "linha-depois-da-rua"
+de = "140"
+o_que = "a cadeia dos postes põe a linha da subestação depois da rua: o último poste da vila liga-se à borda do mapa, e a saída não chega ao ramal"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	return linha + ids'
+depois = '	return ids + linha'
+reprova = { teste_design = "pousa num isolador de cada" }
+
+[[mutante]]
+id = "sombra-por-cima-da-igreja"
+de = "140"
+o_que = "o poste não leva a máscara da vila: a sombra dos postes da curva pinta-se por cima da igreja, que lhes fica à frente"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '		no.material = _mascara(i, no.position)'
+depois = ''
+reprova = { teste_design = "cada peça do mobiliário some atrás do lote da vila" }
+
+[[mutante]]
+id = "rede-por-cima-de-tudo"
+de = "140"
+o_que = "a rede da rua desenha-se depois das docas: os fios e as lâmpadas passam por cima dos camiões e dos prédios"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	cenario.get_parent().move_child(rede, cenario.get_index())'
+depois = ''
+reprova = { teste_design = "a rede da rua desenha-se logo antes do Cenario" }
+
+[[mutante]]
+id = "cavaletes-copia-velha"
+de = "140"
+o_que = "a cópia dos cavaletes do segundo dia no ObraNoMapa devolve o cavalete ao eixo da rua, atrás do poste da quina"
+alvo = "brport_vs/scripts/ObraNoMapa.gd"
+antes = '	[1, [Vector2(7.078, 14.09)]],'
+depois = '	[1, [Vector2(7.078, 15.1)]],'
+reprova = { teste_design = "os cavaletes ficam nos pontos da tabela" }
+
+[[mutante]]
+id = "placa-no-asfalto"
+de = "140"
+o_que = "a tabela põe o PARE do acesso 2 dentro da pista, e o D2 isenta as placas pelo nome"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    5.11,
+    10.23
+'''
+depois = '''
+    4.7,
+    10.23
+'''
+reprova = { teste_design = "fora do cotovelo e da guia do acesso" }
+
+[[mutante]]
+id = "placa-na-guia-do-acesso"
+de = "140"
+o_que = "a tabela põe o PARE do acesso 2 em cima da guia rebaixada por onde o camião sai"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    5.11,
+    10.23
+'''
+depois = '''
+    5.11,
+    10.45
+'''
+reprova = { teste_design = "fora do cotovelo e da guia do acesso" }
+
+[[mutante]]
+id = "poste-no-cotovelo"
+de = "140"
+o_que = "a tabela põe o segundo poste da reta de cima dentro do primeiro cotovelo da rua"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -0.91,
+    2.5
+'''
+depois = '''
+    -0.91,
+    7.0
+'''
+reprova = { teste_design = "cada peça do mobiliário pousa na calçada do lado dela" }
+
+[[mutante]]
+id = "poste-troca-fora-do-dia"
+de = "140"
+o_que = "a tabela dá ao poste da reta 2 o dia da reta 3: ele troca um dia depois do asfalto debaixo dele"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    3.09,
+    11.8
+   ],
+   "quadro": 1,'''
+depois = '''
+    3.09,
+    11.8
+   ],
+   "quadro": 2,'''
+reprova = { teste_design = "troca no dia do trecho de rua onde pousa" }
+
 # ── MEU PORTO AGORA (`125`) ──────────────────────────────────────────────
 
 [[mutante]]

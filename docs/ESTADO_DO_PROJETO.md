@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 24/10/2026 — lacunas (`138`); suítes em paralelo (`139`)
+> **Atualização:** 25/10/2026 — o mobiliário da rua (`140`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -56,15 +56,13 @@ D31) e a moldura fora da VRAM pelo atlas (`049`)**; a água fica a 720 (`026`).
 **E OS CASCOS TÊM CURVA** (`024`, **D29**): quem lia quadrado era o casco,
 tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 
-**A fauna tem seis espécies em nove pontos**, três na costa e três em terra,
-com toque de **44 px** (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo
-do mapa (`069`).
+**A fauna tem seis espécies em nove pontos**, com toque de **44 px**
+(D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo do mapa (`069`).
 
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **18** na main (`111`, PR #133), com migração desde a 14
-(`098`) e um exemplo por versão;
+Save **18** (`111`), migração desde a 14 (`098`), um exemplo por versão;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
@@ -103,7 +101,8 @@ central amarela, curvas em arco) — **três camiões descem e dois sobem, pela 
 e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
 e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 **A rua é GASTA no porto em ruínas**; a obra do pátio recapeia-a por trechos,
-com cones (`136`, D49).
+com cones (`136`, D49), e troca o mobiliário (`140`, D45 §7): postes,
+fiação, placas, cavaletes e a rede de uma subestação no relvado.
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
@@ -123,10 +122,10 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
 **RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
 persistência independente do movimento; telefone pendente.
-**A fila da `126`** (§7): terreno e vegetação (`127`, `130`) e estradas
-(`136`) **aceites**. **Testes (`137`–`139`):** catálogo em cópias e
-fatias, `--fixed-fps 60`, fotos e suítes em paralelo; fechadas as 13
-lacunas graves e 13 médias. A seguir: os detalhes.
+**A fila da `126`** (§7) **acabou**: terreno e vegetação (`127`, `130`),
+estradas (`136`) e o mobiliário da rua (`140`) aceites; testes em
+`137`–`139`. A seguinte é do Bruno; as 15 lacunas médias visuais, só
+com ele.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.

@@ -84,8 +84,18 @@ ramo do dedo partido e o mutante passaria; reprovou, e só na guarda do dedo.
   105,9 s lá, 103,2 e 101,7 s aqui.
 - **O catálogo inteiro**, duas vezes, em quatro cópias: *«MUTANTES OK — 179
   defeito(s)»* em 30 min com as graves, e *«MUTANTES OK — 191 defeito(s)»*
-  em 31 min com as médias. No CI, as três fatias crescem com ele — a medir
-  no PR.
+  em 31 min com as médias.
+- **No CI do PR #151** (`aa056fa`, corrida 40096781112, tudo verde), o
+  passo dos mutantes levou **8:33, 13:41 e 9:37** nas três fatias (64 + 64 +
+  63 defeitos, quatro cópias cada), contra 8:30, 14:38 e 8:50 com 166 no
+  #150: **+15% de catálogo e o job inteiro mais curto** — o `--juntar`
+  deu *«MUTANTES OK — 191 defeito(s) do catálogo em 3 fatia(s)»* aos
+  **14:32** da corrida, contra 15:37. É a deriva do runner a falar mais
+  alto do que os 25 defeitos novos. **A fatia 2 voltou a ser a lenta**,
+  1,4× a 3 com o mesmo número de defeitos: duas corridas já apontam para a
+  partilha (o que cai nela) mais do que para a máquina, e é a primeira
+  pergunta se ela chegar ao teto de 45 min. O «Godot headless» levou 7:09,
+  a «Evidência visual» 13:23 e o export 1:46.
 - **A mesma amostra da `137`**, os 205 válidos, na árvore final: **106 → 131
   apanhados (52% → 64%; 56% → 69% sem os equivalentes, que passaram de 15 a
   16)**, nenhum perdido, e nenhum grave a sobreviver. Os 25 novos são os 13

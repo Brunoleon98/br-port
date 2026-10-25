@@ -104,8 +104,11 @@ const MARGEM := 10
 # que mudam (`PropIso.desenho_na_foto`). O defeito dá ZERO exato; o corte fica
 # a meio da banda medida, e quem acrescentar uma peça menor do que metade da
 # menor de hoje desce-o de propósito.
-# Medido: a menor é o `poste_luz`, com 38 px a 1:1 (folga 2x).
-const DESENHO_MIN := 19
+# Medido: a menor era o `poste_luz`, com 38 px a 1:1 (folga 2x). Desde 25/10
+# é a lâmpada de sódio dos postes da rua (`140`): 9 px a da curva e da quina,
+# 12 a 18 as outras — um bulbo, à parte do poste só para piscar. O corte desceu
+# para 4, metade da menor; o quadro vazio continua a dar zero exato.
+const DESENHO_MIN := 4
 const RODAPE := 32                                 # as duas linhas de nome
 const CABECALHO := 46                              # o título e a legenda
 const FONTE_NOME := 11

@@ -112,7 +112,7 @@ const ARVORES: Array = [
 	["arvore_copa_alta", 10.6, 290.1],
 	["arvore_embauba_a", -1.6, 293.0],
 	["arvore_copa_m2", -9.5, 299.5],
-	["arvore_aroeira_b", 411.6, 73.6],
+	["arvore_aroeira_b", 497.0, 57.2],
 	["arvore_guriri_a", 513.4, 79.9],
 	["arvore_guriri_a", 436.2, 116.7],
 	["arvore_guriri_a", 412.7, 118.5],

@@ -329,6 +329,32 @@ func da_cena(cena: String, base: Vector2, raiz: String, r: Dictionary) -> void:
 					continue
 				r["ancoras"][caminho] = base + Vector2(float(pe[0]), float(pe[1]))
 				r["vistas"].append([String(e["arvore"]) + ".png", caminho])
+		# ⚠️ E O MOBILIÁRIO DA RUA TAMBÉM NÃO (`140`): o `ObraNoMapa` planta os
+		# postes e as placas em runtime e troca-lhes a arte velha pela nova
+		# com a obra, a lâmpada de sódio vive na rede da rua e os cavaletes só
+		# existem nos dias da obra. Cada PNG ancora-se no pé da PRIMEIRA peça
+		# que o mostra, pelas listas do jogo — a mesma conta da mata.
+		var obra: Dictionary = (load("res://scripts/ObraNoMapa.gd") as Script) \
+			.get_script_constant_map()
+		var pecas: Array = []
+		for peca in obra["MOBILIARIO"]:
+			for t in obra["ARTE_DO_MOBILIARIO"][peca[0]]:
+				pecas.append([t, peca[1]])
+			if (obra["LUZ_DE_SODIO"] as Dictionary).has(peca[0]):
+				pecas.append([obra["LUZ_DE_SODIO"][peca[0]], peca[1]])
+		for dia in obra["CAVALETES"]:
+			for v in dia[1]:
+				pecas.append([obra["CAVALETE"], v])
+		for par in pecas:
+			var png := String((par[0] as Texture2D).resource_path.get_file())
+			var caminho_m := "./MapaWrap/Cenario/Mobiliario/" + png.get_basename()
+			var v: Vector2 = par[1]
+			var pe := Vector2(float(obra["CX"]) + (v.x - v.y) * float(obra["MEIA_LARG"]),
+				float(obra["CY"]) + (v.x + v.y) * float(obra["MEIA_ALT"]) - float(obra["ALT_CAIS"]))
+			if r["ancoras"].has(caminho_m) or not _no_mapa(pe.x, pe.y):
+				continue
+			r["ancoras"][caminho_m] = base + pe
+			r["vistas"].append([png, caminho_m])
 		for caminho in fora:
 			var especie: String = fora[caminho][0]
 			if r["ancoras"].has(caminho) \

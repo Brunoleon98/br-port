@@ -973,6 +973,30 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_cavalete_obra_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "cavalete_obra.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_cone_transito_base",
       "category": "porto",
       "stage": "base",
@@ -1236,6 +1260,150 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_placa_pare_nova_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "placa_pare_nova.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_placa_pare_velha_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "placa_pare_velha.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_placa_pedestres_nova_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "placa_pedestres_nova.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_placa_pedestres_velha_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "placa_pedestres_velha.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_placa_velocidade_nova_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "placa_velocidade_nova.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_placa_velocidade_velha_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "placa_velocidade_velha.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_pneus_base",
       "category": "porto",
       "stage": "base",
@@ -1260,10 +1428,58 @@
       "sombra_de_contato": true
     },
     {
+      "id": "BRP_porto_portico_subestacao_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "portico_subestacao.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_porto_poste_base",
       "category": "porto",
       "stage": "base",
       "file": "poste.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_linha_saida_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_linha_saida.png",
       "format": "png-rgba",
       "frame_size": [
         768,
@@ -1311,6 +1527,391 @@
       "habitat": "terra",
       "godot_scene": "",
       "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_a_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_a_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_a_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_a_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_a_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_a_velho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_b_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_b_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_b_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_b_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_curva_b_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_curva_b_velho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_quina_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_quina_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_quina_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_quina_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_quina_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_quina_velho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_ramal_luz_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_ramal_luz.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {
+        "light_flicker": {
+          "tween": "modulate",
+          "loop": true
+        }
+      },
+      "origin": "encaixe",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_poste_rua_ramal_novo_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_ramal_novo.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_ramal_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_ramal_velho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
+      "id": "BRP_porto_poste_rua_velho_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "poste_rua_velho.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
     },
     {
       "id": "BRP_fauna_quero_quero_base",
@@ -1634,6 +2235,30 @@
       "sombra_de_contato": false
     },
     {
+      "id": "BRP_porto_subestacao_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "subestacao.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        2,
+        2
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
+    },
+    {
       "id": "BRP_fauna_tartaruga_verde_base",
       "category": "fauna",
       "stage": "base",
@@ -1761,6 +2386,30 @@
       "habitat": "terra",
       "godot_scene": "",
       "sombra_de_contato": false
+    },
+    {
+      "id": "BRP_porto_torre_at_base",
+      "category": "porto",
+      "stage": "base",
+      "file": "torre_at.png",
+      "format": "png-rgba",
+      "frame_size": [
+        768,
+        768
+      ],
+      "columns": 1,
+      "rows": 1,
+      "fps": 0,
+      "animations": {},
+      "origin": "base",
+      "base_cells": [
+        1,
+        1
+      ],
+      "selectable": false,
+      "habitat": "terra",
+      "godot_scene": "",
+      "sombra_de_contato": true
     },
     {
       "id": "BRP_porto_trabalhador_homem_adulto_amarela_base",

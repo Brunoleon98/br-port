@@ -475,6 +475,13 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   `ESCALA_CAMINHAO` — e o grupo do armazém encolhe pela `ESCALA_PREDIO`, que é o
   mesmo 0,72. Se um dia os dois números divergirem, o munck muda de tamanho sem
   erro nenhum.
+- **⚠️ COM `Y = 90` O EULER DO KIT ESTÁ EM BLOQUEIO, e o giro que se pede
+  vira outro.** O PARE (`140`) olhava para `+x` com `rot=(22.5, 90, 0)`: com o
+  `Y` a 90°, o `X` e o `Z` rodam os dois em torno do `z` do MUNDO, e os 22,5°
+  que deviam girar o octógono no próprio eixo guinavam a chapa. Ninguém o viu
+  enquanto ela era lisa; as letras, retas, saíram enterradas de um lado. Peça
+  que gira no próprio eixo nasce com o eixo onde o giro é o PRIMEIRO
+  (`(90, giro, 0)` a olhar para `-y`), e o grupo roda depois.
 - **Rodar um prop 90° manda metade dos detalhes para a face que a câmera não
   vê.** Só `+x` e `-y` são visíveis. Rodar o caminhão para o eixo da estrada
   punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e

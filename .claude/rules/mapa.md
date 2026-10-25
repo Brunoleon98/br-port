@@ -270,6 +270,12 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   comprimentos de segmento e a mesma sequência de sorteios; o que mudou foi só
   o ponto onde cada coisa cai. **Quem mexe na geometria de uma varredura
   sorteada pergunta primeiro o que mais bebe daquele mesmo `Random`.**
+  ⚠️ **E A PEÇA NOVA QUE EXPULSA UMA PLANTA TIRA-A DEPOIS DO SORTEIO.** A
+  subestação (`140`) pousou no lote de uma aroeira da restinga; recusar o
+  sítio DENTRO da caminhada gastava sorteios e mudava as outras plantas.
+  O `_no_lote_da_subestacao()` filtra a lista já sorteada e muda essa planta
+  para um sítio medido, que cumpre o D47 — crista à frente, nenhuma copa em
+  cima de prop ou bicho — e mantém a contagem de plantas da restinga.
 - **⚠️ E FAMÍLIA DE CURVAS CONCÊNTRICA É O QUE IMPEDE COSTURA.** Tudo o que
   acompanha a costa — linha de água, baixio, espuma, pedras, as três linhas da
   rampa e o campo de cor da água — sai de `ponto_costeiro()`, uma função só, com

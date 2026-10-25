@@ -477,6 +477,22 @@ PALETA = {
     # O capim que cresce nas frestas: mais amarelo do que a copa (`folha`),
     # para mato e árvore não se fundirem num verde só.
     "capim": "#7c9444",
+    # ── O MOBILIÁRIO DA RUA (`140`) ──────────────────────────────────────
+    #
+    # As placas do Código de Trânsito: o vermelho do PARE, o amarelo da
+    # advertência, o branco e o preto. Chapadas e sem desgaste nas novas —
+    # placa nova é chapa refletiva lisa —, e as VELHAS são as mesmas cores
+    # levadas ao desbotado do sol: o vermelho a rosado, o amarelo a palha, o
+    # branco a creme. O matiz fica, para a placa velha ser a mesma placa.
+    "placa_vermelha": "#c8252a", "placa_amarela": "#f0c419",
+    "placa_branca": "#f2f5f7", "placa_preta": "#22272b",
+    "placa_vermelha_velha": "#a8645e", "placa_amarela_velha": "#c4ae72",
+    "placa_branca_velha": "#cfc8b4",
+    # O poste de concreto da rede: o novo claro e liso, o velho escurecido
+    # pela chuva. A luminária velha é de sódio — a luz alaranjada das ruas de
+    # cidade pequena —, e a nova é LED, uma chapa cinzenta e baixa.
+    "poste_concreto": "#9da29b", "poste_concreto_velho": "#686860",
+    "sodio": "#f2a54a",
 }
 
 
@@ -534,6 +550,9 @@ DESGASTE = {
     "zinco": 3.0, "zinco_vinco": 8.0, "chapa_vinco": 8.0,
     # O tijolo solto da ruína é uma peça de 3px: número alto.
     "tijolo": 9.0,
+    # O mobiliário VELHO da rua (`140`): placa e poste pequenos, número alto.
+    "placa_vermelha_velha": 14.0, "placa_amarela_velha": 14.0,
+    "placa_branca_velha": 14.0, "poste_concreto_velho": 12.0,
     # `ferrugem` NÃO entra aqui: quem lhe dá superfície é o padrão dirigido que
     # a usa, e um ruído por cima de outro ruído é lixa.
 }

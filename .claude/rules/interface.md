@@ -438,6 +438,11 @@ paths:
   única prova de que compila — o `nomes_virando` fotografa a folha a meio da
   curva (`067`). E o `ColorRect` que o carrega tem cor de alfa zero: a régua
   do contraste lê a `color` dele como o fundo do texto, e o shader não a muda.
+  ⚠️ **E NO `fragment()` DE UM `canvas_item` O `COLOR` JÁ É A TEXTURA VEZES O
+  `modulate`.** O primeiro `vila_a_frente.gdshader` (`140`) fazia
+  `texture(TEXTURE, UV) * COLOR`, elevava a cor ao quadrado, e os postes
+  mascarados saíram escuros na foto — compilava, e a suíte não vê cor. Quem
+  só quer mexer no alfa parte de `COLOR`.
 
 ## Cor e fundo (da seção «Arte»)
 

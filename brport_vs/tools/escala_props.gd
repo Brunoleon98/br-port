@@ -193,6 +193,12 @@ func _quadros_de_animacao() -> Dictionary:
 	var canteiro: Array = ok["CANTEIRO"]
 	for i in range(1, canteiro.size()):
 		fora[String((canteiro[i] as Texture2D).resource_path).get_file()] = true
+	# A LÂMPADA DE SÓDIO DOS POSTES DA RUA (`140`) é a metade de cima do poste
+	# velho, à parte só para piscar: sozinha são 12 a 18 px de bulbo, abaixo do
+	# `DESENHO_MIN`, e a pergunta de tamanho dela é a do poste, que está na
+	# página. A folha de contato continua a mostrá-la.
+	for tipo in ok["LUZ_DE_SODIO"]:
+		fora[String((ok["LUZ_DE_SODIO"][tipo] as Texture2D).resource_path).get_file()] = true
 	_n_quadros = fora.size()
 	return fora
 
