@@ -102,7 +102,12 @@ Nenhum é castanho nem bege, que some na terra.
 - **D15** isenta os carros pelo nome (`CarroDaViela`): o `my` da ponta norte
   atravessa a vila, e a areia fica a seis unidades.
 - Os 9 mutantes da secção `141` do catálogo, cada um a reprovar o D50 na
-  asserção do lugar dele; um deles é o bug do arredondamento.
+  asserção do lugar dele; um deles é o bug do arredondamento. O da picape
+  escondida reprovou primeiro pela razão errada (movido só na tabela, o §3
+  acusava «fora do pé»): o §3 passou a medir onde o jogo desenha, e o
+  mutante a mexer na cópia — à vista ficam 11%. O catálogo inteiro deu
+  *«MUTANTES OK — 221»* em quatro cópias, em 44 min; as seis suítes *«SUITES
+  OK»*; a bateria de capturas, sem erro, em 4:56.
 
 ## O veredito
 
