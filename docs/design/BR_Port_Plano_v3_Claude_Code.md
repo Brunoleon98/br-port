@@ -739,7 +739,10 @@ o save 19 com migração preservando progresso. O primeiro recorte está integra
 localmente: seis cenas de progresso, duas de compras, arquivo pelas lojas e
 convite no boletim. Escrita/telefone e publicação pendentes; catálogo com
 bônus, estresse, carros e imóveis continuam para depois. Detalhe em
-`docs/RECORTE_HISTORIA_LOJAS_FASE_1.md`. A fila gráfica abaixo segue com Claude.
+`docs/RECORTE_HISTORIA_LOJAS_FASE_1.md`. Bruno priorizou mais vínculo com os
+personagens na revisão: versões para leitura e percurso das lojas em
+`docs/REVISAO_FALAS_LOJAS_FASE_1.md`, ainda não aplicados ao jogo.
+A fila gráfica abaixo segue com Claude.
 
 **Prioridade em vigor desde 10/10, escolha do Bruno: a FILA DE MELHORIAS da
 revisão de 09/10, da mais crítica à mais tranquila, antes de voltar aos

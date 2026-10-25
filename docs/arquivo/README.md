@@ -31,6 +31,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-24d.md` | 24/10 | Revisão de falas/lojas para mais vínculo, escolhida por Bruno; versões para leitura, sem alteração do jogo |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24c.md` | 24/10 | História e primeiras lojas (`140`), aceites, migração 19 e continuação local |
 | `VERIFICACAO_HISTORIA_LOJAS_2026-10-24/README.md` | 24/10 | História da Fase 1, Mercado e Delivery (`140`): compras, conversas, save 19, provas e limites |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24b.md` | 24/10 | As treze lacunas graves e treze médias fechadas (`138`), 106 → 131 da amostra; as suítes em paralelo (`139`); a seguir, os sprites de detalhes |
