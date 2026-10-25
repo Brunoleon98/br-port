@@ -219,6 +219,7 @@ func _ready() -> void:
 	trafego.animar_caminhoes()
 	trafego.animar_retorno()
 	_animar_espuma()
+	_animar_marolas()
 
 	# Turno 1 abria com a faixa de mensagem VAZIA — um cartão creme com nada
 	# dentro, que na tela lê como falha e não como "ainda não aconteceu nada".
@@ -489,20 +490,75 @@ func _animar_espuma() -> void:
 		var alta := i == 1
 		camada.modulate.a = 1.0 if alta else 0.45
 		camada.position = base + (ESPUMA_AVANCO if alta else Vector2.ZERO)
-		var tw := camada.create_tween().set_loops().set_parallel(false)
+		var tw := camada.create_tween().set_loops()
 		movimento_de_fundo.guardar(tw, camada, {"position": camada.position,
 			"modulate:a": camada.modulate.a})
+		# ⚠️ O SEGUNDO TWEENER DO PASSO PRENDE-SE COM `.parallel()`, e não com
+		# `set_parallel(true)`. Até à `142` era este o laço: `set_parallel(true)`
+		# antes de cada passo e `false` depois — e no Godot 4 o primeiro
+		# tweener depois do `true` JUNTA-SE AO PASSO CORRENTE, logo os dois
+		# passos corriam ao mesmo tempo e o último ganhava. Medido numa sonda,
+		# 640 frames: a `Espuma0` nunca saiu de 0,45 nem do sítio, e a
+		# `Espuma1` oscilava aos solavancos. A contrafase descrita acima nunca
+		# tinha existido, e nenhuma suíte o via (`gdscript.md`).
 		for passo in 2:
 			var sobe := (passo == 0) != alta
 			var dur := ESPUMA_ENTRA if sobe else ESPUMA_RECUA
 			var trans := Tween.TRANS_CUBIC if sobe else Tween.TRANS_SINE
-			tw.set_parallel(true)
 			tw.tween_property(camada, "modulate:a", 1.0 if sobe else 0.45, dur) \
 				.set_trans(trans).set_ease(Tween.EASE_OUT)
-			tw.tween_property(camada, "position",
+			tw.parallel().tween_property(camada, "position",
 				base + (ESPUMA_AVANCO if sobe else Vector2.ZERO), dur) \
 				.set_trans(trans).set_ease(Tween.EASE_OUT)
-			tw.set_parallel(false)
+
+
+## AS MAROLAS ROLAM PARA A COSTA (`142`) — a irmã da espuma, com outro ciclo.
+## A espuma LAVA: vai e volta no mesmo sítio, porque é a beira de uma onda a
+## subir a areia. A marola do largo não volta — é a crista da ondulação a
+## andar para o cais —, então cada camada nasce ao largo, anda `MAROLA_ROLA`
+## para a costa enquanto brilha, apaga-se, e só então volta ao ponto de
+## partida, invisível. Em contrafase: quando uma se apaga junto ao cais, a
+## outra está no auge, e o mar nunca fica sem marolas.
+##
+## ⚠️ O ANDAR É LINEAR e o brilho é seno. A crista anda a velocidade
+## constante; o que nasce e morre é a luz nela. Com o andar em ease ela
+## pararia a meio do caminho, que é o pêndulo que a espuma ensinou a evitar.
+##
+## A meio do ciclo a camada está onde o gerador a desenhou, que é onde ele
+## provou que cada marola cai em água à vista nas duas pontas do caminho. Em
+## REPOUSO (reduzir movimento) a 0 fica acesa ali e a 1 apagada — o mar de
+## antes da `142`, parado.
+const MAROLA_ROLA := 0.4        # cópia de `MAROLA_ROLA` do gerador; o D51 confere-a
+const MAROLA_CICLO := 7.0       # segundos de uma camada, de nascer a apagar-se
+## `+mx` é o mar: (+MEIA_LARG, +MEIA_ALT) na tela por unidade, como na espuma.
+const MAROLA_CAMINHO := Vector2(TrafegoDeCamioes.MEIA_LARG,
+	TrafegoDeCamioes.MEIA_ALT) * MAROLA_ROLA
+
+
+func _animar_marolas() -> void:
+	for i in 2:
+		var camada := $MapaWrap.get_node_or_null("Marola%d" % i) as TextureRect
+		if camada == null:
+			continue
+		var base := camada.position
+		var largo := base + MAROLA_CAMINHO * 0.5
+		var cais := base - MAROLA_CAMINHO * 0.5
+		var meio := MAROLA_CICLO * 0.5
+		# Os três passos do ciclo, (posição, brilho, duração): nascer (largo →
+		# meio), apagar-se (meio → cais) e voltar invisível. A 0 começa a
+		# nascer e a 1 no auge — meio ciclo de distância, que é a contrafase.
+		var passos := [[base, 1.0, meio], [cais, 0.0, meio], [largo, 0.0, 0.0]]
+		if i == 1:
+			passos = [passos[1], passos[2], passos[0]]
+		camada.position = largo if i == 0 else base
+		camada.modulate.a = 0.0 if i == 0 else 1.0
+		var tw := camada.create_tween().set_loops()
+		movimento_de_fundo.guardar(tw, camada, {"position": base,
+			"modulate:a": 1.0 if i == 0 else 0.0})
+		for passo in passos:
+			tw.tween_property(camada, "position", passo[0], passo[2])
+			tw.parallel().tween_property(camada, "modulate:a", passo[1], passo[2]) \
+				.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
 ## `light_flicker` — a luminária do poste, e só ela.
