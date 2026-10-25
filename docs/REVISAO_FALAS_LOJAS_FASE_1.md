@@ -1,6 +1,6 @@
 # Falas e lojas da Fase 1 — revisão para leitura
 
-Documento de trabalho sobre a implementação local da decisão `140`, no
+Documento de trabalho sobre a implementação local da decisão `141`, no
 commit `2056dad`. Bruno escolheu **mais vínculo com os personagens** como
 prioridade desta revisão. Os trechos abaixo são versões para comparar na
 leitura; ainda não substituem as falas nem o percurso do jogo.
@@ -41,7 +41,7 @@ Referências verificadas: `brport_vs/scripts/Narrativa.gd`, linhas 744–804;
 | Café no cais | O café fraco para a conversa durar, a resposta seca de Cida e a garrafa que fica. | Manter nesta passagem. Já cumpre o objetivo de vínculo. |
 | A mesa do cais | A compra resultar numa pausa compartilhada com a equipe. | Fazer a chefia participar do almoço, em vez de somente ouvir a troca sobre a cabeceira. |
 
-As condições, os ids persistentes e a ordem das cenas continuam os da `140`.
+As condições, os ids persistentes e a ordem das cenas continuam os da `141`.
 Esta revisão não propõe respostas escolhidas pelo jogador, pontos de amizade
 ou outro sistema de relacionamento.
 
@@ -183,7 +183,7 @@ A proposta de retorno é:
 
 «Voltar ao porto» continua sendo a saída explícita do app. «Fechar o boletim»
 continua primeiro no boletim; esta revisão não recoloca a história antes da
-ação habitual, cuja ordem já foi provada na entrega da `140`.
+ação habitual, cuja ordem já foi provada na entrega da `141`.
 
 O retorno é uma proposta de comportamento, ainda sem alteração de código.
 Pode ser mantido só durante a abertura do painel, sem novo campo no save. Sua
@@ -197,7 +197,7 @@ da direção escolhida por Bruno. A pergunta é se a equipe passa a acolher quem
 joga, se cada voz continua reconhecível e se o humor parece uma conversa.
 Isso ainda exige leitura humana; suíte verde não resolve gosto de escrita.
 
-A implementação e as provas da `140` continuam intactas. A revisão usou o
+A implementação e as provas da `141` continuam intactas. A revisão usou o
 código e as capturas já guardadas; não é novo playtest no telefone, nem prova
 visual dos textos propostos. Antes de integrar os trechos e o retorno, será
 preciso conferir a redação no painel real em Padrão/Maior, inclusive as linhas

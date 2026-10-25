@@ -8,7 +8,7 @@ extends PainelCelular
 # por exemplo. Inclusive esse menu pode ser um celular e os aplicativos seriam
 # essas outras partes do jogo."*
 #
-# As lojas abriram na `140`, a pedido do Bruno: Mercado e Delivery, com
+# As lojas abriram na `141`, a pedido do Bruno: Mercado e Delivery, com
 # visitas, compras narrativas e o arquivo da história da Fase 1. Cidade,
 # missões e análise continuam como portas futuras; o app aponta à cena e
 # não escolhe a economia por conta própria.

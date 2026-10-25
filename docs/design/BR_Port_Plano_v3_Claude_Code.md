@@ -732,7 +732,7 @@ com a dor que pagou, desceu para `docs/arquivo/PLANO_V3_FECHADOS.md` (`092`).
 
 ## 7. A fila
 
-**24/10, frente do Codex — escolha nova do Bruno (`140`):** dar corpo à
+**24/10, frente do Codex — escolha nova do Bruno (`141`):** dar corpo à
 história da primeira fase e abrir lojas enquanto o Claude continua no gráfico.
 Ele escolheu Mercado e Delivery, com visitas/conversas e compras, e autorizou
 o save 19 com migração preservando progresso. O primeiro recorte está integrado

@@ -663,7 +663,7 @@ var save_path: String = ArmazemLocal.caminho(SAVE_ARQUIVO)
 # cargueiro e conquista. A 16 não conhecia o passado destes três marcos.
 # A 18 (`111`), aceite com migração, guarda multas e contadores do
 # cancelamento; a 17 sobe com esses campos a zero, sem recomeçar a partida.
-# A 19 (`140`), autorizada com migração, guarda compras, capítulos lidos e
+# A 19 (`141`), autorizada com migração, guarda compras, capítulos lidos e
 # despesas das lojas. O porto da 18 permanece; estes campos começam vazios.
 const SAVE_VERSION := 19
 
@@ -965,7 +965,7 @@ var dia_anterior: Dictionary = DIA_ZERADO.duplicate()
 var historico_semanas: Array = []
 
 # Compras e leitura pertencem ao espaço da partida, não às preferências.
-# O degrau 18→19 mantém o porto e começa este histórico vazio (`140`).
+# O degrau 18→19 mantém o porto e começa este histórico vazio (`141`).
 var vida_do_porto: Dictionary = VidaDoPorto.vazio()
 
 # ── OS RECORDES DA PARTIDA (`065`) ──

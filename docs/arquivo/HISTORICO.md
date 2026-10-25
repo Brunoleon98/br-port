@@ -907,7 +907,7 @@ inventário deixou de citar o `renumerar_decisao.py`, que continua na
 `gerais.md` e na `119`.
 
 
-## 24/10/2026 — história e lojas, inventário comprimido (`140`)
+## 24/10/2026 — história e lojas, inventário comprimido (`141`)
 
 Para caber o recorte novo no estado, estas descrições do inventário ficaram
 mais curtas; o detalhe anterior permanece aqui:

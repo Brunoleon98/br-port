@@ -1,7 +1,7 @@
 # Próxima conversa — vínculo com a equipe e revisão das lojas
 
 24/10/2026. Branch `codex/historia-e-lojas-fase-1`; implementação local
-da decisão `140` no commit `2056dad`. Bruno retomou para revisar falas e lojas
+da decisão `141` no commit `2056dad`. Bruno retomou para revisar falas e lojas
 e escolheu **mais vínculo com os personagens** como prioridade. A frente
 gráfica continua com Claude.
 
@@ -28,7 +28,7 @@ Seis suítes novamente verdes com Godot 4.6.3 e passo fixo; `SUITES OK` em
 45 s. Logs em `/tmp/brport-revisao-historia-suites` nesta máquina.
 `DOCS OK` e `COLABORACAO OK` conferidos no fecho. Código do jogo, testes,
 save, preços e arte não mudaram. Nenhum novo mutante era necessário para esta
-alteração documental; a prova dos 200 da `140` está no arquivo anterior.
+alteração documental; a prova dos 200 da `141` está no arquivo anterior.
 
 `origin/main` foi atualizada e permanece em `06a1b63`; consulta sem PR aberto.
 Sem push, PR ou alteração do Pages. O commit desta revisão é apenas local;
