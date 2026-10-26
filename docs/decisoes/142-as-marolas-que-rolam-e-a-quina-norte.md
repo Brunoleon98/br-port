@@ -100,6 +100,12 @@ a janela da quina dá +10,5 na terra e +17,0 no pavimentado.
   temporal a 69.613 px de mapa a mudar em 2 s e 0 com o movimento reduzido.
 - O catálogo inteiro, em quatro cópias neste contêiner: *«MUTANTES OK — 230
   defeito(s)»* em 48:28.
+- **No CI do PR #154** (`816e805`, corrida 40264247269, tudo verde), o
+  passo dos mutantes levou **19:19, 14:10 e 19:21** nas três fatias (77 +
+  77 + 76 defeitos, quatro cópias cada), contra 18:27, 11:09 e 11:04 com
+  221 na segunda corrida do #153; o `--juntar` deu *«MUTANTES OK — 230
+  defeito(s) do catálogo em 3 fatia(s)»* aos **20:15** da corrida. O
+  «Godot headless» levou 7:32, a «Evidência visual» 9:50 e o export 2:09.
 
 ## Fora deste item
 
@@ -109,7 +115,11 @@ a janela da quina dá +10,5 na terra e +17,0 no pavimentado.
 - **A fatia 1/3 dos mutantes é a lenta, e não é a máquina**: no CI do #153
   levou 18:29 e depois 18:27, em runners diferentes, contra 11–13 min das
   outras; a leitura da `141` («aponta para o runner») caiu, e está corrigida
-  lá. Que mutantes a fazem lenta não se apurou: o relatório da fatia está num
+  lá. No #154 passaram a ser DUAS as lentas (a 1 e a 3, ~19:20) e a 2 a
+  14:10: os nove mutantes novos baralharam a partilha, e nove que estavam na
+  fatia 1 passaram para a 3. A hipótese era que fossem eles; medidos um a um
+  aqui, levam 56 a 61 s cada, o mesmo que uma corrida normal do
+  `teste_design`. A causa continua por achar: o relatório da fatia está num
   artefacto que o proxy desta sessão não deixa baixar.
 - **O commit `1687ce5`** (os tempos do #151 na `138`) ficou na branch
   `claude/upbeat-meitner-fkfkne` e nunca chegou à `main`.

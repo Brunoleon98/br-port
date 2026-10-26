@@ -1,9 +1,9 @@
 # BR Port — as marolas que rolam e a quina norte (`142`) aceites; o item seguinte é do Bruno
 
-**25/10/2026.** Branch `claude/br-port-continuacao-72yq7v`, a partir da
-cabeça do PR #153 (`66cb96c`, a `141`, verde no runner e por fundir), porque
-as duas mexem no `gerar_mapa_iso.py`. Esta branch não tem PR: ele não o
-pediu. Quando o #153 fundir, o PR desta mostra só a `142`.
+**25–26/10/2026.** A `141` (#153) e a `142` (#154) estão na `main`
+(`d310922`). Os tempos das fatias do #154 ficaram num commit só de
+documento na branch `claude/br-port-continuacao-72yq7v`, recomeçada da
+`main` depois do merge, por fundir.
 
 **Decisão `142` — o que a `124` deixou por olhar**, escolhido pelo Bruno
 entre os itens da §7 (a recomendada). **Aceite à segunda passagem.** O que
@@ -39,10 +39,10 @@ veredito na conversa).
 
 ⚠️ O artefato do CI não se baixa daqui; lê-se o log (`.claude/rules/plataforma.md`).
 
-**Pendente:** o #153 (a `141`) por fundir, e depois o PR desta branch, que é
-decisão do Bruno — com ele o catálogo passa a 230 mutantes. A fatia 1/3 dos
-mutantes levou ~18:30 nas duas corridas do #153, em runners diferentes,
-contra 11–13 min das outras: é o que ela leva, e não se apurou que mutantes
+**Pendente:** o commit dos tempos do #154 (acima), que precisa de um PR
+para chegar à `main`. As fatias lentas dos mutantes: no #153 a 1/3 (~18:30
+em dois runners), no #154 a 1 e a 3 (~19:20) com a 2 a 14:10; os nove
+mutantes que mudaram de fatia levam o tempo normal, e a causa está por achar
 (`142`). O commit `1687ce5` (os tempos do #151 na `138`) ficou na branch
 `claude/upbeat-meitner-fkfkne` e nunca chegou à `main`. Fora deste item: o
 vigia de frames do `teste_design`.
@@ -57,12 +57,10 @@ Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
 e a decisão 142 (as marolas que rolam e a quina norte, aceite). Confira a
 main remota, os PRs abertos e o CI do último merge, e rode python3
 tools/conferir_colaboracao.py com o trabalho commitado (ele lê o HEAD). A
-branch da 142 (claude/br-port-continuacao-72yq7v) arranca da cabeça do PR
-#153 (a 141). Se a 142 ainda não estiver na main, pergunte ao Bruno se abre
-o PR dela (depois de o #153 fundir, para ele mostrar só a 142); se ele disser
-que sim, conduza-o até verde antes de começar: o catálogo passou de 221 para
-230 mutantes e o teste_design ganhou o D51 — leia o tempo de cada fatia de
-mutantes, registe-o na 142, e diga se a fatia 1/3 continua a ser a lenta.
+142 está na main (PR #154); os tempos das fatias do #154 ficaram num commit
+só de documento na branch claude/br-port-continuacao-72yq7v. Se esse commit
+ainda não estiver na main, pergunte ao Bruno se abre o PR dele; se ele
+disser que sim, conduza-o até verde antes de começar.
 
 O item seguinte é do Bruno. Abra a conversa com a pergunta do que vem a
 seguir, com opções e a recomendada primeiro, e não escolha por ele. O que
