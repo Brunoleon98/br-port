@@ -1476,7 +1476,7 @@ id = "praia-norte-acaba-no-porto"
 de = "136"
 o_que = "o chão da praia norte volta a acabar onde o pátio começa e a fechar na altura da crista, e a água aparece num fio azul (o defeito de antes da 136)"
 alvo = "brport_vs/art/porto_mapa_iso.svg"
-antes = '<polygon points="448.5,-332.8 946.6,-86.9 938.4,-80.8 930.2,-74.7 921.6,-69.1 912.6,-64.2 903.3,-59.9 894.0,-55.8 885.0,-51.2 876.8,-45.7 869.2,-39.3 861.8,-32.4 853.9,-25.7 844.8,-20.0 834.3,-15.7 822.7,-12.7 810.7,-10.6 798.9,-8.6 788.1,-6.0 778.4,-2.3 769.9,2.5 762.2,8.1 754.7,14.0 744.8,20.3 733.1,28.0 722.9,35.9 714.9,44.3 710.5,53.7 712.0,64.4 717.5,74.7 726.9,84.3 739.8,92.8 751.7,98.3 761.7,102.5 771.6,106.8 781.3,111.2 780.0,113.7 778.8,113.3 779.8,113.7 783.0,114.8 787.6,116.3 781.1,119.8 774.5,126.8 767.1,132.8 758.8,137.7 749.6,141.7 740.0,145.5 730.4,149.6 721.2,154.3 712.6,159.8 704.3,165.5 696.0,171.0 687.4,175.7 678.0,179.3 667.9,182.0 657.1,184.1 645.6,186.0 634.4,188.7 624.1,192.5 615.1,197.6 609.9,201.5 608.1,204.8 -9.3,-103.8" fill="#7b8f52"/>'
+antes = '<polygon points="448.5,-332.8 946.6,-86.9 938.4,-80.8 930.2,-74.7 921.6,-69.1 912.6,-64.2 903.3,-59.9 894.0,-55.8 885.0,-51.2 876.8,-45.7 869.2,-39.3 861.8,-32.4 853.9,-25.7 844.8,-20.0 834.3,-15.7 822.7,-12.7 810.7,-10.6 798.9,-8.6 788.1,-6.0 778.4,-2.3 769.9,2.5 762.2,8.1 754.7,14.0 744.8,20.3 733.1,28.0 722.9,35.9 714.9,44.3 710.5,53.7 712.0,64.4 717.5,74.7 726.9,84.3 739.8,92.8 751.7,98.3 761.7,102.5 771.6,106.8 781.3,111.2 780.0,113.7 778.8,113.3 779.8,113.7 783.0,114.8 787.6,116.3 781.1,119.8 774.5,126.8 767.1,132.8 758.8,137.7 749.6,141.7 740.0,145.5 730.4,149.6 721.2,154.3 712.6,159.8 704.3,165.5 696.0,171.0 687.4,175.7 678.0,179.3 667.9,182.0 657.1,184.1 645.6,186.0 634.4,188.7 624.1,192.5 615.1,197.6 609.9,201.5 650.7,226.1 -9.3,-103.8" fill="#7b8f52"/>'
 depois = '<polygon points="448.5,-332.8 946.6,-86.9 938.4,-80.8 930.2,-74.7 921.6,-69.1 912.6,-64.2 903.3,-59.9 894.0,-55.8 885.0,-51.2 876.8,-45.7 869.2,-39.3 861.8,-32.4 853.9,-25.7 844.8,-20.0 834.3,-15.7 822.7,-12.7 810.7,-10.6 798.9,-8.6 788.1,-6.0 778.4,-2.3 769.9,2.5 762.2,8.1 754.7,14.0 744.8,20.3 733.1,28.0 722.9,35.9 714.9,44.3 710.5,53.7 712.0,64.4 717.5,74.7 726.9,84.3 739.8,92.8 751.7,98.3 761.7,102.5 771.6,106.8 781.3,111.2 780.0,113.7 778.8,113.3 779.8,113.7 783.0,114.8 787.6,116.3 781.1,119.8 774.5,126.8 767.1,132.8 758.8,137.7 749.6,141.7 740.0,145.5 730.4,149.6 721.2,154.3 712.6,159.8 704.3,165.5 696.0,171.0 687.4,175.7 678.0,179.3 667.9,182.0 657.1,184.1 645.6,186.0 634.4,188.7 624.1,192.5 615.1,197.6 609.9,201.5 -7.5,-104.8" fill="#7b8f52"/>'
 reprova = { teste_design = "D49: terra: a água não aparece na borda norte do pátio" }
 
@@ -1867,6 +1867,109 @@ alvo = "brport_vs/scripts/CarrosDaViela.gd"
 antes = '	return n >= int(carro[3])'
 depois = '	return n > int(carro[3])'
 reprova = { teste_design = "Fase 1, 0 reparo(s) da 1 e 0 da 2: estacionados os da tabela" }
+
+# ── AS MAROLAS QUE ROLAM E A QUINA NORTE (`142`) ─────────────────────────
+
+[[mutante]]
+id = "marolas-copia-velha"
+de = "142"
+o_que = "o jogo leva as marolas pelo caminho da primeira passagem, e não pelo que o gerador provou"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "const MAROLA_ROLA := 0.8"
+depois = "const MAROLA_ROLA := 0.4"
+reprova = { teste_design = "a cópia do Main.gd é a da tabela" }
+
+[[mutante]]
+id = "marolas-em-terra"
+de = "142"
+o_que = "a camada 0 das marolas cai 2 u para terra, por cima do cais e da areia"
+alvo = "brport_vs/art/porto_mapa_marolas0.svg"
+antes = """
+  <g>
+"""
+depois = """
+  <g transform="translate(-60,-30)">
+"""
+reprova = { teste_design = "a camada 0 só pousa em água em todo o caminho" }
+
+[[mutante]]
+id = "marolas-para-o-mar"
+de = "142"
+o_que = "as marolas rolam do cais para o largo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "TrafegoDeCamioes.MEIA_ALT) * MAROLA_ROLA"
+depois = "TrafegoDeCamioes.MEIA_ALT) * -MAROLA_ROLA"
+reprova = { teste_design = "a Marola0 só anda para a costa enquanto se vê" }
+
+[[mutante]]
+id = "marolas-em-fase"
+de = "142"
+o_que = "as duas camadas acendem e apagam juntas, e o mar fica sem marolas a cada ciclo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "passos = passos.slice(2) + passos.slice(0, 2)"
+depois = "passos = passos.slice(0)"
+reprova = { teste_design = "as duas marolas em contrafase" }
+
+[[mutante]]
+id = "marolas-troca-longa"
+de = "142"
+o_que = "a troca volta a ocupar o ciclo inteiro: as duas séries sempre fracas ao mesmo tempo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = "const MAROLA_TROCA := 1.0 / 6.0"
+depois = "const MAROLA_TROCA := 0.5"
+reprova = { teste_design = "a troca é curta" }
+
+[[mutante]]
+id = "marolas-repouso-trocado"
+de = "142"
+o_que = "com o movimento reduzido acende a camada nova, e o mar parado deixa de ser o de antes"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '"modulate:a": 1.0 if i == 0 else 0.0})'
+depois = '"modulate:a": 0.0 if i == 0 else 1.0})'
+reprova = { teste_design = "com o movimento reduzido a Marola0 fica no sítio" }
+
+[[mutante]]
+id = "espuma-nao-lava"
+de = "142"
+o_que = "o bug de sempre: set_parallel(true) junta os dois passos da lavagem, e a Espuma0 fica parada"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+			tw.tween_property(camada, "modulate:a", 1.0 if sobe else ESPUMA_BAIXA, dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.parallel().tween_property(camada, "position",
+'''
+depois = '''
+			tw.set_parallel(true)
+			tw.tween_property(camada, "modulate:a", 1.0 if sobe else ESPUMA_BAIXA, dur) \
+				.set_trans(trans).set_ease(Tween.EASE_OUT)
+			tw.tween_property(camada, "position",
+'''
+reprova = { teste_design = "a Espuma0 lava" }
+
+[[mutante]]
+id = "marolas-em-paralelo"
+de = "142"
+o_que = "o bug da primeira tentativa: os cinco passos das marolas correm ao mesmo tempo"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+			tw.tween_property(camada, "position", passo[0], passo[2])
+			tw.parallel().tween_property(camada, "modulate:a", passo[1], passo[2]) \
+'''
+depois = '''
+			tw.set_parallel(true)
+			tw.tween_property(camada, "position", passo[0], passo[2])
+			tw.tween_property(camada, "modulate:a", passo[1], passo[2]) \
+'''
+reprova = { teste_design = "a Marola0 acende e apaga" }
+
+[[mutante]]
+id = "quina-com-fresta"
+de = "142"
+o_que = "o chão da praia norte volta a fechar na crista, e a água vê-se na quina do pátio"
+alvo = "brport_vs/art/porto_mapa_iso.svg"
+antes = '609.9,201.5 650.7,226.1 -9.3,-103.8" fill="#7b8f52"'
+depois = '609.9,201.5 608.1,204.8 -9.3,-103.8" fill="#7b8f52"'
+reprova = { teste_design = "terra: a água não aparece na quina norte do pátio" }
 
 # ── MEU PORTO AGORA (`125`) ──────────────────────────────────────────────
 

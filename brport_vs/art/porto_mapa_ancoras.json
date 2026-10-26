@@ -4313,6 +4313,9 @@
   "altura": 720,
   "largura": 720
  },
+ "marolas": {
+  "rola": 0.8
+ },
  "mascara_da_vila": [
   {
    "peca": 6,

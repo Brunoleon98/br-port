@@ -98,9 +98,11 @@ Nenhum é castanho nem bege, que some na terra.
   o mesmo número de corridas de cada suíte (±1; a 1 leva 35 `teste_design`
   e as outras 34), e dos nove D50 novos a 1 leva dois, a 2 quatro e a 3
   três, logo os 7 min entre a 1 e a 2 não são da partilha. Na 1 cada
-  `teste_design` levou ~74 s nas quatro cópias; aponta para o runner dela,
-  e uma corrida só não o prova (`gerais.md`, tempo emparelhado). O «Godot
-  headless» levou 6:30, a «Evidência visual» 10:22 e o export 1:42.
+  `teste_design` levou ~74 s nas quatro cópias. Li isto como o runner dela,
+  e a segunda corrida (`66cb96c`, 40177677008) desmentiu-o: a fatia 1 voltou
+  a levar 18:27, noutro runner, contra 11:09 e 11:04 — é o que ela leva, e
+  não a máquina (`142`). O «Godot headless» levou 6:30, a «Evidência
+  visual» 10:22 e o export 1:42.
 
 ## As provas
 

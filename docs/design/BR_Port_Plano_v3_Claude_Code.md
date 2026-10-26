@@ -847,12 +847,15 @@ também acabou**: o caminho está em `docs/arquivo/PLANO_V3_FECHADOS.md`.
 Em 25/10 o Bruno escolheu a seguir os carros estacionados — **fechado no
 mesmo dia (`141`)**, aceite à quarta passagem: medido, na rua não cabiam, e
 ele pô-los na viela de terra, com a rua a ser rodovia, mais a cada fase e
-obra. O item seguinte é outra vez dele — a próxima conversa abre a
-perguntar-lho, com opções. As quinze lacunas médias que a `138` deixou de
-fora (as visuais) e qualquer outra funcionalidade não se começam sem ele.
-Fora da fila, para depois: animar as marolas e o fio diagonal da ponta
-norte do cais (`124`), os gates A4 e A7, o galpão recuperado V3, e
-trabalhadores e crédito.
+obra. E a seguir o que a `124` deixou por olhar — **fechado no mesmo dia
+(`142`)**, aceite à segunda passagem: as marolas rolam para o cais em duas
+camadas em contrafase, a espuma passou a lavar (nunca tinha lavado), e o
+«fio diagonal» era uma fresta de 2 px na quina norte do pátio, fechada. O
+item seguinte é outra vez dele — a próxima conversa abre a perguntar-lho,
+com opções. As quinze lacunas médias que a `138` deixou de fora (as
+visuais) e qualquer outra funcionalidade não se começam sem ele. Fora da
+fila, para depois: os gates A4 e A7, o galpão recuperado V3, trabalhadores
+e crédito, e o vigia de frames do `teste_design` (`142`).
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

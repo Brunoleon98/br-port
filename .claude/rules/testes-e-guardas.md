@@ -387,6 +387,13 @@ guarda.
    teto de voltas do laço de turnos, um andar acima: no CI aquilo não é
    vermelho, é o job a morrer de timeout sem dizer qual passo foi. Toda bateria
    de ferramentas leva teto de tempo POR TIRO (`timeout 180` no `tirar()`).
+   ⚠️ **E O `teste_design` NÃO TEM VIGIA, e espera frames.** Desde o RB5
+   ele faz `await`, e um arquivo de casos que não compila aborta a
+   corrotina: o `quit()` nunca chega e a suíte corre até ao teto — 600 s no
+   `correr_suites.py`, o `timeout-minutes` no CI. Medido na `142`, com um
+   ternário sem tipo («Cannot infer the type»). O `run_tests` e o
+   `teste_fumaca` têm o vigia (`118`); este não, e fica por fazer. À mão,
+   corra-o com `timeout` e leia o `SCRIPT ERROR` antes do marcador.
    ⚠️ **E O ESCOPO DA GUARDA É O ESCOPO DO DEFEITO.** A primeira versão desse
    portão exigia a varredura de todo arquivo de um passo que rodasse
    `--script`, e reprovou a saída de um leitor em **Python** — onde uma exceção

@@ -386,6 +386,14 @@ func _rodar() -> void:
 	_falhas += int(carros.falhas)
 	_confere("o bloco D50 correu até ao fim", carros.completo)
 
+	print("=== D51: as marolas que rolam e a espuma que lava — a cópia, a água, a cena, o ciclo e o repouso ===")
+	var marolas = load("res://tests/casos_marolas.gd").new()
+	marolas.rodar(root.get_node("GameState"), self, _ancoras,
+		_mapa_lido("res://art/porto_mapa_iso.svg"), _mapa_lido("res://art/porto_mapa_iso_patio.svg"),
+		[_mapa_lido("res://art/porto_mapa_marolas0.svg"), _mapa_lido("res://art/porto_mapa_marolas1.svg")])
+	_falhas += int(marolas.falhas)
+	_confere("o bloco D51 correu até ao fim", marolas.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
