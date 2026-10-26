@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 25/10/2026 — o mobiliário da rua (`140`)
+> **Atualização:** 25/10/2026 — os carros da viela (`141`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -103,6 +103,8 @@ e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 **A rua é GASTA no porto em ruínas**; a obra do pátio recapeia-a por trechos,
 com cones (`136`, D49), e troca o mobiliário (`140`, D45 §7): postes,
 fiação, placas, cavaletes e a rede de uma subestação no relvado.
+A rua é rodovia: **carros e motos estacionam na viela de terra**, velhos
+no porto em ruínas e novos na Fase 2, mais a cada obra (`141`, D50).
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
@@ -117,15 +119,13 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **A fila em vigor é a §7 do plano.** Aqui fica só a posição.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
-**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
-(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).
 **RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
 **RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
 persistência independente do movimento; telefone pendente.
-**A fila da `126`** (§7) **acabou**: terreno e vegetação (`127`, `130`),
-estradas (`136`) e o mobiliário da rua (`140`) aceites; testes em
-`137`–`139`. A seguinte é do Bruno; as 15 lacunas médias visuais, só
-com ele.
+**A fila da `126`** (§7) **acabou** (`127`, `130`, `136`, `140`; testes
+em `137`–`139`), e o item que o Bruno escolheu a seguir também: os carros
+da viela (`141`). O próximo é dele; as 15 lacunas médias visuais, só com
+ele.
 Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.

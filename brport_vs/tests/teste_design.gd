@@ -380,6 +380,12 @@ func _rodar() -> void:
 	_falhas += int(estradas.falhas)
 	_confere("o bloco D49 correu até ao fim", estradas.completo)
 
+	print("=== D50: os carros da viela — a cópia, o sítio, à vista e quem aparece ===")
+	var carros = load("res://tests/casos_carros_da_viela.gd").new()
+	carros.rodar(root.get_node("GameState"), self, _ancoras)
+	_falhas += int(carros.falhas)
+	_confere("o bloco D50 correu até ao fim", carros.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -417,7 +423,11 @@ func _rodar() -> void:
 # praias: os postes da vila e as placas do porto não são equipamento do
 # porto, nem a subestação da cidade no campo do norte, de onde a rede vem. A
 # pergunta 1 continua a valer para eles — nenhum pisa a areia.
-const PRAIA_SO_PARA := ["Coqueiro", "Arvore", "PosteDaRua", "PlacaDaRua", "SubestacaoDaRede"]
+# E os CARROS DA VIELA (`141`) são dos moradores e estacionam na viela de
+# terra, atrás da fileira da frente: o `my` da ponta norte atravessa a vila
+# inteira, e a areia fica a seis unidades deles.
+const PRAIA_SO_PARA := ["Coqueiro", "Arvore", "PosteDaRua", "PlacaDaRua", "SubestacaoDaRede",
+	"CarroDaViela"]
 
 # Medido em 04/09: a ponta norte tem 139 px de costa dentro do quadro e a sul
 # 233. O piso é generoso de propósito — ele existe para pegar uma praia que

@@ -475,6 +475,27 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   `ESCALA_CAMINHAO` — e o grupo do armazém encolhe pela `ESCALA_PREDIO`, que é o
   mesmo 0,72. Se um dia os dois números divergirem, o munck muda de tamanho sem
   erro nenhum.
+- **⚠️ UMA MOTO A 13 PX LÊ COMO PONTO; A 21 LÊ PELO QUE SÓ ELA TEM**
+  (`141`). Saiu na segunda passagem e voltou na terceira, a pedido, com as
+  duas rodas grandes e separadas de cubo claro, o escapamento cromado no
+  lado `+x`, os retrovisores e a carga no bagageiro — massa que nenhum carro
+  tem ali.
+  ⚠️ **E VELHO E NOVO DE UM VEÍCULO SEPARAM-SE PELO ACABAMENTO E PELA
+  FORMA**: a mesma lataria em duas cores leu «parecidos». O que os separou foi
+  o para-choque cromado e torto contra o da cor do carro, a ferrugem, o farol
+  creme contra o branco, o vidro escuro contra o claro e o hatch quadrado
+  contra o redondo — a regra da ruína («o antes não partilha as peças do
+  depois»), num veículo.
+  ⚠️ **E A PEÇA QUE POUSA NUMA LATARIA QUE AFINA RECUA COM ELA**: os faróis
+  do hatch redondo, à frente do nariz de baixo, ficaram 0,06 fora da quina
+  cortada de cima e saíram pontas soltas. E uma caçamba de fundo cinzento lê
+  como capota baixada; vazio quase preto, paredes altas e rebordo claro leem
+  como carroceria.
+- **⚠️ PROP QUE SAI DO CATÁLOGO NÃO SAI DO MANIFEST.** O `escrever_manifest`
+  junta as fichas novas às que lá estavam, pelo arquivo: tirar as motos do
+  `brp_porto.py` (`141`) deixou as duas fichas, e apagar o PNG reprovaria o
+  `asset_validator` («no manifest e não no disco», `046`). A ficha sai à
+  mão, com o PNG e o atlas.
 - **⚠️ COM `Y = 90` O EULER DO KIT ESTÁ EM BLOQUEIO, e o giro que se pede
   vira outro.** O PARE (`140`) olhava para `+x` com `rot=(22.5, 90, 0)`: com o
   `Y` a 90°, o `X` e o `Z` rodam os dois em torno do `z` do MUNDO, e os 22,5°

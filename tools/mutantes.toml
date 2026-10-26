@@ -1761,6 +1761,113 @@ depois = '''
    "quadro": 2,'''
 reprova = { teste_design = "troca no dia do trecho de rua onde pousa" }
 
+# ── OS CARROS DA VIELA (`141`) ───────────────────────────────────────────
+
+[[mutante]]
+id = "carros-copia-velha"
+de = "141"
+o_que = "o jogo estaciona o fusca no sítio de antes, e a tabela já o mudou"
+alvo = "brport_vs/scripts/CarrosDaViela.gd"
+antes = '["carro_fusca_velho", Vector2(-3.725, 1.2), 1, 0],'
+depois = '["carro_fusca_velho", Vector2(-3.725, 1.6), 1, 0],'
+reprova = { teste_design = "o carro 0 da cópia é o da tabela" }
+
+[[mutante]]
+id = "carro-na-rodovia"
+de = "141"
+o_que = "o fusca estaciona no asfalto da rua do porto, que o Bruno quis rodovia"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -3.725,
+    1.2
+   ],
+   "prop": "carro_fusca_velho"
+'''
+depois = '''
+    -0.4,
+    1.2
+   ],
+   "prop": "carro_fusca_velho"
+'''
+reprova = { teste_design = "cada carro estaciona na viela de terra do degrau dele" }
+
+[[mutante]]
+id = "carro-atras-das-casas"
+de = "141"
+o_que = "a picape estaciona na margem da viela que a fileira da frente tapa"
+alvo = "brport_vs/scripts/CarrosDaViela.gd"
+antes = '["carro_picape_velha", Vector2(4.275, 17.6), 1, 1],'
+depois = '["carro_picape_velha", Vector2(5.125, 17.6), 1, 1],'
+reprova = { teste_design = "cada carro está à vista" }
+
+[[mutante]]
+id = "carros-colados"
+de = "141"
+o_que = "os dois fuscas estacionam um em cima do outro na viela de cima"
+alvo = "brport_vs/art/porto_mapa_ancoras.json"
+antes = '''
+    -3.725,
+    2.5
+   ],
+   "prop": "carro_fusca_velho_b"
+'''
+depois = '''
+    -3.725,
+    1.8
+   ],
+   "prop": "carro_fusca_velho_b"
+'''
+reprova = { teste_design = "dois carros da mesma margem da viela não se tocam" }
+
+[[mutante]]
+id = "carros-sem-mascara"
+de = "141"
+o_que = "o carro que um lote da vila tapa pinta-se por cima da casa da frente"
+alvo = "brport_vs/scripts/CarrosDaViela.gd"
+antes = '''
+		no.material = _mascara(i, no.position)
+'''
+depois = ''
+reprova = { teste_design = "o que um lote da vila tapa de um carro, a máscara esconde" }
+
+[[mutante]]
+id = "mascara-arredonda-como-python"
+de = "141"
+o_que = "o pé do hatch verde cai em 168,5 px e a máscara sai um pixel ao lado (o round do Python)"
+alvo = "brport_vs/scripts/CarrosDaViela.gd"
+antes = '	[5, 129, ['
+depois = '	[5, 128, ['
+reprova = { teste_design = "o que um lote da vila tapa de um carro, a máscara esconde" }
+
+[[mutante]]
+id = "carros-sem-refresh"
+de = "141"
+o_que = "o Main nunca mostra os carros: ficam todos escondidos desde o dia 1"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	carros.refresh()
+'''
+depois = ''
+reprova = { teste_design = "Fase 1, 0 reparo(s) da 1 e 0 da 2: estacionados os da tabela" }
+
+[[mutante]]
+id = "carros-fase-2-conta-a-1"
+de = "141"
+o_que = "na Fase 2 os reparos da Fase 1 contam para os carros novos, que chegam todos de uma vez"
+alvo = "brport_vs/scripts/CarrosDaViela.gd"
+antes = '		if not antes.has(id):'
+depois = '		if true:'
+reprova = { teste_design = "Fase 2, 3 reparo(s) da 1 e 0 da 2: estacionados os da tabela" }
+
+[[mutante]]
+id = "carros-uma-obra-a-mais"
+de = "141"
+o_que = "cada carro espera uma obra a mais do que a tabela diz, e o dia 1 fica sem nenhum"
+alvo = "brport_vs/scripts/CarrosDaViela.gd"
+antes = '	return n >= int(carro[3])'
+depois = '	return n > int(carro[3])'
+reprova = { teste_design = "Fase 1, 0 reparo(s) da 1 e 0 da 2: estacionados os da tabela" }
+
 # ── MEU PORTO AGORA (`125`) ──────────────────────────────────────────────
 
 [[mutante]]

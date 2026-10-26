@@ -37,6 +37,9 @@ const ObraNoMapa := preload("res://scripts/ObraNoMapa.gd")
 # A MATA DO MORRO (`docs/decisoes/127`): as árvores do Blender atrás da vila,
 # intercaladas no `Cenario` pela profundidade e a balançar como os coqueiros.
 const MataNoMapa := preload("res://scripts/MataNoMapa.gd")
+# OS CARROS DA VIELA (`docs/decisoes/141`): estacionados na viela de terra,
+# mais a cada fase e a cada obra do porto. `preload` pela razão do tráfego.
+const CarrosDaViela := preload("res://scripts/CarrosDaViela.gd")
 # A FILA DAS TELAS QUE ABREM SOZINHAS, num script seu desde o terceiro corte
 # do M8 (`docs/decisoes/097`). `preload` pela mesma razão.
 const VezDasTelas := preload("res://scripts/VezDasTelas.gd")
@@ -145,6 +148,9 @@ var narradora: NarradoraDaCida = NarradoraDaCida.new(_fila)
 # A MATA DO MORRO. Planta-se ao montar a cena, antes de o trânsito começar a
 # reordenar os camiões entre os irmãos — que passam a contar com ela.
 @onready var mata: MataNoMapa = MataNoMapa.new($MapaWrap/Cenario as Control)
+# OS CARROS DA VIELA, plantados pela mesma razão; o `_refresh_estruturas()`
+# mostra os que a fase e as obras já trouxeram.
+@onready var carros: CarrosDaViela = CarrosDaViela.new($MapaWrap/Cenario as Control)
 var movimento_de_fundo: MovimentoDeFundo
 
 # As estruturas trocam de TEXTURA, não de nó: assim o prop ocupa exatamente o
@@ -597,6 +603,7 @@ func _refresh_estruturas() -> void:
 		if eq != null:
 			eq.visible = tem_patio or (patio_em_obra and nome in SINALIZACAO_DE_OBRA)
 	obra.refresh()
+	carros.refresh()
 	# O armazém em obra mostra o quadro do dia (`121`); fora dela, a ruína ou
 	# o pronto, como sempre.
 	var armazem := cenario.get_node_or_null("Armazem") as TextureRect

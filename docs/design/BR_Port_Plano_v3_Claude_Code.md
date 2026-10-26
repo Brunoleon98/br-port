@@ -843,13 +843,16 @@ os sprites de detalhes — **fechado em 25/10 (`140`)**, aceite à oitava
 passagem: postes com fiação e luz de sódio na calçada da vila, placas,
 cavaletes da obra e a rede desde uma subestação no relvado, velhos ou novos
 pelo trecho da obra —, com duas pausas pelo meio (`137`–`139`). **Ela
-também acabou**: o caminho está em `docs/arquivo/PLANO_V3_FECHADOS.md`, e o
-item seguinte é do Bruno — a próxima conversa abre a perguntar-lho, com
-opções. As quinze lacunas médias que a `138` deixou de fora (as visuais) e
-qualquer outra funcionalidade não se começam sem ele. Fora da fila, para
-depois: os carros estacionados (*«na rua, junto ao meio-fio»*, `140`),
-animar as marolas e o fio diagonal da ponta norte do cais (`124`), os gates
-A4 e A7, e o galpão recuperado V3.
+também acabou**: o caminho está em `docs/arquivo/PLANO_V3_FECHADOS.md`.
+Em 25/10 o Bruno escolheu a seguir os carros estacionados — **fechado no
+mesmo dia (`141`)**, aceite à quarta passagem: medido, na rua não cabiam, e
+ele pô-los na viela de terra, com a rua a ser rodovia, mais a cada fase e
+obra. O item seguinte é outra vez dele — a próxima conversa abre a
+perguntar-lho, com opções. As quinze lacunas médias que a `138` deixou de
+fora (as visuais) e qualquer outra funcionalidade não se começam sem ele.
+Fora da fila, para depois: animar as marolas e o fio diagonal da ponta
+norte do cais (`124`), os gates A4 e A7, o galpão recuperado V3, e
+trabalhadores e crédito.
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

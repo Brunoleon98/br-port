@@ -905,3 +905,9 @@ cópias e três fatias no CI, suítes a `--fixed-fps 60`, fotos quatro a
 quatro; lacunas medidas (99 de 205 defeitos passam)»* vive na `137` —, e o
 inventário deixou de citar o `renumerar_decisao.py`, que continua na
 `gerais.md` e na `119`.
+
+**E, para caber os carros da viela (`141`),** saiu da fila do estado a
+linha *«**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
+(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).»* — tudo
+fundido, cada um na sua decisão —, e a da fila da `126` encolheu a uma
+lista de decisões.
