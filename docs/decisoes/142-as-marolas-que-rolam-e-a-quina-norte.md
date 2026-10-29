@@ -121,6 +121,11 @@ a janela da quina dá +10,5 na terra e +17,0 no pavimentado.
   aqui, levam 56 a 61 s cada, o mesmo que uma corrida normal do
   `teste_design`. A causa continua por achar: o relatório da fatia está num
   artefacto que o proxy desta sessão não deixa baixar.
+  No PR #155 (`b5a7bd5`, só documento, o mesmo catálogo de 230), as três
+  levaram **21:59, 21:52 e 21:40**, e o `--juntar` deu verde aos 22:13:
+  nenhuma lenta contra as outras, e todas mais lentas que as do #154. Com o
+  mesmo código e a mesma partilha a variar assim — a fatia 2 levou 14:10
+  no #154 —, o runner volta a ser suspeito.
 - **O commit `1687ce5`** (os tempos do #151 na `138`) ficou na branch
   `claude/upbeat-meitner-fkfkne` e nunca chegou à `main`.
 
