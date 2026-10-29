@@ -124,9 +124,10 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB5 (`134`, `135`, #148):** Padrão/Maior nos Ajustes; telefone pendente.
 **A fila da `126`** (§7) **acabou** (`127`, `130`, `136`, `140`; testes
 em `137`–`139`), e os itens que o Bruno escolheu a seguir também: os carros
-da viela (`141`) e as marolas da `124` (`142`). O próximo é dele; as 15
-lacunas médias visuais, só com ele.
-Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
+da viela (`141`) e as marolas da `124` (`142`). **A seguir, escolha dele
+(29/10):** pesquisar melhorias (luz, animação, som e o resto), uma conversa
+por tema, e só depois implementar (§7).
+**A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
