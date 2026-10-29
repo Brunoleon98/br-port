@@ -857,7 +857,11 @@ outros aspetos que a pesquisa achar —, com a medição do jogo de hoje ao
 lado de cada tema e um documento que a guarde; (2) uma conversa por tema
 para o aprofundar, a partir desse documento; (3) só então implementar, um
 item por conversa. Os temas a aprofundar e a ordem escolhe-os ele, com
-opções e a recomendada primeiro. Fora deste bloco, para depois: as quinze
+opções e a recomendada primeiro. **O tempo (1) fechou no mesmo dia
+(`143`)**, com o estudo em `docs/PESQUISA_MELHORIAS_2026-10-29.md`: ele
+escolheu aprofundar **a animação e o toque**, na ordem animação → luz →
+som → resto, e só essa conversa abriu; as outras abrem quando ele as pedir.
+Fora deste bloco, para depois: as quinze
 lacunas médias que a `138` deixou de fora (as visuais), os gates A4 e A7,
 o galpão recuperado V3, trabalhadores e crédito, e o vigia de frames do
 `teste_design` (`142`).

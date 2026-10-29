@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 25/10/2026 — as marolas que rolam e a quina norte (`142`)
+> **Atualização:** 29/10/2026 — a pesquisa de melhorias (`143`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -123,10 +123,9 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
 **RB5 (`134`, `135`, #148):** Padrão/Maior nos Ajustes; telefone pendente.
 **A fila da `126`** (§7) **acabou** (`127`, `130`, `136`, `140`; testes
-em `137`–`139`), e os itens que o Bruno escolheu a seguir também: os carros
-da viela (`141`) e as marolas da `124` (`142`). **A seguir, escolha dele
-(29/10):** pesquisar melhorias (luz, animação, som e o resto), uma conversa
-por tema, e só depois implementar (§7).
+em `137`–`139`), e a seguir os carros da viela (`141`) e as marolas
+(`142`). **A pesquisa de melhorias fechou** (`143`): aprofunda-se a
+animação e o toque, depois luz, som e o resto (§7).
 **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
