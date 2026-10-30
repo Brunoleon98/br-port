@@ -50,3 +50,12 @@ editada nesta entrega, além de incorporar a main.
 Sem nova imagem, export ou CI remoto desta entrega. As seis suítes respondem
 por regressão do jogo, não pela qualidade literária do parecer. Sugestões
 continuam por ler/aceitar; o revisor não aplica alterações automaticamente.
+
+## Complemento — preferência de acionamento
+
+Após o primeiro fecho, Bruno confirmou revisão contextual pelo chat e pediu
+recomendações de quando acioná-la. Preferência registrada na skill, decisão
+145 e briefing desta entrega. O manifesto acima continua sendo o snapshot do
+primeiro parecer, anterior a esse complemento; uma nova revisão regenera o
+pacote e o hash do método. Nova passagem das seis suítes: `SUITES OK`, 53 s,
+logs em `/tmp/brport-revisor-preferencia-suites`. Nenhum código do jogo mudou.

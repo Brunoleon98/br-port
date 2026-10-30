@@ -11,7 +11,13 @@ Codex em `.agents/skills/revisar-mensagens/SKILL.md`. Prepara-se o contexto com
 `python3 tools/preparar_revisao_mensagens.py --saida /tmp/brport-revisao`.
 O assistente da conversa faz a leitura e escreve o parecer. Não é serviço
 automático nem uma chamada a outra API. Pergunta opcional sobre chat/checagem
-a cada alteração sem resposta nesta rodada; foi seguido o padrão pelo chat.
+a cada alteração sem resposta no primeiro fecho; foi seguido o padrão pelo chat.
+
+No retorno de 30/10, Bruno confirmou o acionamento pelo chat com revisão
+contextual e pediu que recomendemos usá-lo quando fizer sentido. Preferência
+registrada na skill e na decisão 145: sugerir após cenas novas, mudanças de
+voz/ordem/gatilho, queixa de estranheza ou antes de publicar um bloco narrativo,
+explicando o motivo. Não é gate obrigatório nem tarefa automática.
 
 Primeiro parecer em `REVISAO_MENSAGENS_2026-10-30/README.md`, com 15 unidades
 editoriais analisadas e seis recomendações. Manifesto registra 31 fontes e

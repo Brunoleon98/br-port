@@ -9,6 +9,13 @@ Acione quando Bruno pedir «revisar mensagens», «rodar o revisor» ou uma leit
 de tom/encaixe das falas. Funciona com o assistente da conversa, em Claude ou
 Codex; não depende de outra API, chave paga ou serviço em segundo plano.
 
+**Preferência do Bruno (30/10/2026):** acionar pelo chat, com revisão
+contextual, e recomendar o uso quando fizer sentido. Sugira uma rodada após
+criar uma cena, mudar voz/ordem/gatilhos ou compras citadas nas falas, receber
+uma queixa de estranheza, ou antes de publicar um bloco narrativo. Explique o
+motivo concreto da recomendação. A recomendação é uma ajuda editorial, sem
+virar aprovação obrigatória, hook de commit ou checagem a cada edição.
+
 ## Preparação
 
 1. Leia `AGENTS.md`, o estado, a §7 do plano e a regra de narrativa. Respeite

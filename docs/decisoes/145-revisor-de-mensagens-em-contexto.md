@@ -4,8 +4,11 @@
 são agradáveis e se encaixam no jogo. A primeira versão é uma skill acionada
 na conversa, disponível para Claude e Codex, com um preparador local de fontes.
 Não há serviço em segundo plano, hook de commit ou API externa configurados.
-A pergunta opcional sobre acionamento pelo chat versus a cada alteração ainda
-não recebeu resposta; seguiu-se o padrão de revisão pelo chat, já informado.
+A primeira entrega seguiu o padrão pelo chat enquanto a pergunta opcional
+estava pendente. Depois do fecho, Bruno confirmou: «Acionar pelo chat, com
+revisão contextual, e me recomendar quando achar bom acionar ele». A skill
+registra ocasiões para sugerir uma rodada e pedir leitura com motivo concreto,
+sem transformar a recomendação em gate obrigatório.
 
 ## O revisor
 
