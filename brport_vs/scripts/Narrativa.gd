@@ -738,7 +738,7 @@ static func toninho(id: String) -> String:
 	return _gs().texto(String(TONINHO_FALAS.get(id, "")))
 
 
-# A história entre a primeira página e o fim da fase (`144`). Cada linha é
+# A história entre a primeira página e o fim da fase (`146`). Cada linha é
 # uma vez de quem fala; o painel só apresenta e não inventa acontecimentos.
 # As condições ficam no VidaDoPorto, incluindo o armazém PRONTO do envelope.
 const HISTORIA_DO_PORTO := {

@@ -1,7 +1,7 @@
 extends RefCounted
 
 # T32: entra pelas lojas do celular, confirma/cancela com os botões visíveis
-# e prova os direitos na retomada. Os defeitos ficam no catálogo (`144`).
+# e prova os direitos na retomada. Os defeitos ficam no catálogo (`146`).
 var gs
 var arvore: SceneTree
 var falhas := 0

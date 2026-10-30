@@ -2,7 +2,7 @@ class_name VidaDoPorto
 extends RefCounted
 
 # Catálogo e condições separados da interface: o save e as lojas consultam
-# os mesmos ids. Preços novos são de compras narrativas opcionais (`144`).
+# os mesmos ids. Preços novos são de compras narrativas opcionais (`146`).
 const PRODUTOS := {
 	"cafe": {"loja": "mercado", "nome": "Kit de café", "preco": 180,
 		"efeito": "Desbloqueia a conversa Café no cais. Compra única; sem bônus de operação."},

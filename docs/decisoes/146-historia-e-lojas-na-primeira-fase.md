@@ -1,4 +1,4 @@
-# 144 — A história e as primeiras lojas da Fase 1
+# 146 — A história e as primeiras lojas da Fase 1
 
 24/10/2026. Bruno pediu avançar a história da primeira fase enquanto o Claude
 trabalha na parte gráfica e implementar lojas. Confirmou que elas devem ter
