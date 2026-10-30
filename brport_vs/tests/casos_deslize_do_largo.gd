@@ -69,6 +69,11 @@ const SALTO_MAX := 20.0
 ## 0,9, e o mutante sobreviveu: a direção não separa, a distância ao eixo sim.
 const PERTO := 50.0
 const FORA_DA_FAIXA_MAX := 11.0
+## Os passos de ré pela faixa: o casco ENTRA de ré, não vira em cima do
+## berço. Medido (`144`): 48 passos com a boca a 1,1 × o `RUMO_DO_MAR`; 1 com
+## a boca no próprio berço (o mutante `deslize-sem-faixa`, que sobreviveu a
+## todas as outras perguntas do §3). O corte fica a meio.
+const RE_MIN := 24
 
 var falhas := 0
 var completo := false
@@ -240,6 +245,7 @@ func _o_caminho() -> bool:
 	var de_proa := 0
 	var de_lado := 0
 	var re_fora := 0
+	var re_na_faixa := 0
 	var viragens := 0
 	var meias_voltas := 0
 	var vira_parado := 0
@@ -296,6 +302,8 @@ func _o_caminho() -> bool:
 				elif cosseno <= -0.9:
 					if c.distance_to(doca.centro_do_barco()) > faixa + 4.0:
 						re_fora += 1
+					else:
+						re_na_faixa += 1
 				else:
 					de_lado += 1
 		rumo_antes = rumo
@@ -317,6 +325,7 @@ func _o_caminho() -> bool:
 		de_proa >= 30)
 	conferir("§3 nunca anda de lado (%d passos)" % de_lado, de_lado == 0)
 	conferir("§3 só anda de ré na faixa do berço (%d passos fora dela)" % re_fora, re_fora == 0)
+	conferir("§3 entra de ré pela faixa (%d passos)" % re_na_faixa, re_na_faixa >= RE_MIN)
 	conferir("§3 vira 90° de cada vez a deslizar devagar (%d viragens, %d meias-voltas, %d passos parado, %d depressa)"
 		% [viragens, meias_voltas, vira_parado, vira_depressa],
 		viragens >= 1 and meias_voltas == 0 and vira_parado == 0 and vira_depressa == 0)

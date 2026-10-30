@@ -191,6 +191,11 @@ derivada delas.
   por `PropIso.imagem()`. E **um `AtlasTexture` por cima de outro não
   compõe**: o `get_image()` do conjunto dá o desenho e o `draw` desenha a
   margem vazia — recorte-se do atlas de BAIXO (`PropIso.recorte()`).
+  ⚠️ **E O `PropIso.desenho()` É RELATIVO AO CENTRO DO QUADRO**, não ao canto
+  do nó. Somado ao canto, a régua das boias da `144` pôs cada desenho meio
+  quadro ao lado e deu ZERO sobreposições em todos os caminhos, com o vídeo a
+  mostrar o casco por cima do cone; quem o denunciou foi o controle positivo
+  (o casco posto em cima da boia tem de dar píxeis).
 - **E desprojetar um prop de volta ao mundo pede a ALTURA em que ele pousa.**
   Quem está em terra pousa a `ALT_CAIS`; quem está na água, a 0 — é o que o
   `_origem`/`_mundo` do teste de design faz. Desprojetar tudo a 0 desloca cada

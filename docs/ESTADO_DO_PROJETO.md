@@ -29,8 +29,8 @@ desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
 **As conversas falam como no celular, e o fim de fase é uma página do diário**
 (`082`, **D44**, **D22**). **Atracar é a escolha do dia** (`083`): até três
 barcos esperam ao largo, dois dias cada; tocar num atraca-o com o trabalhador
-do píer — o casco desliza do lugar dele ao berço (`144`) —, e quem não for
-chamado vai embora e custa reputação. Cancelar um
+do píer — ele navega de proa do lugar dele, vira e entra de ré (`144`) —, e
+quem não for chamado vai embora e custa reputação. Cancelar um
 serviço solta a equipe no dia, por −5 de reputação e 10% de multa (`111`).
 
 **A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20 e
@@ -125,7 +125,7 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **RB5 (`134`, `135`, #148):** Padrão/Maior nos Ajustes; telefone pendente.
 **A fila da `126`** acabou (`127`–`142`). **Da pesquisa de melhorias**
 (`143`), o tema animação e toque fechou o A1′ (`144`); seguem A1 → T1 →
-A3, uma conversa cada, e depois luz, som e o resto (§7).
+A3, uma conversa cada, e a esteira, a fumaça e o fundeadouro (§7).
 **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
@@ -331,8 +331,8 @@ navio atraca** (`009`), o que faz a trava ser visível em vez de estatística.
 **O CASCO DIZ O QUE O NAVIO TRAZ, e o camião o que sai pela estrada** (`010`).
 Seis cascos, um por par (classe, motivo): o costado é o mesmo e o CONVÉS é que
 muda. O pesqueiro tem um casco só, e isso é afirmação: pescado e armazenagem são
-o mesmo peixe indo para sítios diferentes. Os camiões são um por motivo e por
-transportadora — duas, que se revezam (`070`).
+o mesmo peixe indo para sítios diferentes; cada casco tem a variante virada
+ao cais (`144`). Os camiões, um por motivo e transportadora (`070`).
 O **trabalhador aparece no tabuado** quando alocado — no nível 3, na empilhadeira.
 
 **E O BARCO DE PESCA DIZ QUANTO VALE A ESCALA:** bote, traineira e arrasteiro,

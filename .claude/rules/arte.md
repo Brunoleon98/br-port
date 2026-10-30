@@ -508,6 +508,16 @@ Anotam o `pip install "bpy==4.5.0"` da receita do núcleo.
   punha o para-brisa a olhar certo e a janela lateral para `-x` — invisível, e
   ninguém notaria no render, só na silhueta chapada. Prop que muda de eixo
   RECONSTRÓI-SE com os detalhes repostos nas faces visíveis.
+  ⚠️ **E O PROP VIRADO AO CONTRÁRIO ESPELHA-SE EM `x`, NÃO RODA 180°**
+  (`144`). Rodado, o casco mostraria os dois lados que o kit não detalha;
+  espelhado em `x` (um Empty-pai de escala (−1, 1, 1), só durante o render) a
+  proa vai para `-x`, a câmara vê a popa e o costado detalhado fica à vista.
+  Com o espelho da IMAGEM, um prop simétrico ganha quatro rumos com um render
+  novo. ⚠️ **E QUANTAS DIREÇÕES UMA ANIMAÇÃO PEDE MEDE-SE NOS CAMINHOS, ANTES
+  DE AS PROPOR:** as quatro do isométrico estão a ±26,6° da horizontal, e um
+  caminho a menos de ~18° da vertical da tela fica a mais de 45° de todas —
+  anda de lado. Os do largo aos berços de cima são assim, e a recomendação
+  das quatro saiu sem os medir.
 - A prova visual do prop — o que a captura não vê, o sorteio, o estado
   que nenhuma foto monta, a folha de contato — está em `captura.md`.
 - **⚠️ PNG NOVO EM `art/props/` ENTRA NA FOLHA DOS PROPS, mesmo que o jogo
