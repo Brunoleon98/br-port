@@ -91,7 +91,8 @@ lê o nó a cada 1/60 s.
 1. o lugar tocado esvazia e os outros ficam com o casco que tinham;
 2. o casco começa no centro do lugar tocado (0,2 px; corte 3);
 3. a arte de CADA passo contra o andar dele: de proa no primeiro trecho (64
-   passos), nunca de lado, de ré só na faixa, a viragem 90° de cada vez a
+   passos), nunca de lado, de ré só na faixa e ENTRANDO de ré por ela (48
+   passos; corte 24), a viragem 90° de cada vez a
    deslizar devagar (nem parado nem depressa), a arte nova por cima só no fim
    de cada passo (≤ 6 passos de mistura por viragem), nunca salta, não
    esmaece, acaba no berço, e a menos de 50 px dele está no eixo da faixa
@@ -109,7 +110,30 @@ lê o nó a cada 1/60 s.
 **O T29 apanhou um defeito na primeira corrida**: com o movimento reduzido a
 origem ficava pendente e o guindaste do n1 não arrancava. Ficou no catálogo.
 
-MUTANTES_POR_MEDIR
+Treze defeitos no catálogo (`tools/mutantes.toml`, secção da `144`), cada
+um com a guarda que o apanhou na exploração:
+
+| Mutante | Quem reprova |
+|---|---|
+| O `Main` não ouve o `atracou` (o barco aparece no berço, como antes) | §2, a 279 px do lugar |
+| O lugar pinta a posição da fila (o defeito de antes) | §1, «0 de 2» |
+| A boca do berço no próprio berço: chega de proa e vira em cima dele | §3, 1 passo de ré contra 48 |
+| A arte de sempre o caminho todo (de ré e de lado, outra vez) | §3, 0 passos de proa |
+| O espelho da arte trocado de rumo | §3, 64 passos de lado |
+| A meia-volta de uma vez na boca do berço | §3, 1 meia-volta |
+| A viragem parada (a deriva a zero) | §3, 41 passos parado |
+| A arte nova a misturar o passo inteiro (o «X») | §3, 41 passos a misturar |
+| O trabalho arranca com o casco no mar | §4, 83 passos com gente no tabuado |
+| O casco encosta e o trabalho não rearma | §4 e §5 |
+| A lança presa no repouso enquanto o casco vem | §4, «0,000 rad» |
+| A origem guardada com o movimento reduzido (o defeito do T29) | o T29 e o §6 |
+| O cone de volta ao corredor | §7, 5 caminhos |
+
+⚠️ **Três sobreviveram à primeira versão da guarda que os devia ver**, e cada
+um pediu uma pergunta nova: a reta (um cosseno com o número «medido» escrito
+antes de medir; ficou a distância ao eixo da faixa), a boca no berço (nada
+exigia que a ré EXISTISSE; ficou a contagem dos passos de ré) e as boias (a
+régua das máscaras dava zero em tudo; ficou o controle positivo).
 
 ## O custo
 
