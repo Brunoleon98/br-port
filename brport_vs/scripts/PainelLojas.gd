@@ -1,7 +1,7 @@
 extends PainelNarrativo
 
 # As lojas e o arquivo da história usam o andaime do jogo. Sem arte nova no
-# mapa: este é o primeiro acesso à cidade pelo celular (`141`). A compra é
+# mapa: este é o primeiro acesso à cidade pelo celular (`144`). A compra é
 # confirmada aqui e validada outra vez pelo GameState, no instante do débito.
 var _loja := ""
 var _capitulo := ""

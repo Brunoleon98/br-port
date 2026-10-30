@@ -39,7 +39,7 @@ A **18** (`111`), aceite com migração, guarda despesas e acumuladores do
 cancelamento. O degrau 17→18 põe os campos novos a zero e conserva a partida;
 o T24 prova a retomada com multa já paga e saldo negativo antes do fecho.
 O exemplo 18 joga um cancelamento real; os exemplos anteriores ficam intactos.
-A **19** (`141`), autorizada pelo Bruno nesta entrega, guarda compras e cenas
+A **19** (`144`), autorizada pelo Bruno nesta entrega, guarda compras e cenas
 lidas em `vida_do_porto` e a despesa `lojas` nas contas do dia/semana. O degrau
 18→19 começa esses campos vazios e preserva o porto; o T32 prova migração,
 retomada e isolamento dos espaços. O exemplo 19 compra os dois itens e conclui

@@ -1,6 +1,6 @@
 # História e lojas — verificação local
 
-24/10/2026, decisão `141`. Branch `codex/historia-e-lojas-fase-1`, base
+24/10/2026, decisão `144`. Branch `codex/historia-e-lojas-fase-1`, base
 `origin/main` em `06a1b63`. Entrega local; sem push, PR, merge ou alteração do
 Pages. Bruno escolheu Mercado e Delivery e autorizou migração 18→19 preservando
 o progresso. Recorte em `docs/RECORTE_HISTORIA_LOJAS_FASE_1.md`.

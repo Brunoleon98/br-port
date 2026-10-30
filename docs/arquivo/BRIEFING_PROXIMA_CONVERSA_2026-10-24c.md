@@ -1,6 +1,6 @@
 # Próxima conversa — história e lojas da primeira fase
 
-24/10/2026. Decisão `141`; branch `codex/historia-e-lojas-fase-1`, sobre
+24/10/2026. Decisão `144`; branch `codex/historia-e-lojas-fase-1`, sobre
 `origin/main` em `06a1b63`. Implementação local, sem publicação. Bruno pediu
 história e lojas enquanto o Claude continua na arte, escolheu Mercado e
 Delivery com visitas/conversas e compras, e autorizou o save 18→19 preservando

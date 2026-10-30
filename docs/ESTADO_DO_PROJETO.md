@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 25/10/2026 — rua (`140`) e história/lojas (`141`, local)
+> **Atualização:** 25/10/2026 — rua (`140`) e história/lojas (`144`, local)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -62,7 +62,7 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **19** local (`141`), com migração desde a 14 e exemplos preservados;
+Save **19** local (`144`), com migração desde a 14 e exemplos preservados;
 a main permanece na 18 até publicar esta entrega;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
@@ -92,7 +92,7 @@ prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`, `066`): aparelho de
 400×680 (460×782 na conversa), com o **diário**, as **mensagens** (a conversa do porto, `067`) e
-**Lojas** (`141`): Mercado e Delivery, visitas, compras únicas e releitura da
+**Lojas** (`144`): Mercado e Delivery, visitas, compras únicas e releitura da
 história. Cidade, missões e análise continuam fechadas.
 
 **O ARMAZÉM é um armazém dos dois lados do par** e **o porto abre em RUÍNAS de
@@ -132,7 +132,7 @@ Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
-**História/lojas (`141`):** save 19; chave/almoço aceitos e integrados.
+**História/lojas (`144`):** save 19; chave/almoço aceitos e integrados.
 Revisão restante em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`; telefone pendente.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
@@ -166,7 +166,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Fumaça** — cenas, ícones, save, tokens e falas; prazo prometido (F18), nomes lidos por string (F19), fases declaradas contra o alcançado (F20), exemplos de save (F21), tutorial (F22), Fase 2 e M9 (F23) |
-| `brport_vs/scripts/Narrativa.gd` | Falas e expressões; arco da Fase 1 (`141`). Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
+| `brport_vs/scripts/Narrativa.gd` | Falas e expressões; arco da Fase 1 (`144`). Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
 | `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Doze bustos (`020`, `101`) |

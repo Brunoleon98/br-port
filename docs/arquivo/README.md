@@ -31,11 +31,11 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-25b.md` | 25/10 | Chave/almoço aceitos e integrados; história renumerada para 141 após incorporar a rua da main; revisão restante |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-25d.md` | 25/10 | Chave/almoço aceitos e integrados; história renumerada para 141 após incorporar a rua da main; revisão restante |
 | `VERIFICACAO_FALAS_2026-10-25/README.md` | 25/10 | Integração das falas aceitas da chave/almoço, capturas e provas sobre a main atualizada |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24d.md` | 24/10 | Revisão de falas/lojas para mais vínculo, escolhida por Bruno; versões para leitura, sem alteração do jogo |
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-24c.md` | 24/10 | História e primeiras lojas (`141`), aceites, migração 19 e continuação local |
-| `VERIFICACAO_HISTORIA_LOJAS_2026-10-24/README.md` | 24/10 | História da Fase 1, Mercado e Delivery (`141`): compras, conversas, save 19, provas e limites |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-24c.md` | 24/10 | História e primeiras lojas (`144`), aceites, migração 19 e continuação local |
+| `VERIFICACAO_HISTORIA_LOJAS_2026-10-24/README.md` | 24/10 | História da Fase 1, Mercado e Delivery (`144`): compras, conversas, save 19, provas e limites |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24b.md` | 24/10 | As treze lacunas graves e treze médias fechadas (`138`), 106 → 131 da amostra; as suítes em paralelo (`139`); a seguir, os sprites de detalhes |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-25.md` | 25/10 | O mobiliário da rua aceite à oitava passagem (`140`): postes, fiação, placas, cavaletes e a rede de uma subestação; a fila da `126` acabou, e a seguinte é do Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24.md` | 24/10 | Testes mais rápidos (`137`): cópias, fatias e o relógio fixo, o PR aberto; a seguir, as treze lacunas graves, depois os detalhes |

@@ -1,6 +1,6 @@
 # Falas e lojas da Fase 1 — revisão para leitura
 
-Documento de trabalho sobre a implementação local da decisão `141`, no
+Documento de trabalho sobre a implementação local da decisão `144`, no
 commit `2056dad`. Bruno escolheu **mais vínculo com os personagens** como
 prioridade desta revisão. **Chave e almoço foram aceitos em 25/10/2026 e
 aplicados ao jogo**, com a redação final abaixo. Os demais trechos e o retorno
@@ -42,7 +42,7 @@ Referências verificadas: `brport_vs/scripts/Narrativa.gd`, linhas 744–804;
 | Café no cais | O café fraco para a conversa durar, a resposta seca de Cida e a garrafa que fica. | Manter nesta passagem. Já cumpre o objetivo de vínculo. |
 | A mesa do cais | A compra resultar numa pausa compartilhada com a equipe. | Aplicado: Toninho reserva um lugar para a chefia e brinca com Cida. |
 
-As condições, os ids persistentes e a ordem das cenas continuam os da `141`.
+As condições, os ids persistentes e a ordem das cenas continuam os da `144`.
 Esta revisão não propõe respostas escolhidas pelo jogador, pontos de amizade
 ou outro sistema de relacionamento.
 
@@ -187,7 +187,7 @@ A proposta de retorno é:
 
 «Voltar ao porto» continua sendo a saída explícita do app. «Fechar o boletim»
 continua primeiro no boletim; esta revisão não recoloca a história antes da
-ação habitual, cuja ordem já foi provada na entrega da `141`.
+ação habitual, cuja ordem já foi provada na entrega da `144`.
 
 O retorno é uma proposta de comportamento, ainda sem alteração de código.
 Pode ser mantido só durante a abertura do painel, sem novo campo no save. Sua
@@ -201,7 +201,7 @@ essas cenas como referência para o restante: a equipe acolher quem joga, cada
 voz continuar reconhecível e o humor parecer uma conversa. O aceite das outras
 cenas continua aberto; suíte verde não resolve gosto de escrita.
 
-A implementação da `141` recebeu somente as falas aceitas da chave e do
+A implementação da `144` recebeu somente as falas aceitas da chave e do
 almoço. Preços, save, gatilhos e percurso continuam iguais. Provas dessa
 integração em `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`.
 As capturas da entrega anterior não representam os textos novos. Telefone e
