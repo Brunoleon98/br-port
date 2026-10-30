@@ -1,0 +1,52 @@
+=== autoteste da régua (antes de qualquer número valer) ===
+  PASS  seno fs/4: pico amostra 0.3536, true peak 0.4955 → +2.93 dB (esperado +3,01)
+  PASS  contínua 0,5 no miolo: true peak 0.5000 (esperado 0,5 — sem ganho)
+  PASS  invariante true peak >= pico de amostra: 0.4240 >= 0.2999
+  PASS  candidatos == força bruta: 0.423950772 vs 0.423950772
+  PASS  estalo no meio com bordas a zero: razão 41.3 contra 2.0 limpo
+  PASS  tom de 1 kHz: banda dominante 500-2k (100%), centroide 1000 Hz
+
+  a régua responde ao que sabe responder, e o resto é medição.
+
+=== os 14 sons, medidos ===
+arquivo                  ms    pico     dBTP Δ-razão centroide  <500Hz  banda
+--------------------------------------------------------------------------------------------
+sfx_alerta              370   0.720    -2.83     1.1      943Hz      0%  500-2k (94%)
+sfx_amb_mar            3600   0.420    -7.65     1.2     2215Hz     36%  500-2k (32%)
+sfx_construir           300   0.780    -2.16     1.2      212Hz     92%  20-200 (91%)
+sfx_derrota             895   0.740    -2.62     1.1      372Hz     80%  200-500 (80%)
+sfx_fauna_areia         270   0.340    -8.94     1.1     3453Hz     15%  500-2k (36%)
+sfx_fauna_gaivota       520   0.460    -6.76     1.1     1324Hz      0%  500-2k (97%)
+sfx_fauna_mergulho      580   0.420    -7.31     1.1     1211Hz     72%  20-200 (68%)
+sfx_moeda               245   0.620    -4.06     1.1     2267Hz      0%  500-2k (51%)
+sfx_navio_chega        1100   0.680    -3.35     1.1      138Hz    100%  20-200 (93%)
+sfx_ui_click             90   0.550    -5.35     1.1      917Hz      0%  500-2k (98%)
+sfx_ui_error            340   0.700    -3.10     1.1      297Hz     88%  200-500 (85%)
+sfx_ui_success          400   0.820    -1.72     1.0      734Hz      0%  500-2k (99%)
+sfx_ui_warn             310   0.720    -2.84     1.0      356Hz     99%  200-500 (99%)
+sfx_vitoria             685   0.820    -1.72     1.1      831Hz      0%  500-2k (99%)
+
+=== a soma offline, e o que ela NÃO prova ===
+buses: 2 bus(es) a 0 dB, sem efeito, bypass false/false
+três vozes (VOZES=3) no pior alinhamento possível:
+   sfx_vitoria + sfx_ui_success + sfx_construir
+   soma dos true peaks: 2.420  (7.68 dBTP)
+   ⚠️  acima de 0 dBTP: TRÊS no mesmo instante saturariam o
+       Master. Não é veredito — é o pior caso aritmético,
+       e nada prova que o jogo o produz.
+
+⚠️  E ISTO NÃO É A MIX. A soma é aritmética sobre os arquivos; a
+    mix real tem a fase de cada som, o instante em que cada um
+    entra e o volume que o jogador escolheu. O que a linha acima
+    prova é só o TETO: nada pode passar disto.
+
+=== o que fica para o ouvido (A6), e não se decide aqui ===
+• timbre: se 'moeda' soa a dinheiro e 'obra' soa a obra.
+• hierarquia: a interface mede ~8 dB acima do ambiente. Se isso é
+  hierarquia ou é interface aos gritos, mede-se ouvindo.
+• fadiga: o clique toca dezenas de vezes por partida.
+• a coluna '<500Hz' diz que fração do som o alto-falante de um
+  telefone tende a NÃO devolver — é o que procurar na escuta.
+
+=== SINAL OK — 14 sons medidos, sem saturação nem estalo ===
+    (nada aqui diz que os sons são BONS: ninguém os ouviu)
