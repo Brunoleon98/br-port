@@ -7277,6 +7277,38 @@ def largura_opaca(caminho: str) -> int:
 
 
 # ---------------------------------------------------------------- principal
+## O sufixo do casco virado para o cais (`144`): `barco_pesca_bote_ao_cais`.
+SUFIXO_AO_CAIS = "_ao_cais"
+
+
+def espelhar_em_x(objetos):
+    """Pendura `objetos` num Empty na origem do mundo e espelha-o em `x`.
+
+    Com o Empty na identidade, o `matrix_parent_inverse` fica a identidade e
+    nenhum objeto se mexe ao ganhar o pai; só a escala (−1, 1, 1) posta
+    DEPOIS os espelha. O Cycles desenha a escala negativa com as normais
+    certas. Devolve o Empty, para o `desfazer_espelho()`.
+    """
+    vazio = bpy.data.objects.new("espelho_ao_cais", None)
+    bpy.context.scene.collection.objects.link(vazio)
+    for o in objetos:
+        o.parent = vazio
+        o.matrix_parent_inverse.identity()
+    vazio.scale = (-1.0, 1.0, 1.0)
+    bpy.context.view_layer.update()
+    return vazio
+
+
+def desfazer_espelho(vazio, objetos):
+    """Volta a escala à identidade e solta os objetos, que ficam onde eram."""
+    vazio.scale = (1.0, 1.0, 1.0)
+    bpy.context.view_layer.update()
+    for o in objetos:
+        o.parent = None
+    bpy.data.objects.remove(vazio)
+    bpy.context.view_layer.update()
+
+
 def main() -> int:
     contorno = "--contorno" in sys.argv
     despejo = next((a.split("=", 1)[1] for a in sys.argv[1:]
@@ -7304,6 +7336,19 @@ def main() -> int:
         return 0
     saida, pedidos = args[0], args[1:]
 
+    # O BARCO VIRADO PARA O CAIS (`144`): o que desliza do largo ao berço vem
+    # de proa, e o casco só existia a apontar para o mar. Não é um modelo
+    # novo — é o MESMO grupo espelhado em `x` (x → −x), e o espelho é a única
+    # transformação que serve. Rodado 180° em `z` ele mostraria à câmera os
+    # lados que o kit não detalha (corrimão, vigias, letras e pneus vivem só
+    # no costado `-y`, `arte.md`); espelhado em `x` a proa vai para `-x` (o
+    # cais), a câmera passa a ver a POPA na face `+x`, e o costado detalhado
+    # continua no `-y`. A luz do estúdio fica no mundo, como em todo prop.
+    # Quem espelha é um Empty-pai de escala (−1, 1, 1), posto só durante o
+    # render da variante: o grupo original continua intocado para os outros.
+    for nome in [n for n in grupos if n.startswith("barco_")]:
+        grupos[nome + SUFIXO_AO_CAIS] = grupos[nome]
+
     if pedidos:
         desconhecidos = [p for p in pedidos if p not in grupos]
         if desconhecidos:
@@ -7326,7 +7371,12 @@ def main() -> int:
             o.hide_render = False
         alvo = "%s/%s.png" % (saida.rstrip("/"), nome)
         cena.render.filepath = alvo
+        espelho = None
+        if nome.endswith(SUFIXO_AO_CAIS):
+            espelho = espelhar_em_x(grupos[nome])
         bpy.ops.render.render(write_still=True)
+        if espelho is not None:
+            desfazer_espelho(espelho, grupos[nome])
         if nome in SOMBRA:
             temp = "%s/_sombra_tmp.png" % saida.rstrip("/")
             render_sombra(cena, grupos[nome], temp,

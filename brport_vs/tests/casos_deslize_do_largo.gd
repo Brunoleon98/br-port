@@ -165,6 +165,16 @@ func _centro(no: Control) -> Vector2:
 	return no.get_global_rect().get_center()
 
 
+## O rumo que o nó do barco MOSTRA (`Dock.RUMO_*`), pela textura e pelo
+## espelho; −1 se a arte não for a do casco `mar` nem a dele virada ao cais.
+func _rumo_visto(barco: TextureRect, mar: Texture2D, cais: Texture2D) -> int:
+	if barco.texture == mar:
+		return 1 if barco.flip_h else 0
+	if barco.texture == cais:
+		return 3 if barco.flip_h else 2
+	return -1
+
+
 # §1 a §4 ───────────────────────────────────────────────────────────────────
 func _o_caminho() -> bool:
 	var tela := _abrir()
@@ -207,7 +217,11 @@ func _o_caminho() -> bool:
 		% comeco.distance_to(de_onde), comeco.distance_to(de_onde) <= COMECO_MAX,
 		"começa em %s, o lugar estava em %s, o berço em %s" % [comeco, de_onde,
 			doca.centro_do_barco()])
-	conferir("§2 e com a arte do barco tocado", barco.texture == artes[0])
+	var k_doca: Dictionary = (load("res://scripts/Dock.gd") as Script).get_script_constant_map()
+	var direcoes: Array = k_doca["DIRECAO_DO_RUMO"]
+	var cais: Texture2D = k_doca["CASCOS_AO_CAIS"][(artes[0] as Texture2D).resource_path]
+	conferir("§2 e com a arte do barco tocado",
+		_rumo_visto(barco, artes[0], cais) >= 0)
 
 	# §3 e §4 ── o caminho, passo a passo
 	var centros: Array = [comeco]
@@ -218,12 +232,73 @@ func _o_caminho() -> bool:
 	var giro_min := lanca.rotation
 	var giro_max := lanca.rotation
 	var passos := 0
-	while doca.deslizando() and passos < int(3.0 / PASSO):
+	# A ARTE DE CADA PASSO, contra o andar desse passo: o rumo que ela mostra
+	# e para onde o casco se moveu, na tela.
+	var faixa: float = (k_doca["RUMO_DO_MAR"] as Vector2).length() * float(k_doca["DESLIZE_BOCA"])
+	var rumo_antes := _rumo_visto(barco, artes[0], cais)
+	var desconhecida := 0
+	var de_proa := 0
+	var de_lado := 0
+	var re_fora := 0
+	var viragens := 0
+	var meias_voltas := 0
+	var vira_parado := 0
+	var vira_depressa := 0
+	var em_mistura := 0
+	var mistura_fora := 0
+	var mistura_inteira := 0
+	var mistura_fora_da_viragem := 0
+	# Quantos passos de 90° a viragem deste caminho tem, pela mesma conta do
+	# jogo (a duração menos os dois trechos, em passos).
+	var viragens_previstas: int = roundi((float(doca.duracao_do_deslize(
+		doca.get_global_transform().affine_inverse() * de_onde - barco.size * 0.5,
+		doca._barco_base)) - float(k_doca["DESLIZE_PROA_SEG"])
+		- float(k_doca["DESLIZE_RE_SEG"])) / float(k_doca["DESLIZE_VIRA_SEG"]))
+	while doca.deslizando() and passos < int(4.0 / PASSO):
 		_andar(antes, PASSO)
 		passos += 1
 		var c := _centro(barco)
-		maior_salto = maxf(maior_salto, c.distance_to(centros[centros.size() - 1]))
+		var anda: Vector2 = c - centros[centros.size() - 1]
+		maior_salto = maxf(maior_salto, anda.length())
 		centros.append(c)
+		var rumo := _rumo_visto(barco, artes[0], cais)
+		var vira: TextureRect = doca._barco_vira
+		var t_agora: float = passos * PASSO
+		var virando: bool = doca.deslizando() and t_agora > float(k_doca["DESLIZE_PROA_SEG"]) \
+			and t_agora < float(k_doca["DESLIZE_PROA_SEG"]) \
+				+ float(k_doca["DESLIZE_VIRA_SEG"]) * viragens_previstas
+		if rumo < 0:
+			desconhecida += 1
+		elif doca.deslizando():
+			if rumo != rumo_antes:
+				viragens += 1
+				if (rumo - rumo_antes + 4) % 4 == 2:
+					meias_voltas += 1
+			if virando:
+				if anda.length() < 0.15:
+					vira_parado += 1
+				elif anda.length() > 1.5:
+					vira_depressa += 1
+				if vira.visible:
+					var chega := _rumo_visto(vira, artes[0], cais)
+					if chega < 0 or (chega - rumo + 4) % 4 == 2 or chega == rumo:
+						mistura_fora += 1
+					elif vira.modulate.a > 0.0 and vira.modulate.a < 1.0:
+						em_mistura += 1
+					else:
+						mistura_inteira += 1
+			elif vira.visible:
+				mistura_fora_da_viragem += 1
+			if not virando and anda.length() > 0.3:
+				var cosseno: float = anda.normalized().dot((direcoes[rumo] as Vector2).normalized())
+				if cosseno >= 0.7:
+					de_proa += 1
+				elif cosseno <= -0.9:
+					if c.distance_to(doca.centro_do_barco()) > faixa + 4.0:
+						re_fora += 1
+				else:
+					de_lado += 1
+		rumo_antes = rumo
 		if barco.modulate.a < 0.999:
 			esmaece += 1
 		if doca.deslizando():
@@ -235,7 +310,21 @@ func _o_caminho() -> bool:
 			giro_max = maxf(giro_max, lanca.rotation)
 	var duracao: float = passos * PASSO
 	conferir("§3 o deslize acaba (%.2f s)" % duracao, not doca.deslizando()
-		and duracao >= 0.5 and duracao < 3.0)
+		and duracao >= 2.0 and duracao < 3.2)
+	conferir("§3 a arte é sempre a do barco tocado, num dos quatro rumos (%d passos fora)"
+		% desconhecida, desconhecida == 0)
+	conferir("§3 o casco navega de proa do largo à boca do berço (%d passos)" % de_proa,
+		de_proa >= 30)
+	conferir("§3 nunca anda de lado (%d passos)" % de_lado, de_lado == 0)
+	conferir("§3 só anda de ré na faixa do berço (%d passos fora dela)" % re_fora, re_fora == 0)
+	conferir("§3 vira 90° de cada vez a deslizar devagar (%d viragens, %d meias-voltas, %d passos parado, %d depressa)"
+		% [viragens, meias_voltas, vira_parado, vira_depressa],
+		viragens >= 1 and meias_voltas == 0 and vira_parado == 0 and vira_depressa == 0)
+	# 0,1 s de troca por passo são 6 passos de 1/60 s, menos as duas pontas.
+	conferir("§3 na viragem a arte que chega aparece por cima da que sai, só no fim de cada passo (%d passos a misturar, %d fora de 90°, %d inteiros, %d fora da viragem)"
+		% [em_mistura, mistura_fora, mistura_inteira, mistura_fora_da_viragem],
+		em_mistura >= 4 * viragens_previstas and em_mistura <= 6 * viragens_previstas
+			and mistura_fora == 0 and mistura_fora_da_viragem == 0)
 	conferir("§3 nenhum passo salta (maior %.1f px)" % maior_salto, maior_salto <= SALTO_MAX)
 	conferir("§3 o casco não esmaece no caminho (%d passos)" % esmaece, esmaece == 0)
 	conferir("§3 no fim o casco está no berço",
@@ -302,6 +391,13 @@ func _o_reduzido() -> bool:
 
 # §7 ─────────────────────────────────────────────────────────────────────────
 const MEIO_QUADRO := Vector2(256, 256)
+## OS TRÊS CAMINHOS QUE PASSAM POR CIMA DO BARCO PARADO NO LUGAR 1, aceites
+## pelo Bruno na `144` («aceitar agora, fundeadouro depois»): o lugar 1 fica
+## no meio dos caminhos dos outros dois, e numa procura de 749 disposições
+## dos três lugares nenhuma deixou os 9 limpos e de proa. A lista é FECHADA
+## para os dois lados: um cruzamento novo reprova, e o que o item do
+## fundeadouro (§7 do plano) resolver também — e tira-se daqui.
+const CRUZAMENTOS_ACEITES := ["lugar 2 -> berço 1", "lugar 3 -> berço 2", "lugar 3 -> berço 3"]
 ## Quanto a boia sobe no balanço dela (`Main._animar_boias()`, `base.y − 3`).
 const BOIA_SOBE := 3.0
 
@@ -309,6 +405,28 @@ const BOIA_SOBE := 3.0
 func _mascara(tex: Texture2D) -> Dictionary:
 	var P: Script = load("res://scripts/PropIso.gd")
 	return {"img": P.imagem(tex), "k": P.escala(tex), "r": P.desenho(tex)}
+
+
+var _mascaras_no_rumo := {}
+
+
+## A máscara do casco `mar` a apontar para `rumo`, com a arte e o espelho que
+## o jogo escolhe (`Dock.arte_no_rumo()`). Espelhada, a imagem vira em `x` e
+## o desenho passa para o outro lado do centro do quadro.
+func _mascara_no_rumo(DockS: Script, mar: Texture2D, rumo: int) -> Dictionary:
+	var chave := "%s|%d" % [mar.resource_path, rumo]
+	if _mascaras_no_rumo.has(chave):
+		return _mascaras_no_rumo[chave]
+	var arte: Array = DockS.arte_no_rumo(mar, rumo)
+	var m := _mascara(arte[0])
+	if arte[1]:
+		var img: Image = (m["img"] as Image).duplicate()
+		img.flip_x()
+		var r: Rect2 = m["r"]
+		m = {"img": img, "k": m["k"],
+			"r": Rect2(Vector2(-(r.position.x + r.size.x), r.position.y), r.size)}
+	_mascaras_no_rumo[chave] = m
+	return m
 
 
 ## Píxeis opacos em comum entre o desenho `a` com o quadro em `oa` e o `b`
@@ -379,8 +497,15 @@ func _a_ancoragem() -> bool:
 	conferir("§7 controle: o casco posto em cima de %s dá píxeis (%d)" % [p0["nome"], controle],
 		controle > 100)
 
+	# Cada caminho anda pela POSE do jogo (`Dock.pose_do_deslize()`), passo a
+	# passo, com a arte do rumo de cada passo — de proa ela é a `_ao_cais`, e
+	# espelhada desenha-se do outro lado do centro do quadro. Os obstáculos:
+	# as três peças da ancoragem, nas duas pontas do balanço, e os barcos
+	# PARADOS nos outros dois lugares ao largo (o casco maior, parado de proa
+	# para o mar).
 	var cruzam: Array = []
-	var pior := 0
+	var por_cima_de_barco: Array = []
+	var parado_maior: Dictionary = extremos[1]
 	for k in range(3):
 		var lugar := tela.get_node("MapaWrap/Cenario/BarcoEspera%d" % (k + 1)) as TextureRect
 		var centro := lugar.get_global_rect().get_center()
@@ -397,18 +522,36 @@ func _a_ancoragem() -> bool:
 			var base: Vector2 = doca._barco_base
 			var inicio: Vector2 = doca.get_global_transform().affine_inverse() * centro \
 				- barco.size * 0.5
+			var dur: float = DockS.duracao_do_deslize(inicio, base)
 			var aqui := 0
-			for i in range(101):
-				var pos: Vector2 = DockS.ponto_do_deslize(inicio, base, i / 100.0)
-				var o: Vector2 = doca.get_global_transform() * pos
-				for p in pecas:
-					for m in extremos:
+			var sobre_barco := 0
+			var t := 0.0
+			while t <= dur + 0.0001:
+				var pose: Dictionary = DockS.pose_do_deslize(inicio, base, t)
+				var o: Vector2 = doca.get_global_transform() * Vector2(pose["pos"])
+				for casco in [cascos[0], cascos[cascos.size() - 1]]:
+					var m := _mascara_no_rumo(DockS, casco, int(pose["rumo"]))
+					for p in pecas:
 						aqui += _sobrepostos(m, o, p["m"], p["o"])
 						aqui += _sobrepostos(m, o, p["m"], p["o"] - Vector2(0, BOIA_SOBE))
-			pior = maxi(pior, aqui)
+					for j in range(3):
+						if j == k:
+							continue
+						var outro := tela.get_node("MapaWrap/Cenario/BarcoEspera%d" % (j + 1)) as TextureRect
+						sobre_barco += _sobrepostos(m, o, parado_maior,
+							outro.get_global_transform().origin)
+				t += PASSO
 			if aqui > 0:
 				cruzam.append("lugar %d -> berço %d (%d px)" % [k + 1, d + 1, aqui])
+			if sobre_barco > 0:
+				por_cima_de_barco.append("lugar %d -> berço %d (%d px)" % [k + 1, d + 1, sobre_barco])
 	conferir("§7 nenhum casco passa por cima da ancoragem nos 9 caminhos (%d casos)"
 		% cruzam.size(), cruzam.is_empty(), ", ".join(cruzam))
+	var chaves: Array = []
+	for caso in por_cima_de_barco:
+		chaves.append(String(caso).get_slice(" (", 0))
+	chaves.sort()
+	conferir("§7 só os cruzamentos aceites passam por cima de outro barco ao largo (%d)"
+		% chaves.size(), chaves == CRUZAMENTOS_ACEITES, ", ".join(por_cima_de_barco))
 	_fechar(tela)
 	return true

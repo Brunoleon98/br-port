@@ -204,9 +204,9 @@ de = "144"
 o_que = "o cone da ancoragem volta ao sítio de antes, no caminho de cinco dos nove deslizes"
 alvo = "brport_vs/scenes/Main.tscn"
 antes = '''
-offset_left = 339.00
+offset_left = 371.00
 offset_top = 252.83
-offset_right = 851.00
+offset_right = 883.00
 offset_bottom = 764.83
 '''
 depois = '''
