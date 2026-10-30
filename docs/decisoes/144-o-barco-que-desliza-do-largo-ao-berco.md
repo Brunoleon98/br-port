@@ -137,7 +137,15 @@ régua das máscaras dava zero em tudo; ficou o controle positivo).
 
 ## O custo
 
-CUSTO_POR_MEDIR
+- **Desenho** (`medir_desempenho.gd`, depois): 406,3 e 604,5 chamadas por
+  quadro (antes 405,6 e 604,0; o intervalo de 60 quadros vai de 403 a 411),
+  **389 nós** (+3, a `BarcoVira` de cada doca, escondida fora da viragem) e
+  os mesmos 99 e 102 tweens — o deslize cria um tween passageiro por toque.
+- **VRAM:** ~1,05 MB sem compressão, os 9 atlas `_ao_cais`.
+- **A bateria** tem 110 fotos e a folha dos props passou a **16 páginas**
+  (317 props); as fotos com o largo mudam uma vez, pelas boias.
+- **O catálogo inteiro**: 243 defeitos em 79,7 min, em quatro cópias,
+  `MUTANTES OK`. As seis suítes em 88 s.
 
 ## O desenho dos outros três, para as conversas seguintes
 
