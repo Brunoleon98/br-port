@@ -243,6 +243,13 @@ guarda.
    — o jogo a escrevê-lo — pede a sua guarda (`052`). E um sub-bloco leva a
    sua BANDEIRA: um erro de execução lá dentro só aborta ele, e a bandeira do
    chamador ficava verde.
+   ⚠️ **E O VALOR DEVOLVIDO NÃO É BANDEIRA.** O erro devolve o zero do tipo
+   (`gdscript.md`): no D14 um 0 na ruína deixava o «completo > em_ruina»
+   passar. A bandeira é uma escrita na última linha, à parte do valor — e a
+   régua que a prova injeta o erro ANTES dela: em 30/10 o erro posto antes do
+   `return conferidos` caiu depois do `append` e o D14 ficou verde de graça.
+   Injetar em todos ao mesmo tempo só prova que UM sub-bloco de cada bloco
+   está ligado; é uma rodada por sub-bloco.
    ⚠️ **E O ESTADO ESCRITO À MÃO NÃO CHEGA A QUEM OUVE O SINAL.** Na `104`
    o F23 escrevia `GS.reputation = 100` para provar que a Dona Cida não
    anuncia o recomeço da passagem, e o mutante sem a correção PASSOU: a
