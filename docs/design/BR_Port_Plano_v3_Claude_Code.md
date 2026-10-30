@@ -861,6 +861,13 @@ opções e a recomendada primeiro. **O tempo (1) fechou no mesmo dia
 (`143`)**, com o estudo em `docs/PESQUISA_MELHORIAS_2026-10-29.md`: ele
 escolheu aprofundar **a animação e o toque**, na ordem animação → luz →
 som → resto, e só essa conversa abriu; as outras abrem quando ele as pedir.
+**A conversa da animação e do toque desenhou os quatro itens e fechou o
+primeiro (`144`)**: o barco tocado ao largo desliza do lugar dele ao berço
+(A1′). O Bruno escolheu as quatro recomendadas e a ordem **A1′ → A1 → T1 →
+A3**; **a próxima conversa é o A1** (a peça nova assenta, o «Avançar dia»
+afunda), depois a háptica (T1) e o casco que rola (A3), uma por conversa,
+com o desenho de cada uma na `144`. A luz, o som e o resto continuam à
+espera de ele os pedir.
 Fora deste bloco, para depois: as quinze
 lacunas médias que a `138` deixou de fora (as visuais), os gates A4 e A7,
 o galpão recuperado V3, trabalhadores e crédito, e o vigia de frames do

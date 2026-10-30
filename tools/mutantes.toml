@@ -103,6 +103,94 @@ antes = 'texto += " · acordo"'
 depois = 'texto += "  ·  acordo"'
 reprova = { teste_design = "a espera do barco ao largo cabe" }
 
+# ── O BARCO QUE DESLIZA DO LARGO AO BERÇO (`144`) ─────────────────────────
+
+[[mutante]]
+id = "deslize-sem-origem"
+de = "144"
+o_que = "o Main não ouve o atracou, e o barco tocado aparece no berço no quadro do toque"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	GameState.atracou.connect(_ao_atracar)
+'''
+depois = ''
+
+[[mutante]]
+id = "ancorados-por-posicao"
+de = "144"
+o_que = "cada lugar ao largo pinta a posição da fila: some o último e não o tocado"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	var na_fila := {}
+	for b in GameState.fila:
+'''
+depois = '''
+	_lugar_do_barco.clear()
+	var na_fila := {}
+	for b in GameState.fila:
+'''
+
+[[mutante]]
+id = "deslize-em-reta"
+de = "144"
+o_que = "o deslize vai em reta do largo ao berço, e não chega pela faixa dele"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = 'return s * s * s * inicio + 3.0 * s * s * e * p1 + 3.0 * s * e * e * p2 + e * e * e * base'
+depois = 'return inicio.lerp(base, e)'
+
+[[mutante]]
+id = "deslize-trabalho-nao-espera"
+de = "144"
+o_que = "o trabalhador e o guindaste arrancam com o casco ainda no mar"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+		if _deslizando:
+			return
+		# QUEM ALOCA A MEIO DA CHEGADA ENCOSTA O BARCO JÁ. O guindaste
+		# descarrega do porão no berço, e com o casco ainda a deslizar a
+		# carga sairia da água ao lado dele.
+		concluir_troca()
+'''
+depois = '''
+		if not _deslizando:
+			concluir_troca()
+'''
+
+[[mutante]]
+id = "deslize-sem-rearmar"
+de = "144"
+o_que = "o casco encosta e o trabalho não arranca até ao próximo refresh"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+		_deslizando = false
+		refresh()
+'''
+depois = '''
+		_deslizando = false
+'''
+
+[[mutante]]
+id = "deslize-lanca-parada"
+de = "144"
+o_que = "no toque a lança deixa de varrer e fica presa no repouso enquanto o casco vem"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = 'if _deslizando or _origem_do_deslize != null:'
+depois = 'if _deslizando:'
+
+[[mutante]]
+id = "deslize-reduzido-guarda-origem"
+de = "144"
+o_que = "com o movimento reduzido a origem fica pendente e o guindaste do n1 não arranca"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	_origem_do_deslize = centro_global
+'''
+depois = '''
+	_origem_do_deslize = centro_global
+'''
+
 # ── O TRABALHADOR E O CAIXA ────────────────────────────────────────────────
 
 [[mutante]]
