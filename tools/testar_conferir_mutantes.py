@@ -311,6 +311,15 @@ class Contrato(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("cm", EXECUTOR)
         cm = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cm)
+        # O catálogo de verdade só apanhou a roda antiga no dia em que calhou
+        # (a `144`, 30/10); este apanha-a sempre: o grupo de «b» começa na
+        # parte que o «a + b» já tinha enchido, e a roda dava-lhe 3/1/1.
+        sintetico = [{"id": "ab", "reprova": {"a": "", "b": ""}}]
+        sintetico += [{"id": f"ac{i}", "reprova": {"a": "", "c": ""}} for i in range(2)]
+        sintetico += [{"id": f"b{i}", "reprova": {"b": ""}} for i in range(4)]
+        partes = cm.repartir(sintetico, 3)
+        n = [sum(1 for m in p if "b" in m["reprova"]) for p in partes]
+        self.assertLessEqual(max(n) - min(n), 1, ("sintético", n))
         cat = cm.carregar_catalogo(EXECUTOR.with_name("mutantes.toml"))
         for k in (2, 3, 4):
             partes = cm.repartir(cat, k)

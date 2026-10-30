@@ -879,6 +879,18 @@ opções e a recomendada primeiro. **O tempo (1) fechou no mesmo dia
 (`143`)**, com o estudo em `docs/PESQUISA_MELHORIAS_2026-10-29.md`: ele
 escolheu aprofundar **a animação e o toque**, na ordem animação → luz →
 som → resto, e só essa conversa abriu; as outras abrem quando ele as pedir.
+**A conversa da animação e do toque desenhou os quatro itens e fechou o
+primeiro (`144`), aceite à quarta passagem**: o barco tocado ao largo navega
+de proa do lugar dele à boca do berço, vira e entra de ré (A1′), com arte
+nova (o casco virado para o cais) e as boias do lado do mar. A ordem do
+Bruno é **A1′ → A1 → T1 → A3**: **a próxima conversa é o A1** (a peça nova
+assenta, o «Avançar dia» afunda), depois a háptica (T1) e o casco que rola
+(A3), uma por conversa, com o desenho de cada uma na `144`. **Abriram-se três
+itens a pedido dele, para depois deles**: a esteira e a fumaça dos navios a
+navegar, e **o fundeadouro** — 3 dos 9 caminhos passam por cima do barco
+parado no lugar 1, aceites por agora (`144`, «O que fica de fora»); a ordem
+entre os três pergunta-se. A luz, o som e o resto continuam à espera de ele
+os pedir.
 Fora deste bloco, para depois: as quinze
 lacunas médias que a `138` deixou de fora (as visuais), os gates A4 e A7,
 o galpão recuperado V3, trabalhadores e crédito, e o vigia de frames do

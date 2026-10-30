@@ -296,7 +296,7 @@ def julgar(r: dict, guarda: str | None, teto: float) -> tuple[bool, str]:
 
 
 def repartir(mutantes: list[dict], n: int) -> list[list[dict]]:
-    """N partes, em roda, com a lista ordenada por suíte e por id.
+    """N partes, cada mutante na que tem menos corridas das suítes dele.
 
     Sem tempo medido nem peso escrito à mão: cada parte leva o mesmo número
     de corridas de cada suíte (±1), e é isso que as iguala — um mutante custa
@@ -304,11 +304,26 @@ def repartir(mutantes: list[dict], n: int) -> list[list[dict]]:
     E é DETERMINÍSTICO: as fatias da matriz do CI calculam-se cada uma no seu
     job, e o `--juntar` volta a calculá-las para conferir que cada job correu
     a sua, e não outra.
+
+    Até 30/10 era uma roda só pela lista ordenada, e o ±1 valia por acaso: a
+    roda não recomeça a cada suíte, e os grupos de uma suíte separados por
+    outro (o único `run_tests` + `teste_design`, depois os de `teste_audio`)
+    somavam as sobras na mesma parte. Com os 13 mutantes da `144`, a
+    `teste_design` ficou 41/43/41 em três fatias. Escolher a parte pela conta
+    de cada suíte segura o ±1 em toda suíte de um mutante só; os de várias
+    vão primeiro, com as contas ainda vazias, que é onde cabem sem o partir.
     """
-    ordem = sorted(mutantes, key=lambda m: (sorted(m.get("reprova", {})), m["id"]))
+    ordem = sorted(mutantes, key=lambda m: (-len(m.get("reprova", {})),
+                                            sorted(m.get("reprova", {})), m["id"]))
     partes: list[list[dict]] = [[] for _ in range(n)]
-    for i, m in enumerate(ordem):
-        partes[i % n].append(m)
+    contas: list[dict[str, int]] = [{} for _ in range(n)]
+    for m in ordem:
+        suites = sorted(m.get("reprova", {}))
+        p = min(range(n), key=lambda i: (max((contas[i].get(s, 0) for s in suites), default=0),
+                                         len(partes[i]), i))
+        partes[p].append(m)
+        for s in suites:
+            contas[p][s] = contas[p].get(s, 0) + 1
     return partes
 
 

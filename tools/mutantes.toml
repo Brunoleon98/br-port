@@ -200,6 +200,183 @@ antes = 'texto += " · acordo"'
 depois = 'texto += "  ·  acordo"'
 reprova = { teste_design = "a espera do barco ao largo cabe" }
 
+# ── O BARCO QUE DESLIZA DO LARGO AO BERÇO (`144`) ─────────────────────────
+
+[[mutante]]
+id = "deslize-sem-origem"
+de = "144"
+o_que = "o Main não ouve o atracou, e o barco tocado aparece no berço no quadro do toque"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	GameState.atracou.connect(_ao_atracar)
+'''
+depois = ''
+reprova = { teste_design = "D52: §2 o casco começa no lugar ao largo que se tocou" }
+
+[[mutante]]
+id = "ancorados-por-posicao"
+de = "144"
+o_que = "cada lugar ao largo pinta a posição da fila: some o último e não o tocado"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	var na_fila := {}
+	for b in GameState.fila:
+'''
+depois = '''
+	_lugar_do_barco.clear()
+	var na_fila := {}
+	for b in GameState.fila:
+'''
+reprova = { teste_design = "D52: §1 os outros dois ficam no lugar deles" }
+
+[[mutante]]
+id = "deslize-sem-faixa"
+de = "144"
+o_que = "a boca do berço passa a ser o próprio berço: o casco chega de diagonal e vira em cima dele"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+	var boca := base + RUMO_DO_MAR * DESLIZE_BOCA
+	var d := boca - inicio
+	var r0 := rumo_de(d)
+	var passos := viragem(r0, d)
+	var vira_seg := DESLIZE_VIRA_SEG * passos.size()
+'''
+depois = '''
+	var boca := base
+	var d := boca - inicio
+	var r0 := rumo_de(d)
+	var passos := viragem(r0, d)
+	var vira_seg := DESLIZE_VIRA_SEG * passos.size()
+'''
+reprova = { teste_design = "D52: §3 entra de ré pela faixa" }
+
+[[mutante]]
+id = "deslize-de-re-outra-vez"
+de = "144"
+o_que = "o casco não usa a arte virada ao cais: navega com a proa para o mar, de ré e de lado"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+	if rumo == RUMO_MAR or rumo == RUMO_MY:
+		return [mar, rumo == RUMO_MY]
+'''
+depois = '''
+	if true:
+		return [mar, false]
+'''
+reprova = { teste_design = "D52: §3 o casco navega de proa do largo à boca do berço" }
+
+[[mutante]]
+id = "deslize-espelho-trocado"
+de = "144"
+o_que = "o espelho da arte troca de rumo: o casco aponta para o lado errado em my"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = 'return [CASCOS_AO_CAIS[mar.resource_path], rumo == RUMO_MENOS_MY]'
+depois = 'return [CASCOS_AO_CAIS[mar.resource_path], rumo == RUMO_CAIS]'
+reprova = { teste_design = "D52: §3 nunca anda de lado" }
+
+[[mutante]]
+id = "viragem-de-uma-vez"
+de = "144"
+o_que = "na boca do berço a proa dá meia-volta de uma vez, em vez de dois passos de 90°"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = 'return [RUMO_MENOS_MY if d.x > 0.0 else RUMO_MY, RUMO_MAR]'
+depois = 'return [RUMO_MAR]'
+reprova = { teste_design = "D52: §3 vira 90° de cada vez a deslizar devagar" }
+
+[[mutante]]
+id = "viragem-parada"
+de = "144"
+o_que = "o casco pára seco na boca do berço para virar («parar para virar é robótico»)"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = 'const DESLIZE_DERIVA := 60.0'
+depois = 'const DESLIZE_DERIVA := 0.0'
+reprova = { teste_design = "D52: §3 vira 90° de cada vez a deslizar devagar" }
+
+[[mutante]]
+id = "viragem-mistura-o-passo-todo"
+de = "144"
+o_que = "a arte nova mistura-se o passo inteiro e as duas, a 90°, desenham um «X»"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = 'const DESLIZE_TROCA_SEG := 0.1'
+depois = 'const DESLIZE_TROCA_SEG := 0.35'
+reprova = { teste_design = "D52: §3 na viragem a arte que chega aparece por cima da que sai, só no fim de cada passo" }
+
+[[mutante]]
+id = "deslize-trabalho-nao-espera"
+de = "144"
+o_que = "o trabalhador e o guindaste arrancam com o casco ainda no mar"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+		if _deslizando:
+			return
+		# QUEM ALOCA A MEIO DA CHEGADA ENCOSTA O BARCO JÁ. O guindaste
+		# descarrega do porão no berço, e com o casco ainda a deslizar a
+		# carga sairia da água ao lado dele.
+		concluir_troca()
+'''
+depois = '''
+		if not _deslizando:
+			concluir_troca()
+'''
+reprova = { teste_design = "D52: §4 ninguém no tabuado enquanto o casco desliza" }
+
+[[mutante]]
+id = "deslize-sem-rearmar"
+de = "144"
+o_que = "o casco encosta e o trabalho não arranca até ao próximo refresh"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+		_deslizando = false
+		refresh()
+'''
+depois = '''
+		_deslizando = false
+'''
+reprova = { teste_design = "D52: §4 encostado, o trabalhador aparece" }
+
+[[mutante]]
+id = "deslize-lanca-parada"
+de = "144"
+o_que = "no toque a lança deixa de varrer e fica presa no repouso enquanto o casco vem"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = 'if _deslizando or _origem_do_deslize != null:'
+depois = 'if _deslizando:'
+reprova = { teste_design = "D52: §4 a lança varre como numa doca vazia" }
+
+[[mutante]]
+id = "deslize-reduzido-guarda-origem"
+de = "144"
+o_que = "com o movimento reduzido a origem fica pendente e o guindaste do n1 não arranca"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	_origem_do_deslize = centro_global
+'''
+depois = '''
+	_origem_do_deslize = centro_global
+'''
+reprova = { run_tests = "T29: operação mantém trabalhador e ciclo de serviço", teste_design = "D52: §6 e o trabalhador também, com o ciclo do guindaste a correr" }
+
+[[mutante]]
+id = "cone-no-corredor"
+de = "144"
+o_que = "o cone da ancoragem volta ao sítio de antes, no caminho de cinco dos nove deslizes"
+alvo = "brport_vs/scenes/Main.tscn"
+antes = '''
+offset_left = 371.00
+offset_top = 252.83
+offset_right = 883.00
+offset_bottom = 764.83
+'''
+depois = '''
+offset_left = 255.00
+offset_top = 212.83
+offset_right = 767.00
+offset_bottom = 724.83
+'''
+reprova = { teste_design = "D52: §7 nenhum casco passa por cima da ancoragem nos 9 caminhos" }
+
 # ── O TRABALHADOR E O CAIXA ────────────────────────────────────────────────
 
 [[mutante]]

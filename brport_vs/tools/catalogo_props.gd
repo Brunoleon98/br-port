@@ -430,6 +430,11 @@ func familias(ancoras: Dictionary) -> Dictionary:
 		for motivo in GS.CLASSES_DE_NAVIO[classe]["motivos"]:
 			for t in cascos[classe][motivo]:
 				barcos.append(t)
+	# E o mesmo casco virado para o cais (`144`), que ocupa o MESMO nó
+	# enquanto o barco desliza do largo ao berço.
+	var ao_cais: Dictionary = dk["CASCOS_AO_CAIS"]
+	for caminho in ao_cais:
+		barcos.append(ao_cais[caminho])
 
 	# A ida e o retorno são nós DIFERENTES da cena, e cada um mostra as suas
 	# silhuetas: o chão de cada célula sai do sítio onde o nó pousa.
@@ -546,10 +551,13 @@ func papeis() -> Dictionary:
 	var tk: Dictionary = trafego.get_script_constant_map()
 	var out := {}
 	var cascos: Dictionary = dk["CASCOS"]
+	var ao_cais: Dictionary = dk["CASCOS_AO_CAIS"]
 	for classe in cascos:
 		for motivo in cascos[classe]:
 			for t in cascos[classe][motivo]:
 				out[(t as Texture2D).resource_path.get_file()] = "classe " + String(classe)
+				out[(ao_cais[(t as Texture2D).resource_path] as Texture2D) \
+					.resource_path.get_file()] = "classe " + String(classe)
 	var camioes: Dictionary = tk["CAMINHOES"]
 	for motivo in camioes:
 		for empresa in camioes[motivo]:
