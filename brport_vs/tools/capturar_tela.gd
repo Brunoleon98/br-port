@@ -659,6 +659,11 @@ func _montar() -> void:
 			_fechar_paineis_de_rotina(false)
 		_atracar_todos()
 		_main._refresh_all()
+		# O barco tocado DESLIZA do largo ao berço (`144`): sem levar o deslize
+		# ao fim, a foto do porto a operar sairia com o casco a meio do mar e o
+		# trabalho por armar — e a guarda da virada, abaixo, reprovava-a.
+		if not _virada:
+			_main._concluir_virada()
 
 
 	# ⚠️ E O PAINEL ABRE POR ÚLTIMO, DEPOIS DA ATRACAÇÃO. Os cinco leem o estado

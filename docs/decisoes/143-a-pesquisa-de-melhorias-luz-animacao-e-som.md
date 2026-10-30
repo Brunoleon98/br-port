@@ -71,6 +71,11 @@ antes e depois, e **só implementa depois de ele aprovar** — arte pela
   `078`. O que falta é o percurso do lugar ao largo até ao berço, que é o
   A1′ — e a escolha dele não dependia da frase. Corrigido no documento
   antes do commit.
+  ⚠️ **E A CORREÇÃO ESTAVA ERRADA (`144`).** Medido quadro a quadro, o barco
+  aparecia no berço no quadro do toque: a chegada da `078` arrancava e
+  morria no mesmo `refresh()`, porque o trabalhador vai com o barco desde a
+  `083`. A frase original era a verdadeira, e a correção leu o código em vez
+  de o medir.
 - **O tiro de painel a 1080 reprova a prova das caras.** O boletim de
   `-- 12 … completo` a `--resolution 1080x1920` saiu com *«retrato_cida_seria
   não chegou à foto: 0 px mudam ao escondê-la (mínimo 4695)»*; o mesmo tiro

@@ -231,7 +231,7 @@ direções, e as diagonais são as caras. Pistas:
 | | Usa o que existe | Mexe em | Custo | Ganho |
 |---|---|---|---|---|
 | **A1** | Os tweens do `Main.gd` e do `Dock.gd`; o `MovimentoDeFundo`; a virada da `078` | O toque no barco ao largo, o «Avançar dia», a obra que acaba (`obra_concluida`); nada no save nem na economia | **Baixo** | O toque responde: é onde o jogador está a olhar |
-| **A1′** — o barco que desliza do largo ao berço | A fila no fundeadouro (`083`) e a troca de barco do `Dock.gd` | O rumo (a `078` registou que um rumo antigo atravessava o píer), a ordem do nó (`projecao.md`), a foto de um instante do deslize | Médio | O barco vai de onde foi tocado até ao berço; hoje entra pelo lado do mar (`RUMO_DO_MAR`, `078`), longe do toque |
+| **A1′** — o barco que desliza do largo ao berço | A fila no fundeadouro (`083`) e a troca de barco do `Dock.gd` | O rumo (a `078` registou que um rumo antigo atravessava o píer), a ordem do nó (`projecao.md`), a foto de um instante do deslize | Médio | O barco vai de onde foi tocado até ao berço; hoje entra pelo lado do mar (`RUMO_DO_MAR`, `078`), longe do toque (⚠️ medido na `144`: aparecia no berço no quadro do toque, e a chegada da `078` morria no mesmo `refresh()`) |
 | **A2** | A mata da `127`/`130`; o atlas da `049` | Um shader novo (um tiro na bateria que o desenhe, `interface.md`), os 62 tweens a sair (a `MataNoMapa` cria um por árvore), e uma sonda como a do D51, que lê o movimento com `custom_step` | Médio | Menos tweens e a copa a dobrar em vez de rodar inteira |
 | **A3** | O balanço de 5 px do `Dock.gd` | Um rolar pequeno no casco; a carga do convés e o «+R$», que nascem dele; o camião que encosta de ré | Baixo | O porto atracado, que é o assunto, deixa de ser rígido |
 | **A4** | Nada (seria o primeiro sistema de partículas) | `CPUParticles2D` com semente fixa, senão a bateria deixa de ser byte a byte (`captura.md`); o RB6 tem de as parar | Médio | Fumo dos cargueiros e poeira da obra contam que há motor |
@@ -444,7 +444,8 @@ mapa inteiro, e a `interface.md` mede texto, não arte.
 
 1. **Animação, com o toque** (A1, A1′, A3 e a háptica T1). É onde a medição
    mostra o buraco maior pelo menor custo: o barco do verbo do dia (atracar)
-   entra pelo lado do mar e não pelo lugar onde se tocou, e o porto, que é o
+   entra pelo lado do mar e não pelo lugar onde se tocou (⚠️ medido na
+   `144`: aparecia no berço no quadro do toque), e o porto, que é o
    assunto, só sobe e desce. Usa a infraestrutura
    que existe e não mexe em save nem em economia.
 2. **Iluminação** (L1 e L3). A maior mudança de imagem, mas reabre o aceite

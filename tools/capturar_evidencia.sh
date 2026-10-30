@@ -783,21 +783,24 @@ tirar trabalhadores - - --script res://tools/folha_trabalhadores.gd -- "$SAIDA/t
 # pórtico e a subestação — levaram-no a 294.
 # E QUINZE desde 25/10 (`141`): os catorze carros e motos da viela levaram-no
 # a 308.
-tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 15
-tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 15
-tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 15
-tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 15
-tirar props5  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props5.png" 5 15
-tirar props6  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props6.png" 6 15
-tirar props7  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props7.png" 7 15
-tirar props8  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props8.png" 8 15
-tirar props9  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props9.png" 9 15
-tirar props10 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props10.png" 10 15
-tirar props11 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props11.png" 11 15
-tirar props12 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props12.png" 12 15
-tirar props13 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props13.png" 13 15
-tirar props14 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props14.png" 14 15
-tirar props15 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props15.png" 15 15
+# E DEZASSEIS desde 30/10 (`144`): os nove cascos virados para o cais, que
+# ocupam o nó do barco no deslize do largo ao berço, levaram-no a 317.
+tirar props1  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props1.png" 1 16
+tirar props2  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props2.png" 2 16
+tirar props3  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props3.png" 3 16
+tirar props4  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props4.png" 4 16
+tirar props5  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props5.png" 5 16
+tirar props6  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props6.png" 6 16
+tirar props7  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props7.png" 7 16
+tirar props8  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props8.png" 8 16
+tirar props9  - -  --script res://tools/folha_props.gd   --    "$SAIDA/props9.png" 9 16
+tirar props10 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props10.png" 10 16
+tirar props11 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props11.png" 11 16
+tirar props12 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props12.png" 12 16
+tirar props13 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props13.png" 13 16
+tirar props14 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props14.png" 14 16
+tirar props15 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props15.png" 15 16
+tirar props16 - -  --script res://tools/folha_props.gd   --    "$SAIDA/props16.png" 16 16
 
 # A ESCALA E A PRANCHA (`docs/decisoes/068`), as duas respostas ao veredito
 # do Bruno sobre as três folhas de cima: «mais útil para a IA alterar e fazer

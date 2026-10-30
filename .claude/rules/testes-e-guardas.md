@@ -626,3 +626,11 @@ guarda.
   `capturar_tela.gd` reconhecia a contra-oferta pelo nome de uma propriedade
   (`dock_index`), que mudou com a fila: deixou de a reconhecer, sem erro. Ao
   mudar o verbo, procure quem o CHAMA e quem RECONHECE o que ele abre.
+  ⚠️ **E A ANIMAÇÃO PENDURADA NO VERBO MORRE COM ELE, com a guarda verde.**
+  Na mesma `083` o trabalhador passou a ir com o barco, e a chegada da `078`
+  — que «quem aloca a meio da chegada encosta já» mata — deixou de correr
+  dois dias depois de aceite. O D41 montava os barcos SEM trabalhador à mão
+  e continuou a prová-la; a `143` leu o código e escreveu que ela corria.
+  Medido quadro a quadro (`144`): o barco aparecia no berço no quadro do
+  toque. Quem muda o verbo procura também quem ANIMA o que ele faz, e a
+  guarda de uma animação entra pela porta do jogador.
