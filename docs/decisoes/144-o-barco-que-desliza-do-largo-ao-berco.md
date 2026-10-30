@@ -83,8 +83,8 @@ lê o nó a cada passo de 1/60 s:
 1. o lugar tocado esvazia e os outros dois ficam com o casco que tinham;
 2. o casco começa no centro do lugar tocado (0,2 px; o corte é 3);
 3. o caminho nunca salta (maior passo 5,4 px; corte 20), não esmaece, acaba
-   no berço, e o último sexto chega pela faixa (cosseno 1,000 contra o
-   `−RUMO_DO_MAR`; corte 0,9);
+   no berço, e a menos de 50 px dele o casco está na faixa (3,2 px fora do
+   eixo do `RUMO_DO_MAR`; corte 11);
 4. enquanto desliza, ninguém no tabuado, o guindaste não opera e a lança
    varre; encostado, o trabalhador aparece;
 5. o `_concluir_virada()` a meio encosta-o e arma o trabalho;
@@ -96,7 +96,26 @@ origem ficava pendente, o `_guindaste_opera()` dizia que não no refresh do
 toque, e nada rearmava o guindaste do n1. A correção é não a guardar, e o
 defeito ficou no catálogo.
 
-DEFEITOS_POR_MEDIR
+Sete defeitos no catálogo (`tools/mutantes.toml`, secção da `144`), cada
+um com a guarda que o apanhou na exploração:
+
+| Mutante | Quem reprova |
+|---|---|
+| O `Main` não ouve o `atracou` (o barco aparece no berço, como antes) | §2, a 279 px do lugar; e §3 e §4 |
+| O lugar pinta a posição da fila (o defeito de antes) | §1, «0 de 2» |
+| O deslize em reta do lugar ao berço | §3, 18,5 px fora do eixo |
+| O trabalho arranca com o casco no mar | §4, «83 passos» com gente no tabuado |
+| O casco encosta e o trabalho não rearma | §4 e §5 |
+| A lança presa no repouso enquanto o casco vem | §4, «0,000 rad» |
+| A origem guardada com o movimento reduzido (o defeito do T29) | o T29 e o §6 |
+
+⚠️ **O da reta SOBREVIVEU à primeira versão do §3.** Ela perguntava o
+cosseno do último sexto do caminho contra a faixa, com um comentário a dizer
+que a reta dava 0,80 — escrito antes de medir. Do lugar 1 a reta chega quase
+alinhada com a faixa (0,924) e passava o corte de 0,9. A pergunta que separa
+é a distância ao EIXO da faixa com o casco a menos de 50 px do berço: 3,2 px
+com a curva, 18,5 com a reta, e o corte a meio, 11. É a regra do comentário
+escrito no futuro (`testes-e-guardas.md`), cumprida outra vez.
 
 ## O custo
 

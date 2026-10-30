@@ -114,6 +114,7 @@ antes = '''
 	GameState.atracou.connect(_ao_atracar)
 '''
 depois = ''
+reprova = { teste_design = "D52: §2 o casco começa no lugar ao largo que se tocou" }
 
 [[mutante]]
 id = "ancorados-por-posicao"
@@ -129,6 +130,7 @@ depois = '''
 	var na_fila := {}
 	for b in GameState.fila:
 '''
+reprova = { teste_design = "D52: §1 os outros dois ficam no lugar deles" }
 
 [[mutante]]
 id = "deslize-em-reta"
@@ -137,6 +139,7 @@ o_que = "o deslize vai em reta do largo ao berço, e não chega pela faixa dele"
 alvo = "brport_vs/scripts/Dock.gd"
 antes = 'return s * s * s * inicio + 3.0 * s * s * e * p1 + 3.0 * s * e * e * p2 + e * e * e * base'
 depois = 'return inicio.lerp(base, e)'
+reprova = { teste_design = "D52: §3 perto do berço o casco está na faixa dele" }
 
 [[mutante]]
 id = "deslize-trabalho-nao-espera"
@@ -155,6 +158,7 @@ depois = '''
 		if not _deslizando:
 			concluir_troca()
 '''
+reprova = { teste_design = "D52: §4 ninguém no tabuado enquanto o casco desliza" }
 
 [[mutante]]
 id = "deslize-sem-rearmar"
@@ -168,6 +172,7 @@ antes = '''
 depois = '''
 		_deslizando = false
 '''
+reprova = { teste_design = "D52: §4 encostado, o trabalhador aparece" }
 
 [[mutante]]
 id = "deslize-lanca-parada"
@@ -176,6 +181,7 @@ o_que = "no toque a lança deixa de varrer e fica presa no repouso enquanto o ca
 alvo = "brport_vs/scripts/Dock.gd"
 antes = 'if _deslizando or _origem_do_deslize != null:'
 depois = 'if _deslizando:'
+reprova = { teste_design = "D52: §4 a lança varre como numa doca vazia" }
 
 [[mutante]]
 id = "deslize-reduzido-guarda-origem"
@@ -190,6 +196,7 @@ antes = '''
 depois = '''
 	_origem_do_deslize = centro_global
 '''
+reprova = { run_tests = "T29: operação mantém trabalhador e ciclo de serviço", teste_design = "D52: §6 e o trabalhador também, com o ciclo do guindaste a correr" }
 
 # ── O TRABALHADOR E O CAIXA ────────────────────────────────────────────────
 

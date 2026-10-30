@@ -22,8 +22,8 @@ extends RefCounted
 #      ao largo que se tocou (lido no nó, antes do toque), e não no berço nem
 #      no mar da `078`;
 #   §3 O CAMINHO, lido no NÓ a cada passo: nunca salta, nunca esmaece, acaba
-#      no berço, e o último trecho chega pela faixa do berço, contra o
-#      `RUMO_DO_MAR` — a faixa que a `078` provou não cruzar o píer;
+#      no berço, e perto dele o casco já está NA faixa do berço (o eixo do
+#      `RUMO_DO_MAR`) — a faixa que a `078` provou não cruzar o píer;
 #   §4 O TRABALHO ESPERA: enquanto desliza, ninguém no tabuado e a lança a
 #      varrer como numa doca vazia; encostado, o trabalhador aparece;
 #   §5 O TOQUE A MEIO: o `_concluir_virada()` — o que o «Avançar dia» faz
@@ -50,10 +50,16 @@ const COMECO_MAX := 3.0
 ## O maior salto de um passo de 1/60 s. Medido: ~5 px no arranque, que é onde
 ## a curva corre mais; um salto do largo ao berço são centenas.
 const SALTO_MAX := 20.0
-## A direção do último sexto do caminho contra a faixa do berço (−RUMO), em
-## cosseno. Medido (`144`): 0,99 com a curva; a reta do largo ao berço dá
-## 0,80 no berço 1. O corte fica a meio.
-const FAIXA_MIN := 0.9
+## PERTO DO BERÇO O CASCO ESTÁ NA FAIXA DELE: com o centro a menos de
+## `PERTO` px do berço, a maior distância ao EIXO da faixa (a reta do berço
+## ao longo do `RUMO_DO_MAR`). Medido (`144`): 3,2 px com a curva, e 18,5 px
+## com a reta do lugar ao berço (o mutante `deslize-em-reta`). O corte fica a
+## meio. ⚠️ A primeira versão perguntava o COSSENO do último sexto contra a
+## faixa, com um comentário a dizer que a reta dava 0,80 — escrito antes de
+## medir. Do lugar 1 a reta chega quase alinhada (0,924), passava o corte de
+## 0,9, e o mutante sobreviveu: a direção não separa, a distância ao eixo sim.
+const PERTO := 50.0
+const FORA_DA_FAIXA_MAX := 11.0
 
 var falhas := 0
 var completo := false
@@ -225,12 +231,18 @@ func _o_caminho() -> bool:
 	conferir("§3 no fim o casco está no berço",
 		_centro(barco).distance_to(doca.centro_do_barco()) < 0.5 and not doca.em_troca(),
 		"%s contra %s" % [_centro(barco), doca.centro_do_barco()])
-	var rumo: Vector2 = load("res://scripts/Dock.gd").RUMO_DO_MAR
-	var desde: int = int(centros.size() * 5 / 6)
-	var ultimo: Vector2 = centros[centros.size() - 1] - centros[desde]
-	var cosseno := ultimo.normalized().dot(-rumo.normalized())
-	conferir("§3 o último trecho chega pela faixa do berço (%.3f)" % cosseno,
-		cosseno >= FAIXA_MIN, "o corte é %.2f" % FAIXA_MIN)
+	var eixo: Vector2 = (load("res://scripts/Dock.gd").RUMO_DO_MAR as Vector2).normalized()
+	var berco: Vector2 = doca.centro_do_barco()
+	var fora := 0.0
+	var perto := 0
+	for c in centros:
+		var rel: Vector2 = c - berco
+		if rel.length() <= PERTO:
+			perto += 1
+			fora = maxf(fora, absf(rel.cross(eixo)))
+	conferir("§3 perto do berço o casco está na faixa dele (%.1f px fora do eixo, em %d passos)"
+		% [fora, perto], perto >= 5 and fora <= FORA_DA_FAIXA_MAX,
+		"o corte é %.1f px" % FORA_DA_FAIXA_MAX)
 	conferir("§4 ninguém no tabuado enquanto o casco desliza (%d passos)" % no_tabuado,
 		no_tabuado == 0)
 	conferir("§4 o guindaste não opera enquanto desliza (%d passos)" % opera, opera == 0)

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 29/10/2026 — a pesquisa de melhorias (`143`)
+> **Atualização:** 30/10/2026 — o barco que desliza do largo ao berço (`144`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -29,7 +29,8 @@ desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
 **As conversas falam como no celular, e o fim de fase é uma página do diário**
 (`082`, **D44**, **D22**). **Atracar é a escolha do dia** (`083`): até três
 barcos esperam ao largo, dois dias cada; tocar num atraca-o com o trabalhador
-do píer, e quem não for chamado vai embora e custa reputação. Cancelar um
+do píer — o casco desliza do lugar dele ao berço (`144`) —, e quem não for
+chamado vai embora e custa reputação. Cancelar um
 serviço solta a equipe no dia, por −5 de reputação e 10% de multa (`111`).
 
 **A câmera mostra um DISTRITO e não três berços.** O `MEIA_LARG` efetivo é 20 e
@@ -122,10 +123,9 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
 **RB5 (`134`, `135`, #148):** Padrão/Maior nos Ajustes; telefone pendente.
-**A fila da `126`** (§7) **acabou** (`127`, `130`, `136`, `140`; testes
-em `137`–`139`), e a seguir os carros da viela (`141`) e as marolas
-(`142`). **A pesquisa de melhorias fechou** (`143`): aprofunda-se a
-animação e o toque, depois luz, som e o resto (§7).
+**A fila da `126`** acabou (`127`–`142`). **Da pesquisa de melhorias**
+(`143`), o tema animação e toque fechou o A1′ (`144`); seguem A1 → T1 →
+A3, uma conversa cada, e depois luz, som e o resto (§7).
 **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
