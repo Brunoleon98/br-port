@@ -99,6 +99,13 @@ derivada delas.
   MULTIPLICA-SE.** A guarda da máscara da vila (`140`) dividia, pôs cada
   pixel 2,25× mais longe do que estava, e contou ZERO pixels tapados — que
   se lia como «nada atrás da vila», a regra do zero a morder outra vez.
+  ⚠️ **E O MEIO ARREDONDA-SE DE MANEIRAS DIFERENTES NOS DOIS LADOS.** O
+  `round()` do Python leva o meio ao PAR (168,5 → 168), o `roundi()` do
+  Godot para longe do zero (169): a máscara do hatch verde (`141`), que o
+  gerador publica e o D50 refaz, saiu um pixel ao lado. Coluna de tela que
+  o gerador publica para o jogo arredonda-se como o Godot,
+  `floor(x + 0.5)`; o mobiliário da `140` passou porque nenhum pé calhava
+  num meio.
   ⚠️ **E A ALAVANCA B NÃO REDESENHA NADA, ao contrário do que o item previa.**
   A previsão era que "os props são desenhados nas unidades da SAÍDA", logo todo
   número em pixel do gerador teria de ser varrido. Medido: a geometria dele

@@ -101,7 +101,7 @@ também deve.
 | preço ou constante `# TUNING:` | **a skill `/balancear`** — ela conduz a medição e o rasto | as taxas de `.claude/rules/economia.md` ainda de pé |
 | **o `GameState.gd`, em qualquer linha** — a tabela cita a LINHA de cada constante, e um comentário acima delas envelhece-a (`067`) | o despejo + a tabela (abaixo) | `TABELA OK` |
 | **a economia, de qualquer maneira** | `tools/projetar_parcelas.py` (abaixo) | o modelo ainda calibra nos 3 perfis |
-| `tools/gerar_mapa_iso.py` | regerar **os quatro** mapas (abaixo) | `git diff -- brport_vs/art` limpo |
+| `tools/gerar_mapa_iso.py` | regerar **todos** os mapas e camadas (abaixo) | `git diff -- brport_vs/art` limpo |
 | `tools/gerar_sons.py` | `python3 tools/gerar_sons.py brport_vs/audio/sfx` | `git diff -- brport_vs/audio` limpo |
 | **qualquer coisa de áudio** | `python3 tools/medir_audio.py` | `SINAL OK` — e é OUTRA pergunta que o `teste_audio.gd`: lá o encanamento, aqui a ONDA (true peak, estalo interno, espectro) |
 | catálogo em `blender/` | `python3 blender/validate_brp_assets.py` | `BRP BLENDER OK` nas quatro categorias |
@@ -112,7 +112,7 @@ também deve.
 | qualquer coisa visível | uma captura, e **olhar para ela** (seção 4) | — |
 
 ```sh
-# OS QUATRO MAPAS. Este bloco listava DOIS — o do porto e o do pátio — e os
+# OS MAPAS E AS CAMADAS. Este bloco listava DOIS — o do porto e o do pátio — e os
 # dois da espuma entraram em 03/09 sem ele saber: quem seguisse esta receita
 # deixava metade por regerar e descobria no CI vermelho.
 #
@@ -123,13 +123,16 @@ também deve.
 # reprova: conte o que ela achou antes de acreditar no silêncio (`032`).
 #
 # A lista é explícita, e quem a prende ao workflow é `tools/conferir_docs.py`:
-# ele reprova se estes quatro alvos divergirem dos que o CI regera.
+# ele reprova se estes alvos divergirem dos que o CI regera. As duas camadas
+# de marolas entraram na `142`, pelo mesmo caminho da espuma.
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   --sem-pavimento brport_vs/art/porto_mapa_iso.svg
 python3 tools/gerar_mapa_iso.py --sem-pieres --sem-coqueiros --sem-predios \
   brport_vs/art/porto_mapa_iso_patio.svg
 python3 tools/gerar_mapa_iso.py --espuma=0 brport_vs/art/porto_mapa_espuma0.svg
 python3 tools/gerar_mapa_iso.py --espuma=1 brport_vs/art/porto_mapa_espuma1.svg
+python3 tools/gerar_mapa_iso.py --marolas=0 brport_vs/art/porto_mapa_marolas0.svg
+python3 tools/gerar_mapa_iso.py --marolas=1 brport_vs/art/porto_mapa_marolas1.svg
 git diff --stat -- brport_vs/art        # tem de sair vazio
 ```
 

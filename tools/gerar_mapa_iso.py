@@ -4616,20 +4616,105 @@ def mascara_da_vila() -> list:
     da vila à frente do PÉ dela que chega à caixa dela na tela: o `y` de cima
     do lote por coluna, de `x0` a `x0 + 2·MASCARA_LADO` (`SAIDA` onde nada
     fica à frente). A conta da `fiacao_atras_da_vila()`, com o ponto do pé."""
-    pecas = pecas_da_vila()
     out = []
     for k, (_t, mx, my, _q) in enumerate(mobiliario_da_rua()):
-        x, y = tela(mx, my, ALT_CAIS)
-        x0 = int(round(x)) - MASCARA_LADO
-        teto = []
-        for c in range(x0, x0 + 2 * MASCARA_LADO + 1):
-            v = float(SAIDA)
-            for caixa, cols in pecas:
-                if c in cols and lote_a_frente(caixa, mx, my):
-                    v = min(v, cols[c])
-            teto.append(v)
-        if min(teto) < y + MASCARA_ABAIXO:
-            out.append((k, x0, teto))
+        m = _mascara_do_pe(mx, my)
+        if m is not None:
+            out.append((k,) + m)
+    return out
+
+
+def _mascara_do_pe(mx: float, my: float):
+    """`(x0, teto)` de uma peça com o pé em (mx, my): o `y` de cima dos lotes
+    da vila que lhe ficam à frente, coluna a coluna, de `x0` a
+    `x0 + 2·MASCARA_LADO` — ou `None` se nenhum chega à caixa dela."""
+    pecas = pecas_da_vila()
+    x, y = tela(mx, my, ALT_CAIS)
+    # ⚠️ O MEIO ARREDONDA-SE PARA CIMA, COMO NO GODOT (`141`): o `round()`
+    # do Python leva 168,5 ao PAR (168) e o `roundi()` do jogo e do D50 a 169,
+    # e a máscara do carro com o pé nessa coluna saía um pixel ao lado.
+    x0 = int(math.floor(x + 0.5)) - MASCARA_LADO
+    teto = []
+    for c in range(x0, x0 + 2 * MASCARA_LADO + 1):
+        v = float(SAIDA)
+        for caixa, cols in pecas:
+            if c in cols and lote_a_frente(caixa, mx, my):
+                v = min(v, cols[c])
+        teto.append(v)
+    return (x0, teto) if min(teto) < y + MASCARA_ABAIXO else None
+
+
+# ── OS CARROS DA VIELA (`141`) ───────────────────────────────────────────
+#
+# *«Os carros estacionados»* que a `140` deixou de fora. Medido antes do
+# escopo: na rua não cabem — entre o camião e o meio-fio sobram 0,18, e um
+# carro tem ~0,3 —, e o Bruno pô-los na VIELA DE TERRA (`viela_da_vila()`),
+# com a rua do porto a ser rodovia: nenhum carro nela.
+#
+# ⚠️ A VIELA ESTÁ QUASE TODA ATRÁS DA FILEIRA DA FRENTE. Varrida a cada 0,1
+# em `my`, dos dois lados, a fração de um carro que se vê (os lotes à frente
+# e o topo do mapa, debaixo do HUD): a do degrau 1 vê-se de −3,3 a 6,6 do
+# lado das casas de trás, onde o vão do escritório tirou a fileira da
+# frente; a do 2 só de 8,5 a 9,1 e de 12,7 a 14,7; a do 3 de 16,5 a 19,4; a
+# do 4 quase nada. Os sítios abaixo estão todos acima de 80%, e a máscara
+# da vila esconde o resto, como ao poste (`mascara_dos_carros()`).
+#
+# `(prop, degrau, lado, my, fase, obras)`: o carro aparece desde a `fase`,
+# com `obras` reparos DESSA fase já prontos (os da Fase 1 são os três da
+# tabela dela, os da Fase 2 os que ela acrescenta) — escolha do Bruno: o
+# número cresce com a fase e com as obras do porto, e os da Fase 2 são os
+# novos. O `lado` é a margem da viela: `tras` junto às casas de trás.
+CARROS_DA_VIELA = (
+    ("carro_fusca_velho", 1, "tras", 1.2, 1, 0),
+    ("carro_kombi_velha", 2, "tras", 13.6, 1, 0),
+    ("carro_fusca_velho_b", 1, "tras", 2.5, 1, 0),
+    ("carro_picape_velha", 3, "tras", 17.6, 1, 1),
+    ("carro_hatch_velho", 1, "tras", 4.6, 1, 2),
+    ("carro_hatch_velho_b", 2, "tras", 8.8, 1, 3),
+    ("carro_hatch_novo", 1, "frente", 0.2, 2, 0),
+    ("carro_picape_nova", 1, "tras", 6.0, 2, 1),
+    ("carro_hatch_novo_b", 2, "frente", 14.2, 2, 2),
+    ("carro_hatch_novo_c", 3, "tras", 18.9, 2, 3),
+    # As motos voltaram na terceira passagem, do lado das casas da frente,
+    # nos trechos da viela que se veem (`_moto` no `brp_porto.py`).
+    ("carro_moto_velha", 1, "frente", 1.6, 1, 0),
+    ("carro_moto_nova", 2, "frente", 8.9, 2, 0),
+    # E mais duas na quarta passagem (*«mais motos»*).
+    ("carro_moto_velha_b", 3, "tras", 16.75, 1, 2),
+    ("carro_moto_nova_b", 1, "frente", 2.7, 2, 2),
+)
+# A meia largura do carro mais largo (a kombi, 0,31 × a `ESCALA_CARRO` de
+# 1,25 do `brp_porto.py`) e a folga dele à borda da terra batida.
+CARRO_MEIA_LARG = 0.195
+CARRO_FOLGA = 0.06
+
+
+def faixa_da_viela(i: int) -> tuple:
+    """`(mx0, mx1)` da viela de terra do degrau `i`."""
+    borda = DEGRAUS[i][2]
+    return borda - VILA_RECUO_2 + VILA_PROF + 0.12, borda - VILA_RECUO - 0.12
+
+
+def carros_da_viela() -> list:
+    """`(prop, mx, my, fase, obras)` de cada carro, com o `mx` da margem da
+    viela que o `lado` pede."""
+    out = []
+    for prop, i, lado, my, fase, obras in CARROS_DA_VIELA:
+        mx0, mx1 = faixa_da_viela(i)
+        d = CARRO_FOLGA + CARRO_MEIA_LARG
+        mx = mx0 + d if lado == "tras" else mx1 - d
+        out.append((prop, round(mx, 3), my, fase, obras))
+    return out
+
+
+def mascara_dos_carros() -> list:
+    """`(índice, x0, teto)` de cada carro com um lote da vila à frente dele
+    que chega à caixa dele na tela: a conta da `mascara_da_vila()`."""
+    out = []
+    for k, (_p, mx, my, _f, _o) in enumerate(carros_da_viela()):
+        m = _mascara_do_pe(mx, my)
+        if m is not None:
+            out.append((k,) + m)
     return out
 
 
@@ -5135,10 +5220,17 @@ def praia_chao(indice: int, my_a: float, my_b: float) -> str:
     # atrás, e a ÁGUA, que é o fundo do mapa, via-se num fio azul que
     # engrossava para o cais (#1f86ac, anotado na `130`). A laje, desenhada
     # depois, tapa o que ele avança.
+    # ⚠️ E NO NORTE ELE FECHA ATÉ À BEIRA DO DEGRAU, e não na crista (`142`).
+    # A crista acaba levantada a 1,09 do cais, e entre a borda dela, a da
+    # rampa (que acaba no `PONTA_NORTE` exato) e a da laje sobrava uma fresta
+    # de 2 px na quina, e via-se a água: o resto do fio azul que a `136`
+    # tirou da borda do pátio, o «fio diagonal da ponta norte» da `124`. A
+    # rampa e a laje, desenhadas depois, tapam tudo o que o chão avança menos
+    # a fresta.
     if indice == 0:
-        mx = mundo[-1][0]
         ini = [p(FUNDO_TERRA, my_a, ALT_CAIS)]
-        fim = [p(mx, my_b + COSTURA, ALT_CAIS), p(FUNDO_TERRA, my_b + COSTURA, ALT_CAIS)]
+        fim = [p(_borda_em(my_b), my_b + COSTURA, ALT_CAIS),
+               p(FUNDO_TERRA, my_b + COSTURA, ALT_CAIS)]
     else:
         mx = mundo[0][0]
         ini = [p(FUNDO_TERRA, my_a - COSTURA, ALT_CAIS), p(mx, my_a - COSTURA, ALT_CAIS)]
@@ -7005,8 +7097,8 @@ def viela_da_vila(pavimentado: bool) -> str:
     for i, (my0, my1, borda) in enumerate(DEGRAUS):
         if i == 0:
             continue
-        mx0 = borda - VILA_RECUO_2 + VILA_PROF + 0.12
-        mx1 = borda - VILA_RECUO - 0.12
+        # A mesma faixa onde estacionam os carros (`141`).
+        mx0, mx1 = faixa_da_viela(i)
         if mx1 - mx0 < 0.4:
             continue
         # Ela acaba na última casa de trás do quarteirão, e não num `my`
@@ -7440,10 +7532,21 @@ def espuma(semente: int) -> str:
 # da costa ela é maior e mais viva; ao largo encurta e apaga-se, e é isso que
 # deixa o fundo calmo depois de a rampa voltar a descer até lá.
 #
-# E CADA UMA É UMA PEÇA COM CENTRO, não um traço solto: para as animar basta
-# escrevê-las numa camada própria, como a espuma (`--espuma=N`), em duas
-# sementes que o `Main.gd` lave em contrafase. Hoje ficam no mapa; a VRAM de
-# uma camada a 1080 sem compressão são ~4,7 MB.
+# E CADA UMA É UMA PEÇA COM CENTRO, não um traço solto — e é isso que as deixa
+# andar. Desde a `142` elas não estão no mapa: são duas camadas próprias, como
+# a espuma (`--marolas=N`), e o `Main.gd` fá-las ROLAR PARA A COSTA em
+# contrafase — cada camada aparece ao largo, anda `MAROLA_ROLA` para o cais e
+# apaga-se, e volta invisível. A camada 0 é a semente de sempre, para quem
+# reduz o movimento ver o mar de antes, parado; a 1 é outra semente. Cada uma
+# custa 4,67 MB de textura a 1080 (medido: 105 MB com o jogo aberto antes delas).
+#
+# ⚠️ E A CAMADA VAI POR CIMA DE TUDO O QUE O MAPA DESENHA. No mapa as marolas
+# saíam ANTES da terra, e o que a praia, o muro e o enrocamento lhes tapavam
+# ninguém via: rasterizado, eram 614 px (Δ > 8) de marola que, numa camada
+# por cima, passavam a pintar a areia da praia sul e o espelho dos degraus. Por
+# isso a lente só entra se cada ponto dela, nas DUAS pontas do percurso, cair
+# em água À VISTA (`_agua_a_vista`), do lado da água da linha costeira e
+# longe dela — e a peça de baixo, que antes tapava, já não precisa de tapar.
 MAROLAS_POR_DEGRAU = 22
 MAROLA_PERTO = 2.0            # unidades da borda do degrau até à primeira
 MAROLA_LONGE = 26.0           # e até à última
@@ -7455,10 +7558,20 @@ MAROLA_FOLGA_TERRA = 1.8      # nenhum ponto dela a menos disto do cais
 # passagem da `124`, a pedido de «deixar a água mais realista»).
 MAROLA_ESPACO = 0.95
 MAROLA_SERIE_FRACA = 0.72     # o que cada crista de trás guarda da da frente
+# O que cada marola anda para a costa enquanto se vê, em unidades de mundo: o
+# `Main.gd` leva-a de +metade (ao largo) a −metade (junto ao cais), e a meio
+# do tempo à vista ela está onde a camada a desenha. ~27 px num telefone de
+# 1080 (a 0,4 da primeira passagem «quase não se notava»). O jogo leva uma
+# CÓPIA (o pacote não leva a tabela), e o D51 confere-a.
+MAROLA_ROLA = 0.8
+# Na praia a margem é maior do que no cais: a arrebentação (`ARREBENTACAO`)
+# vai até 2,3 da linha de água, e é desenhada no mapa — por BAIXO da camada.
+MAROLA_FOLGA_PRAIA = 2.6
+SEMENTES_MAROLAS = (SEMENTE_CHAO + 500, SEMENTE_CHAO + 501)
 
 
-def _lente(mx, my, meio, grossura, arco, frente) -> list:
-    """O contorno de uma lente deitada na água, afinada nas pontas.
+def _lente_mundo(mx, my, meio, grossura, arco, frente) -> list:
+    """O contorno de uma lente deitada na água, afinada nas pontas, no MUNDO.
 
     `meio` é meio comprimento em `my`; `grossura` a espessura máxima em `mx`,
     da qual `frente` vai para terra e o resto para o mar; `arco` o quanto o
@@ -7469,8 +7582,8 @@ def _lente(mx, my, meio, grossura, arco, frente) -> list:
         s = -1.0 + i / 5.0
         cheio = 1.0 - s * s
         eixo = mx - arco * cheio
-        terra.append(p(eixo - grossura * frente * cheio, my + s * meio))
-        mar.append(p(eixo + grossura * (1.0 - frente) * cheio, my + s * meio))
+        terra.append((eixo - grossura * frente * cheio, my + s * meio))
+        mar.append((eixo + grossura * (1.0 - frente) * cheio, my + s * meio))
     return terra + mar[::-1]
 
 
@@ -7482,8 +7595,82 @@ def _na_agua_livre(mx, my, meio, arco) -> bool:
     return not (mx - _borda_em(my) < PIER_ALCANCE + 1.0 and _sob_pier(my))
 
 
-def marolas() -> str:
-    r = random.Random(SEMENTE_CHAO + 500)
+_COSTA_DAS_MAROLAS = None
+
+
+def _ponto_em_agua_livre(mx: float, my: float) -> bool:
+    """O ponto do mundo é água à vista, do lado do mar e longe da margem?
+
+    Três perguntas que o `_na_agua_livre` não fazia, porque no mapa a terra,
+    desenhada depois, tapava o resto: a linha costeira inteira (a praia não
+    acaba na borda do degrau), a margem da arrebentação nas praias, e o muro
+    que tapa a água atrás dele na tela.
+    """
+    global _COSTA_DAS_MAROLAS
+    if _COSTA_DAS_MAROLAS is None:
+        _COSTA_DAS_MAROLAS = linha_costeira(0.0)
+    costa = _COSTA_DAS_MAROLAS
+    # Do lado da água: um raio para +mx cruza a linha um número PAR de vezes.
+    # A linha vai de uma ponta do mundo à outra em `my`, então o que está fora
+    # dela em `mx` é água e o que está dentro é terra.
+    cruza = 0
+    melhor, my_perto = float("inf"), my
+    for (x0, y0), (x1, y1) in zip(costa, costa[1:]):
+        if (y0 <= my) != (y1 <= my):
+            x = x0 + (my - y0) * (x1 - x0) / (y1 - y0)
+            if x > mx:
+                cruza += 1
+        vx, vy = x1 - x0, y1 - y0
+        den = vx * vx + vy * vy
+        t = 0.0 if den == 0.0 else max(0.0, min(1.0, ((mx - x0) * vx + (my - y0) * vy) / den))
+        # `sqrt` e não `hypot`: o CI compara o mapa byte a byte, e a soma de
+        # dois produtos é IEEE em qualquer Python (`mapa.md`).
+        dx, dy = mx - (x0 + vx * t), my - (y0 + vy * t)
+        d = math.sqrt(dx * dx + dy * dy)
+        if d < melhor:
+            melhor, my_perto = d, y0 + vy * t
+    if cruza % 2 == 1:
+        return False
+    if na_praia(my_perto) and melhor < MAROLA_FOLGA_PRAIA:
+        return False
+    return _agua_a_vista(*tela(mx, my))
+
+
+_SEGMENTOS_DAS_MAROLAS = None
+
+
+def _sombra_sobre(mx: float, my: float) -> float:
+    """O alfa (0–1) da sombra do muro neste ponto do mundo.
+
+    No mapa a sombra do muro é desenhada no FIM, por cima das marolas, e a
+    1,8 u do cais ainda escurece ~18%. Na camada a marola vai por cima dela, e
+    sairia mais viva do que a que o Bruno aceitou na `124` (Δ até 23 no
+    rasterizado). Multiplicar a opacidade dela por `1 − sombra` repõe a ordem
+    antiga a ≤ s·m·(1−s) da diferença entre a água e a sombra — uns 4 níveis.
+    """
+    global _SEGMENTOS_DAS_MAROLAS
+    if _SEGMENTOS_DAS_MAROLAS is None:
+        costa = linha_costeira(0.0)
+        t = [tela(a, b) for a, b in costa]
+        _SEGMENTOS_DAS_MAROLAS = [(t[i][0], t[i][1], t[i + 1][0], t[i + 1][1],
+                                   costa[i][1], costa[i + 1][1])
+                                  for i in range(len(costa) - 1)]
+    x, y = tela(mx, my)
+    distancia_px, my_perto = _distancia_ao_contorno(x, y, _SEGMENTOS_DAS_MAROLAS)
+    return _alfa_da_sombra(x, y, round(distancia_px / (2.0 * MEIA_LARG * ZOOM), 8),
+                           my_perto) / 255.0
+
+
+def _lente_em_agua_livre(pontos: list) -> bool:
+    """A lente, nas duas pontas do percurso, só passa por água à vista?"""
+    return all(_ponto_em_agua_livre(a + k * MAROLA_ROLA / 2.0, b)
+               for k in (-1.0, 1.0) for a, b in pontos)
+
+
+def marolas(semente: int = SEMENTES_MAROLAS[0]) -> str:
+    """As marolas de uma camada. Os sorteios correm todos antes de qualquer
+    recusa, então a camada 0 tem as de sempre, menos as que a terra tapava."""
+    r = random.Random(semente)
     s = '  <g>\n'
     for my0, my1, borda in DEGRAUS:
         for _ in range(MAROLAS_POR_DEGRAU):
@@ -7502,13 +7689,25 @@ def marolas() -> str:
                 mj = my + j * meio * 0.12          # a série não é uma pilha
                 if not _na_agua_livre(mx, mj, meio * fraca, arco):
                     continue
-                s += poli(_lente(mx + grossura * 1.8, mj + meio * 0.08,
-                                 meio * 0.82 * fraca, grossura * 0.70 * fraca,
-                                 arco, 0.5),
-                          C["sombra_agua"], round(opac * 0.55 * fraca, 2))
-                s += poli(_lente(mx, mj, meio * fraca, grossura * fraca, arco, 0.35),
-                          C["espuma"], round(opac * fraca, 2))
+                cavado = _lente_mundo(mx + grossura * 1.8, mj + meio * 0.08,
+                                      meio * 0.82 * fraca, grossura * 0.70 * fraca,
+                                      arco, 0.5)
+                crista = _lente_mundo(mx, mj, meio * fraca, grossura * fraca,
+                                      arco, 0.35)
+                if not _lente_em_agua_livre(cavado + crista):
+                    continue
+                luz = 1.0 - _sombra_sobre(mx, mj)
+                s += poli([p(a, b) for a, b in cavado],
+                          C["sombra_agua"], round(opac * 0.55 * fraca * luz, 2))
+                s += poli([p(a, b) for a, b in crista],
+                          C["espuma"], round(opac * fraca * luz, 2))
     return s + '  </g>\n'
+
+
+def gerar_marolas(semente: int) -> str:
+    return ('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
+            'viewBox="0 0 %d %d">\n%s</svg>\n'
+            % (SAIDA, SAIDA, LARG, ALT, marolas(semente)))
 
 
 # AS CORRENTES DO LARGO: faixas escuras compridas, deitadas ao longo da costa,
@@ -7765,10 +7964,10 @@ def gerar(com_pieres: bool = True, com_coqueiros: bool = True,
               'transform="rotate(%.0f %.0f %.0f)"/>\n'
               % (cx, cy, rx, ry, mancha, giro, cx, cy))
 
-    # As correntes do largo e as MAROLAS no lugar dos riscos «~» (`124`):
-    # ver cada função.
+    # As correntes do largo (`124`). As MAROLAS, que vinham logo a seguir,
+    # são camada desde a `142` (`--marolas=N`): assadas aqui e na camada
+    # sairiam a dobrar, e as do mapa nunca rolariam.
     s += correntes()
-    s += marolas()
 
     # ---- terra, degrau por degrau (de trás para a frente) ----
     # O `+ COSTURA` no my1: duas lajes que encostam exatamente no mesmo my
@@ -8341,6 +8540,9 @@ def tabela_ancoras() -> dict:
             "alcance_costeiro": ALCANCE_COSTEIRO,
         },
         "pegadas": {k: list(v) for k, v in sorted(PEGADAS.items())},
+        # O quanto cada marola rola para a costa (`142`): o `Main.gd` leva a
+        # cópia, e o D51 confere-a aqui.
+        "marolas": {"rola": MAROLA_ROLA},
         "mapa": {"largura": SAIDA, "altura": SAIDA},
         "pieres": pieres,
         "faixas": faixas,
@@ -8364,6 +8566,13 @@ def tabela_ancoras() -> dict:
         # passagem): o jogo copia-o para o shader.
         "mascara_da_vila": [{"peca": k, "x0": x0, "teto": [round(t, 1) for t in teto]}
                             for k, x0, teto in mascara_da_vila()],
+        # Os carros da viela (`141`) e o que os lotes da vila lhes tapam: o
+        # jogo copia os dois, e o D50 confere a cópia contra esta tabela.
+        "carros_da_viela": [{"prop": p, "ponto": [x, y], "fase": f, "obras": o}
+                            for p, x, y, f, o in carros_da_viela()],
+        "mascara_dos_carros": [{"carro": k, "x0": x0,
+                                "teto": [round(t, 1) for t in teto]}
+                               for k, x0, teto in mascara_dos_carros()],
         "lotes_reservados": reservados,
         # ⚠️ O `tipo` ENTRA NA TABELA para o teste de design poder perguntar ao
         # DESENHO se a igreja, a praça e a obra chegaram lá. Sem ele o bloco
@@ -8455,6 +8664,15 @@ def main() -> int:
             with open(destino_e, "w", encoding="utf-8") as f:
                 f.write(conteudo_e)
             print("%s — camada de espuma %d, %dx%d" % (destino_e, i, SAIDA, SAIDA))
+            return 0
+        # `--marolas=N`, a irmã: a camada de marolas N, que o jogo faz rolar.
+        if a.startswith("--marolas="):
+            i = int(a.split("=", 1)[1])
+            destino_m = args[0] if args else "porto_mapa_marolas%d.svg" % i
+            conteudo_m = gerar_marolas(SEMENTES_MAROLAS[i])
+            with open(destino_m, "w", encoding="utf-8") as f:
+                f.write(conteudo_m)
+            print("%s — camada de marolas %d, %dx%d" % (destino_m, i, SAIDA, SAIDA))
             return 0
     com_pieres = "--sem-pieres" not in sys.argv
     com_coqueiros = "--sem-coqueiros" not in sys.argv

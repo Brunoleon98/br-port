@@ -1701,10 +1701,465 @@ def subestacao(M, est):
     est.registrar("subestacao", p, celulas=(2, 2), zenite=ZENITE_DO_MOBILIARIO)
 
 
+# ── OS CARROS DA VIELA (`141`) ───────────────────────────────────────────
+#
+# *«Os carros estacionados»*, que a `140` deixou de fora com o lugar dito
+# (*«na rua, junto ao meio-fio»*). Medido antes de os desenhar: na rua não
+# cabem — entre o camião e o meio-fio sobram 0,18, e um carro tem ~0,3 —, e
+# o Bruno escolheu a VIELA DE TERRA entre as duas fileiras de casas, com a
+# rua do porto a ser rodovia. Cinco modelos — hatch, fusca, kombi, picape
+# e moto —, os velhos do porto em ruínas e os novos da Fase 2.
+#
+# A RÉGUA É A DOS CAMIÕES, NÃO A DA PESSOA (`arte.md`): a cabine do camião
+# tem 0,45 u para 2,5 m (5,6 m/u) e 17,3 px para ~3,2 m (5,4 px/m). Um hatch
+# de 3,9 × 1,65 × 1,45 m sai 0,70 × 0,295 u e 7,8 px — e é com essas
+# medidas que cada carro se escreve abaixo.
+# ⚠️ E SAEM 25% MAIORES DO QUE ELA (`ESCALA_CARRO`), escolha do Bruno na
+# segunda passagem (*«pequenos demais»*): a 1:1 um carro media ~21 px na
+# tela de 1080, e a moto 13 — um ponto. As motos saíram nessa passagem,
+# cada uma trocada por um carro, e voltaram na terceira com mais peças
+# (`_moto`). Escala-se no GRUPO, no fim, como o camião.
+#
+# Correm em `my`, como a viela: o comprimento é o `y` do Blender, e a FRENTE
+# vai a `-y` (o `+my` do mapa, a face que se vê) quando o carro aponta para
+# baixo na rua, ou a `+y` quando aponta para cima — aí o que se vê é a
+# traseira, com as lanternas. A face `+x` é o lado que a câmara vê; o `-x`
+# fica sem detalhe, como nos camiões.
+#
+# ⚠️ E A ESTE TAMANHO O QUE DIZ «CARRO» É O VIDRO ESCURO SOB UM TETO DA COR
+# DA LATARIA: a estufa vai inteira em vidro, num tronco de pirâmide que
+# recua no para-brisa (o vidro deitado), e o teto pousa por cima dele.
+#
+# ⚠️ VELHO E NOVO SEPARAM-SE PELO ACABAMENTO E PELA FORMA, não só pela cor
+# (*«velhos e novos parecidos»*, segunda passagem). O VELHO tem o para-choque
+# cromado e torto, ferrugem por cima das rodas, farol creme e o vidro escuro
+# dos camiões; o hatch velho é QUADRADO, de para-brisa em pé. O NOVO tem o
+# para-choque da cor da lataria, a jante clara e larga, farol branco e o
+# vidro claro; o hatch novo é REDONDO, a afinar para cima, de para-brisa
+# deitado e traseira inclinada.
+CARRO_RODA = 1.6          # px: o raio da roda, ~0,3 m
+CARRO_VAO = 1.0           # px: a carroçaria acima do chão
+ESCALA_CARRO = 1.25
+
+
+def _carro_prisma(nome, cima, baixo, z0, z1, mat):
+    """O prisma do kit, com o sentido da volta acertado: o kit usa o
+    anti-horário, e um contorno escrito ao contrário fecha as faces para
+    dentro (a mesma conta do `_prisma` dos camiões)."""
+    area = sum(baixo[i][0] * baixo[i - 1][1] - baixo[i - 1][0] * baixo[i][1]
+               for i in range(len(baixo)))
+    if area > 0:
+        baixo, cima = baixo[::-1], cima[::-1]
+    return prisma(nome, cima, z0, z1, None, mat, contorno_baixo=baixo)
+
+
+def _planta(meia_l, meio_c, quina, sf, a0=None, a1=None):
+    """O contorno de chão de uma caixa de quinas cortadas, ao longo de `y`:
+    de `a0` (atrás) a `a1` (à frente), contados no sentido da frente, com
+    `sf` a dizer para que lado de `y` ela aponta."""
+    a0 = -meio_c if a0 is None else a0
+    a1 = meio_c if a1 is None else a1
+    w, q = meia_l, quina
+    pts = [(w, a0 + q), (w, a1 - q), (w - q, a1), (-w + q, a1),
+           (-w, a1 - q), (-w, a0 + q), (-w + q, a0), (w - q, a0)]
+    return [(x, sf * a) for x, a in pts]
+
+
+def _rodas(M, nome, meia_l, eixos, sf, velho, raio=CARRO_RODA, larg=0.05):
+    """As quatro rodas de eixo em `x` e o cubo de cada uma, que é o que a
+    separa da sombra debaixo do carro (a regra do cubo do camião). O do
+    carro novo é a jante de liga: larga e clara."""
+    p = []
+    cubo, cor_cubo = (0.45, M["metal_claro"]) if velho else (0.68, M["carro_prata"])
+    for i, a in enumerate(eixos):
+        for j, s in enumerate((1.0, -1.0)):
+            x, y = s * (meia_l - larg / 2.0 + 0.012), sf * a
+            p.append(cone("%s_roda%d%d" % (nome, i, j), (x, y, z(raio)),
+                          z(raio), z(raio), larg, 14, M["pneu"], rot=(0, 90, 0)))
+            p.append(cone("%s_cubo%d%d" % (nome, i, j), (x, y, z(raio)),
+                          z(raio * cubo), z(raio * cubo), larg + 0.012, 10,
+                          cor_cubo, rot=(0, 90, 0)))
+    return p
+
+
+def _ponta(M, nome, meia_l, meio_c, sf, frente, z_luz, velho, cor, larg_luz=0.06,
+           z_para=CARRO_VAO + 0.9, recuo=0.0, x_luz=None):
+    """Os faróis (ou as lanternas) e o para-choque da ponta que aponta para
+    `sf`: `frente` diz se é a da frente. O para-choque do velho é cromado e
+    o da frente está torto — o encontrão de alguém; o do novo é da cor do
+    carro.
+
+    ⚠️ NO NARIZ QUE AFINA PARA CIMA, AS LUZES RECUAM COM ELE (`recuo`). No
+    hatch novo da segunda passagem elas ficaram à frente da lataria, a 0,06
+    dela na quina cortada, e o render mostrou-as como duas pontas brancas
+    soltas no ar; e o para-choque, com a largura do carro, saía pelas quinas
+    como barbatanas."""
+    if frente:
+        luz = M["farol"] if velho else M["farol_novo"]
+    else:
+        luz = M["lanterna"]
+    a = meio_c + 0.004
+    lado = "f" if frente else "t"
+    torto = (0.0, 0.0, 7.0) if velho and frente else (0.0, 0.0, 0.0)
+    larg_para = 2 * meia_l + 0.01 if recuo == 0.0 else 2 * meia_l - 0.08
+    p = [caixa("%s_parachoque_%s" % (nome, lado), (0.0, sf * (a - recuo * 0.3), z(z_para)),
+               (larg_para, 0.022, z(1.0)),
+               M["metal_claro"] if velho else cor, rot=torto)]
+    xl = meia_l - larg_luz / 2.0 - 0.02 if x_luz is None else x_luz
+    for k, s in enumerate((1.0, -1.0)):
+        p.append(caixa("%s_luz_%s%d" % (nome, lado, k),
+                       (s * xl, sf * (a - recuo), z(z_luz)),
+                       (larg_luz, 0.012, z(0.9)), luz))
+    return p
+
+
+def _ferrugem(M, nome, meia_l, eixos, sf, z0, z1):
+    """A ferrugem do carro velho: uma mancha por cima de cada roda, na face
+    que se vê, onde a água da rua bate."""
+    caixa_c = ((0.0, 0.0, (z0 + z1) / 2.0), (2 * meia_l, 2.0, z1 - z0))
+    return [na_face("%s_ferrugem%d" % (nome, i), "+x", caixa_c[0], caixa_c[1],
+                    sf * a, -(z1 - z0) / 2.0 + z(1.1), 0.09, z(1.0), 0.004,
+                    M["ferrugem"], 0.002)
+            for i, a in enumerate(eixos)]
+
+
+def _estufa(M, nome, meia_l, base_a, topo_a, z0, z1, sf, cor, velho, aperto=0.034):
+    """A estufa de vidro (um tronco de pirâmide) e o teto da cor da lataria
+    por cima dela. `base_a`/`topo_a` são `(atrás, à frente)` na base e no
+    topo; o recuo entre os dois é o vidro deitado, e o `aperto` o quanto os
+    lados afinam para cima."""
+    def anel(a0, a1, w):
+        return [(w, sf * a0), (w, sf * a1), (-w, sf * a1), (-w, sf * a0)]
+    wb, wt = meia_l - 0.012, meia_l - aperto
+    vidro = _carro_prisma(nome + "_estufa", anel(topo_a[0], topo_a[1], wt),
+                          anel(base_a[0], base_a[1], wb), z0, z1,
+                          M["vidro_cab"] if velho else M["vidro_novo"])
+    teto = _carro_prisma(nome + "_teto", anel(topo_a[0] - 0.004, topo_a[1] + 0.004, wt + 0.004),
+                         anel(topo_a[0] - 0.004, topo_a[1] + 0.004, wt + 0.004),
+                         z1 - z(0.5), z1 + z(0.5), cor)
+    return [vidro, teto]
+
+
+def _coluna(nome, meia_l, a, z0, z1, sf, cor, aperto=0.034):
+    """A coluna do meio, que parte o vidro do lado em dois: sem ela a estufa
+    é uma fita escura e o carro lê como um carrinho de brinquedo."""
+    return barra(nome + "_coluna", (meia_l - 0.016, sf * a, z0),
+                 (meia_l - aperto - 0.002, sf * a, z1), 0.022, cor)
+
+
+def _carro_hatch(M, nome, cor, sf, velho, porta=None):
+    L, W, h0 = 0.70, 0.295, CARRO_VAO
+    mc, ml = L / 2.0, W / 2.0
+    eixos = (0.23, -0.23)
+    if velho:
+        # O QUADRADO: lataria de lados a direito e o para-brisa quase em pé.
+        h1, h2 = 4.4, 7.8
+        p = [_carro_prisma(nome + "_corpo", _planta(ml, mc, 0.035, sf),
+                           _planta(ml - 0.006, mc - 0.006, 0.035, sf), z(h0), z(h1), cor)]
+        p += _estufa(M, nome, ml, (-mc + 0.04, mc - 0.25), (-mc + 0.06, mc - 0.31),
+                     z(h1 - 0.3), z(h2 - 0.5), sf, cor, velho, aperto=0.026)
+        p.append(_coluna(nome, ml, 0.02, z(h1), z(h2 - 0.7), sf, cor, aperto=0.026))
+    else:
+        # O REDONDO: a lataria afina para cima e no nariz, o para-brisa e a
+        # traseira deitam-se, e o teto fica mais curto do que a estufa.
+        h1, h2 = 4.2, 8.0
+        p = [_carro_prisma(nome + "_corpo", _planta(ml - 0.022, mc - 0.05, 0.09, sf),
+                           _planta(ml, mc, 0.07, sf), z(h0), z(h1), cor)]
+        p += _estufa(M, nome, ml - 0.012, (-mc + 0.07, mc - 0.20), (-mc + 0.17, mc - 0.40),
+                     z(h1 - 0.3), z(h2 - 0.5), sf, cor, velho, aperto=0.045)
+        p.append(_coluna(nome, ml - 0.012, 0.0, z(h1), z(h2 - 0.7), sf, cor, aperto=0.045))
+    p += _rodas(M, nome, ml, eixos, sf, velho)
+    # O nariz do redondo recua 0,05 no topo e corta as quinas a 0,09: as luzes
+    # vão para dentro da quina e para trás com ele (medido no render).
+    recuo, x_luz = (0.0, None) if velho else (0.058, 0.064)
+    p += _ponta(M, nome, ml, mc, sf, True, h1 - 0.9, velho, cor, 0.05 if not velho else 0.06,
+                recuo=recuo, x_luz=x_luz)
+    p += _ponta(M, nome, ml, mc, -sf, False, h1 - 0.9, velho, cor, 0.05,
+                recuo=recuo, x_luz=x_luz)
+    if velho:
+        p += _ferrugem(M, nome, ml, eixos, sf, z(h0), z(h1))
+    if porta is not None:
+        # A porta da frente trocada e por pintar: o primário cinzento.
+        p.append(na_face(nome + "_porta", "+x", (0.0, 0.0, z((h0 + h1) / 2.0)),
+                         (W, L, z(h1 - h0)), sf * 0.07, 0.0, 0.17, z(h1 - h0 - 0.6),
+                         0.006, M[porta], 0.002))
+    return p
+
+
+def _carro_fusca(M, nome, cor, sf):
+    """O fusca: a carroçaria baixa, quatro para-lamas redondos que saem dela
+    e a estufa em CÚPULA — é a cúpula que o diz a 20 px, e não o tamanho.
+    Só existe velho."""
+    L, W = 0.72, 0.28
+    mc, ml = L / 2.0, W / 2.0
+    eixos = (0.23, -0.23)
+    p = [_carro_prisma(nome + "_corpo", _planta(ml - 0.02, mc - 0.02, 0.07, sf),
+                       _planta(ml - 0.035, mc - 0.05, 0.07, sf), z(1.4), z(3.7), cor)]
+    # O capô da frente e a tampa do motor, abaulados.
+    p.append(base.bola(nome + "_capo", (0.0, sf * 0.19, z(3.6)), (0.105, 0.17, z(1.3)), cor))
+    p.append(base.bola(nome + "_motor", (0.0, sf * -0.22, z(3.6)), (0.10, 0.14, z(1.2)), cor))
+    # A cúpula: o vidro escuro, e o teto por cima dele, mais estreito e mais
+    # alto, para sobrar uma fita de vidro à volta.
+    p.append(base.bola(nome + "_estufa", (0.0, sf * -0.02, z(4.2)), (0.118, 0.215, z(3.6)),
+                       M["vidro_cab"]))
+    p.append(base.bola(nome + "_teto", (0.0, sf * -0.035, z(4.9)), (0.108, 0.165, z(3.3)), cor))
+    for i, a in enumerate(eixos):
+        for j, s in enumerate((1.0, -1.0)):
+            p.append(base.bola("%s_paralama%d%d" % (nome, i, j),
+                               (s * (ml - 0.045), sf * a, z(2.4)), (0.05, 0.105, z(1.9)), cor))
+    p += _rodas(M, nome, ml - 0.01, eixos, sf, True, raio=1.5, larg=0.045)
+    # Os faróis redondos em cima dos para-lamas da frente.
+    for k, s in enumerate((1.0, -1.0)):
+        p.append(base.bola("%s_farol%d" % (nome, k), (s * (ml - 0.045), sf * (mc - 0.06), z(3.8)),
+                           (0.026, 0.02, z(0.8)), M["farol"]))
+        p.append(caixa("%s_lanterna%d" % (nome, k), (s * (ml - 0.045), -sf * (mc - 0.045), z(3.4)),
+                       (0.03, 0.012, z(0.9)), M["lanterna"]))
+    for lado, sinal in (("f", 1.0), ("t", -1.0)):
+        p.append(caixa("%s_parachoque_%s" % (nome, lado), (0.0, sinal * sf * (mc - 0.005), z(2.0)),
+                       (W - 0.01, 0.02, z(0.8)), M["metal_claro"],
+                       rot=(0.0, 0.0, 7.0) if sinal > 0 else (0.0, 0.0, 0.0)))
+    # A ferrugem no estribo, entre as rodas, que é onde o fusca enferruja.
+    p.append(na_face(nome + "_ferrugem", "+x", (0.0, 0.0, z(2.5)), (W - 0.04, L, z(2.4)),
+                     0.0, -z(0.6), 0.16, z(0.8), 0.004, M["ferrugem"], 0.002))
+    return p
+
+
+def _triangulo(nome, pts, mat):
+    """Uma chapa triangular fina, pelos três vértices dados no mundo: o V da
+    pintura da kombi, que caixa nenhuma do kit desenha."""
+    bpy = base.bpy
+    me = bpy.data.meshes.new(nome)
+    me.from_pydata([tuple(v) for v in pts], [], [[0, 1, 2]])
+    me.update()
+    o = bpy.data.objects.new(nome, me)
+    bpy.context.collection.objects.link(o)
+    o.data.materials.append(mat)
+    return o
+
+
+def _carro_kombi(M, nome, cor, cima, sf):
+    """A kombi: a caixa alta de quinas redondas, o para-brisa partido em dois
+    e a pintura de duas cores que desce em V na frente. Só existe velha."""
+    L, W, h0, hm, h1 = 0.80, 0.31, CARRO_VAO, 5.6, 10.0
+    mc, ml = L / 2.0, W / 2.0
+    eixos = (0.27, -0.27)
+    p = [_carro_prisma(nome + "_baixo", _planta(ml, mc, 0.055, sf),
+                       _planta(ml - 0.01, mc - 0.01, 0.06, sf), z(h0), z(hm), cor),
+         _carro_prisma(nome + "_cima", _planta(ml - 0.004, mc - 0.004, 0.06, sf),
+                       _planta(ml, mc, 0.055, sf), z(hm - 0.2), z(h1), M[cima]),
+         _carro_prisma(nome + "_teto", _planta(ml - 0.03, mc - 0.03, 0.07, sf),
+                       _planta(ml - 0.004, mc - 0.004, 0.06, sf), z(h1 - 0.2), z(h1 + 0.6),
+                       M[cima])]
+    caixa_k = ((0.0, 0.0, z((hm + h1) / 2.0)), (W, L, z(h1 - hm)))
+    # Só a face `-y` se vê: a frente, quando ela aponta para `+my`; senão,
+    # a traseira, com o vidro de trás.
+    if sf < 0:
+        for k, s in enumerate((1.0, -1.0)):
+            p.append(na_face("%s_parabrisa%d" % (nome, k), "-y", caixa_k[0], caixa_k[1],
+                             s * 0.068, z(0.9), 0.118, z(2.4), 0.006, M["vidro_cab"], 0.002))
+        # O V: a cor de cima desce até ao meio da frente, num triângulo rente
+        # a ela, e o farol redondo fica em cada ponta dele.
+        yv = sf * (mc + 0.003)
+        p.append(_triangulo(nome + "_v", [(ml - 0.03, yv, z(hm)), (-ml + 0.03, yv, z(hm)),
+                                          (0.0, yv, z(hm - 2.6))], M[cima]))
+    else:
+        p.append(na_face(nome + "_vidro_tras", "-y", caixa_k[0], caixa_k[1], 0.0, z(0.9),
+                         0.20, z(1.8), 0.006, M["vidro_cab"], 0.002))
+    for k, a in enumerate((0.20, 0.0, -0.20)):
+        p.append(na_face("%s_janela%d" % (nome, k), "+x", caixa_k[0], caixa_k[1],
+                         sf * a, z(0.9), 0.15, z(2.2), 0.006, M["vidro_cab"], 0.002))
+    for k, s in enumerate((1.0, -1.0)):
+        p.append(base.bola("%s_farol%d" % (nome, k), (s * (ml - 0.05), sf * (mc - 0.005), z(3.6)),
+                           (0.03, 0.012, z(0.9)), M["farol"]))
+        p.append(caixa("%s_lanterna%d" % (nome, k), (s * (ml - 0.03), -sf * (mc + 0.003), z(5.0)),
+                       (0.03, 0.012, z(1.6)), M["lanterna"]))
+    for lado, sinal in (("f", 1.0), ("t", -1.0)):
+        p.append(caixa("%s_parachoque_%s" % (nome, lado), (0.0, sinal * sf * (mc + 0.006), z(2.0)),
+                       (W + 0.01, 0.022, z(1.0)), M["metal_claro"],
+                       rot=(0.0, 0.0, 7.0) if sinal > 0 else (0.0, 0.0, 0.0)))
+    p += _rodas(M, nome, ml, eixos, sf, True, raio=1.7)
+    p += _ferrugem(M, nome, ml, eixos, sf, z(h0), z(hm))
+    return p
+
+
+def _carro_picape(M, nome, cor, sf, velho, carga):
+    """A picape pequena: a cabine curta à frente e a caçamba aberta atrás,
+    que é o que a diz de cima.
+
+    ⚠️ A CAÇAMBA LIA COMO CAPOTA BAIXADA (segunda passagem, *«picape lê
+    como conversível»*): o fundo cinzento e as paredes de 1,8 px eram o
+    habitáculo de um descapotável. O fundo é agora quase preto e as paredes
+    sobem a 2,8 px, com o rebordo claro por cima — a carroceria aberta é um
+    VAZIO escuro emoldurado, e o banco de um carro não é."""
+    L, W, h0, h1, h2 = 0.79, 0.295, CARRO_VAO, 4.0, 7.9
+    mc, ml = L / 2.0, W / 2.0
+    eixos = (0.26, -0.24)
+    cab0 = mc - 0.40              # a traseira da cabine, contada da frente
+    p = [_carro_prisma(nome + "_corpo", _planta(ml, mc, 0.04, sf),
+                       _planta(ml - 0.012, mc - 0.01, 0.045, sf), z(h0), z(h1), cor),
+         _carro_prisma(nome + "_cabine", _planta(ml, mc, 0.04, sf, cab0, mc),
+                       _planta(ml, mc, 0.04, sf, cab0, mc), z(h1 - 0.2), z(h1 + 0.6), cor)]
+    p += _estufa(M, nome, ml, (cab0 + 0.01, mc - 0.24), (cab0 + 0.02, mc - 0.32),
+                 z(h1 + 0.4), z(h2 - 0.5), sf, cor, velho)
+    # A caçamba: o fundo escuro e as três paredes da cor do carro, altas, com
+    # o rebordo claro por cima.
+    comp = cab0 - (-mc)
+    meio = (cab0 + (-mc)) / 2.0
+    parede = 2.8
+    p.append(caixa(nome + "_cacamba_fundo", (0.0, sf * meio, z(h1 + 0.05)),
+                   (W - 0.05, comp - 0.04, z(0.3)), M["carro_banco"]))
+    for k, s in enumerate((1.0, -1.0)):
+        p.append(caixa("%s_cacamba_lado%d" % (nome, k), (s * (ml - 0.014), sf * meio,
+                                                         z(h1 + parede / 2.0)),
+                       (0.028, comp, z(parede)), cor))
+        p.append(caixa("%s_rebordo%d" % (nome, k), (s * (ml - 0.014), sf * meio, z(h1 + parede + 0.2)),
+                       (0.034, comp, z(0.4)), M["metal_claro"]))
+    p.append(caixa(nome + "_tampa", (0.0, sf * (-mc + 0.014), z(h1 + parede / 2.0)),
+                   (W, 0.028, z(parede)), cor))
+    p.append(caixa(nome + "_tampa_rebordo", (0.0, sf * (-mc + 0.014), z(h1 + parede + 0.2)),
+                   (W + 0.006, 0.034, z(0.4)), M["metal_claro"]))
+    if carga == "sacos":
+        for k, (x, a) in enumerate(((0.05, meio + 0.07), (-0.05, meio + 0.04), (0.0, meio - 0.09))):
+            p.append(base.bola("%s_saco%d" % (nome, k), (x, sf * a, z(h1 + 1.3)),
+                               (0.06, 0.085, z(1.3)), M["rafia"]))
+    elif carga == "arco":
+        # O santo-antônio da picape nova: o arco de tubo atrás da cabine.
+        y = sf * (cab0 - 0.03)
+        p += [barra(nome + "_arco_e", (ml - 0.02, y, z(h1 + 0.4)), (ml - 0.02, y, z(h1 + 4.0)),
+                    0.016, M["metal"]),
+              barra(nome + "_arco_d", (-ml + 0.02, y, z(h1 + 0.4)), (-ml + 0.02, y, z(h1 + 4.0)),
+                    0.016, M["metal"]),
+              barra(nome + "_arco_t", (ml - 0.02, y, z(h1 + 4.0)), (-ml + 0.02, y, z(h1 + 4.0)),
+                    0.016, M["metal"])]
+    p += _rodas(M, nome, ml, eixos, sf, velho)
+    p += _ponta(M, nome, ml, mc, sf, True, h1 - 0.9, velho, cor)
+    p += _ponta(M, nome, ml, mc, -sf, False, h1 - 0.6, velho, cor, 0.04)
+    if velho:
+        p += _ferrugem(M, nome, ml, eixos, sf, z(h0), z(h1))
+    return p
+
+
+def _moto(M, nome, cor, sf, velho, carga):
+    """A moto no descanso, encostada para o lado que não se vê.
+
+    ⚠️ A DA PRIMEIRA PASSAGEM LIA COMO UM PONTO (13 px) e saiu na segunda;
+    voltou na terceira a pedido (*«poderia ter motos como antes, dessa vez
+    melhore os detalhes delas»*). A esta escala o que diz «moto» é o que
+    cada peça tem de próprio e se vê de cima e de lado: DUAS RODAS grandes e
+    separadas, com o cubo claro largo; o MOTOR escuro entre elas e o
+    ESCAPAMENTO cromado a correr para trás no lado `+x`; o garfo cromado e
+    o guidão com os dois retrovisores; e a CARGA no bagageiro, que lhe dá
+    massa — a caixa de isopor do pescador na velha, o baú preto na nova."""
+    R = 1.75
+    p = []
+    for k, a in enumerate((0.14, -0.14)):
+        p.append(cone("%s_roda%d" % (nome, k), (0.0, sf * a, z(R)), z(R), z(R), 0.036, 16,
+                      M["pneu"], rot=(0, 90, 0)))
+        p.append(cone("%s_cubo%d" % (nome, k), (0.0, sf * a, z(R)), z(R * 0.55), z(R * 0.55),
+                      0.042, 10, M["metal_claro"] if velho else M["carro_prata"], rot=(0, 90, 0)))
+        # O para-lama por cima de cada roda, da cor da moto.
+        p.append(caixa("%s_paralama%d" % (nome, k), (0.0, sf * a, z(2 * R + 0.3)),
+                       (0.05, 0.11, z(0.5)), cor))
+    p += [
+        # O motor e o quadro: o bloco escuro entre as rodas, e a espinha que
+        # sobe do eixo de trás à coluna da direção.
+        caixa(nome + "_motor", (0.0, sf * 0.005, z(2.6)), (0.07, 0.11, z(2.0)), M["metal"]),
+        barra(nome + "_quadro", (0.0, sf * -0.14, z(R)), (0.0, sf * 0.095, z(5.4)), 0.026,
+              M["metal"]),
+        # O escapamento cromado, no lado que se vê, do motor até atrás.
+        barra(nome + "_escape", (0.045, sf * 0.03, z(1.9)), (0.045, sf * -0.17, z(2.7)), 0.024,
+              M["carro_prata"]),
+        barra(nome + "_garfo", (0.0, sf * 0.14, z(R)), (0.0, sf * 0.10, z(6.0)), 0.02,
+              M["carro_prata"]),
+        # O tanque e as tampas laterais, da cor da moto; o banco comprido.
+        caixa(nome + "_tanque", (0.0, sf * 0.045, z(5.2)), (0.085, 0.10, z(1.6)), cor),
+        caixa(nome + "_tampa", (0.0, sf * -0.06, z(3.9)), (0.072, 0.07, z(1.4)), cor),
+        caixa(nome + "_banco", (0.0, sf * -0.075, z(5.1)), (0.07, 0.15, z(0.9)),
+              M["carro_banco"]),
+        # O guidão, e um retrovisor em cada ponta.
+        barra(nome + "_guidao", (0.085, sf * 0.10, z(6.4)), (-0.085, sf * 0.10, z(6.4)),
+              0.016, M["metal"]),
+        base.bola(nome + "_farol", (0.0, sf * 0.15, z(5.6)), (0.026, 0.016, z(0.9)),
+                  M["farol"] if velho else M["farol_novo"]),
+        caixa(nome + "_lanterna", (0.0, sf * -0.205, z(4.6)), (0.03, 0.012, z(0.6)),
+              M["lanterna"]),
+        # O bagageiro: a grade de tubo atrás do banco.
+        caixa(nome + "_bagageiro", (0.0, sf * -0.185, z(4.8)), (0.07, 0.07, z(0.3)), M["metal"]),
+    ]
+    for k, s in enumerate((1.0, -1.0)):
+        p.append(barra("%s_espelho_haste%d" % (nome, k), (s * 0.07, sf * 0.10, z(6.4)),
+                       (s * 0.08, sf * 0.105, z(8.0)), 0.01, M["metal"]))
+        p.append(base.bola("%s_espelho%d" % (nome, k), (s * 0.08, sf * 0.105, z(8.2)),
+                           (0.018, 0.008, z(0.6)), M["metal"]))
+    if carga == "isopor":
+        p.append(caixa(nome + "_isopor", (0.0, sf * -0.185, z(6.0)), (0.10, 0.09, z(2.2)),
+                       M["carro_creme_velho"] if velho else M["cabine"]))
+        p.append(caixa(nome + "_isopor_tampa", (0.0, sf * -0.185, z(7.2)), (0.106, 0.096, z(0.3)),
+                       M["azul"]))
+    elif carga == "bau":
+        # ⚠️ O BAÚ ERA PRETO e fundia-se com o banco (terceira passagem,
+        # *«baú preto some no banco»*): é cinza-claro, com a faixa vermelha
+        # do refletivo a dar-lhe a traseira.
+        p.append(caixa(nome + "_bau", (0.0, sf * -0.19, z(6.0)), (0.10, 0.09, z(2.2)),
+                       M["carro_prata"]))
+        p.append(caixa(nome + "_bau_tampa", (0.0, sf * -0.19, z(7.2)), (0.104, 0.094, z(0.3)),
+                       M["metal_claro"]))
+        p.append(caixa(nome + "_bau_luz", (0.0, sf * -0.237, z(5.8)), (0.09, 0.006, z(0.6)),
+                       M["lanterna"]))
+    elif carga == "caixote":
+        # O caixote de feira, de ripas de madeira, amarrado à grade.
+        p.append(caixa(nome + "_caixote", (0.0, sf * -0.185, z(5.8)), (0.10, 0.09, z(1.8)),
+                       M["madeira"]))
+        p.append(caixa(nome + "_caixote_ripa", (0.0, sf * -0.185, z(5.8)), (0.106, 0.096, z(0.4)),
+                       M["madeira_esc"]))
+    return _inclinar(p, graus_y=-10.0)
+
+
+# Os carros, `[nome, modelo, cor, velho?, aponta para +my?, extra]`. A ordem
+# não é a do jogo: quem diz quando cada um aparece é a tabela do
+# `gerar_mapa_iso.py` (`CARROS_DA_VIELA`), que só os nomeia. Nenhum é
+# castanho nem bege: estacionam na terra da viela, e somem nela.
+CARROS_DA_VIELA = (
+    ("carro_fusca_velho", "fusca", "carro_azul_velho", True, True, None),
+    ("carro_kombi_velha", "kombi", "carro_verde_velho", True, True, "carro_creme_velho"),
+    ("carro_fusca_velho_b", "fusca", "carro_vermelho_velho", True, False, None),
+    ("carro_picape_velha", "picape", "carro_mostarda_velho", True, False, "sacos"),
+    ("carro_hatch_velho", "hatch", "carro_creme_velho", True, True, "carro_primer"),
+    ("carro_hatch_velho_b", "hatch", "carro_verde_velho", True, False, None),
+    ("carro_hatch_novo", "hatch", "carro_prata", False, False, None),
+    ("carro_picape_nova", "picape", "carro_branco", False, True, "arco"),
+    ("carro_hatch_novo_b", "hatch", "carro_vermelho", False, True, None),
+    ("carro_hatch_novo_c", "hatch", "carro_azul", False, False, None),
+    ("carro_moto_velha", "moto", "carro_vermelho_velho", True, True, "isopor"),
+    ("carro_moto_nova", "moto", "carro_vermelho", False, False, "bau"),
+    ("carro_moto_velha_b", "moto", "carro_azul_velho", True, False, "caixote"),
+    ("carro_moto_nova_b", "moto", "carro_azul", False, True, None),
+)
+
+
+def carros_da_viela(M, est):
+    for nome, modelo, cor, velho, desce, extra in CARROS_DA_VIELA:
+        sf = -1.0 if desce else 1.0
+        if modelo == "hatch":
+            p = _carro_hatch(M, nome, M[cor], sf, velho, extra)
+        elif modelo == "fusca":
+            p = _carro_fusca(M, nome, M[cor], sf)
+        elif modelo == "kombi":
+            p = _carro_kombi(M, nome, M[cor], extra, sf)
+        elif modelo == "moto":
+            p = _moto(M, nome, M[cor], sf, velho, extra)
+        else:
+            p = _carro_picape(M, nome, M[cor], sf, velho, extra)
+        _encolher(p, ESCALA_CARRO)
+        origem(nome)
+        est.registrar(nome, p, celulas=(1, 1), zenite=ZENITE_DO_MOBILIARIO)
+
+
 CATALOGO = (_registrar_caminhoes, empilhadeira, cabeco, poste, pilha_caixotes,
             doca_concreto, pallet, pneus, cone_transito, barreira, bote,
             guincho, trabalhador_retrato, retratos_de_fala,
-            poste_rua, placas_da_rua, cavalete_obra, linha_da_rede, subestacao)
+            poste_rua, placas_da_rua, cavalete_obra, linha_da_rede, subestacao,
+            carros_da_viela)
 
 
 def montar(M, est):

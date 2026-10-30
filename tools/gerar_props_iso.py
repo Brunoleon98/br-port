@@ -493,6 +493,26 @@ PALETA = {
     # cidade pequena —, e a nova é LED, uma chapa cinzenta e baixa.
     "poste_concreto": "#9da29b", "poste_concreto_velho": "#686860",
     "sodio": "#f2a54a",
+    # ── OS CARROS DA VIELA (`141`) ───────────────────────────────────────
+    #
+    # Estacionados na viela de terra (`terra_escura` #75664f), e por isso
+    # nenhum é castanho nem bege: some no chão. Os VELHOS são as cores de
+    # carro dos anos 70 e 80 levadas ao desbotado do sol — o azul-calcinha, o
+    # verde-água, o vermelho a rosado, a mostarda, o creme (claro, que se
+    # separa da terra pelo valor) —, e a porta de outra cor é
+    # a do primário cinzento de quem trocou a peça e não pintou. Os NOVOS são
+    # as cores que a rua brasileira de hoje tem: prata, branco, vermelho e
+    # azul, chapados.
+    "carro_azul_velho": "#7f9db3", "carro_verde_velho": "#86b1a2",
+    "carro_vermelho_velho": "#b0605a", "carro_mostarda_velho": "#c2a24a",
+    "carro_creme_velho": "#ddd5bf", "carro_primer": "#8d928e",
+    "carro_prata": "#b9c1c7", "carro_branco": "#eef2f5",
+    "carro_vermelho": "#b8262c", "carro_azul": "#2f5f9a",
+    "farol": "#f4f1dc", "lanterna": "#c0282c", "carro_banco": "#2b2f33",
+    # Segunda passagem: *«velhos e novos parecidos»*. O vidro do carro NOVO
+    # é mais claro e azulado do que o `vidro_cab` dos velhos e dos camiões,
+    # e o farol dele é branco, onde o do velho é creme amarelado.
+    "vidro_novo": "#5d7f97", "farol_novo": "#fbfdff",
 }
 
 
@@ -553,6 +573,11 @@ DESGASTE = {
     # O mobiliário VELHO da rua (`140`): placa e poste pequenos, número alto.
     "placa_vermelha_velha": 14.0, "placa_amarela_velha": 14.0,
     "placa_branca_velha": 14.0, "poste_concreto_velho": 12.0,
+    # A lataria dos carros VELHOS da viela (`141`): peça de 0,3 por 0,7, e a
+    # marca tem de caber nela — o número da cabine do camião, um pouco acima.
+    "carro_azul_velho": 7.0, "carro_verde_velho": 7.0,
+    "carro_vermelho_velho": 7.0, "carro_mostarda_velho": 7.0,
+    "carro_creme_velho": 7.0,
     # `ferrugem` NÃO entra aqui: quem lhe dá superfície é o padrão dirigido que
     # a usa, e um ruído por cima de outro ruído é lixa.
 }

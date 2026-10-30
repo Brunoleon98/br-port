@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 25/10/2026 — rua (`140`) e história/lojas (`144`, local)
+> **Atualização:** 30/10/2026 — base gráfica atualizada; história local (`144`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -37,8 +37,9 @@ ela centra-se no centroide dos berços; o mundo cresceu para isso (`my` de −14
 42, fundo da terra em −16), senão o mapa ACABAVA à vista por três lados.
 
 **A água é tropical e escurece até ao largo** (`124`, **D46**) — campo de cor
-contínuo pela distância à costa, marolas em séries, correntes escuras,
-arrebentação e cáusticas nas praias; a sombra do muro esvai.
+contínuo pela distância à costa, correntes escuras, arrebentação e
+cáusticas nas praias; a sombra do muro esvai. **As marolas ROLAM para o
+cais**, duas camadas em contrafase, e a espuma lava (`142`, D51).
 
 **As duas pontas são costa desenhada** (`023`), com o cais reto. Água, baixio,
 espuma, pedras e rampa saem de `ponto_costeiro()`, sem costuras. **D28** tranca
@@ -99,12 +100,14 @@ história. Cidade, missões e análise continuam fechadas.
 verdade** — parede desabada, meio telhado, portão fora do trilho.
 
 **O porto tem uma CIDADE atrás dele.** Rua de **mão dupla** (1,8, linha
-central amarela, curvas em arco) — **três camiões descem e dois sobem, pela DIREITA, e os dois sentidos encostam nos berços** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
+central amarela, curvas em arco) — **três camiões descem e dois sobem, pela DIREITA** (`047`, `052`) —, calçada, acesso a cada berço, **duas fileiras de casas**
 e uma **viela de terra entre elas** — a de trás mais rala, a desfiar no quintal
 e na mata do morro. Tem nível (`--nivel-vila=N`); o jogo mostra o 1.
 **A rua é GASTA no porto em ruínas**; a obra do pátio recapeia-a por trechos,
 com cones (`136`, D49), e troca o mobiliário (`140`, D45 §7): postes,
 fiação, placas, cavaletes e a rede de uma subestação no relvado.
+A rua é rodovia: **carros e motos estacionam na viela de terra**, velhos
+no porto em ruínas e novos na Fase 2, mais a cada obra (`141`, D50).
 
 **A VILA É HUMILDE DE PROPÓSITO** (`123`): meia-água de fibrocimento, casinha
 de empena, quatro águas, varanda e casa em L, cada uma num terreno de muro
@@ -119,16 +122,13 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **A fila em vigor é a §7 do plano.** Aqui fica só a posição.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
-**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
-(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).
 **RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
-**RB5 (`134`, `135`, #148):** três colunas/+25%; Padrão/Maior nos Ajustes,
-persistência independente do movimento; telefone pendente.
-**A fila da `126`** (§7) **acabou**: terreno e vegetação (`127`, `130`),
-estradas (`136`) e o mobiliário da rua (`140`) aceites; testes em
-`137`–`139`. A seguinte é do Bruno; as 15 lacunas médias visuais, só
-com ele.
-Trabalhadores/crédito ficam depois. **A4, caderno, leitura e telefone
+**RB5 (`134`, `135`, #148):** Padrão/Maior nos Ajustes; telefone pendente.
+**A fila da `126`** (§7) **acabou** (`127`, `130`, `136`, `140`; testes
+em `137`–`139`), e a seguir os carros da viela (`141`) e as marolas
+(`142`). **A pesquisa de melhorias fechou** (`143`): aprofunda-se a
+animação e o toque, depois luz, som e o resto (§7).
+**A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
@@ -320,9 +320,8 @@ os trinta do trabalhador saem de `blender/brp_retratos.py` (`056`, `059`).
 O cenário usa os props: **coqueiros de tronco ARQUEADO** (`028`) que oscilam em
 rajada, **guindaste** nas docas construídas, **carga no convés** e **boias +
 marcador** na Zona de Espera. **Os camiões levam a carga do porto** e
-**encostam de ré na doca** que tem barco e trabalhador (`011`, `077`); a
-**espuma lava a costa** no mesmo campo contínuo da água; o **enrocamento para
-nas duas pontas**.
+**encostam de ré na doca** que tem barco e trabalhador (`011`, `077`); o
+**enrocamento para nas duas pontas**.
 
 **E as chapas lisas acabaram**: tabuado com junta no n2, junta atravessada no
 n3, ferrugem nos cargueiros — padrões DIRIGIDOS, peça a peça, nunca pela paleta.

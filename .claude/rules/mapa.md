@@ -351,6 +351,13 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   do vizinho — a da praia fechava na crista, que o meandro levanta a 1,09 do
   cais, e saía inclinada, com o fio a engrossar para o cais. O D49 §2 e §3
   medem os dois.
+  ⚠️ **E A GUARDA DA BORDA PARAVA ANTES DA QUINA.** O chão passou a fechar
+  por baixo do porto, mas só até à crista; a rampa acaba no `PONTA_NORTE`
+  exato, e a 2 px do canto do pátio nenhuma das três peças cobria o fundo.
+  O percurso do D49 §3 acabava 0,4 antes do cais e não o via: era o «fio
+  diagonal» que a `124` deixou por olhar. Hoje o chão fecha até à beira do
+  degrau, e o §3 mede a janela da quina (`142`). Fresta de várias peças
+  procura-se onde elas se juntam TODAS, não ao longo de cada borda.
 - **⚠️ O QUE MUDA ENTRE OS DOIS MAPAS TEM DE MUDAR DENTRO DA OBRA.** O jogo
   troca o mapa de terra pelo pavimentado de uma vez, no fim da obra do pátio,
   e tudo o que difere fora do recorte dela «aparece do nada»: em 18/10 eram
@@ -358,6 +365,16 @@ degrau e a 16 no último. `APRON`, `RUA_RECUO`, `VILA_RECUO` são recuos, não
   clareavam, e a faixa do avental, um pixel além do recorte. Desenho novo que
   o pavimentado faça diferente cai num recorte da obra (o pátio ou um trecho
   de `obra_da_rua()`); o D49 §1 conta os pixels.
+- **⚠️ O QUE SAI DO MAPA PARA UMA CAMADA POR CIMA PERDE O QUE O TAPAVA, e o
+  que o escurecia.** As marolas (`142`) eram desenhadas antes da terra: o que
+  a praia, o muro e o enrocamento lhes tapavam ninguém via, e numa camada por
+  cima eram 614 px (Δ > 8) a pintar a areia e o espelho dos degraus. E a
+  sombra do muro, desenhada no fim, escurecia-as até ~18%: por cima dela
+  sairiam mais vivas do que as aceites. A marola só entra se cada ponto
+  dela, nas duas pontas do caminho, for água À VISTA, e leva a sombra na
+  opacidade. A régua compara a camada por cima com as MESMAS marolas na
+  ordem antiga, e não com as de ontem — com outras, a diferença mede o
+  filtro, e não a ordem.
 - **⚠️ O CONTORNO DAS VIAS É O QUE A MATA LÊ.** O `horizonte_das_vias()` sai do
   SVG do `vias()`, e o leitor de contornos rebenta com tag que não conhece:
   o que se pinta DENTRO da rua vive em `vias_detalhes()`, fora dele. E mudar a

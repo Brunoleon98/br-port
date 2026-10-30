@@ -856,13 +856,28 @@ os sprites de detalhes — **fechado em 25/10 (`140`)**, aceite à oitava
 passagem: postes com fiação e luz de sódio na calçada da vila, placas,
 cavaletes da obra e a rede desde uma subestação no relvado, velhos ou novos
 pelo trecho da obra —, com duas pausas pelo meio (`137`–`139`). **Ela
-também acabou**: o caminho está em `docs/arquivo/PLANO_V3_FECHADOS.md`, e o
-item seguinte é do Bruno — a próxima conversa abre a perguntar-lho, com
-opções. As quinze lacunas médias que a `138` deixou de fora (as visuais) e
-qualquer outra funcionalidade não se começam sem ele. Fora da fila, para
-depois: os carros estacionados (*«na rua, junto ao meio-fio»*, `140`),
-animar as marolas e o fio diagonal da ponta norte do cais (`124`), os gates
-A4 e A7, e o galpão recuperado V3.
+também acabou**: o caminho está em `docs/arquivo/PLANO_V3_FECHADOS.md`.
+Em 25/10 o Bruno escolheu a seguir os carros estacionados — **fechado no
+mesmo dia (`141`)**, aceite à quarta passagem: medido, na rua não cabiam, e
+ele pô-los na viela de terra, com a rua a ser rodovia, mais a cada fase e
+obra. E a seguir o que a `124` deixou por olhar — **fechado no mesmo dia
+(`142`)**, aceite à segunda passagem: as marolas rolam para o cais em duas
+camadas em contrafase, a espuma passou a lavar (nunca tinha lavado), e o
+«fio diagonal» era uma fresta de 2 px na quina norte do pátio, fechada.
+**Em 29/10 o Bruno deu o bloco seguinte, em três tempos:** (1) uma
+PESQUISA de melhorias — a iluminação, as animações e os sons do jogo, e os
+outros aspetos que a pesquisa achar —, com a medição do jogo de hoje ao
+lado de cada tema e um documento que a guarde; (2) uma conversa por tema
+para o aprofundar, a partir desse documento; (3) só então implementar, um
+item por conversa. Os temas a aprofundar e a ordem escolhe-os ele, com
+opções e a recomendada primeiro. **O tempo (1) fechou no mesmo dia
+(`143`)**, com o estudo em `docs/PESQUISA_MELHORIAS_2026-10-29.md`: ele
+escolheu aprofundar **a animação e o toque**, na ordem animação → luz →
+som → resto, e só essa conversa abriu; as outras abrem quando ele as pedir.
+Fora deste bloco, para depois: as quinze
+lacunas médias que a `138` deixou de fora (as visuais), os gates A4 e A7,
+o galpão recuperado V3, trabalhadores e crédito, e o vigia de frames do
+`teste_design` (`142`).
 
 **Prioridade de 03/10 a 09/10, escolha do Bruno: a MELHORIA DE DESIGN.**
 As conversas seguintes começavam por ela, à frente da máquina do contêiner e da

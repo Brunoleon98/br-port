@@ -24,7 +24,11 @@ extends RefCounted
 #      «linha fina diagonal junto do coqueiro sul» da `130`;
 #   §3 a borda norte do pátio não deixa ver a ÁGUA: o chão da praia acabava
 #      onde o porto começa, e fechava inclinado pela crista, e o fundo do
-#      mapa via-se num fio azul de um pixel — anotado também na `130`.
+#      mapa via-se num fio azul de um pixel — anotado também na `130`. E a
+#      QUINA dela (`142`): o percurso da borda acaba 0,4 antes do cais, e a
+#      fresta de 2 px entre a crista, a rampa e a laje, onde o pátio, o
+#      relvado e o cais se encontram, viveu ali até à `142` — o «fio
+#      diagonal da ponta norte» que a `124` deixou por olhar.
 #
 # §2 e §3 são defeitos CORRIGIDOS, e os dois estão no catálogo de mutantes
 # com a linha de antes da correção. Bloco num arquivo próprio pela regra do
@@ -71,6 +75,7 @@ func rodar(terra, patio, ancoras: Dictionary, obra: Script) -> void:
 	for par in [["terra", terra], ["pavimentado", patio]]:
 		_juntas_sem_fio(String(par[0]), par[1], ancoras)
 		_borda_norte(String(par[0]), par[1], ancoras)
+		_quina_norte(String(par[0]), par[1], ancoras)
 	completo = true
 
 
@@ -206,6 +211,38 @@ func _borda_norte(nome: String, mapa, ancoras: Dictionary) -> void:
 		mx += 0.1
 	conferir("%s: a borda norte do pátio foi lida (%d amostras)" % [nome, lidas], lidas >= 500)
 	conferir("%s: a água não aparece na borda norte do pátio (azul %+.1f, o máximo é %+.1f)"
+		% [nome, pior, AZUL_MAX], pior <= AZUL_MAX, onde)
+
+
+## A quina nordeste do pátio, à altura do cais: uma janela de `QUINA_RAIO` px
+## de tela à volta dela. Medido (`142`): +84,5 com a fresta, +10,5 na terra e
+## +17,0 no pavimentado sem ela; o corte é o mesmo da borda.
+const QUINA_RAIO := 6.0
+
+
+func _quina_norte(nome: String, mapa, ancoras: Dictionary) -> void:
+	var pr: Dictionary = ancoras["projecao"]
+	var patio: Dictionary = ancoras["patio"][0]
+	var q := _tela(pr, float(patio["mx"][1]), float(patio["my"][0]))
+	var a: Vector2i = mapa.pxv(q - Vector2(QUINA_RAIO, QUINA_RAIO))
+	var b: Vector2i = mapa.pxv(q + Vector2(QUINA_RAIO, QUINA_RAIO))
+	var pior := -INF
+	var onde := ""
+	var lidas := 0
+	for y in range(a.y, b.y + 1):
+		for x in range(a.x, b.x + 1):
+			var v := Vector2i(x, y)
+			if not mapa.dentro(v):
+				continue
+			lidas += 1
+			var c: Color = mapa.img.get_pixelv(v)
+			var azul := (c.b - (c.r + c.g) / 2.0) * 255.0
+			if azul > pior:
+				pior = azul
+				onde = "no pixel %s, %s" % [v, c.to_html(false)]
+	conferir("%s: a quina norte do pátio foi lida (%d px)" % [nome, lidas],
+		lidas >= int(mapa.area(QUINA_RAIO * QUINA_RAIO * 3.0)))
+	conferir("%s: a água não aparece na quina norte do pátio (azul %+.1f, o máximo é %+.1f)"
 		% [nome, pior, AZUL_MAX], pior <= AZUL_MAX, onde)
 
 

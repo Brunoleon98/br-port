@@ -146,3 +146,13 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
   `Main` solto deixaria o objeto a ouvir para sempre — sem erro e sem nada na
   tela. Objeto `RefCounted` liga-se ao autoload por método; o F8h do
   `teste_fumaca` prova-o na narradora (`096`).
+- **⚠️ `set_parallel(true)` ANTES DE CADA PASSO JUNTA OS PASSOS TODOS NUM
+  SÓ.** No Godot 4 o tweener que entra depois do `true` vai para o passo
+  CORRENTE, e o `false` a seguir só vale para os próximos: o laço da espuma
+  fazia `true`, dois tweeners, `false`, por passo, e os dois passos corriam
+  ao mesmo tempo, com o último a ganhar. Medido numa sonda (`142`): a
+  `Espuma0` ficou parada em 0,45 desde que nasceu, com as seis suítes
+  verdes. Um passo de dois tweeners é `tween_property(…)` e
+  `parallel().tween_property(…)`. E animação nova prova-se com uma sonda que
+  imprime o nó ao longo dos frames — uma foto é um instante, e não diz se
+  anda; o D51 lê-o com `custom_step`.

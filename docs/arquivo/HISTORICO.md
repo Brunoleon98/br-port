@@ -919,3 +919,9 @@ mais curtas; o detalhe anterior permanece aqui:
 | `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
 
 | `tools/conferir_cobertura_paineis.py` | Fotos dos painéis abertos, por tempo/cara (`039`, `051`, `060`); `COBERTURA OK`, sem lacuna |
+
+**E, para caber os carros da viela (`141`),** saiu da fila do estado a
+linha *«**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
+(`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).»* — tudo
+fundido, cada um na sua decisão —, e a da fila da `126` encolheu a uma
+lista de decisões.
