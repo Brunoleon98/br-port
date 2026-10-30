@@ -925,3 +925,10 @@ linha *«**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
 (`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).»* — tudo
 fundido, cada um na sua decisão —, e a da fila da `126` encolheu a uma
 lista de decisões.
+
+## 30/10/2026 — revisor de mensagens (`145`)
+
+A referência do inventário foi comprimida para caber o revisor no estado.
+Texto anterior, preservado:
+
+| `brport_vs/scripts/Narrativa.gd` | Falas e expressões; arco da Fase 1 (`144`). Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |

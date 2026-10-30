@@ -732,6 +732,11 @@ com a dor que pagou, desceu para `docs/arquivo/PLANO_V3_FECHADOS.md` (`092`).
 
 ## 7. A fila
 
+**30/10, pedido do Bruno (`145`):** revisor de mensagens em contexto, como
+skill acionada na conversa, com preparador de fontes e primeiro parecer em
+`docs/arquivo/REVISAO_MENSAGENS_2026-10-30/README.md`. Não altera as falas nem
+aprova automaticamente a escrita. A frente gráfica abaixo segue com Claude.
+
 **24/10, frente do Codex — escolha nova do Bruno (`144`):** dar corpo à
 história da primeira fase e abrir lojas enquanto o Claude continua no gráfico.
 Ele escolheu Mercado e Delivery, com visitas/conversas e compras, e autorizou

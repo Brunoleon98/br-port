@@ -134,6 +134,7 @@ ou teste no telefone.
 
 **História/lojas (`144`):** save 19; chave/almoço aceitos e integrados.
 Revisão restante em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`; telefone pendente.
+**Revisor de mensagens (`145`):** skill `revisar-mensagens`, com parecer contextual.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
 histórico em `HISTORICO.md`.
@@ -166,7 +167,7 @@ histórico em `HISTORICO.md`.
 | `brport_vs/tests/teste_registro.gd` | **Teste do registro** — o `WRITE` que trunca, o teto, o relógio, a obra pronta (R7), e que o gravador não grava desarmado. Espera `REGISTRO OK` |
 | `brport_vs/tests/teste_design.gd` | **Teste de design** — encaixe, profundidade, limites da interface, leitura raster do mapa e pixel contra coordenada nos nós de prop (`025`, `028`, `029`); espera `DESIGN OK` |
 | `brport_vs/tests/teste_fumaca.gd` | **Fumaça** — cenas, ícones, save, tokens e falas; prazo prometido (F18), nomes lidos por string (F19), fases declaradas contra o alcançado (F20), exemplos de save (F21), tutorial (F22), Fase 2 e M9 (F23) |
-| `brport_vs/scripts/Narrativa.gd` | Falas e expressões; arco da Fase 1 (`144`). Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |
+| `brport_vs/scripts/Narrativa.gd` | Falas/expressões e arco da Fase 1 (`144`); números por extenso e concordância (`037`), conforme `narrativa.md` |
 | `brport_vs/tools/gravar_save_de_exemplo.gd` | Grava o save de exemplo da versão corrente em `tests/saves/` (`098`) |
 | `brport_vs/scripts/ArmazemLocal.gd` | **Onde o jogo guarda o que é do jogador** — com `--script`, em `user://ferramentas/`. `tools/sentinela_do_jogador.py` prova-o no CI (`061`) |
 | `brport_vs/scripts/Retratos.gd` | **O registro dos rostos** — qual PNG é qual personagem em qual expressão, como o `Icones.gd` para o ícone. Doze bustos (`020`, `101`) |

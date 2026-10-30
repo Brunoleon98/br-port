@@ -31,6 +31,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-30.md` | 30/10 | Revisor contextual (`145`), modo pelo chat, primeira rodada, base preservada e continuação |
+| `REVISAO_MENSAGENS_2026-10-30/README.md` | 30/10 | Primeira aplicação do revisor contextual (`145`): cobertura declarada, fatos, riscos, candidatos e o que manter |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-25d.md` | 25/10 | Chave/almoço aceitos e integrados; história renumerada para 141 após incorporar a rua da main; revisão restante |
 | `VERIFICACAO_FALAS_2026-10-25/README.md` | 25/10 | Integração das falas aceitas da chave/almoço, capturas e provas sobre a main atualizada |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24d.md` | 24/10 | Revisão de falas/lojas para mais vínculo, escolhida por Bruno; versões para leitura, sem alteração do jogo |
