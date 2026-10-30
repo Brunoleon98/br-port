@@ -559,28 +559,19 @@ expand_mode = 1
 texture = ExtResource("prop_coqueiro_copa")
 [node name="Ancoragem0" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 255.00
-offset_top = 212.83
-offset_right = 767.00
-offset_bottom = 724.83
+offset_left = 339.00
+offset_top = 252.83
+offset_right = 851.00
+offset_bottom = 764.83
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_marcador")
 [node name="Ancoragem2" type="TextureRect" parent="MapaWrap/Cenario"]
 layout_mode = 0
-offset_left = 333.00
-offset_top = 256.50
-offset_right = 845.00
-offset_bottom = 768.50
-mouse_filter = 2
-expand_mode = 1
-texture = ExtResource("prop_boia")
-[node name="Ancoragem1" type="TextureRect" parent="MapaWrap/Cenario"]
-layout_mode = 0
-offset_left = 205.00
-offset_top = 285.50
-offset_right = 717.00
-offset_bottom = 797.50
+offset_left = 353.00
+offset_top = 292.50
+offset_right = 865.00
+offset_bottom = 804.50
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("prop_boia")
@@ -593,6 +584,15 @@ offset_bottom = 801.83
 mouse_filter = 2
 expand_mode = 1
 texture = ExtResource("5")
+[node name="Ancoragem1" type="TextureRect" parent="MapaWrap/Cenario"]
+layout_mode = 0
+offset_left = 205.00
+offset_top = 325.50
+offset_right = 717.00
+offset_bottom = 837.50
+mouse_filter = 2
+expand_mode = 1
+texture = ExtResource("prop_boia")
 [node name="Fauna" type="Node2D" parent="MapaWrap"]
 script = ExtResource("fauna_ambiente")
 

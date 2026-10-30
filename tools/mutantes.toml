@@ -198,6 +198,25 @@ depois = '''
 '''
 reprova = { run_tests = "T29: operação mantém trabalhador e ciclo de serviço", teste_design = "D52: §6 e o trabalhador também, com o ciclo do guindaste a correr" }
 
+[[mutante]]
+id = "cone-no-corredor"
+de = "144"
+o_que = "o cone da ancoragem volta ao sítio de antes, no caminho de cinco dos nove deslizes"
+alvo = "brport_vs/scenes/Main.tscn"
+antes = '''
+offset_left = 339.00
+offset_top = 252.83
+offset_right = 851.00
+offset_bottom = 764.83
+'''
+depois = '''
+offset_left = 255.00
+offset_top = 212.83
+offset_right = 767.00
+offset_bottom = 724.83
+'''
+reprova = { teste_design = "D52: §7 nenhum casco passa por cima da ancoragem nos 9 caminhos" }
+
 # ── O TRABALHADOR E O CAIXA ────────────────────────────────────────────────
 
 [[mutante]]

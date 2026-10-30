@@ -29,12 +29,21 @@ extends RefCounted
 #   §5 O TOQUE A MEIO: o `_concluir_virada()` — o que o «Avançar dia» faz
 #      antes de virar — encosta o casco já, e o trabalho arranca;
 #   §6 COM O MOVIMENTO REDUZIDO não há deslize: o casco está no berço no
-#      toque, e o trabalhador também.
+#      toque, e o trabalhador também;
+#   §7 NENHUM CASCO PASSA POR CIMA DA ANCORAGEM: no porto completo, os nove
+#      caminhos (3 lugares × 3 berços), com o casco de maior e o de menor
+#      desenho da frota, píxel a píxel contra o cone e as duas boias, nas duas
+#      pontas do balanço delas; e os barcos parados ao largo também não lhes
+#      tocam. ⚠️ Com as peças onde estavam até à `144`, 6 dos 9 caminhos lhes
+#      passavam por cima, e o casco desenha-se DEPOIS do `Cenario` — por cima
+#      até da boia que lhe fica à frente. O Bruno escolheu tirá-las do
+#      corredor. Leva um controle: o casco posto em cima de uma boia tem de
+#      dar píxeis, senão o zero era de graça (e foi, na primeira sonda: o
+#      `PropIso.desenho()` mede a partir do CENTRO do quadro).
 #
-# ⚠️ FICA DE FORA: que a curva não passe por cima de um píer ou de uma boia.
-# A última perna é a faixa da `078` (o §3 prende-a) e o resto é mar aberto
-# nos três berços, visto na prancha da `144`; uma régua de pixel do casco
-# contra o tabuado custaria mais do que o que prende.
+# ⚠️ FICA DE FORA: que a curva não passe por cima de um píer. A última perna
+# é a faixa da `078` (o §3 prende-a), e o resto é mar aberto nos três
+# berços, visto na prancha da `144`.
 #
 # Bloco num arquivo próprio, pela regra do `AGENTS.md` §2.
 # ============================================================
@@ -88,6 +97,7 @@ func rodar(gs: Node, arvore: SceneTree) -> void:
 	_pref.definir_reduzir_movimento(true)
 	conferir("o movimento reduzido correu até ao fim", _o_reduzido() == true)
 	_pref.definir_reduzir_movimento(reduzido_antes)
+	conferir("a ancoragem correu até ao fim", _a_ancoragem() == true)
 	_gs.clear_save()
 	completo = true
 
@@ -286,5 +296,119 @@ func _o_reduzido() -> bool:
 	conferir("§6 e o trabalhador também, com o ciclo do guindaste a correr",
 		(doca.get_node("Trabalhador") as TextureRect).visible
 			and doca._tw_trabalho != null and doca._tw_trabalho.is_running())
+	_fechar(tela)
+	return true
+
+
+# §7 ─────────────────────────────────────────────────────────────────────────
+const MEIO_QUADRO := Vector2(256, 256)
+## Quanto a boia sobe no balanço dela (`Main._animar_boias()`, `base.y − 3`).
+const BOIA_SOBE := 3.0
+
+
+func _mascara(tex: Texture2D) -> Dictionary:
+	var P: Script = load("res://scripts/PropIso.gd")
+	return {"img": P.imagem(tex), "k": P.escala(tex), "r": P.desenho(tex)}
+
+
+## Píxeis opacos em comum entre o desenho `a` com o quadro em `oa` e o `b`
+## com o quadro em `ob` (cantos dos nós, em coordenada global). O `desenho()`
+## é relativo ao CENTRO do quadro, que é a origem do mundo.
+func _sobrepostos(a: Dictionary, oa: Vector2, b: Dictionary, ob: Vector2) -> int:
+	var ra := Rect2(oa + MEIO_QUADRO + (a["r"] as Rect2).position, (a["r"] as Rect2).size)
+	var rb := Rect2(ob + MEIO_QUADRO + (b["r"] as Rect2).position, (b["r"] as Rect2).size)
+	var i := ra.intersection(rb)
+	var n := 0
+	for y in range(floori(i.position.y), ceili(i.end.y)):
+		for x in range(floori(i.position.x), ceili(i.end.x)):
+			var g := Vector2(x, y)
+			if _opaco(a, g - oa) and _opaco(b, g - ob):
+				n += 1
+	return n
+
+
+func _opaco(m: Dictionary, local: Vector2) -> bool:
+	var img: Image = m["img"]
+	var px := Vector2i(int(local.x / float(m["k"])), int(local.y / float(m["k"])))
+	if px.x < 0 or px.y < 0 or px.x >= img.get_width() or px.y >= img.get_height():
+		return false
+	return img.get_pixelv(px).a > 0.5
+
+
+func _a_ancoragem() -> bool:
+	_gs.clear_save()
+	_gs._rng.seed = SEMENTE
+	_gs.new_game()
+	_gs.definir_nomes(_gs.NOME_PORTO_PADRAO, "")
+	if _gs.phase == "rival_offer":
+		_gs.resolve_rival_offer(true)
+	var custo: int = 0
+	for e in _gs.ESTRUTURAS:
+		custo += int(_gs.ESTRUTURAS[e]["custo"])
+	_gs.cash += custo
+	for e in _gs.ESTRUTURAS:
+		load("res://tools/estado_da_bancada.gd").instalar(_gs, e)
+	var tela: Control = load(CENA).instantiate()
+	_arvore.root.add_child(tela)
+	var docas: Array = tela.get_node("MapaWrap/Docas").get_children()
+	conferir("§7 o porto completo tem os três berços", docas.size() == 3
+		and _gs.docks.size() == 3)
+	var DockS: Script = load("res://scripts/Dock.gd")
+	var P: Script = load("res://scripts/PropIso.gd")
+	var cascos: Array = []
+	var casco_d: Dictionary = DockS.CASCOS
+	for classe in casco_d:
+		for motivo in casco_d[classe]:
+			for tex in casco_d[classe][motivo]:
+				cascos.append(tex)
+	cascos.sort_custom(func(x, y): return P.desenho(x).get_area() < P.desenho(y).get_area())
+	var extremos: Array = [_mascara(cascos[0]), _mascara(cascos[cascos.size() - 1])]
+	var pecas: Array = []
+	for no in tela.get_node("MapaWrap/Cenario").get_children():
+		if String(no.name).begins_with("Ancoragem"):
+			pecas.append({"m": _mascara((no as TextureRect).texture),
+				"o": (no as Control).get_global_transform().origin, "nome": String(no.name)})
+	conferir("§7 a ancoragem tem as três peças (%d)" % pecas.size(), pecas.size() == 3)
+
+	# o controle: o casco maior com o centro do desenho no da primeira peça
+	var c: Dictionary = extremos[1]
+	var p0: Dictionary = pecas[0]
+	var em_cima: Vector2 = p0["o"] + (p0["m"]["r"] as Rect2).get_center() \
+		- (c["r"] as Rect2).get_center()
+	var controle := _sobrepostos(c, em_cima, p0["m"], p0["o"])
+	conferir("§7 controle: o casco posto em cima de %s dá píxeis (%d)" % [p0["nome"], controle],
+		controle > 100)
+
+	var cruzam: Array = []
+	var pior := 0
+	for k in range(3):
+		var lugar := tela.get_node("MapaWrap/Cenario/BarcoEspera%d" % (k + 1)) as TextureRect
+		var centro := lugar.get_global_rect().get_center()
+		for p in pecas:
+			for m in extremos:
+				var parado := _sobrepostos(m, lugar.get_global_transform().origin, p["m"], p["o"]) \
+					+ _sobrepostos(m, lugar.get_global_transform().origin, p["m"],
+						p["o"] - Vector2(0, BOIA_SOBE))
+				if parado > 0:
+					cruzam.append("o lugar %d parado toca %s" % [k + 1, p["nome"]])
+		for d in range(3):
+			var doca = docas[d]
+			var barco := doca.get_node("Barco") as TextureRect
+			var base: Vector2 = doca._barco_base
+			var inicio: Vector2 = doca.get_global_transform().affine_inverse() * centro \
+				- barco.size * 0.5
+			var aqui := 0
+			for i in range(101):
+				var pos: Vector2 = DockS.ponto_do_deslize(inicio, base, i / 100.0)
+				var o: Vector2 = doca.get_global_transform() * pos
+				for p in pecas:
+					for m in extremos:
+						aqui += _sobrepostos(m, o, p["m"], p["o"])
+						aqui += _sobrepostos(m, o, p["m"], p["o"] - Vector2(0, BOIA_SOBE))
+			pior = maxi(pior, aqui)
+			if aqui > 0:
+				cruzam.append("lugar %d -> berço %d (%d px)" % [k + 1, d + 1, aqui])
+	conferir("§7 nenhum casco passa por cima da ancoragem nos 9 caminhos (%d casos)"
+		% cruzam.size(), cruzam.is_empty(), ", ".join(cruzam))
 	_fechar(tela)
 	return true
