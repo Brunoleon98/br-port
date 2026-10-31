@@ -1,0 +1,16 @@
+almoco_maior_1.png: 720x1280, marcador presente, sem erro de script/shader; sha256 a7322d42f280042b15bfd0bb63eab78431b7803ba5e41222fde4f60724f84963
+almoco_maior_2.png: 720x1280, marcador presente, sem erro de script/shader; sha256 2e4bf2245e962d899b6a47fb8bb612c624943fcf83a309514c8d085660d71e79
+almoco_maior_3.png: 720x1280, marcador presente, sem erro de script/shader; sha256 0eba611c25ed1b19da293e64adfa831609a0beb2667d59600a26cc04def64c36
+almoco_maior_4.png: 720x1280, marcador presente, sem erro de script/shader; sha256 8c5132bacb3c2da91d78de0b7b0d881c92c634a478f5a4e04083b5c39f9629e1
+almoco_padrao_1.png: 720x1280, marcador presente, sem erro de script/shader; sha256 42efc0f90c08054c0302fd81bc8ee9fbe7b99df60c2717562d86c717cc4f8107
+almoco_padrao_2.png: 720x1280, marcador presente, sem erro de script/shader; sha256 a6d0da74ec27f373f7ae5716c17cd2d40ed426b930c1ba2232d05b9df64dd0c8
+almoco_padrao_3.png: 720x1280, marcador presente, sem erro de script/shader; sha256 26bda8aa4ab00e037e0df6ad9a7129def4636f790799e9b89e6ffde8bc837714
+almoco_padrao_4.png: 720x1280, marcador presente, sem erro de script/shader; sha256 1f27c02129fa2fe8c93fe28014d1c3e3f995f9b843ba115cd6436aee8c61adb7
+chave_maior_1.png: 720x1280, marcador presente, sem erro de script/shader; sha256 62107c7d89ebcf18869350d7fb5cce3e6fc5c9f7a8129a47da889b8206f3e3e3
+chave_maior_2.png: 720x1280, marcador presente, sem erro de script/shader; sha256 44809785d1aadd6c1a94d6e324edcbe4ad6e0905864a19cfe536e19777f9653c
+chave_maior_3.png: 720x1280, marcador presente, sem erro de script/shader; sha256 76b6be9f1229aff68f9117069cce406ab63607ed5d3b46d562987edb9047164a
+chave_maior_4.png: 720x1280, marcador presente, sem erro de script/shader; sha256 fb6d3a86381c473feb5cba34739932d10945426b585ce5fa112596dd1f800103
+chave_padrao_1.png: 720x1280, marcador presente, sem erro de script/shader; sha256 563a97a0026bd6e9b2ec65ca884c6e08eed77fdb1cca9d4c0e2a9724ca3f1418
+chave_padrao_2.png: 720x1280, marcador presente, sem erro de script/shader; sha256 4a63e65bf59595847b3b29e7f28f5c34df948b39c8d7d0133d6062f987daa911
+chave_padrao_3.png: 720x1280, marcador presente, sem erro de script/shader; sha256 03b6bfe8e40ba1f8cf2e5ed5338b07da60d439e3f151588541a9fbe7cadfe42c
+chave_padrao_4.png: 720x1280, marcador presente, sem erro de script/shader; sha256 70aace1f3def633ebd2f030e2b085c4eb5d4db9717d8dd8dc8c312c0c190f0b8

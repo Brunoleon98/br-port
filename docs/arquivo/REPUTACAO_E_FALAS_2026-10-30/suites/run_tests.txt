@@ -1,0 +1,1635 @@
+Fontconfig error: No writable cache directories
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+=== T1/T2: travamento depois da oferta do rival (cena real) ===
+  PASS  [igualar] botao desabilitado durante a oferta
+  PASS  [igualar] fase voltou para playing
+  PASS  [igualar] botao AVANCAR DIA reabilitado  <-- o bug reportado
+  PASS  [recusar] botao desabilitado durante a oferta
+  PASS  [recusar] fase voltou para playing
+  PASS  [recusar] botao AVANCAR DIA reabilitado  <-- o bug reportado
+  PASS  [recusar] a perda entra também no dia
+=== T3: mesmo trabalhador em duas docas ===
+  PASS  primeira alocacao aceita
+  PASS  segunda alocacao do MESMO trabalhador recusada
+  PASS  doca 1 continua sem trabalhador
+  PASS  worker_dock_index aponta a doca 0
+=== T4: devolver o barco ao largo ===
+  PASS  atracar enche o berco
+  PASS  desatracar devolve o barco ao largo
+  PASS  e o trabalhador fica livre
+  PASS  com a paciencia que tinha
+  PASS  recusa devolver com operacao em andamento
+=== T4b: contra-oferta com os 3 presets do GDD ===
+  PASS  igualar devolve 'fechado'
+  PASS  igualar cobra os 15% do GDD
+  PASS  fase voltou para playing
+  PASS  o barco fica ao largo, pronto para atracar
+  PASS  manter preco PODE dar certo  <-- era impossivel antes
+  PASS  quando da certo, paga o valor cheio
+  PASS  sem paciencia o cliente vai embora
+  PASS  o barco sai da fila quando o cliente vai
+  PASS  fase volta para playing mesmo perdendo
+  PASS  igualar depois de insistir custa mais (28 por cento)
+=== T4c: painel da contra-oferta (cena real) ===
+  PASS  painel tem os 3 presets do GDD
+  PASS  botao de igualar mostra o preco
+  PASS  botao de cortar metade mostra a chance
+  PASS  botao de manter mostra o valor cheio
+  PASS  negociar pelo painel devolve o jogo para playing
+  PASS  botao AVANCAR DIA reabilitado depois do painel
+=== T4d: a fila no fundeadouro ===
+  PASS  atracar o do meio
+  PASS  entrou o barco de 200
+  PASS  com o trabalhador junto
+  PASS  e a fila ficou com os outros dois
+  PASS  sem berco livre nao atraca mais nada
+  PASS  o atracado foi servido
+  PASS  o de paciencia 1 desistiu
+  PASS  o de paciencia 2 continua, com 1
+  PASS  a desistencia conta como barco perdido
+  PASS  e no dia que fechou
+  PASS  e custa reputacao
+  PASS  a fila nunca passa dos lugares
+  PASS  e a chegada nunca poe barco na doca
+  PASS  o berco 2 chama o trabalhador 2, e nao o primeiro livre
+  PASS  o portico corta o dia do barco que ja esperava
+  PASS  o save com fila carrega
+  PASS  e a fila volta com a paciencia
+  PASS  o bloco T4d correu até ao fim
+=== T5: upgrade avisa a UI ===
+  PASS  pier 2 comprado
+  PASS  iniciar não muda o roster
+  PASS  roster_changed disparou ao concluir
+  PASS  docas subiram para 2
+  PASS  trabalhadores subiram para 2
+  PASS  pier 3 fica para as próximas fases
+  PASS  Fase 1 fica com duas docas e dois trabalhadores
+=== T5b: estruturas — pre-requisito, caixa e efeito ===
+  PASS  sem caixa, o pier 2 diz quanto falta
+  PASS  e recusa a compra
+  PASS  pier 3 bloqueado sem o pier 2
+  PASS  comprar duas vezes nao acontece
+  PASS  estrutura ja construida diz isso
+  PASS  trabalhador alocado para o teste do armazem
+  PASS  armazem soma 50% ao barco de armazenagem (200 -> 300)
+  PASS  trabalhador alocado para o teste do pescado
+  PASS  e nao soma nada ao pescado (200 -> 200)
+=== T5c: save de outra versao nao entra ===
+  PASS  save sem versao e recusado  <-- o bug do pier duplicado
+  PASS  e apagado, para nao ser tentado de novo
+  PASS  save da versao corrente carrega
+  PASS  e traz o caixa de volta
+=== T5d: docas nunca passam do que o mapa desenha ===
+  PASS  os dois pieres dao exatamente 3 docas
+  PASS  e nunca mais trabalhador do que doca
+  PASS  save com doca a mais carrega
+  PASS  e a doca invisivel foi cortada
+  PASS  junto com o trabalhador que so ela tinha
+=== T5e: dinheiro sai com separador de milhar ===
+  PASS  R$8.000
+  PASS  R$54 sem ponto nenhum
+  PASS  R$1.234.567
+  PASS  negativo mantem o sinal na frente
+=== T5f: a reputacao MEXE na contra-oferta (A3) ===
+  PASS  na reputacao inicial o efeito e NEUTRO
+  PASS  reputacao alta ajuda
+  PASS  reputacao baixa atrapalha
+  PASS  a ordem e monotona
+  PASS  com reputacao maxima a aposta nao vira certeza
+  PASS  nunca passa de 1
+  PASS  igualar fecha mesmo com reputacao zero
+=== T5g: o Voltar do Android fecha o painel, nao o jogo ===
+  PASS  Voltar fecha o boletim
+  PASS  Voltar NAO fecha a tela dos nomes
+  PASS  Voltar NAO fecha a oferta do rival
+  PASS  e nao muda a fase
+  PASS  Voltar sem painel abre a pausa (e nao fecha o jogo)
+  PASS  quit_on_go_back esta desligado
+  PASS  o bloco T5g correu até ao fim
+=== T5h: atracagem pendente — os dois numeros saem da mesma varredura ===
+  PASS  conta todos os bercos livres, e nao só o primeiro
+  PASS  conta todos os barcos prontos ao largo
+  PASS  barcos_ao_largo concorda com a contagem
+  PASS  barco sob oferta nao conta
+  PASS  e nao atraca
+  PASS  berco nenhum livre => nao ha atracagem pendente
+  PASS  fila vazia => nao ha atracagem pendente
+  PASS  fora de playing nao ha atracagem pendente
+  PASS  o bloco T5h correu até ao fim
+=== T5i: resumo do dia — o que ja aconteceu e o que a projecao promete ===
+  PASS  antes do primeiro dia, 'ontem' nao tem turno
+  PASS  a projecao ve o barco que completaria hoje (servidos=1 receita=10000 esperado=10000)
+  PASS  a projecao nao mexeu na doca
+  PASS  a projecao nao mexeu no caixa
+  PASS  depois de avançar, 'ontem' tem o que a projecao prometeu (servidos=1 receita=10000)
+  PASS  e 'ontem' leva o numero do dia que fechou (turno=1)
+  PASS  e 'hoje' zerou — o dia novo ainda não jogou nada
+  PASS  barco sem trabalhador conta como perdido na projecao
+  PASS  dia de fechar semana projeta pier/salarios/manutencao
+  PASS  dia da parcela projeta o valor dela
+  PASS  parcela ja paga nao projeta de novo
+  PASS  o bloco T5i correu até ao fim
+=== T5j: calendario — so os tres eventos que se sabem de antemao ===
+  PASS  um dia por turno da partida, nem mais nem menos
+  PASS  'passado' concorda com o turno atual (dia 1)
+  PASS  'passado' concorda com o turno atual (dia 2)
+  PASS  'passado' concorda com o turno atual (dia 3)
+  PASS  'passado' concorda com o turno atual (dia 4)
+  PASS  'passado' concorda com o turno atual (dia 5)
+  PASS  'passado' concorda com o turno atual (dia 6)
+  PASS  'passado' concorda com o turno atual (dia 7)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 7)
+  PASS  'passado' concorda com o turno atual (dia 8)
+  PASS  'passado' concorda com o turno atual (dia 9)
+  PASS  o dia de hoje é o turno atual (10)
+  PASS  'passado' concorda com o turno atual (dia 10)
+  PASS  'passado' concorda com o turno atual (dia 11)
+  PASS  'passado' concorda com o turno atual (dia 12)
+  PASS  'passado' concorda com o turno atual (dia 13)
+  PASS  'passado' concorda com o turno atual (dia 14)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 14)
+  PASS  'passado' concorda com o turno atual (dia 15)
+  PASS  'passado' concorda com o turno atual (dia 16)
+  PASS  'passado' concorda com o turno atual (dia 17)
+  PASS  'passado' concorda com o turno atual (dia 18)
+  PASS  'passado' concorda com o turno atual (dia 19)
+  PASS  'passado' concorda com o turno atual (dia 20)
+  PASS  'passado' concorda com o turno atual (dia 21)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 21)
+  PASS  'passado' concorda com o turno atual (dia 22)
+  PASS  'passado' concorda com o turno atual (dia 23)
+  PASS  'passado' concorda com o turno atual (dia 24)
+  PASS  'passado' concorda com o turno atual (dia 25)
+  PASS  'passado' concorda com o turno atual (dia 26)
+  PASS  'passado' concorda com o turno atual (dia 27)
+  PASS  'passado' concorda com o turno atual (dia 28)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 28)
+  PASS  a parcela vence no dia certo (dia 28, esperado 28)
+  PASS  'passado' concorda com o turno atual (dia 29)
+  PASS  'passado' concorda com o turno atual (dia 30)
+  PASS  'passado' concorda com o turno atual (dia 31)
+  PASS  'passado' concorda com o turno atual (dia 32)
+  PASS  'passado' concorda com o turno atual (dia 33)
+  PASS  'passado' concorda com o turno atual (dia 34)
+  PASS  'passado' concorda com o turno atual (dia 35)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 35)
+  PASS  'passado' concorda com o turno atual (dia 36)
+  PASS  'passado' concorda com o turno atual (dia 37)
+  PASS  'passado' concorda com o turno atual (dia 38)
+  PASS  'passado' concorda com o turno atual (dia 39)
+  PASS  'passado' concorda com o turno atual (dia 40)
+  PASS  'passado' concorda com o turno atual (dia 41)
+  PASS  'passado' concorda com o turno atual (dia 42)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 42)
+  PASS  'passado' concorda com o turno atual (dia 43)
+  PASS  'passado' concorda com o turno atual (dia 44)
+  PASS  'passado' concorda com o turno atual (dia 45)
+  PASS  'passado' concorda com o turno atual (dia 46)
+  PASS  'passado' concorda com o turno atual (dia 47)
+  PASS  'passado' concorda com o turno atual (dia 48)
+  PASS  'passado' concorda com o turno atual (dia 49)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 49)
+  PASS  'passado' concorda com o turno atual (dia 50)
+  PASS  'passado' concorda com o turno atual (dia 51)
+  PASS  'passado' concorda com o turno atual (dia 52)
+  PASS  'passado' concorda com o turno atual (dia 53)
+  PASS  'passado' concorda com o turno atual (dia 54)
+  PASS  'passado' concorda com o turno atual (dia 55)
+  PASS  'passado' concorda com o turno atual (dia 56)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 56)
+  PASS  a parcela vence no dia certo (dia 56, esperado 56)
+  PASS  'passado' concorda com o turno atual (dia 57)
+  PASS  'passado' concorda com o turno atual (dia 58)
+  PASS  'passado' concorda com o turno atual (dia 59)
+  PASS  'passado' concorda com o turno atual (dia 60)
+  PASS  'passado' concorda com o turno atual (dia 61)
+  PASS  'passado' concorda com o turno atual (dia 62)
+  PASS  'passado' concorda com o turno atual (dia 63)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 63)
+  PASS  'passado' concorda com o turno atual (dia 64)
+  PASS  'passado' concorda com o turno atual (dia 65)
+  PASS  'passado' concorda com o turno atual (dia 66)
+  PASS  'passado' concorda com o turno atual (dia 67)
+  PASS  'passado' concorda com o turno atual (dia 68)
+  PASS  'passado' concorda com o turno atual (dia 69)
+  PASS  'passado' concorda com o turno atual (dia 70)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 70)
+  PASS  'passado' concorda com o turno atual (dia 71)
+  PASS  'passado' concorda com o turno atual (dia 72)
+  PASS  'passado' concorda com o turno atual (dia 73)
+  PASS  'passado' concorda com o turno atual (dia 74)
+  PASS  'passado' concorda com o turno atual (dia 75)
+  PASS  'passado' concorda com o turno atual (dia 76)
+  PASS  'passado' concorda com o turno atual (dia 77)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 77)
+  PASS  'passado' concorda com o turno atual (dia 78)
+  PASS  'passado' concorda com o turno atual (dia 79)
+  PASS  'passado' concorda com o turno atual (dia 80)
+  PASS  'passado' concorda com o turno atual (dia 81)
+  PASS  'passado' concorda com o turno atual (dia 82)
+  PASS  'passado' concorda com o turno atual (dia 83)
+  PASS  'passado' concorda com o turno atual (dia 84)
+  PASS  todo dia de fechar semana é multiplo de TURNS_PER_WEEK (dia 84)
+  PASS  a parcela vence no dia certo (dia 84, esperado 84)
+  PASS  exatamente um dia é 'hoje'
+  PASS  um fecho de semana por semana (12, esperado 12)
+  PASS  três vencimentos dentro da Fase 1
+  PASS  o bloco T5j correu até ao fim
+=== T5k: quitar a parcela antes do prazo ===
+  PASS  sem caixa para a parcela, nao da para quitar
+  PASS  e a tentativa recusada nao mexe no caixa
+  PASS  com caixa, a porta abre
+  PASS  quitar devolve verdadeiro
+  PASS  saiu do caixa exatamente o valor mostrado (130435, esperado 130435)
+  PASS  a parcela ficou marcada como paga
+  PASS  parcela ja paga fecha a porta
+  PASS  e a segunda tentativa nao cobra de novo
+  PASS  a parcela adiantada entra no dia em curso
+  PASS  e no boletim da semana em curso
+  PASS  fora de playing a porta fecha
+  PASS  quitar adiantado satisfaz a vitoria
+  PASS  uma parcela sozinha não quita as três
+  PASS  no vencimento a parcela custa o principal cheio
+  PASS  e passado o prazo ela nao ENCARECE
+  PASS  quitar mais cedo custa ESTRITAMENTE menos, nos 28 turnos do prazo
+  PASS  o cálculo genérico não cria juros após vencer
+  PASS  o desconto acompanha o PRINCIPAL que recebe, nao a parcela
+  PASS  e dobrar o principal dobra o desconto
+  PASS  quem paga no vencimento paga o principal inteiro (140000)
+  PASS  no vencimento, o boletim espera a decisao
+  PASS  o autosave preserva a semana enquanto a parcela espera
+  PASS  depois do pagamento, a semana fecha uma vez
+  PASS  o boletim final inclui a parcela
+  PASS  e desconta a parcela do resultado
+  PASS  o acumulador so zera depois do boletim
+  PASS  com o caixa curto, o vencimento tambem para em debt_payment
+  PASS  recusar a parcela FECHA a semana 4  <-- o adiamento orfao
+  PASS  e a quarta semana entra no historico na derrota
+  PASS  o boletim da derrota traz a semana, e sem parcela
+  PASS  e a semana zera, mesmo tendo-se perdido o porto
+  PASS  recusar duas vezes fecha a semana uma vez so
+  PASS  o bloco T5k correu até ao fim
+=== T5l: o motivo da escala ===
+  PASS  todo motivo que paga tem linha na contabilidade (nenhum de fora)
+  PASS  os motivos do pesqueiro somam 100 (100)
+  PASS  os motivos do medio somam 100 (100)
+  PASS  os motivos do grande somam 100 (100)
+  PASS  o pesqueiro nunca traz motivo fora da tabela dele (nenhum)
+  PASS  o medio nunca traz motivo fora da tabela dele (nenhum)
+  PASS  o grande nunca traz motivo fora da tabela dele (nenhum)
+  PASS  todo motivo da tabela chega ao jogo (todos)
+  PASS  porto em ruínas é nível 1 (1)
+  PASS  e recebe SÓ o pesqueiro (["pesqueiro"])
+  PASS  reparos básicos não compram guindaste intermediário
+  PASS  bancada do guindaste intermediário sobe a nível 2 (2)
+  PASS  e recebe pesqueiro e cargueiro, mas ainda não o grande (["medio", "pesqueiro"])
+  PASS  partida nova limpa o nível da bancada
+  PASS  save conserva os reparos e limpa o guindaste da bancada
+  PASS  com pórtico e sem cais o porto FICA no nível 2 (píer 2, guindaste 3, porto 2)
+  PASS  e o longo curso continua sem atracar (["medio", "pesqueiro"])
+  PASS  com pórtico e cais o porto chega a nível 3 (3)
+  PASS  e aí sim recebe as três classes (["medio", "pesqueiro", "grande"])
+  PASS  o valor cai na faixa da classe (todos)
+  PASS  o pátio foi comprado para o teste
+  PASS  o pátio soma 30% ao contêiner (1000 -> 1300)
+  PASS  e nao soma nada ao pescado (1000 -> 1000)
+  PASS  sem pórtico, o cargueiro leva 2 turnos (2)
+  PASS  sem pórtico, o cargueiro de granel leva 3 (3)
+  PASS  e o pesqueiro leva 1 (1)
+  PASS  a bancada instalou o pórtico
+  PASS  com pórtico, o cargueiro volta a 1 turno (1)
+  PASS  com pórtico, o granel dele desce a 2 e nao a 1 (2)
+  PASS  e o pesqueiro nunca desce abaixo de 1 (1)
+  PASS  o longo curso com pórtico leva 2 turnos (2)
+  PASS  todo barco nasce com motivo conhecido e turnos coerentes (todos)
+  PASS  o bloco T5l correu até ao fim
+=== T6: regressao — partidas completas ===
+  PASS  40 partidas completadas sem travar
+  PASS  e elas jogaram — serviram barcos (6274)
+  -> vitorias=40 derrotas=0
+=== T7: a Leitura do simulador escolhe por identidade, nao por posicao ===
+  PASS  A: a leitura sai válida
+  PASS  A: o Ótimo entra com a taxa e a amostra dele
+  PASS  A: jogar mal é o DESCUIDADO, a 30%
+  PASS  A: o vão sai em pontos percentuais, e são 70
+  PASS  A: a taxa do Antecipado NÃO chega à conclusão
+  PASS  A: a linha que o CI procura continua a sair
+  PASS  permutar a ordem devolve exatamente as mesmas linhas
+  PASS  acrescentar um perfil 1/10 não muda quem é o Descuidado
+  PASS  B: a leitura sai válida
+  PASS  B: o Ótimo usa o denominador dele (20)
+  PASS  B: o Descuidado usa o denominador DELE (10)
+  PASS  B: o vão são 50 pontos
+  PASS  B: o denominador do Ótimo NÃO serve o Descuidado
+  PASS  B: a diferença não é relativa
+  PASS  sem Descuidado, a leitura recusa
+  PASS  sem Descuidado, ela diz que não o achou
+  PASS  sem Descuidado, não publica taxa nenhuma
+  PASS  sem Descuidado, não publica vão nenhum
+  PASS  com Descuidado duplicado, a leitura recusa
+  PASS  com Descuidado duplicado, ela diz quantas vezes apareceu
+  PASS  com Descuidado duplicado, não publica taxa nenhuma
+  PASS  amostra vazia recusa
+  PASS  amostra vazia diz que não há partida com desfecho
+  PASS  amostra vazia não publica taxa
+  PASS  amostra vazia não publica vão
+  PASS  o papel PERFIL_BOM existe em PERFIS
+  PASS  o papel PERFIL_RUIM existe em PERFIS
+  PASS  os dois papéis são perfis diferentes
+  PASS  o bloco T7 correu até ao fim
+=== T8: a fila da faixa de mensagem ===
+  PASS  T8: a primeira aparece logo, sem esperar
+  PASS  T8: e a segunda fica à espera da vez
+  PASS  T8: um passo curto não troca a mensagem
+  PASS  T8: e ela continua na tela
+  PASS  T8: o passo que fecha o mínimo troca
+  PASS  T8: e agora é a segunda
+  PASS  T8: a urgente não rouba a vez de quem está na tela
+  PASS  T8: mas passa à frente das que esperavam
+  PASS  T8: texto igual à espera funde-se
+  PASS  T8: e não ocupa lugar nenhum na fila
+  PASS  T8: texto diferente nunca se funde
+  PASS  T8: o histórico tem as três, mesmo com duas por mostrar
+  PASS  T8: e a mais recente vem primeiro
+  PASS  T8: retirar tira a que espera a vez
+  PASS  T8: e tira-a do histórico — nunca esteve na tela, não foi dita
+  PASS  T8: a que está na tela NÃO se retira — a fila nunca interrompe
+  PASS  T8: e a que ficou chega à tela, pela ordem
+  PASS  T8: uma frase curta fica perto da base
+  PASS  T8: uma frase longa fica mais
+  PASS  T8: e nenhuma passa do teto
+  PASS  o bloco T8 correu até ao fim
+=== T9: a concordancia de plural, com o adjetivo junto ===
+  PASS  T9: zero leva PLURAL, e é o caso que separa n==1 de n<=1
+  PASS  T9: um leva singular
+  PASS  T9: dois leva plural, adjetivo incluído
+  PASS  T9: trinta e dois leva plural
+  PASS  T9: um, com particípio
+  PASS  T9: dois, com particípio
+  PASS  T9: zero, com particípio
+  PASS  T9: substantivo sozinho, um
+  PASS  T9: substantivo sozinho, dois
+  PASS  o bloco T9 correu até ao fim
+=== T10: lucro ou prejuizo, e o zero que nao e nenhum ===
+  PASS  T10: lucro, com separador de milhar
+  PASS  T10: prejuízo SEM sinal — a palavra já diz que saiu
+  PASS  T10: zero não é lucro nem prejuízo
+  PASS  T10: a abrir a linha, a primeira letra sobe
+  PASS  o bloco T10 correu até ao fim
+=== T11: quando vence a parcela, no painel dela (cena real) ===
+  PASS  T11: no dia 28 o painel diz «Vence hoje, dia 28.»
+  PASS  T11: no dia 27 o painel diz «Vence amanhã, dia 28.»
+  PASS  T11: no dia 26 o painel diz «Vence no dia 28 — daqui a 2 dias.»
+  PASS  o bloco T11 correu até ao fim
+=== T12: o tom do boletim so afirma o que a semana confirma ===
+  PASS  T12: parcela paga na semana com histórico → ruim_ribeiro (deu ruim_ribeiro)
+  PASS  T12: parcela paga JÁ na semana 1 → ruim_ribeiro (deu ruim_ribeiro)
+  PASS  T12: primeira semana no vermelho → primeira_ruim (deu primeira_ruim)
+  PASS  T12: vermelho depois de vermelho → ruim (deu ruim)
+  PASS  T12: vermelho depois de uma semana a ZERO → ruim_virou (deu ruim_virou)
+  PASS  T12: vermelho depois de azul → ruim_virou (deu ruim_virou)
+  PASS  T12: azul sem histórico → neutro (deu neutro)
+  PASS  T12: azul acima de 30% da média → otimo (deu otimo)
+  PASS  T12: azul perto da média → neutro (deu neutro)
+  PASS  o bloco T12 correu até ao fim
+=== T13: a despedida do Sr. Ribeiro so vem depois de pagar (cena real) ===
+  PASS  T13: «pagou» traz a despedida
+  PASS  T13: «pagou» fecha com «Até a próxima, Sr. Ribeiro»
+  PASS  T13: «nao_pagou» não traz a despedida
+  PASS  T13: «nao_pagou» fecha com «Adeus, Sr. Ribeiro»
+  PASS  o bloco T13 correu até ao fim
+=== T14: três cobranças e desbloqueios da Fase 1 ===
+  PASS  T14: calendário aprovado tem 84 dias e 7 por semana
+  PASS  T14: píer 2 abre no início
+  PASS  T14: armazém espera a segunda semana
+  PASS  T14: pier_3 não pode ser comprado na Fase 1
+  PASS  T14: escritorio não pode ser comprado na Fase 1
+  PASS  T14: trelica não pode ser comprado na Fase 1
+  PASS  T14: guindaste não pode ser comprado na Fase 1
+  PASS  T14: cais não pode ser comprado na Fase 1
+  PASS  T14: dia 1 mantém a madeira e só recebe pesca
+  PASS  T14: dia 2 mantém a madeira e só recebe pesca
+  PASS  T14: dia 3 mantém a madeira e só recebe pesca
+  PASS  T14: dia 4 mantém a madeira e só recebe pesca
+  PASS  T14: dia 5 mantém a madeira e só recebe pesca
+  PASS  T14: dia 6 mantém a madeira e só recebe pesca
+  PASS  T14: dia 7 mantém a madeira e só recebe pesca
+  PASS  T14: armazém abre no dia 8
+  PASS  T14: dia 8 mantém a madeira e só recebe pesca
+  PASS  T14: dia 9 mantém a madeira e só recebe pesca
+  PASS  T14: dia 10 mantém a madeira e só recebe pesca
+  PASS  T14: dia 11 mantém a madeira e só recebe pesca
+  PASS  T14: dia 12 mantém a madeira e só recebe pesca
+  PASS  T14: dia 13 mantém a madeira e só recebe pesca
+  PASS  T14: dia 14 mantém a madeira e só recebe pesca
+  PASS  T14: dia 15 mantém a madeira e só recebe pesca
+  PASS  T14: dia 16 mantém a madeira e só recebe pesca
+  PASS  T14: dia 17 mantém a madeira e só recebe pesca
+  PASS  T14: dia 18 mantém a madeira e só recebe pesca
+  PASS  T14: dia 19 mantém a madeira e só recebe pesca
+  PASS  T14: dia 20 mantém a madeira e só recebe pesca
+  PASS  T14: dia 21 mantém a madeira e só recebe pesca
+  PASS  T14: dia 22 mantém a madeira e só recebe pesca
+  PASS  T14: dia 23 mantém a madeira e só recebe pesca
+  PASS  T14: dia 24 mantém a madeira e só recebe pesca
+  PASS  T14: dia 25 mantém a madeira e só recebe pesca
+  PASS  T14: dia 26 mantém a madeira e só recebe pesca
+  PASS  T14: dia 27 mantém a madeira e só recebe pesca
+  PASS  T14: pátio não abre antes da primeira cobrança
+  PASS  T14: dia 28 mantém a madeira e só recebe pesca
+  PASS  T14: cobrança 1 vence no dia correto
+  PASS  T14: save retoma cobrança 1 suspensa
+  PASS  T14: cobrança 1 debitada uma vez
+  PASS  T14: repetir Pagar não debita outra vez
+  PASS  T14: boletim inclui a cobrança correta
+  PASS  T14: pagar não encerra antes da terceira
+  PASS  T14: save preserva a janela seguinte
+  PASS  T14: pátio abre após a cobrança paga
+  PASS  T14: dia 29 mantém a madeira e só recebe pesca
+  PASS  T14: dia 30 mantém a madeira e só recebe pesca
+  PASS  T14: dia 31 mantém a madeira e só recebe pesca
+  PASS  T14: dia 32 mantém a madeira e só recebe pesca
+  PASS  T14: dia 33 mantém a madeira e só recebe pesca
+  PASS  T14: dia 34 mantém a madeira e só recebe pesca
+  PASS  T14: dia 35 mantém a madeira e só recebe pesca
+  PASS  T14: dia 36 mantém a madeira e só recebe pesca
+  PASS  T14: dia 37 mantém a madeira e só recebe pesca
+  PASS  T14: dia 38 mantém a madeira e só recebe pesca
+  PASS  T14: dia 39 mantém a madeira e só recebe pesca
+  PASS  T14: dia 40 mantém a madeira e só recebe pesca
+  PASS  T14: dia 41 mantém a madeira e só recebe pesca
+  PASS  T14: dia 42 mantém a madeira e só recebe pesca
+  PASS  T14: dia 43 mantém a madeira e só recebe pesca
+  PASS  T14: dia 44 mantém a madeira e só recebe pesca
+  PASS  T14: dia 45 mantém a madeira e só recebe pesca
+  PASS  T14: dia 46 mantém a madeira e só recebe pesca
+  PASS  T14: dia 47 mantém a madeira e só recebe pesca
+  PASS  T14: dia 48 mantém a madeira e só recebe pesca
+  PASS  T14: dia 49 mantém a madeira e só recebe pesca
+  PASS  T14: dia 50 mantém a madeira e só recebe pesca
+  PASS  T14: dia 51 mantém a madeira e só recebe pesca
+  PASS  T14: dia 52 mantém a madeira e só recebe pesca
+  PASS  T14: dia 53 mantém a madeira e só recebe pesca
+  PASS  T14: dia 54 mantém a madeira e só recebe pesca
+  PASS  T14: dia 55 mantém a madeira e só recebe pesca
+  PASS  T14: dia 56 mantém a madeira e só recebe pesca
+  PASS  T14: cobrança 2 vence no dia correto
+  PASS  T14: save retoma cobrança 2 suspensa
+  PASS  T14: cobrança 2 debitada uma vez
+  PASS  T14: repetir Pagar não debita outra vez
+  PASS  T14: boletim inclui a cobrança correta
+  PASS  T14: pagar não encerra antes da terceira
+  PASS  T14: save preserva a janela seguinte
+  PASS  T14: dia 57 mantém a madeira e só recebe pesca
+  PASS  T14: dia 58 mantém a madeira e só recebe pesca
+  PASS  T14: dia 59 mantém a madeira e só recebe pesca
+  PASS  T14: dia 60 mantém a madeira e só recebe pesca
+  PASS  T14: dia 61 mantém a madeira e só recebe pesca
+  PASS  T14: dia 62 mantém a madeira e só recebe pesca
+  PASS  T14: dia 63 mantém a madeira e só recebe pesca
+  PASS  T14: dia 64 mantém a madeira e só recebe pesca
+  PASS  T14: dia 65 mantém a madeira e só recebe pesca
+  PASS  T14: dia 66 mantém a madeira e só recebe pesca
+  PASS  T14: dia 67 mantém a madeira e só recebe pesca
+  PASS  T14: dia 68 mantém a madeira e só recebe pesca
+  PASS  T14: dia 69 mantém a madeira e só recebe pesca
+  PASS  T14: dia 70 mantém a madeira e só recebe pesca
+  PASS  T14: dia 71 mantém a madeira e só recebe pesca
+  PASS  T14: dia 72 mantém a madeira e só recebe pesca
+  PASS  T14: dia 73 mantém a madeira e só recebe pesca
+  PASS  T14: dia 74 mantém a madeira e só recebe pesca
+  PASS  T14: dia 75 mantém a madeira e só recebe pesca
+  PASS  T14: dia 76 mantém a madeira e só recebe pesca
+  PASS  T14: dia 77 mantém a madeira e só recebe pesca
+  PASS  T14: dia 78 mantém a madeira e só recebe pesca
+  PASS  T14: dia 79 mantém a madeira e só recebe pesca
+  PASS  T14: dia 80 mantém a madeira e só recebe pesca
+  PASS  T14: dia 81 mantém a madeira e só recebe pesca
+  PASS  T14: dia 82 mantém a madeira e só recebe pesca
+  PASS  T14: dia 83 mantém a madeira e só recebe pesca
+  PASS  T14: dia 84 mantém a madeira e só recebe pesca
+  PASS  T14: cobrança 3 vence no dia correto
+  PASS  T14: save retoma cobrança 3 suspensa
+  PASS  T14: cobrança 3 debitada uma vez
+  PASS  T14: repetir Pagar não debita outra vez
+  PASS  T14: boletim inclui a cobrança correta
+  PASS  T14: o laço dos dias acabou sem bater no teto
+  PASS  T14: três cobranças reais emitidas
+  PASS  T14: doze boletins, e a Fase 2 só depois do dia 84
+  PASS  T14: recibo soma o que efetivamente saiu
+  PASS  T14: parcela antecipada abre na janela 0
+  PASS  T14: antecipar mantém o prazo e bloqueia pagamento repetido
+  PASS  T14: save retoma o recibo antecipado
+  PASS  T14: antecipação não chama cobrança outra vez
+  PASS  T14: parcela antecipada abre na janela 1
+  PASS  T14: antecipar mantém o prazo e bloqueia pagamento repetido
+  PASS  T14: save retoma o recibo antecipado
+  PASS  T14: antecipação não chama cobrança outra vez
+  PASS  T14: parcela antecipada abre na janela 2
+  PASS  T14: antecipar mantém o prazo e bloqueia pagamento repetido
+  PASS  T14: save retoma o recibo antecipado
+  PASS  T14: antecipação não chama cobrança outra vez
+  PASS  T14: três antecipações também passam à Fase 2
+  PASS  T14: antecipar nunca perdoa o capital emprestado
+  PASS  T14: antecipar abate juros do total contratado
+  PASS  T14: sem dinheiro não baixa parcela 0
+  PASS  T14: recusar parcela 0 perde o porto
+  PASS  T14: sem dinheiro não baixa parcela 1
+  PASS  T14: recusar parcela 1 perde o porto
+  PASS  T14: sem dinheiro não baixa parcela 2
+  PASS  T14: recusar parcela 2 perde o porto
+  PASS  T14: monta reparos do save 12
+  PASS  T14: monta armazém do save 12
+  PASS  T14: save legado tem cargueiro real
+  PASS  T14: estado legado passa a sanidade antes de trocar a versão
+  PASS  T14: consulta recusa save 12 sem apagar o arquivo
+  PASS  T14: carregar descarta save 12 sem limpar a bancada
+  PASS  T14: recusa save 12 antes de aplicar todos os campos persistidos
+  PASS  T14: recusa versao antes de aplicar qualquer campo
+  PASS  T14: recusa parcela_indice antes de aplicar qualquer campo
+  PASS  T14: recusa parcelas_quitadas antes de aplicar qualquer campo
+  PASS  T14: recusa total_pago_parcelas antes de aplicar qualquer campo
+  PASS  T14: recusa parcela_paid antes de aplicar qualquer campo
+  PASS  T14: forma ausente ou recibo incoerente recusado antes de aplicar
+  PASS  T14: forma ausente ou recibo incoerente recusado antes de aplicar
+  PASS  T14: forma ausente ou recibo incoerente recusado antes de aplicar
+  PASS  T14: forma ausente ou recibo incoerente recusado antes de aplicar
+  PASS  T14: forma ausente ou recibo incoerente recusado antes de aplicar
+  PASS  T14: forma ausente ou recibo incoerente recusado antes de aplicar
+  PASS  T14: forma ausente ou recibo incoerente recusado antes de aplicar
+  PASS  o bloco T14 correu até ao fim
+  PASS  T15: paga o píer ao iniciar
+  PASS  T15: pagamento não libera capacidade, trabalhador ou fala de pronto
+  PASS  T15: só uma obra, sem cobrar outra vez
+  PASS  T15: obra não esconde bloqueio das próximas fases
+  PASS  T15: obra não esconde abertura na segunda semana
+  PASS  T15: outra obra liberada espera a atual
+  PASS  T15: primeiro dia não termina o píer
+  PASS  T15: decisão pendente não avança dia nem obra
+  PASS  T15: Save 14 retoma prazo e saldo, limpando bancada
+  PASS  T15: segundo dia termina uma vez, abre no dia 3
+  PASS  T15: conclusão repetida não duplica o porto
+  PASS  T15: inicia armazém no dia 8
+  PASS  T15: armazenagem ainda não recebe bônus
+  PASS  T15: armazém pronto no dia 10 paga só armazenagem
+  PASS  T15: inicia pátio no dia 29
+  PASS  T15: pátio pronto no dia 32 dobra renda sem mudar madeira
+  PASS  T15: inicia píer antes da primeira cobrança
+  PASS  T15: conclusão não pula a cobrança do dia 28
+  PASS  T15: semana encerrada paga somente trabalhador que já existia
+  PASS  T15: cobrança e porto concluído retomam juntos
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: consulta recusa e preserva arquivo
+  PASS  T15: carregar descarta incompatível sem limpar bancada
+  PASS  T15: recusa preserva todo estado persistido, inclusive obra
+  PASS  T15: nova partida zera a obra
+  PASS  T15: obra que excederia a fase não cobra nem começa
+  PASS  T15: pode terminar no fechamento do dia 84
+  PASS  o bloco T15 correu até ao fim
+  PASS  T16: segunda cobrança abre sozinha
+  PASS  T16: pagamento sorteia oferta e preserva resposta sozinha
+  PASS  T16: boletim vem antes do Arlindo
+  PASS  T16: oferta abre depois do boletim sem perder cliente
+  PASS  T16: oferta habitual mantém prioridade sobre boletim
+  PASS  o bloco T16 correu até ao fim
+=== T17: a regra de abertura num lugar só ===
+  PASS  T17: quita a primeira cobrança no dia 1
+  PASS  T17: o calendário foi andado até ao fim
+  PASS  T17: o botão abre na fase toda obra que tem prazo, e só essas
+  PASS  T17: obra de pier_2 começada no dia em que abre (1) é aceita
+  PASS  T17: com o mínimo de quitadas (0) o save de pier_2 é aceito
+  PASS  T17: obra de pier_2 carregada sai com inteiros
+  PASS  T17: na véspera de armazem (dia 7) o recibo não aperta
+  PASS  T17: obra de armazem começada na véspera (dia 7) é recusada
+  PASS  T17: obra de armazem começada no dia em que abre (8) é aceita
+  PASS  T17: com o mínimo de quitadas (0) o save de armazem é aceito
+  PASS  T17: obra de armazem carregada sai com inteiros
+  PASS  T17: na véspera de patio (dia 28) o recibo não aperta
+  PASS  T17: obra de patio começada na véspera (dia 28) é recusada
+  PASS  T17: obra de patio começada no dia em que abre (29) é aceita
+  PASS  T17: com o mínimo de quitadas (1) o save de patio é aceito
+  PASS  T17: com uma quitada a menos o save de patio é recusado
+  PASS  T17: obra de patio carregada sai com inteiros
+  PASS  o bloco T17 correu até ao fim
+=== T18: a segunda chance do Sr. Ribeiro ===
+  PASS  T18: fora do vencimento não há segunda chance
+  PASS  T18: quem tem o boleto inteiro não a vê
+  PASS  T18: a quem falta um real, ela abre
+  PASS  T18: na última cobrança da fase não há seguinte, e ela não abre
+  PASS  T18: a bancada tem dois trabalhadores
+  PASS  T18: o empréstimo é o que falta mais a semana do fecho (191000)
+  PASS  T18: e a devolução leva o acréscimo fixo (213920)
+  PASS  T18: aceitar devolve true
+  PASS  T18: depois de pagar, o jogador fica exatamente com a semana (46000)
+  PASS  T18: a parcela 1 conta como paga, e a partida segue na janela 2
+  PASS  T18: a dívida é a devolução, e a chance fica gasta
+  PASS  T18: o sinal sai uma vez, com o emprestado e a devolução
+  PASS  T18: o boletim da semana fecha uma vez
+  PASS  T18: o boletim mostra o empréstimo à parte
+  PASS  T18: e o resultado NÃO o soma — crédito não é lucro
+  PASS  T18: aceitar outra vez não empresta de novo
+  PASS  T18: a semana depois do empréstimo fecha sem quebrar, mesmo sem um barco
+  PASS  T18: o boleto seguinte é a parcela mais a devolução
+  PASS  T18: antecipar não abate a devolução — ela soma inteira ao valor de hoje
+  PASS  T18: o save devolve a dívida e a chance gasta
+  PASS  T18: quitar antes paga a dívida junto
+  PASS  T18: a primeira chance abre
+  PASS  T18: a partida chega ao segundo vencimento com o boleto maior
+  PASS  T18: e a segunda chance não abre outra vez
+  PASS  T18: pagar no vencimento paga a dívida junto
+  PASS  T18: partida nova começa sem dívida e com a chance por usar
+  PASS  o bloco T18 correu até ao fim
+=== T19: o degrau 14→15 do save ===
+  PASS  T19: o exemplo da 14 lê-se
+  PASS  T19: e não traz os campos da 15
+  PASS  T19: a cadeia leva-o à 15
+  PASS  T19: sem dívida e com a chance por usar
+  PASS  T19: a semana em curso ganha a linha do empréstimo a zero
+  PASS  T19: e nenhum campo da 14 muda
+  PASS  T19: a origem não foi tocada
+  PASS  T19: o save da 14 carrega
+  PASS  o bloco T19 correu até ao fim
+=== T20: a passagem e a Fase 2 sem meta ===
+  PASS  T20: a reputação de teste não é a de partida da Fase 2
+  PASS  T20: a terceira quitação emite a passagem uma vez, da Fase 1 (1)
+  PASS  T20: e sai com a Fase 1 ainda em jogo — a reputação e o recibo com que ela fechou
+  PASS  T20: a partida segue na Fase 2, no primeiro dia dela, sem fim de jogo
+  PASS  T20: a cobrança recomeça vazia, e a segunda chance por usar
+  PASS  T20: a reputação recomeça na escala da Fase 2 (65.0)
+  PASS  T20: e o recibo da Fase 1 fica no total pago
+  PASS  o bloco T20 (a passagem) correu até ao fim
+  PASS  T20: sem cobrança, nada pede o boleto
+  PASS  T20: a Fase 2 não tem prazo, e o dia diz a fase
+  PASS  T20: o calendário mostra a semana de hoje e as três seguintes, sem cobrança
+  PASS  T20: o píer 3 abre na Fase 2, depois do píer 2
+  PASS  T20: o escritório abre no primeiro dia dela
+  PASS  T20: o guindaste e o cais continuam nas próximas fases
+  PASS  T20: nove semanas de Fase 2 sem cobrança e sem fim (63 dias, 0 cobranças)
+  PASS  T20: e o boletim fecha toda semana, da 13 em diante ([13, 14, 15, 16, 17, 18, 19, 20, 21])
+  PASS  T20: com o píer 3 de pé o porto chega aos três berços
+  PASS  T20: o caixa negativo ainda acaba a partida na Fase 2
+  PASS  o bloco T20 (a Fase 2 joga-se) correu até ao fim
+  PASS  T20: o save da Fase 2 traz a fase e a obra do píer 3
+  PASS  T20: com a Fase 1 viva, o espaço da Fase 2 lê-se pela fase dele
+  PASS  T20: com a Fase 2 viva, o espaço da Fase 1 no dia 30 lê-se pela fase dele
+  PASS  T20: recusa a fase acima da tabela
+  PASS  T20: recusa a fase zero
+  PASS  T20: recusa a fase em texto
+  PASS  T20: recusa a fase partida
+  PASS  T20: recusa o dia de antes de a Fase 2 abrir
+  PASS  T20: recusa a Fase 1 com a obra do píer 3
+  PASS  T20: recusa uma parcela na Fase 2
+  PASS  T20: recusa quitadas na Fase 2
+  PASS  T20: recusa o recibo pago na Fase 2
+  PASS  T20: recusa a segunda chance usada na Fase 2
+  PASS  T20: recusa um estado de turno que não existe
+  PASS  T20: o save bom da Fase 2 passa
+  PASS  T20: a obra da Fase 2 não tem teto de dia
+  PASS  o bloco T20 (o save pela fase do arquivo) correu até ao fim
+  PASS  T20: o exemplo da 15 lê-se
+  PASS  T20: e é da forma da 15 — com o legado, sem a fase
+  PASS  T20: a cadeia leva-o à 16, na Fase 1 e sem o legado
+  PASS  T20: e nenhum outro campo da 15 muda
+  PASS  T20: a origem não foi tocada
+  PASS  T20: o save da 15 carrega na Fase 1
+  PASS  T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar
+  PASS  T20: com os recomeços da passagem
+  PASS  T20: e passa todas as recusas
+  PASS  T20: e joga-se: o dia anda sem cobrança nem fim
+  PASS  T20: a partida perdida da 15 fica no fim de jogo, na Fase 1
+  PASS  o bloco T20 (o degrau 15→16) correu até ao fim
+=== T21: a treliça comprada e o cargueiro de dois dias ===
+  PASS  T21: a treliça não se compra na Fase 1
+  PASS  T21: a treliça abre no primeiro dia da Fase 2
+  PASS  T21: pede o píer 2 para garantir o píer de nível 2
+  PASS  T21: compra o píer 2
+  PASS  T21: avança até ao dia 87
+  PASS  T21: inicia a treliça e paga o preço inteiro uma vez
+  PASS  T21: nem a obra nem dois reparos promovem a madeira antes de concluir
+  PASS  T21: avança até ao dia 88
+  PASS  T21: a treliça retoma do save ainda em obra, sem cobrar de novo
+  PASS  T21: avança até ao dia 89
+  PASS  T21: concluída, a treliça põe píer, guindaste e porto no nível 2
+  PASS  T21: recebe pesca e cargueiro, mantendo longo curso bloqueado
+  PASS  T21: save da treliça pronta volta ao nível 2 sem meta de bancada
+  PASS  T21: a doca real escolhe o píer e a lança aprovados do nível 2
+  PASS  T21: o sorteio do porto de nível 2 produz cargueiro com contêiner
+  PASS  T21: a treliça conserva dois dias do cargueiro e o extra do granel
+  PASS  T21: o cargueiro sorteado atraca pela porta do jogador
+  PASS  T21: avança até ao dia 90
+  PASS  T21: após um dia permanece na doca sem pagamento
+  PASS  T21: o cargueiro retoma do save com um dia trabalhado
+  PASS  T21: avança até ao dia 91
+  PASS  T21: o segundo dia fecha o contrato e libera o trabalhador
+  PASS  o bloco T21 correu até ao fim
+=== T22: três barras, regressão, jogo livre e save 17 ===
+  PASS  T22: piso abaixo do início e meta acima, três dias
+  PASS  T22: abre sem dias contados, missão ou conquista
+  PASS  T22: um reparo pronto de dois, sem contar escritório
+  PASS  T22: limiar exato conta um dia fechado
+  PASS  T22: save e load guardam o dia sem contar outro
+  PASS  T22: fecho abaixo do alvo recomeça sequência
+  PASS  T22: 1 de três dias, sem conquista precoce
+  PASS  T22: 2 de três dias, sem conquista precoce
+  PASS  T22: 3 de três dias, sem conquista precoce
+  PASS  T22: píer 3 em obra não completa barra
+  PASS  T22: infra pronta não substitui missão
+  PASS  T22: encontrou cargueiro de dois dias
+  PASS  T22: atraca cargueiro sem cumprir missão
+  PASS  T22: primeiro dia de descarga não cumpre missão
+  PASS  T22: descarga cumpriu missão e fechou fase uma vez
+  PASS  T22: abaixo do piso só novas chegadas de pesca
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: sorteio respeita suspensão
+  PASS  T22: conquista e missão voltam mesmo com reputação baixa
+  PASS  T22: piso exato recupera cargueiros
+  PASS  T22: jogo livre avança sem repetir diário
+  PASS  T22: conquista não impede quebra
+  PASS  T22: contratado termina abaixo do piso
+  PASS  T22: quebra tem prioridade sobre três barras
+  PASS  T22: degrau 16→17 conserva porto e começa acompanhamento
+  PASS  T22: recusa progresso inválido dias_de_reputacao=-1
+  PASS  T22: recusa progresso inválido dias_de_reputacao=1.5
+  PASS  T22: recusa progresso inválido dias_de_reputacao=4
+  PASS  T22: recusa progresso inválido primeiro_cargueiro=1
+  PASS  T22: recusa progresso inválido meta_concluida=true
+  PASS  T22: dinheiro curto sem cobrança é salário, não parcela
+ERROR: Resumed function '_aplicar()' after await, but class instance is gone. At script: res://scripts/TextoDaInterface.gd:118
+   at: resume (modules/gdscript/gdscript_function.cpp:204)
+  PASS  T22: aviso da Cida chega sem prometer cobrança
+  PASS  T22: toque no rodapé abre painel das três barras
+  PASS  T22: painel tem exatamente três barras
+  PASS  T22: barras leem dias, infra pronta e missão, nesta ordem
+  PASS  T22: conquista abre diário e não EndGame
+  PASS  T22: diário oferece só seguir em jogo livre
+  PASS  T22: diário não traz dígitos nem tokens crus
+ERROR: Resumed function '_aplicar()' after await, but class instance is gone. At script: res://scripts/TextoDaInterface.gd:119
+   at: resume (modules/gdscript/gdscript_function.cpp:204)
+  PASS  T22: oferta sorteada espera diário e vem ao fechar
+  PASS  T22: partida nova zera todos os marcos
+  PASS  o bloco T22 correu até ao fim
+=== T23: populações e censura da medição da Fase 2 ===
+  PASS  T23: denominador de entrada exclui perda na Fase 1 e travamento
+  PASS  T23: a meta permanece cumprida após quebra no jogo livre
+  PASS  T23: quebra antes da meta é separada da posterior
+  PASS  T23: janela encerrada sem meta é censura, não derrota
+  PASS  T23: perda da fase anterior tem população própria
+  PASS  T23: travamento não se publica como perfil que perdeu
+  PASS  T23: dias até a meta usam só quem a alcançou
+  PASS  T23: o caixa usa as quatro entradas, não apenas as metas
+  PASS  T23: sem meta não se inventa dia zero
+  PASS  T23: a população vazia também não inventa caixa
+  PASS  o bloco T23 correu até ao fim
+PASS T24: doca e identidade inválidas recusadas
+PASS T24: recusa fora de jogando: rival_offer
+PASS T24: recusa fora de jogando: debt_payment
+PASS T24: recusa fora de jogando: game_over
+PASS T24: devolução sem espaço recusa gratuitamente
+PASS T24: toque antes de operar devolve gratuitamente
+PASS T24: concluído não cancela
+PASS T24: previsão separa bônus da base
+PASS T24: fila cheia permite saída definitiva
+PASS T24: multa e reputação únicas, sem pagar serviço
+PASS T24: repetição não cobra
+PASS T24: equipe reutilizada no mesmo dia
+PASS T24: multa lançada nas contas
+PASS T24: granel, acordo e arredondamento
+PASS T24: outra doca intacta
+PASS T24: negativo permitido até ao fecho
+PASS T24: negativo e despesas sobrevivem à retomada
+PASS T24: recupera sem nova multa no fecho
+PASS T24: sem recuperação perde no fecho
+PASS T24: fecho semanal e projeção contam multa exatamente uma vez
+PASS T24: recorde do dia desconta a multa
+PASS T24: boletim identifica a despesa
+PASS T24: marcos já conquistados permanecem
+PASS T24: a sequência é avaliada só no fecho
+PASS T24: fecho abaixo da meta interrompe a sequência
+PASS T24: 17→18 preserva toda a partida
+PASS T24: migração não inventa multa passada
+PASS T24: 18 truncada recusada: dia_atual
+PASS T24: 18 truncada recusada: dia_anterior
+PASS T24: 18 truncada recusada: semana_atual
+PASS T24: 18 truncada recusada: metrics
+PASS T24: press iniciado não abre confirmação
+Fontconfig error: No writable cache directories
+PASS T24: cartão abre a confirmação
+PASS T24: confirmação mostra multa, percentual e saldo resultante
+PASS T24: continuar é o foco inicial
+PASS T24: confirmação bloqueia avanço
+PASS T24: abandonar não cancela
+ERROR: Resumed function '_aplicar()' after await, but class instance is gone. At script: res://scripts/TextoDaInterface.gd:119
+   at: resume (modules/gdscript/gdscript_function.cpp:204)
+PASS T24: press no cenário também espera soltar
+PASS T24: cenário abre o mesmo painel
+PASS T24: confirmação velha não cobra outro barco
+PASS T24: orçamento alterado exige nova confirmação
+PASS T24: recusa pede reabrir: confirmar outra vez não cancela
+PASS T24: painel removido não pode confirmar
+PASS T24: a confirmação mostra o botão Cancelar serviço
+PASS T24: confirmação real cobra uma vez
+PASS T24: registro 5 observa uma vez, sem identidade pessoal
+  PASS  T24: cancelamento, contas, migração, interface e registro
+PASS T25: espaços e cobranças vêm das regras
+PASS T25: custos reais e regra sem parcial na ajuda
+PASS T25: consulta não tem porta de escrita: PainelComoJogar
+PASS T25: consulta não tem porta de escrita: ConteudoComoJogar
+PASS T25: ajuda sem depender de save (ocupado=false)
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: ajuda sem depender de save (ocupado=true)
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: fase1
+ERROR: Resumed function '_aplicar()' after await, but class instance is gone. At script: res://scripts/TextoDaInterface.gd:119
+   at: resume (modules/gdscript/gdscript_function.cpp:204)
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: iniciado
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: negativo
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: livre
+PASS T25: controle: botão de baixo recebe toque antes da ajuda
+PASS T25: botão alcançável: Como jogar
+PASS T25: a porta abre a cena compartilhada
+PASS T25: toque no fundo não atravessa a ajuda
+PASS T25: abre pelo índice com seis assuntos e glossário
+PASS T25: mesmo conteúdo em todas as origens e fases
+PASS T25: botão alcançável: Como jogar
+PASS T25: pedido repetido não duplica ajuda
+PASS T25: botão alcançável: Atracar e atender
+PASS T25: artigo selecionado: atracar
+PASS T25: Voltar retorna ao índice: atracar
+PASS T25: botão alcançável: Avançar o dia
+PASS T25: artigo selecionado: avancar
+PASS T25: Voltar retorna ao índice: avancar
+PASS T25: botão alcançável: Dinheiro e semana
+PASS T25: artigo selecionado: dinheiro
+PASS T25: Voltar retorna ao índice: dinheiro
+PASS T25: botão alcançável: Salvar e retomar
+PASS T25: artigo selecionado: salvar
+PASS T25: Voltar retorna ao índice: salvar
+PASS T25: botão alcançável: Devolver ou cancelar
+PASS T25: artigo selecionado: cancelar
+PASS T25: Voltar retorna ao índice: cancelar
+PASS T25: botão alcançável: Fases e metas
+PASS T25: artigo selecionado: fases
+PASS T25: Voltar retorna ao índice: fases
+PASS T25: botão alcançável: Glossário
+PASS T25: artigo selecionado: glossario
+PASS T25: Voltar retorna ao índice: glossario
+PASS T25: botão alcançável: Glossário
+PASS T25: glossário realmente rola
+PASS T25: botão de retorno fica fora da rolagem e dentro da tela
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Glossário
+PASS T25: consulta conserva posição do artigo
+PASS T25: botão alcançável: Assuntos
+PASS T25: botão alcançável: Fechar
+PASS T25: Fechar dispensa a consulta
+PASS T25: consulta preserva estado, RNG, arquivos e registro
+PASS T25: controle: toque volta a alcançar a origem
+PASS T25: botão alcançável: Como jogar
+PASS T25: reabrir começa no índice
+PASS T25: Voltar no índice retorna à origem
+PASS T25: fechar por Voltar também preserva tudo
+PASS T25: pausa permanece na origem: fim
+PASS T25: índice alcançável em (720, 1280): Atracar e atender
+PASS T25: índice alcançável em (720, 1280): Avançar o dia
+PASS T25: índice alcançável em (720, 1280): Dinheiro e semana
+PASS T25: índice alcançável em (720, 1280): Salvar e retomar
+PASS T25: índice alcançável em (720, 1280): Devolver ou cancelar
+PASS T25: índice alcançável em (720, 1280): Fases e metas
+PASS T25: índice alcançável em (720, 1280): Glossário
+PASS T25: índice alcançável em (720, 1280): Fechar
+PASS T25: botão alcançável: Glossário
+PASS T25: fim do glossário alcançável em (720, 1280)
+PASS T25: retorno visível no fim em (720, 1280)
+PASS T25: índice alcançável em (720, 1600): Atracar e atender
+PASS T25: índice alcançável em (720, 1600): Avançar o dia
+PASS T25: índice alcançável em (720, 1600): Dinheiro e semana
+PASS T25: índice alcançável em (720, 1600): Salvar e retomar
+PASS T25: índice alcançável em (720, 1600): Devolver ou cancelar
+PASS T25: índice alcançável em (720, 1600): Fases e metas
+PASS T25: índice alcançável em (720, 1600): Glossário
+PASS T25: índice alcançável em (720, 1600): Fechar
+PASS T25: botão alcançável: Glossário
+PASS T25: fim do glossário alcançável em (720, 1600)
+PASS T25: retorno visível no fim em (720, 1600)
+PASS T25: índice alcançável em (720, 1152): Atracar e atender
+PASS T25: índice alcançável em (720, 1152): Avançar o dia
+PASS T25: índice alcançável em (720, 1152): Dinheiro e semana
+PASS T25: índice alcançável em (720, 1152): Salvar e retomar
+PASS T25: índice alcançável em (720, 1152): Devolver ou cancelar
+PASS T25: índice alcançável em (720, 1152): Fases e metas
+PASS T25: índice alcançável em (720, 1152): Glossário
+PASS T25: índice alcançável em (720, 1152): Fechar
+PASS T25: botão alcançável: Glossário
+PASS T25: fim do glossário alcançável em (720, 1152)
+PASS T25: retorno visível no fim em (720, 1152)
+  PASS  T25: consulta, navegação e preservação da partida
+=== T26: o jogador ao acaso — invariantes a cada passo ===
+  PASS  T26: 24 partidas ao acaso guardam os invariantes
+  -> fase 2 em 13 de 24 partidas; dia mais longe 141; aceitas { "atracar": 3260, "carregar": 602, "devolver": 224, "avancar": 2491, "negociar": 804, "construir": 91, "pagar": 21, "cancelar": 99, "adiantar": 30, "chance": 7 }
+  PASS  T26: o robô exerceu cada ação que o jogo aceitou
+  PASS  o bloco T26 correu até ao fim, sem invariante quebrado
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: Fase 1 usa dia, saldo e meta reais
+PASS T27: porto sem obras nem serviços é explícito
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: boleto inclui segunda chance
+PASS T27: controle: antecipação aceita
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: antecipação mantém recibo e próxima cobrança futura
+PASS T27: controle: compra real inicia obra
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: obra usa prazo real e dias restantes
+PASS T27: prazo mostrado corresponde à conclusão no jogo
+PASS T27: controle: obra no último fecho inicia
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: obra do último fecho não promete dia inexistente
+PASS T27: última antecipação não inventa parcela seguinte
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: vencimento identifica dia fechado sem adiantar decisão
+PASS T27: controle: partida chega à Fase 2
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: Fase 2 sem cobrança nem prazo fictícios
+PASS T27: controle: píer 3 comprado ainda em obra
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: meta não conta estrutura ainda em obra
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: meta lê dias fechados e infraestrutura pronta
+PASS T27: controle: cargueiro com armazenagem sorteado
+PASS T27: controle: serviço contratado pela atracação
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: serviço mostra progresso guardado e receita com bônus
+PASS T27: recebimento mostrado confere com entrega real
+PASS T27: controle: outro serviço atraca
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: sem trabalhador não promete recebimento
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: jogo livre conserva conquista sem novo objetivo
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: encerramento e caixa negativo são reais
+PASS T27: conquista fica registrada após encerramento
+PASS T27: controle: obra e serviço antes do encerramento
+PASS T27: gerar conteúdo preserva estado, RNG, arquivos e registro
+PASS T27: encerrada não promete obra nem recebimento futuros
+PASS T27: controle: partida chega à Fase 2
+PASS T27: controle: doca ocupada para layout 0
+PASS T27: controle: doca ocupada para layout 1
+PASS T27: controle: doca ocupada para layout 2
+PASS T27: botões acessíveis fora da leitura
+PASS T27: resumo tem contraste medido sem pendências
+PASS T27: leitura alcança meta e botões continuam fora da rolagem
+PASS T27: consulta visual preserva estado, RNG, arquivos e registro
+PASS T27: Continuar abre resumo do mais recente sem criar Main
+PASS T27: o resumo escreve o dia e a semana
+PASS T27: Nova partida com espaços ocupados pergunta onde, com o título
+PASS T27: retomada repetida não duplica painel
+PASS T27: Voltar do aparelho fica na inicial e preserva consulta
+PASS T27: Carregar mostra o espaço escolhido
+PASS T27: Ir ao porto emite entrada única sem recarregar
+PASS T27: controle: estado pendente alcançado rival_offer
+PASS T27: consulta mantém decisão pendente rival_offer
+PASS T27: Ir ao porto troca para a cena real rival_offer
+PASS T27: porto recupera painel original rival_offer
+PASS T27: controle: estado pendente alcançado debt_payment
+PASS T27: consulta mantém decisão pendente debt_payment
+PASS T27: Ir ao porto troca para a cena real debt_payment
+PASS T27: porto recupera painel original debt_payment
+PASS T27: controle: estado pendente alcançado game_over
+PASS T27: consulta mantém decisão pendente game_over
+PASS T27: Ir ao porto troca para a cena real game_over
+PASS T27: porto recupera painel original game_over
+PASS T27: recusa não inicia partida nem apaga arquivo
+PASS T27: partida nova segue sem resumo: instalação false
+PASS T27: partida nova segue sem resumo: instalação true
+  PASS  T27: resumo de retomada e consulta sem efeitos
+PASS T28: identidade conserva commit completo e marca modificada
+PASS T28: build limpo não recebe marca de modificado
+PASS T28: identidade inválida não se apresenta como build
+PASS T28: editor não usa identidade possivelmente velha de outro export
+PASS T28: diagnóstico informa motor e plataforma reais
+PASS T28: porta de versão e diagnóstico existe
+PASS T28: as duas portas abrem a consulta compartilhada
+PASS T28: pedido repetido não empilha consulta
+PASS T28: abrir não inicia cópia automaticamente
+PASS T28: prévia exclui dados da partida e caminhos
+PASS T28: copia exatamente a prévia por ação explícita
+PASS T28: não confirma antes da resposta
+PASS T28: toque repetido não inicia segunda cópia pendente
+PASS T28: falha não anuncia sucesso e permite tentar de novo
+PASS T28: recusa da cópia mantém texto legível
+PASS T28: confirma somente a cópia concluída
+PASS T28: confirmação da cópia mantém texto legível
+PASS T28: botões têm alvo e cabem na tela
+PASS T28: consulta e cópia preservam estado, RNG, arquivos e registro
+PASS T28: Voltar do aparelho fecha a consulta
+PASS T28: botão Voltar fecha a consulta
+PASS T28: fechar preserva a partida
+PASS T28: porta de versão e diagnóstico existe
+PASS T28: as duas portas abrem a consulta compartilhada
+PASS T28: pedido repetido não empilha consulta
+PASS T28: abrir não inicia cópia automaticamente
+PASS T28: prévia exclui dados da partida e caminhos
+PASS T28: copia exatamente a prévia por ação explícita
+PASS T28: não confirma antes da resposta
+PASS T28: toque repetido não inicia segunda cópia pendente
+PASS T28: falha não anuncia sucesso e permite tentar de novo
+PASS T28: recusa da cópia mantém texto legível
+PASS T28: confirma somente a cópia concluída
+PASS T28: confirmação da cópia mantém texto legível
+PASS T28: botões têm alvo e cabem na tela
+PASS T28: consulta e cópia preservam estado, RNG, arquivos e registro
+PASS T28: Voltar do aparelho fecha a consulta
+PASS T28: botão Voltar fecha a consulta
+PASS T28: fechar preserva a partida
+PASS T28: fechar consulta conserva a pausa
+PASS T28: backend indisponível reprova a cópia
+  PASS  T28: identidade, prévia, cópia e consulta sem efeitos
+PASS T29: ausência mantém padrão e leitura não cria arquivo
+PASS T29: valor inválido mantém movimento atual: true
+PASS T29: valor inválido mantém movimento atual: 1
+PASS T29: valor inválido mantém movimento atual: []
+PASS T29: valor inválido mantém movimento atual: <null>
+PASS T29: escrita de preferência informa sucesso real
+PASS T29: nova instância relê escolha persistente
+PASS T29: bancada pode derivar padrão sem herdar outra ferramenta
+PASS T29: preferência de ferramenta é isolada
+PASS T29: jogo usa preferência fora da pasta de ferramentas
+PASS T29: preferência independe do espaço 1
+PASS T29: preferência independe do espaço 2
+PASS T29: preferência independe do espaço 3
+PASS T29: porta dos Ajustes disponível
+PASS T29: início e pausa abrem os mesmos Ajustes
+PASS T29: Ajustes repetidos não duplicam painel
+PASS T29: preferência acessível e sincronizada
+PASS T29: toque aplica imediatamente e permanece no disco
+PASS T29: falha ao lembrar é explícita e escolha vale na sessão
+PASS T29: escolha e Voltar alcançáveis com alvo mínimo
+PASS T29: Ajustes cabem na altura lógica 1152
+PASS T29: Ajustes cabem na altura lógica 1280
+PASS T29: Ajustes cabem na altura lógica 1600
+PASS T29: preferência e explicação mantêm texto legível
+PASS T29: Ajustes preservam partida, RNG, arquivos e registro
+PASS T29: Voltar do aparelho fecha somente os Ajustes
+PASS T29: botão Voltar fecha os Ajustes
+PASS T29: fechar Ajustes preserva a partida
+PASS T29: porta dos Ajustes disponível
+PASS T29: início e pausa abrem os mesmos Ajustes
+PASS T29: Ajustes repetidos não duplicam painel
+PASS T29: preferência acessível e sincronizada
+PASS T29: toque aplica imediatamente e permanece no disco
+PASS T29: falha ao lembrar é explícita e escolha vale na sessão
+PASS T29: escolha e Voltar alcançáveis com alvo mínimo
+PASS T29: Ajustes cabem na altura lógica 1152
+PASS T29: Ajustes cabem na altura lógica 1280
+PASS T29: Ajustes cabem na altura lógica 1600
+PASS T29: preferência e explicação mantêm texto legível
+PASS T29: Ajustes preservam partida, RNG, arquivos e registro
+PASS T29: Voltar do aparelho fecha somente os Ajustes
+PASS T29: botão Voltar fecha os Ajustes
+PASS T29: fechar Ajustes preserva a partida
+PASS T29: retorno dos Ajustes mantém a pausa
+PASS T29: controle: mata se move na apresentação padrão
+PASS T29: escolha para fundo já aberto e repõe pose inteira
+PASS T29: comparação temporal: fundo reduzido fica estável
+PASS T29: mudança de apresentação preserva partida e RNG
+PASS T29: berço livre mantém realce fixo
+PASS T29: barco chamável mantém realce e ação
+PASS T29: doca com barco à espera mantém realce fixo
+PASS T29: trânsito sem serviço fica oculto
+PASS T29: trânsito sem serviço fica oculto
+PASS T29: trânsito sem serviço fica oculto
+PASS T29: trânsito sem serviço fica oculto
+PASS T29: trânsito sem serviço fica oculto
+PASS T29: controle: fauna exercitada
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: fauna reduzida mantém pose e toque
+PASS T29: desligar restaura ciclos decorativos
+PASS T29: mudar a meio conclui callback da transição
+PASS T29: transição reduzida conclui próximo callback sem espera
+PASS T29: elementos criados depois nascem com fundo parado
+PASS T29: controle: serviço contratado pela ação de atracar
+PASS T29: operação mantém trabalhador e ciclo de serviço
+PASS T29: visita operacional do caminhão continua visível
+PASS T29: troca com operação preserva estado, RNG, arquivos e registro
+PASS T29: serviço e dia concluem com movimento reduzido
+PASS T29: caixa mostra resultado final sem contagem
+PASS T29: resultado do serviço continua visível e imóvel
+PASS T29: resultado termina sem esperar tween decorativo pausado
+  PASS  T29: preferência, movimento, informação e isolamento
+PASS T30: início tem exatamente quatro entradas em ambas as situações
+PASS T30: Continuar só está habilitado quando há partida salva
+PASS T30: Saves abre a lista compartilhada de espaços
+PASS T30: Configurações reúne as três consultas e Voltar
+PASS T30: consulta cabe e tem alvo de toque: Ajustes
+PASS T30: consulta cabe e tem alvo de toque: Como jogar
+PASS T30: consulta cabe e tem alvo de toque: Versão e diagnóstico
+PASS T30: consulta cabe e tem alvo de toque: Voltar
+PASS T30: Configurações usa a consulta compartilhada: Ajustes
+PASS T30: a consulta oculta o menu de Configurações
+PASS T30: pedido repetido conserva um único painel
+PASS T30: movimento normal tem fundo opaco e contraste AA
+PASS T30: movimento hover tem fundo opaco e contraste AA
+PASS T30: movimento pressed tem fundo opaco e contraste AA
+PASS T30: movimento hover_pressed tem fundo opaco e contraste AA
+PASS T30: Voltar do aparelho fecha somente a consulta
+PASS T30: fechar a consulta devolve o mesmo menu visível
+PASS T30: Configurações usa a consulta compartilhada: Como jogar
+PASS T30: a consulta oculta o menu de Configurações
+PASS T30: pedido repetido conserva um único painel
+PASS T30: Voltar do aparelho fecha somente a consulta
+PASS T30: fechar a consulta devolve o mesmo menu visível
+PASS T30: Configurações usa a consulta compartilhada: Versão e diagnóstico
+PASS T30: a consulta oculta o menu de Configurações
+PASS T30: pedido repetido conserva um único painel
+PASS T30: Voltar do aparelho fecha somente a consulta
+PASS T30: fechar a consulta devolve o mesmo menu visível
+PASS T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro
+PASS T30: Voltar de Configurações devolve a inicial
+PASS T30: entrada cabe e tem alvo de toque: Continuar
+PASS T30: entrada cabe e tem alvo de toque: Nova partida
+PASS T30: entrada cabe e tem alvo de toque: Saves
+PASS T30: entrada cabe e tem alvo de toque: Configurações
+PASS T30: início tem exatamente quatro entradas em ambas as situações
+PASS T30: Continuar só está habilitado quando há partida salva
+PASS T30: Saves abre a lista compartilhada de espaços
+PASS T30: Configurações reúne as três consultas e Voltar
+PASS T30: consulta cabe e tem alvo de toque: Ajustes
+PASS T30: consulta cabe e tem alvo de toque: Como jogar
+PASS T30: consulta cabe e tem alvo de toque: Versão e diagnóstico
+PASS T30: consulta cabe e tem alvo de toque: Voltar
+PASS T30: Configurações usa a consulta compartilhada: Ajustes
+PASS T30: a consulta oculta o menu de Configurações
+PASS T30: pedido repetido conserva um único painel
+PASS T30: movimento normal tem fundo opaco e contraste AA
+PASS T30: movimento hover tem fundo opaco e contraste AA
+PASS T30: movimento pressed tem fundo opaco e contraste AA
+PASS T30: movimento hover_pressed tem fundo opaco e contraste AA
+PASS T30: Voltar do aparelho fecha somente a consulta
+PASS T30: fechar a consulta devolve o mesmo menu visível
+PASS T30: Configurações usa a consulta compartilhada: Como jogar
+PASS T30: a consulta oculta o menu de Configurações
+PASS T30: pedido repetido conserva um único painel
+PASS T30: Voltar do aparelho fecha somente a consulta
+PASS T30: fechar a consulta devolve o mesmo menu visível
+PASS T30: Configurações usa a consulta compartilhada: Versão e diagnóstico
+PASS T30: a consulta oculta o menu de Configurações
+PASS T30: pedido repetido conserva um único painel
+PASS T30: Voltar do aparelho fecha somente a consulta
+PASS T30: fechar a consulta devolve o mesmo menu visível
+PASS T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro
+PASS T30: Voltar de Configurações devolve a inicial
+PASS T30: entrada cabe e tem alvo de toque: Continuar
+PASS T30: entrada cabe e tem alvo de toque: Nova partida
+PASS T30: entrada cabe e tem alvo de toque: Saves
+PASS T30: entrada cabe e tem alvo de toque: Configurações
+  PASS  T30: quatro entradas, retorno das consultas e movimento legível
+=== T31: o que a tela mostra e o que o toque faz ===
+PASS T31: atender um barco sobe a reputação em 0.8
+PASS T31: o arranque abre a partida gravada, e não uma nova
+PASS T31: sem save, o arranque abre partida nova
+PASS T31: o recorde malformado no save carrega a zero, sem herdar o da partida viva
+PASS T31: alocar fora do array recusa sem erro do motor
+PASS T31: o caixa diz o que entrou ontem (R$8.000), com o total de cada dia
+PASS T31: a parcela diz quanto falta para quitar hoje
+PASS T31: a parcela com falta deixa fechar
+PASS T31: a meta da Fase 2 volta ao porto
+PASS T31: antes da Fase 2 a meta diz quando abre e deixa fechar
+PASS T31: o cartão da doca mostra o valor do barco atracado
+PASS T31: e, com o acordo, o valor acordado
+PASS T31: cada barco ao largo tem casco à vista ([33, 52, 64] px)
+PASS T31: o painel das docas diz a classe, quando paga e quem opera
+PASS T31: a página da Fase 2 relida diz que a fase acabou
+  PASS  T31: reputação, arranque e o que os painéis mostram e fazem
+PASS T32: 18 migra sem perder saldo, fase, obra ou nomes
+PASS T32: migração não inventa compras nem leituras
+PASS T32: dinheiro insuficiente e id desconhecido não debitam
+PASS T32: decisão pendente impede compra: rival_offer
+PASS T32: decisão pendente impede compra: debt_payment
+PASS T32: decisão pendente impede compra: game_over
+PASS T32: compra debita uma vez e libera a conversa
+PASS T32: clique repetido não duplica item nem cobrança
+PASS T32: dia e semana incluem a despesa já paga
+PASS T32: não conclui capítulo bloqueado
+PASS T32: conclusão é idempotente
+PASS T32: retomada conserva compra, leitura e dinheiro
+PASS T32: virar dia não cobra compra novamente
+PASS T32: save recusa compras duplicadas
+PASS T32: 19 truncada não vira inventário vazio
+PASS T32: save recusa despesa inválida
+PASS T32: save não permite ler cena antes do acontecimento
+PASS T32: outro espaço começa sem compras
+PASS T32: voltar ao espaço recupera seus itens
+PASS T32: jogo novo zera compras e cenas
+PASS T32: caneca espera a primeira semana fechar
+PASS T32: caneca chega na semana seguinte
+PASS T32: antecipar parcela não antecipa capítulo
+PASS T32: recibo exige o mês fechado e parcela paga
+PASS T32: obra não revela documentos
+PASS T32: armazém pronto revela envelope no meio da fase
+PASS T32: todo capítulo possui diálogo e cada fala tem texto
+PASS T32: lojas estão abertas no celular
+PASS T32: app abre catálogo de lojas
+PASS T32: botão alcançável: Visitar o mercado
+PASS T32: botão alcançável: Conversar com Seu Biu
+PASS T32: visita tem interlocutor e fala
+PASS T32: botão alcançável: Continuar a conversa
+PASS T32: botão alcançável: Concluir conversa
+PASS T32: botão alcançável: Comprar Kit de café
+PASS T32: confirmação informa preço e efeito
+PASS T32: botão alcançável: Voltar sem comprar
+PASS T32: desistir preserva dinheiro e inventário
+PASS T32: botão alcançável: Comprar Kit de café
+PASS T32: botão alcançável: Confirmar compra por R$180
+PASS T32: confirmar compra abre a história e debita
+PASS T32: botão alcançável: Ler depois
+PASS T32: sair cedo não consome cena
+PASS T32: botão alcançável: Continuar a conversa
+PASS T32: botão alcançável: Continuar a conversa
+PASS T32: botão alcançável: Continuar a conversa
+PASS T32: botão alcançável: Concluir conversa
+PASS T32: ler até o fim grava conclusão
+PASS T32: botão alcançável: Ler história: A caneca que ficou
+PASS T32: boletim leva ao capítulo disponível
+PASS T32: botão alcançável: Ler depois
+PASS T32: botão alcançável: Fechar o boletim
+PASS T32: botão alcançável: Ver o delivery
+PASS T32: botão alcançável: Conversar com Mané
+PASS T32: delivery tem visita própria
+PASS T32: botão alcançável: Continuar a conversa
+PASS T32: botão alcançável: Concluir conversa
+PASS T32: botão alcançável: Comprar Almoço para a equipe
+PASS T32: botão alcançável: Confirmar compra por R$240
+PASS T32: delivery entrega item e conversa próprios
+  PASS  T32: história, lojas, compra, contas e retomada
+PASS T33: patamar de alerta em 0.0
+PASS T33: patamar de alerta em 20.9
+PASS T33: patamar de alerta em 21.0
+PASS T33: patamar de alerta em 40.99
+PASS T33: patamar de alerta em 41.0
+PASS T33: patamar de alerta em 65.0
+PASS T33: patamar de alerta em 100.0
+PASS T33: início saudável não alarma
+PASS T33: queda ainda saudável não alarma
+PASS T33: entrar no patamar baixo avisa
+PASS T33: permanecer baixo não repete aviso
+PASS T33: recuperar e cair de novo permite outro aviso
+PASS T33: abrir já baixo avisa uma vez
+PASS T33: abrir baixo não repete no primeiro sinal
+PASS T33: subir de patamar mantém elogio
+PASS T33: indicador baixo usa estilo de alerta
+PASS T33: cor de alerta é vermelha
+PASS T33: número e patamar permanecem legíveis
+PASS T33: recuperar restaura estilo habitual
+PASS T33: HUD acompanha entrada no patamar baixo
+PASS T33: HUD acompanha recuperação
+  PASS  T33: reputação baixa, aviso e indicador
+
+=== TODOS OS TESTES PASSARAM ===
+ERROR: Resumed function '_aplicar()' after await, but class instance is gone. At script: res://scripts/TextoDaInterface.gd:119
+   at: resume (modules/gdscript/gdscript_function.cpp:204)

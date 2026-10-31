@@ -63,6 +63,9 @@ func conectar() -> void:
 	GameState.fase_concluida.connect(_cida_passagem)
 	GameState.cash_changed.connect(_cida_caixa)
 	GameState.turn_advanced.connect(_cida_semana)
+	# Retomada já em alerta também merece uma fala; a cor do HUD permanece
+	# visível, enquanto a fala acontece uma vez por entrada no patamar baixo.
+	_cida_reputacao(GameState.reputation)
 
 
 # ⚠️ UM MÉTODO, E NÃO O LAMBDA QUE ISTO ERA NO `Main`. Ligado a um sinal, um
@@ -154,29 +157,23 @@ func _cida_agora(id: String) -> void:
 			Narrativa.retrato("cida", id))
 
 
-# A REPUTAÇÃO SÓ FALA QUANDO CRUZA UMA FAIXA, não a cada ponto. Ela mexe-se em
-# quase todo turno (±0,8 por barco), e uma fala por movimento seria a Dona Cida
-# a comentar ruído. A faixa qualitativa já existe em `reputation_label()` e é a
-# unidade em que o jogador pensa — "respeitado" virou "admirado" é notícia,
-# 71,2 virar 72,0 não é.
+# Bruno pediu o comentário ao ficar BAIXA (`147`), não em toda queda de faixa.
+# As subidas mantêm o elogio de antes; o aviso negativo tem memória própria:
+# uma vez ao entrar/retomar baixo, novamente só após recuperar e cair de novo.
 var _faixa_reputacao := ""
 var _reputacao_vista := 0.0
+var _reputacao_estava_baixa := false
 
 
 func _cida_reputacao(valor: float) -> void:
 	var faixa: String = GameState.reputation_label()
-	# A primeira chamada só regista onde a barra estava: sem um valor anterior
-	# não há direção nenhuma para anunciar.
-	if _faixa_reputacao == "":
-		_faixa_reputacao = faixa
-		_reputacao_vista = valor
-		return
-	if faixa != _faixa_reputacao:
-		# A DIREÇÃO SAI DO VALOR GUARDADO, não da barra corrente. A primeira
-		# versão comparava a reputação com ela própria, o que dá sempre falso —
-		# a Dona Cida teria dito "caiu" mesmo quando subia, e nada reprovaria.
-		_cida("reputacao_subiu" if valor > _reputacao_vista else "reputacao_caiu")
-		_faixa_reputacao = faixa
+	var baixa := AvisoDeReputacao.baixa(valor)
+	if baixa and not _reputacao_estava_baixa:
+		_cida("reputacao_caiu")
+	elif _faixa_reputacao != "" and faixa != _faixa_reputacao and valor > _reputacao_vista:
+		_cida("reputacao_subiu")
+	_reputacao_estava_baixa = baixa
+	_faixa_reputacao = faixa
 	_reputacao_vista = valor
 
 
@@ -190,6 +187,7 @@ func _cida_reputacao(valor: float) -> void:
 func _cida_passagem(_numero: int, _motivo: String) -> void:
 	if _numero == 1:
 		_faixa_reputacao = ""
+		_reputacao_estava_baixa = false
 
 
 # O aviso de caixa curto dispara UMA VEZ por travessia, não a cada centavo

@@ -31,11 +31,20 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-31.md` | 31/10 | Reputação e falas integradas após #156 (`147`); provas e continuação da revisão |
+| `REPUTACAO_E_FALAS_2026-10-30/README.md` | 30–31/10 | Aviso de reputação baixa, Cida/Mané e provas (`147`); HUD integrado após Bruno confirmar o merge do #156 |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-30b.md` | 30/10 | Revisor contextual (`145`), modo pelo chat, primeira rodada, base preservada e continuação |
+| `REVISAO_MENSAGENS_2026-10-30/README.md` | 30/10 | Primeira aplicação do revisor contextual (`145`): cobertura declarada, fatos, riscos, candidatos e o que manter |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-25d.md` | 25/10 | Chave/almoço aceitos e integrados; história renumerada para 141 após incorporar a rua da main; revisão restante |
+| `VERIFICACAO_FALAS_2026-10-25/README.md` | 25/10 | Integração das falas aceitas da chave/almoço, capturas e provas sobre a main atualizada |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-24d.md` | 24/10 | Revisão de falas/lojas para mais vínculo, escolhida por Bruno; versões para leitura, sem alteração do jogo |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-24c.md` | 24/10 | História e primeiras lojas (`146`), aceites, migração 19 e continuação local |
+| `VERIFICACAO_HISTORIA_LOJAS_2026-10-24/README.md` | 24/10 | História da Fase 1, Mercado e Delivery (`146`): compras, conversas, save 19, provas e limites |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-24b.md` | 24/10 | As treze lacunas graves e treze médias fechadas (`138`), 106 → 131 da amostra; as suítes em paralelo (`139`); a seguir, os sprites de detalhes |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-25.md` | 25/10 | O mobiliário da rua aceite à oitava passagem (`140`): postes, fiação, placas, cavaletes e a rede de uma subestação; a fila da `126` acabou, e a seguinte é do Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-25b.md` | 25/10 | Os carros da viela aceites à quarta passagem (`141`): na rua não cabiam, e estacionam na viela de terra, mais a cada fase e obra; o item seguinte é do Bruno |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-30.md` | 30/10 | O barco tocado ao largo navega de proa, vira e entra de ré (`144`), com o casco virado ao cais e as boias do lado do mar; aceite à quarta passagem; a seguir, o A1 |
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-31.md` | 31/10 | A peça nova assenta e a obra velha esvai-se; o «Avançar dia» e o cartão ao largo afundam (`145`); aceite à quarta passagem; a seguir, a T1 |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-31b.md` | 31/10 | A peça nova assenta e a obra velha esvai-se; o «Avançar dia» e o cartão ao largo afundam (`145`); aceite à quarta passagem; a seguir, a T1 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-29.md` | 29/10 | A pesquisa de melhorias (`143`): o jogo medido tema a tema, as técnicas com a fonte, o custo e o ganho; ele escolheu aprofundar a animação e o toque, depois luz, som e o resto |
 | `MEDICOES_PESQUISA_MELHORIAS_2026-10-29/` | 29/10 | A sonda de animação (o que mexe em 20 s parado e em duas viradas), o custo por quadro e o sinal dos sons, medidos para a pesquisa (`143`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-25c.md` | 25/10 | As marolas que rolam e a quina norte aceites à segunda passagem (`142`): duas camadas em contrafase, a espuma que passou a lavar, e a fresta de 2 px fechada; a seguir, a pesquisa de melhorias (luz, animação, som e o resto) que o Bruno escolheu |

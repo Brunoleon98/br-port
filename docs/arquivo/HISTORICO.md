@@ -906,8 +906,29 @@ quatro; lacunas medidas (99 de 205 defeitos passam)»* vive na `137` —, e o
 inventário deixou de citar o `renumerar_decisao.py`, que continua na
 `gerais.md` e na `119`.
 
+
+## 24/10/2026 — história e lojas, inventário comprimido (`146`)
+
+Para caber o recorte novo no estado, estas descrições do inventário ficaram
+mais curtas; o detalhe anterior permanece aqui:
+
+| `tools/conferir_lote_de_arte.py` | Confere lote vindo de fora: alfa, tamanho e **ângulo da base contra os 26,57°**. Antes de qualquer PNG externo entrar |
+
+| `blender/validate_brp_assets.py` | Validador do lado do Blender: âncora, apoio ao solo, escala, coleção. **Não roda no CI** — precisa de ~1 GB de `bpy` |
+
+| `tools/conferir_guardas_ci.py` | Deriva do workflow quem roda `--script` e exige saída preservada, marcador e varredura de erro. Espera `GUARDAS OK` |
+
+| `tools/conferir_cobertura_paineis.py` | Fotos dos painéis abertos, por tempo/cara (`039`, `051`, `060`); `COBERTURA OK`, sem lacuna |
+
 **E, para caber os carros da viela (`141`),** saiu da fila do estado a
 linha *«**Na main:** cancelamento/ajuda (`109`–`116`), obras/máquinas/vila
 (`121`–`123`), retomada (`125`) e diagnóstico (`128`, #142).»* — tudo
 fundido, cada um na sua decisão —, e a da fila da `126` encolheu a uma
 lista de decisões.
+
+## 30/10/2026 — revisor de mensagens (`145`)
+
+A referência do inventário foi comprimida para caber o revisor no estado.
+Texto anterior, preservado:
+
+| `brport_vs/scripts/Narrativa.gd` | Falas e expressões; arco da Fase 1 (`146`). Número sai de constante e vai por EXTENSO; o F4 reprova dígito na narração e fala que o jogo não dispare. Traz também o `concordar()`, a concordância de plural num lugar só (`037`) |

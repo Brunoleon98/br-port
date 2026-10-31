@@ -8,11 +8,10 @@ extends PainelCelular
 # por exemplo. Inclusive esse menu pode ser um celular e os aplicativos seriam
 # essas outras partes do jogo."*
 #
-# ESTA TELA É A CASCA, e só ela. O mapa da cidade, as lojas e as missões são
-# os itens 18 a 21, que o próprio plano classifica como "um segundo jogo" e
-# que assentam numa pergunta ainda sem resposta — a economia das fases
-# seguintes, na `BR_Port_GDD_V7_ERRATA_ECONOMIA.md`. Construí-los aqui seria
-# escolher essa economia de passagem.
+# As lojas abriram na `146`, a pedido do Bruno: Mercado e Delivery, com
+# visitas, compras narrativas e o arquivo da história da Fase 1. Cidade,
+# missões e análise continuam como portas futuras; o app aponta à cena e
+# não escolhe a economia por conta própria.
 #
 # ⚠️ E ELA É UM OVERLAY, NUNCA UMA FASE DO `GameState`. Uma fase a mais fez 24
 # de 30 partidas não terminarem, com o CI verde — o `advance_turn()` retorna
@@ -90,7 +89,7 @@ const APPS := [
 	# a ela tocando na faixa de mensagem, que é uma porta que ninguém vê.
 	{"id": "mensagens", "nome": "Mensagens", "icone": Icones.APP_MENSAGENS, "cena": "res://scenes/panels/PainelMensagens.tscn"},
 	{"id": "cidade", "nome": "Cidade", "icone": Icones.APP_CIDADE, "cena": ""},
-	{"id": "lojas", "nome": "Lojas", "icone": Icones.APP_LOJAS, "cena": ""},
+	{"id": "lojas", "nome": "Lojas", "icone": Icones.APP_LOJAS, "cena": "res://scenes/panels/PainelLojas.tscn"},
 	{"id": "missoes", "nome": "Missões", "icone": Icones.APP_MISSOES, "cena": ""},
 	{"id": "analise", "nome": "Análise", "icone": Icones.APP_ANALISE, "cena": ""},
 ]
@@ -102,7 +101,7 @@ const APPS := [
 # texto dentro dela, o que triplicaria a altura da grelha para repetir quatro
 # vezes a mesma frase. Desde a `066` ela é um aviso, no cartão de um widget,
 # com o cadeado ao lado — o mesmo selo que vai em cima dos ícones.
-const RODAPE_FECHADOS := "Os apps com cadeado abrem na Fase 2, quando a cidade abrir."
+const RODAPE_FECHADOS := "Os apps com cadeado ainda estão em desenvolvimento. Lojas e histórias já estão abertas."
 
 func setup(_sem_argumentos: Variant = null) -> void:
 	# O aparelho — corpo, tela, papel de parede e barra de status — é do

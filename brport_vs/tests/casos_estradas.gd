@@ -71,21 +71,30 @@ func rodar(terra, patio, ancoras: Dictionary, obra: Script) -> void:
 	if terra == null or patio == null:
 		conferir("os dois mapas abrem", false)
 		return
-	_tudo_dentro_da_obra(terra, patio, obra)
+	# Cada sub-bloco devolve `true` na última linha, e reprova aqui pelo nome se
+	# um erro de execução o abortar a meio — senão só ele morria e a bandeira
+	# do bloco ficava verde (`testes-e-guardas.md`, «um sub-bloco leva a sua
+	# BANDEIRA»).
+	conferir("a diferença só dentro da obra correu até ao fim",
+		_tudo_dentro_da_obra(terra, patio, obra) == true)
 	for par in [["terra", terra], ["pavimentado", patio]]:
-		_juntas_sem_fio(String(par[0]), par[1], ancoras)
-		_borda_norte(String(par[0]), par[1], ancoras)
-		_quina_norte(String(par[0]), par[1], ancoras)
+		var nome := String(par[0])
+		conferir("%s: as juntas correram até ao fim" % nome,
+			_juntas_sem_fio(nome, par[1], ancoras) == true)
+		conferir("%s: a borda norte correu até ao fim" % nome,
+			_borda_norte(nome, par[1], ancoras) == true)
+		conferir("%s: a quina norte correu até ao fim" % nome,
+			_quina_norte(nome, par[1], ancoras) == true)
 	completo = true
 
 
 # ── §1 ─────────────────────────────────────────────────────────────────────
-func _tudo_dentro_da_obra(terra, patio, obra: Script) -> void:
+func _tudo_dentro_da_obra(terra, patio, obra: Script) -> bool:
 	var a: Image = terra.img
 	var b: Image = patio.img
 	conferir("os dois mapas têm o mesmo tamanho", a.get_size() == b.get_size())
 	if a.get_size() != b.get_size():
-		return
+		return true
 	if a.get_format() != Image.FORMAT_RGBA8:
 		a = a.duplicate()
 		a.convert(Image.FORMAT_RGBA8)
@@ -137,6 +146,7 @@ func _tudo_dentro_da_obra(terra, patio, obra: Script) -> void:
 		mudados >= MUDADOS_MIN)
 	conferir("nada muda entre os dois mapas fora da obra (%d px fora, o máximo é %d)"
 		% [fora, FORA_MAX], fora <= FORA_MAX, primeiro)
+	return true
 
 
 func _no_recorte(p: Vector2, pols: Array, caixas: Array, folga: float) -> bool:
@@ -157,7 +167,7 @@ func _no_recorte(p: Vector2, pols: Array, caixas: Array, folga: float) -> bool:
 ## Atravessa a junta de cada cotovelo com a reta de baixo, nas duas faixas de
 ## rodagem (fora do eixo, que a linha central cruza, e longe do meio-fio), e
 ## compara a linha da junta com o asfalto dos dois lados dela.
-func _juntas_sem_fio(nome: String, mapa, ancoras: Dictionary) -> void:
+func _juntas_sem_fio(nome: String, mapa, ancoras: Dictionary) -> bool:
 	var pr: Dictionary = ancoras["projecao"]
 	var pior := -INF
 	var onde := ""
@@ -184,12 +194,13 @@ func _juntas_sem_fio(nome: String, mapa, ancoras: Dictionary) -> void:
 	conferir("%s: as juntas dos cotovelos à vista foram lidas (%d)" % [nome, lidas], lidas >= 12)
 	conferir("%s: nenhuma junta de cotovelo tem fio claro (pior %+.1f, o máximo é %+.1f)"
 		% [nome, pior, FIO_MAX], pior <= FIO_MAX, onde)
+	return true
 
 
 # ── §3 ─────────────────────────────────────────────────────────────────────
 ## Percorre a borda norte do primeiro trecho do pátio, da calçada até antes da
 ## crista da praia, numa faixa de ±0,1 em `my`, e mede quanto azul aparece.
-func _borda_norte(nome: String, mapa, ancoras: Dictionary) -> void:
+func _borda_norte(nome: String, mapa, ancoras: Dictionary) -> bool:
 	var pr: Dictionary = ancoras["projecao"]
 	var patio: Dictionary = ancoras["patio"][0]
 	var my0 := float(patio["my"][0])
@@ -212,6 +223,7 @@ func _borda_norte(nome: String, mapa, ancoras: Dictionary) -> void:
 	conferir("%s: a borda norte do pátio foi lida (%d amostras)" % [nome, lidas], lidas >= 500)
 	conferir("%s: a água não aparece na borda norte do pátio (azul %+.1f, o máximo é %+.1f)"
 		% [nome, pior, AZUL_MAX], pior <= AZUL_MAX, onde)
+	return true
 
 
 ## A quina nordeste do pátio, à altura do cais: uma janela de `QUINA_RAIO` px
@@ -220,7 +232,7 @@ func _borda_norte(nome: String, mapa, ancoras: Dictionary) -> void:
 const QUINA_RAIO := 6.0
 
 
-func _quina_norte(nome: String, mapa, ancoras: Dictionary) -> void:
+func _quina_norte(nome: String, mapa, ancoras: Dictionary) -> bool:
 	var pr: Dictionary = ancoras["projecao"]
 	var patio: Dictionary = ancoras["patio"][0]
 	var q := _tela(pr, float(patio["mx"][1]), float(patio["my"][0]))
@@ -244,6 +256,7 @@ func _quina_norte(nome: String, mapa, ancoras: Dictionary) -> void:
 		lidas >= int(mapa.area(QUINA_RAIO * QUINA_RAIO * 3.0)))
 	conferir("%s: a água não aparece na quina norte do pátio (azul %+.1f, o máximo é %+.1f)"
 		% [nome, pior, AZUL_MAX], pior <= AZUL_MAX, onde)
+	return true
 
 
 func _lum(mapa, p: Vector2) -> float:

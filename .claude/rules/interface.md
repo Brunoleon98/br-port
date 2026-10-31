@@ -4,6 +4,7 @@ paths:
   - "brport_vs/ui/**"
   - "brport_vs/scripts/Painel*.gd"
   - "brport_vs/scripts/Main.gd"
+  - "brport_vs/scripts/AvisoDeReputacao.gd"
   - "brport_vs/scripts/DocaCartao.gd"
   - "brport_vs/scripts/Icones.gd"
   - "brport_vs/scripts/TelaNomes.gd"

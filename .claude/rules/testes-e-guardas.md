@@ -257,6 +257,13 @@ guarda.
    chamador ficava verde. Medido outra vez na `145`: com o «Avançar dia» num
    `Control`, o sub-bloco do contraste do D43 rebentou, dez asserções não
    correram, e a suíte disse `DESIGN OK` e «o bloco D43 correu até ao fim».
+   ⚠️ **E O VALOR DEVOLVIDO NÃO É BANDEIRA.** O erro devolve o zero do tipo
+   (`gdscript.md`): no D14 um 0 na ruína deixava o «completo > em_ruina»
+   passar. A bandeira é uma escrita na última linha, à parte do valor — e a
+   régua que a prova injeta o erro ANTES dela: em 30/10 o erro posto antes do
+   `return conferidos` caiu depois do `append` e o D14 ficou verde de graça.
+   Injetar em todos ao mesmo tempo só prova que UM sub-bloco de cada bloco
+   está ligado; é uma rodada por sub-bloco.
    ⚠️ **E O ESTADO ESCRITO À MÃO NÃO CHEGA A QUEM OUVE O SINAL.** Na `104`
    o F23 escrevia `GS.reputation = 100` para provar que a Dona Cida não
    anuncia o recomeço da passagem, e o mutante sem a correção PASSOU: a

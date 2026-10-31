@@ -79,20 +79,25 @@ func rodar(gs: Node, arvore: SceneTree, ancoras: Dictionary) -> void:
 	_dk = (load("res://scripts/Dock.gd") as Script).get_script_constant_map()
 	_mk = (load("res://scripts/Main.gd") as Script).get_script_constant_map()
 
-	_contrato_com_a_tabela()
-	_contrato_da_rua()
-	_contrato_do_mobiliario()
-	_um_quadro_por_dia()
+	# Cada sub-bloco devolve `true` na última linha, e reprova aqui pelo nome se
+	# um erro de execução o abortar a meio — senão só ele morria e a bandeira
+	# do bloco ficava verde (`testes-e-guardas.md`, «um sub-bloco leva a sua
+	# BANDEIRA»). Os três de baixo já o faziam; os contratos não.
+	conferir("o contrato com a tabela correu até ao fim", _contrato_com_a_tabela() == true)
+	conferir("o contrato da rua correu até ao fim", _contrato_da_rua() == true)
+	conferir("o contrato do mobiliário correu até ao fim", _contrato_do_mobiliario() == true)
+	conferir("o quadro por dia correu até ao fim", _um_quadro_por_dia() == true)
 	conferir("o píer comprado correu até ao fim", _o_pier_comprado())
 	conferir("o armazém correu até ao fim", _o_armazem())
 	conferir("o pátio correu até ao fim", _o_patio())
-	_tres_dias_em_dois_quadros()
+	conferir("os três dias em dois quadros correram até ao fim",
+		_tres_dias_em_dois_quadros() == true)
 	_gs.clear_save()
 	completo = true
 
 
 # ── §1 ─────────────────────────────────────────────────────────────────────
-func _contrato_com_a_tabela() -> void:
+func _contrato_com_a_tabela() -> bool:
 	var tabela: Array = _ancoras.get("patio", [])
 	var copia: Array = _ok["PATIO"]
 	conferir("o pátio da tabela tem %d trecho(s), e a cópia tantos quantos" % tabela.size(),
@@ -114,10 +119,11 @@ func _contrato_com_a_tabela() -> void:
 		conferir("a projeção do recorte: %s é o `%s` da tabela" % par,
 			absf(float(_ok[par[0]]) - float(pr[par[1]])) < 0.0005,
 			"%s contra %s" % [_ok[par[0]], pr[par[1]]])
+	return true
 
 
 # ── §2 ─────────────────────────────────────────────────────────────────────
-func _um_quadro_por_dia() -> void:
+func _um_quadro_por_dia() -> bool:
 	_novo_jogo()
 	for par in [["pier_2", (_dk["ArtePierObra"] as Array).size()],
 			["armazem", (_ok["ARMAZEM"] as Array).size()],
@@ -134,6 +140,7 @@ func _um_quadro_por_dia() -> void:
 			and float(fracoes[i]) < 1.0
 	conferir("o asfalto começa em zero e cresce sem chegar ao pátio inteiro %s" % [fracoes],
 		cresce)
+	return true
 
 
 # ── §3 ─────────────────────────────────────────────────────────────────────
@@ -222,7 +229,10 @@ func _o_patio() -> bool:
 		velha.texture == _mk["MapaTerra"] and nova.texture == _mk["MapaPatio"])
 	conferir("antes da obra não há rua recortada nem cones",
 		not velha.visible and not nova.visible and _cones(cenario).is_empty())
-	_confere_mobiliario(tela, -1, "antes da obra")
+	# Os ajudantes que conferem devolvem `true` na última linha, e o pátio só
+	# devolve o dele se todos o devolveram.
+	var correram: Array = []
+	correram.append(_confere_mobiliario(tela, -1, "antes da obra") == true)
 	_comecar_obra("patio")
 	for d in range(int(_gs.dias_da_obra("patio"))):
 		var dia := "no dia %d da obra" % (d + 1)
@@ -233,12 +243,13 @@ func _o_patio() -> bool:
 			and (cenario.get_node("ConeTransito") as CanvasItem).visible
 			and not (cenario.get_node("Empilhadeira") as CanvasItem).visible)
 		conferir("o chão de baixo continua a terra %s" % dia, mapa.texture == _mk["MapaTerra"])
-		_confere_asfalto(asfalto, mapa, float(fracoes[d]), dia)
-		_confere_rua(nova, d, true, dia)
-		_confere_rua(velha, d, false, dia)
-		_confere_cones(cenario, d, dia)
-		_confere_cones(cenario, d, dia, "CavaleteDaRua", "cavaletes_da_obra")
-		_confere_mobiliario(tela, d, dia)
+		correram.append(_confere_asfalto(asfalto, mapa, float(fracoes[d]), dia) == true)
+		correram.append(_confere_rua(nova, d, true, dia) == true)
+		correram.append(_confere_rua(velha, d, false, dia) == true)
+		correram.append(_confere_cones(cenario, d, dia) == true)
+		correram.append(_confere_cones(cenario, d, dia, "CavaleteDaRua",
+			"cavaletes_da_obra") == true)
+		correram.append(_confere_mobiliario(tela, d, dia) == true)
 		if not _virar_o_dia():
 			_desmontar(tela)
 			return false
@@ -248,26 +259,27 @@ func _o_patio() -> bool:
 	conferir("pronto, sem rua recortada nem cones",
 		not velha.visible and not nova.visible and _cones(cenario).is_empty()
 		and _cones(cenario, "CavaleteDaRua").is_empty())
-	_confere_mobiliario(tela, int(_ancoras["obra_dias"]), "com o pátio pronto")
+	correram.append(_confere_mobiliario(tela, int(_ancoras["obra_dias"]),
+		"com o pátio pronto") == true)
 	_desmontar(tela)
-	return true
+	return not correram.has(false)
 
 
 ## O recorte contra os cantos que a TABELA publica, pela projeção dela: do
 ## avental até `fracao` da largura do pátio. E a UV contra a razão MEDIDA
 ## entre a textura e o rect do mapa, que é o que põe o pixel certo do mapa
 ## pronto no sítio certo.
-func _confere_asfalto(asfalto: Polygon2D, mapa: TextureRect, fracao: float, dia: String) -> void:
+func _confere_asfalto(asfalto: Polygon2D, mapa: TextureRect, fracao: float, dia: String) -> bool:
 	if fracao <= 0.0:
 		conferir("sem asfalto novo %s (o dia da brita)" % dia, not asfalto.visible)
-		return
+		return true
 	var tabela: Array = _ancoras["patio"]
 	var grupos: Array = asfalto.polygons
 	conferir("o asfalto novo aparece %s, um quadrilátero por trecho do pátio" % dia,
 		asfalto.visible and grupos.size() == tabela.size(),
 		"%d grupos, %d trechos" % [grupos.size(), tabela.size()])
 	if grupos.size() != tabela.size():
-		return
+		return true
 	var pontos := asfalto.polygon
 	var certo := true
 	var detalhe := ""
@@ -295,10 +307,11 @@ func _confere_asfalto(asfalto: Polygon2D, mapa: TextureRect, fracao: float, dia:
 		uv_certa = uv_certa and asfalto.uv[k].distance_to(pontos[k] * razao) < 0.01
 	conferir("a UV do recorte é o vértice × %.3f, a razão textura/rect %s" % [razao, dia],
 		uv_certa)
+	return true
 
 
 # ── §6 ─────────────────────────────────────────────────────────────────────
-func _contrato_da_rua() -> void:
+func _contrato_da_rua() -> bool:
 	var dias := (_ok["CANTEIRO"] as Array).size()
 	conferir("a tabela conta os mesmos dias de obra que o canteiro (%d)" % dias,
 		int(_ancoras.get("obra_dias", -1)) == dias)
@@ -326,6 +339,7 @@ func _contrato_da_rua() -> void:
 		% [cones_t.size(), cones_c.size()], cones_t.size() == dias and cones_c.size() == dias)
 	for i in range(mini(cones_t.size(), cones_c.size())):
 		conferir("os cones do dia %d são os da tabela" % i, _igual(cones_t[i], cones_c[i]))
+	return true
 
 
 ## Um pedaço (ou um grupo de cones) da cópia contra o da tabela: o dia e cada
@@ -344,7 +358,7 @@ func _igual(t: Dictionary, c: Array) -> bool:
 
 ## Um recorte da rua no dia `d`: os pedaços prontos (`prontos`) ou os que
 ## faltam, contra a TABELA, pela projeção dela.
-func _confere_rua(no: Polygon2D, d: int, prontos: bool, dia: String) -> void:
+func _confere_rua(no: Polygon2D, d: int, prontos: bool, dia: String) -> bool:
 	var esperado: Array = []
 	for t in _ancoras["obra_da_rua"]:
 		if (int(t["quadro"]) <= d) == prontos:
@@ -355,7 +369,7 @@ func _confere_rua(no: Polygon2D, d: int, prontos: bool, dia: String) -> void:
 		no.visible == not esperado.is_empty() and grupos.size() == esperado.size(),
 		"%d grupos, visível %s" % [grupos.size(), no.visible])
 	if grupos.size() != esperado.size():
-		return
+		return true
 	var certo := true
 	for i in range(esperado.size()):
 		var ids: PackedInt32Array = grupos[i]
@@ -367,12 +381,13 @@ func _confere_rua(no: Polygon2D, d: int, prontos: bool, dia: String) -> void:
 			if no.polygon[ids[k]].distance_to(_tela(float(pts[k][0]), float(pts[k][1]))) > 0.05:
 				certo = false
 	conferir("%s cai nos pedaços da tabela %s" % [nome, dia], certo)
+	return true
 
 
 ## Os cones do dia (ou o cavalete entre eles, `140`), nos pontos da tabela, e cada um entre os irmãos de cima e os de baixo na tela — a
 ## profundidade do `Cenario` é a ordem.
 func _confere_cones(cenario: Node, d: int, dia: String, prefixo := "ConeDaRua",
-		lista := "cones_da_obra") -> void:
+		lista := "cones_da_obra") -> bool:
 	var cones := _cones(cenario, prefixo)
 	var esperado: Array = []
 	for t in _ancoras[lista]:
@@ -403,6 +418,7 @@ func _confere_cones(cenario: Node, d: int, dia: String, prefixo := "ConeDaRua",
 	conferir("os %s ficam nos pontos da tabela %s" % [quem, dia], no_sitio)
 	conferir("cada um dos %s fica entre os irmãos pela profundidade %s" % [quem, dia],
 		na_ordem, onde)
+	return true
 
 
 func _cones(cenario: Node, prefixo := "ConeDaRua") -> Array:
@@ -474,7 +490,7 @@ const FIO_FORA_DA_CALCADA := 0.22
 const MARGEM_DO_TAPUME := 1.0
 
 
-func _contrato_do_mobiliario() -> void:
+func _contrato_do_mobiliario() -> bool:
 	var tabela: Array = _ancoras.get("mobiliario_da_rua", [])
 	var copia: Array = _ok["MOBILIARIO"]
 	conferir("o mobiliário da tabela tem %d peça(s), e a cópia tantas quantas" % tabela.size(),
@@ -640,6 +656,7 @@ func _contrato_do_mobiliario() -> void:
 			onde = "%s em (%.2f, %.2f): quadro %d, o asfalto ao lado é de %s" \
 				% [tipo, x, y, int(t["quadro"]), achados]
 	conferir("cada peça do mobiliário troca no dia do trecho de rua onde pousa", no_dia, onde)
+	return true
 
 
 ## Vazio se a peça `tipo` em `p` pousa no campo ao norte do pátio: entre a
@@ -768,13 +785,13 @@ func _faixa_de(my: float) -> Dictionary:
 ## lâmpada de sódio só no poste velho, no quadro dele, e cada fio a ligar
 ## dois postes vizinhos com cada ponta pousada num isolador do poste que se
 ## VÊ.
-func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
+func _confere_mobiliario(tela: Control, d: int, dia: String) -> bool:
 	var cenario: Node = tela.get_node("MapaWrap/Cenario")
 	var rede := tela.get_node_or_null("MapaWrap/RedeDaRua")
 	conferir("a rede da rua desenha-se logo antes do Cenario, debaixo de todo prop %s" % dia,
 		rede != null and rede.get_index() == cenario.get_index() - 1)
 	if rede == null:
-		return
+		return true
 	var tabela: Array = _ancoras["mobiliario_da_rua"]
 	var arte: Dictionary = _ok["ARTE_DO_MOBILIARIO"]
 	var certo := true
@@ -886,6 +903,7 @@ func _confere_mobiliario(tela: Control, d: int, dia: String) -> void:
 	for v in vistos.values():
 		cada_vao = cada_vao and int(v) == FIOS_POR_VAO
 	conferir("cada vão leva os seus dois fios %s" % dia, cada_vao, "%s" % [vistos])
+	return true
 
 
 ## Os pixels opacos do nó `no` (uma peça do mobiliário, de pé em `pe`) que
@@ -1016,7 +1034,7 @@ func _poste_do_isolador(p: Vector2, postes: Dictionary) -> int:
 
 
 # ── §5 ─────────────────────────────────────────────────────────────────────
-func _tres_dias_em_dois_quadros() -> void:
+func _tres_dias_em_dois_quadros() -> bool:
 	_novo_jogo()
 	var t := int(_gs.turn)
 	_gs.obra_em_andamento = {"id": "pier_3", "inicio": t, "conclusao": t + 3}
@@ -1029,6 +1047,7 @@ func _tres_dias_em_dois_quadros() -> void:
 	conferir("outra obra não dá quadro ao píer 3", int(_gs.quadro_da_obra("armazem", 2)) == -1)
 	_gs.turn = t
 	_gs.obra_em_andamento = {}
+	return true
 
 
 # ── utilitários ────────────────────────────────────────────────────────────

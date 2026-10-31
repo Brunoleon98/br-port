@@ -24,6 +24,168 @@
 # Literais TOML entre aspas simples: nada se escapa, e o tab do GDScript entra
 # como tab. O `'''` seguido de quebra de linha come essa quebra.
 
+# ── AVISO DE REPUTAÇÃO BAIXA (`147`) ──────────────────────────────────────
+
+[[mutante]]
+id = "reputacao-hud-nao-atualiza"
+de = "147"
+o_que = "a lógica de alerta existe mas o HUD não acompanha a reputação real"
+alvo = "brport_vs/scripts/Main.gd"
+antes = 'AvisoDeReputacao.atualizar(_rep_label, GameState.reputation)'
+depois = 'pass'
+reprova = { run_tests = "T33: HUD acompanha entrada no patamar baixo" }
+
+[[mutante]]
+id = "reputacao-queda-saudavel-alarma"
+de = "147"
+o_que = "Cida avisa em uma queda que ainda deixa o cais confiável"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = 'if baixa and not _reputacao_estava_baixa:'
+depois = 'if _faixa_reputacao != "" and valor < _reputacao_vista:'
+reprova = { run_tests = "T33: queda ainda saudável não alarma" }
+
+[[mutante]]
+id = "reputacao-baixa-sem-memoria"
+de = "147"
+o_que = "o aviso se repete em cada sinal enquanto a reputação continua baixa"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = '_reputacao_estava_baixa = baixa'
+depois = '_reputacao_estava_baixa = false'
+reprova = { run_tests = "T33: permanecer baixo não repete aviso" }
+
+[[mutante]]
+id = "reputacao-retomada-sem-alerta"
+de = "147"
+o_que = "abrir o porto já em patamar baixo não avisa"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = '_cida_reputacao(GameState.reputation)'
+depois = 'pass'
+reprova = { run_tests = "T33: abrir já baixo avisa uma vez" }
+
+[[mutante]]
+id = "reputacao-alerta-nao-rearma"
+de = "147"
+o_que = "recuperar não permite um novo aviso quando cair de novo"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = '_reputacao_estava_baixa = baixa'
+depois = '_reputacao_estava_baixa = _reputacao_estava_baixa or baixa'
+reprova = { run_tests = "T33: recuperar e cair de novo permite outro aviso" }
+
+[[mutante]]
+id = "reputacao-indicador-sem-vermelho"
+de = "147"
+o_que = "o indicador continua no estilo habitual mesmo com reputação baixa"
+alvo = "brport_vs/scripts/AvisoDeReputacao.gd"
+antes = 'rotulo.theme_type_variation = &"TextoPilulaAlerta" if baixa(valor) else &"TextoPilulaDestaque"'
+depois = 'rotulo.theme_type_variation = &"TextoPilulaDestaque"'
+reprova = { run_tests = "T33: indicador baixo usa estilo de alerta" }
+
+[[mutante]]
+id = "reputacao-baixa-inclui-confiavel"
+de = "147"
+o_que = "o patamar Confiável acende o alerta de reputação baixa"
+alvo = "brport_vs/scripts/AvisoDeReputacao.gd"
+antes = 'in ["Questionável", "Desconhecido"]'
+depois = 'in ["Questionável", "Desconhecido", "Confiável"]'
+reprova = { run_tests = "T33: patamar de alerta em 41.0" }
+
+# ── HISTÓRIA E LOJAS (`146`) ───────────────────────────────────────────────
+
+[[mutante]]
+id = "loja-sem-debito"
+de = "146"
+o_que = "a loja entrega o café sem tirar dinheiro"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'cash -= preco'
+depois = 'cash -= 0 * preco'
+reprova = { run_tests = "T32: compra debita uma vez e libera a conversa" }
+
+[[mutante]]
+id = "loja-compra-repetida"
+de = "146"
+o_que = "tocar duas vezes cobra de novo o mesmo item"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'if vida_do_porto["compras"].has(id):'
+depois = 'if vida_do_porto["compras"].has(id) and false:'
+reprova = { run_tests = "T32: clique repetido não duplica item nem cobrança" }
+
+[[mutante]]
+id = "loja-sem-lancamento-semanal"
+de = "146"
+o_que = "a compra sai do saldo mas some das contas da semana"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'semana_atual["lojas"] += preco'
+depois = 'semana_atual["lojas"] += 0'
+reprova = { run_tests = "T32: dia e semana incluem a despesa já paga" }
+
+[[mutante]]
+id = "loja-retomada-esquece-itens"
+de = "146"
+o_que = "retomar a partida perde compras e leituras"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = 'vida_do_porto = parsed["vida_do_porto"].duplicate(true)'
+depois = 'vida_do_porto = VidaDoPorto.vazio()'
+reprova = { run_tests = "T32: retomada conserva compra, leitura e dinheiro" }
+
+[[mutante]]
+id = "historia-documentos-na-obra"
+de = "146"
+o_que = "o envelope aparece antes de o armazém estar pronto"
+alvo = "brport_vs/scripts/VidaDoPorto.gd"
+antes = 'if dia > 6 * dias_por_semana and estruturas.has("armazem"):'
+depois = 'if dia > 6 * dias_por_semana:'
+reprova = { run_tests = "T32: obra não revela documentos" }
+
+[[mutante]]
+id = "historia-parcela-antecipa-cena"
+de = "146"
+o_que = "quitar antes do vencimento antecipa o capítulo do fim do mês"
+alvo = "brport_vs/scripts/VidaDoPorto.gd"
+antes = 'if dia > 4 * dias_por_semana and (quitadas >= 1 or fase > 1):'
+depois = 'if quitadas >= 1 or fase > 1:'
+reprova = { run_tests = "T32: antecipar parcela não antecipa capítulo" }
+
+[[mutante]]
+id = "historia-consome-ao-abrir"
+de = "146"
+o_que = "a cena é marcada como lida antes de chegar ao final"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+	_falas = Narrativa.falas_da_historia(id)
+	_capitulo = id
+'''
+depois = '''
+	_falas = Narrativa.falas_da_historia(id)
+	_capitulo = id
+	GameState.concluir_capitulo(id)
+'''
+reprova = { run_tests = "T32: sair cedo não consome cena" }
+
+[[mutante]]
+id = "loja-confirmar-nao-compra"
+de = "146"
+o_que = "o botão de confirmação volta à loja sem comprar"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = 'if GameState.comprar_na_loja(id):'
+depois = 'if false:'
+reprova = { run_tests = "T32: confirmar compra abre a história e debita" }
+
+[[mutante]]
+id = "historia-migracao-perde-saldo"
+de = "146"
+o_que = "o degrau do save conserva itens vazios mas apaga o saldo"
+alvo = "brport_vs/autoload/GameState.gd"
+antes = '''
+func _de_18_para_19(dados: Dictionary) -> Dictionary:
+	dados["vida_do_porto"] = VidaDoPorto.vazio()
+'''
+depois = '''
+func _de_18_para_19(dados: Dictionary) -> Dictionary:
+	dados["vida_do_porto"] = VidaDoPorto.vazio()
+	dados["cash"] = 0
+'''
+reprova = { run_tests = "T32: 18 migra sem perder saldo, fase, obra ou nomes" }
+
 # ── A FILA NO FUNDEADOURO (`083`) ──────────────────────────────────────────
 
 [[mutante]]
@@ -1048,6 +1210,59 @@ alvo = "brport_vs/autoload/Audio.gd"
 antes = 'if agora - float(_ultima_vez.get(id, -999.0)) < float(SONS[id]["espera"]):'
 depois = 'if _ultima_vez.has(id):'
 reprova = { teste_audio = "passada a espera, o mesmo som volta a tocar" }
+
+# ── AS BANDEIRAS DOS SUB-BLOCOS (`testes-e-guardas.md`) ────────────────────
+# Um erro de execução num sub-bloco aborta só ele, e a bandeira do bloco que
+# o chama ficava verde. Medido em 30/10 com o «AVANÇAR DIA» embrulhado num
+# `Control`: o D43 correu 4 das 14 asserções e a suíte disse `DESIGN OK`. O
+# mesmo defeito sobre o código anterior à correção passou verde — é o bug,
+# e este é o mutante dele. Em 31/10 a varredura chegou aos blocos sem
+# bandeira (D1 a D8) e aos sub-blocos dos `casos_*.gd` do `teste_design`.
+# Fica um mutante por FORMA — o bloco que devolve a bandeira (D6), o
+# sub-bloco que devolve um valor (D14), o sub-bloco de um arquivo de casos
+# (D49) —, e o resto provou-se à mão, um erro injetado por sub-bloco.
+
+[[mutante]]
+id = "d43-sub-bloco-rebenta"
+de = "testes-e-guardas.md, 30/10"
+o_que = "o sub-bloco do que recua lê um nó que já não existe e aborta; a bandeira do D43 ficava verde"
+alvo = "brport_vs/tests/teste_design.gd"
+antes = 'var avancar := tela.get_node("AcoesTurno/Avancar") as Button'
+depois = 'var avancar := tela.get_node("AcoesTurno/AvancarX") as Button'
+reprova = { teste_design = "o bloco D43 correu até ao fim" }
+
+[[mutante]]
+id = "d6-alvo-mudou-de-sitio"
+de = "testes-e-guardas.md, 31/10"
+o_que = "o D6 lê o «AVANÇAR DIA» pelo caminho velho e aborta; até 31/10 o D6 nem tinha bandeira"
+alvo = "brport_vs/tests/teste_design.gd"
+antes = 'alvos.append(_main.get_node("AcoesTurno/Avancar"))'
+depois = 'alvos.append(_main.get_node("AcoesTurno/AvancarX"))'
+reprova = { teste_design = "o bloco D6 correu até ao fim" }
+
+[[mutante]]
+id = "d14-ruina-rebenta"
+de = "testes-e-guardas.md, 31/10"
+o_que = "na ruína o sub-bloco do D14 aborta e devolve o 0 do int, que o «completo > em_ruina» deixava passar"
+alvo = "brport_vs/tests/teste_design.gd"
+antes = '''
+	var conferidos := 0
+'''
+depois = '''
+	var conferidos := 0
+	if estado == "em ruína":
+		conferidos = int(_ancoras["projecao"]["nao_existe"])
+'''
+reprova = { teste_design = "o bloco D14 correu até ao fim" }
+
+[[mutante]]
+id = "d49-borda-norte-rebenta"
+de = "testes-e-guardas.md, 31/10"
+o_que = "a borda norte do pátio lê uma chave que a tabela não tem e aborta; o D49 ficava verde"
+alvo = "brport_vs/tests/casos_estradas.gd"
+antes = 'var my0 := float(patio["my"][0])'
+depois = 'var my0 := float(patio["mi"][0])'
+reprova = { teste_design = "a borda norte correu até ao fim" }
 
 # ── AS TREZE LACUNAS GRAVES DA AMOSTRA (`137`, `138`) ──────────────────────
 # A amostra de mutação da `137` sorteou-os nas funções que as suítes executam,

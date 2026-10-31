@@ -1,0 +1,11 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+OpenGL API 4.5 (Core Profile) Mesa 25.0.7-2+deb13u1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 19.1.7, 256 bits)
+
+PREVIA: 35 Questionável | TextoPilulaAlerta
+FUNDO: { "pendente": false, "alfa": 1.0, "cores": [(0.09, 0.16, 0.24, 1.0)], "nota": "" }
+CONTRASTE: 6.62511711438268
+Overlay: 0 painel(eis)  [fase playing, turno 4, 0 estrutura(s)]
+Paineis: (nenhum)
+Tela salva em /tmp/brport-reputacao-fotos/reputacao_35_maior.png (720x1280)
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:364)

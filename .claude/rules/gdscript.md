@@ -133,6 +133,11 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
   a doca fora do array de uma recusa no T31 (`138`). A janela fica estreita
   (só a chamada), e o erro tem de nascer numa função chamada: no próprio
   `_process` ele aborta a suíte antes do `remove_logger`.
+  ⚠️ **E VALE DEPOIS DE UM `await`: QUEM ESPERA NÃO PENDURA.** Medido em
+  31/10 no RB5 (`casos_texto_ajustavel.gd`): nove corrotinas `-> bool` com o
+  erro posto depois do último `assentar()` devolveram `false` ao `await` do
+  `rodar`, que seguiu e reprovou cada uma pelo nome. O sub-bloco que espera
+  frames leva a bandeira como os outros: `(await _x()) == true`.
 - **⚠️ E O LAMBDA CAPTURA A VARIÁVEL LOCAL POR VALOR.** `var n := 0` e um
   `func(): n += 1` ligado a um sinal contam numa CÓPIA: o T20 nasceu a provar
   «zero cobranças na Fase 2» com um contador assim, e o zero era de graça. Num

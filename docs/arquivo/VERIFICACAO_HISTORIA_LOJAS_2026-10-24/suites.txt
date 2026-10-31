@@ -1,0 +1,8 @@
+  verde     run_tests (100 s)
+  verde     teste_design (170 s)
+  verde     teste_audio (4 s)
+  verde     teste_fumaca (49 s)
+  verde     teste_registro (4 s)
+  verde     asset_validator (68 s)
+
+SUITES OK — 6 suíte(s) ao mesmo tempo, cada uma com o seu user://, em 170 s.

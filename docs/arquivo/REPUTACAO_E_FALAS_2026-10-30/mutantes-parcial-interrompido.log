@@ -1,0 +1,177 @@
+Em paralelo: 245 mutante(s) em 4 cópia(s) de 4810 arquivo(s).
+[t1] Base:
+[t2] Base:
+[t3] Base:
+[t4] Base:
+[t3]   verde     run_tests (22 s)
+[t4]   verde     run_tests (23 s)
+[t1]   verde     run_tests (35 s)
+[t2]   verde     run_tests (41 s)
+[t3]   verde     teste_design (78 s)
+[t3]   verde     teste_audio (1 s)
+[t1]   verde     teste_design (81 s)
+[t1]   verde     teste_audio (1 s)
+[t3]   verde     teste_fumaca (20 s)
+[t3]   verde     teste_registro (2 s)
+[t3] 
+[t3] 61 mutante(s):
+[t1]   verde     teste_fumaca (13 s)
+[t1]   verde     teste_registro (1 s)
+[t1] 
+[t1] 62 mutante(s):
+[t3]   reprovado  reputacao-retomada-sem-alerta  (147)
+[t3]       run_tests        «T33: abrir já baixo avisa uma vez» (+2)
+[t2]   verde     teste_design (116 s)
+[t2]   verde     teste_audio (1 s)
+[t4]   verde     teste_design (141 s)
+[t4]   verde     teste_audio (1 s)
+[t3]   reprovado  reputacao-baixa-inclui-confiavel  (147)
+[t3]       run_tests        «T33: patamar de alerta em 41.0» (+4)
+[t1]   reprovado  reputacao-indicador-sem-vermelho  (147)
+[t1]       run_tests        «T33: indicador baixo usa estilo de alerta» (+1)
+[t2]   verde     teste_fumaca (20 s)
+[t2]   verde     teste_registro (1 s)
+[t2] 
+[t2] 61 mutante(s):
+[t4]   verde     teste_fumaca (18 s)
+[t4]   verde     teste_registro (1 s)
+[t4] 
+[t4] 61 mutante(s):
+[t1]   reprovado  historia-consome-ao-abrir  (146)
+[t1]       run_tests        «T32: sair cedo não consome cena» (+1)
+[t3]   reprovado  loja-sem-debito  (146)
+[t3]       run_tests        «T32: compra debita uma vez e libera a conversa» (+6)
+[t2]   reprovado  reputacao-queda-saudavel-alarma  (147)
+[t2]       run_tests        «T33: queda ainda saudável não alarma» (+6)
+[t4]   reprovado  reputacao-baixa-sem-memoria  (147)
+[t4]       run_tests        «T33: permanecer baixo não repete aviso» (+3)
+[t1]   reprovado  loja-confirmar-nao-compra  (146)
+[t1]       run_tests        «T32: confirmar compra abre a história e debita» (+8)
+[t3]   reprovado  historia-migracao-perde-saldo  (146)
+[t3]       run_tests        «T32: 18 migra sem perder saldo, fase, obra ou nomes» (+6)
+[t4]   reprovado  loja-compra-repetida  (146)
+[t4]       run_tests        «T32: clique repetido não duplica item nem cobrança» (+5)
+[t2]   reprovado  reputacao-alerta-nao-rearma  (147)
+[t2]       run_tests        «T33: recuperar e cair de novo permite outro aviso» (+1)
+[t1]   reprovado  desistencia-de-graca  (083)
+[t1]       run_tests        «e custa reputacao»
+[t3]   reprovado  atracar-sem-trabalhador  (083)
+[t3]       run_tests        «com o trabalhador junto» (+24)
+[t2]   reprovado  loja-retomada-esquece-itens  (146)
+[t2]       run_tests        «T32: retomada conserva compra, leitura e dinheiro» (+2)
+[t1]   reprovado  reparos-uma-semana-depois  (089)
+[t1]       run_tests        «T14: armazém abre no dia 8» (+48)
+[t3]   reprovado  save-fila-sem-teto  (083)
+[t3]       teste_fumaca     «mais barcos do que lugares»
+[t4]   reprovado  loja-sem-lancamento-semanal  (146)
+[t4]       run_tests        «T32: dia e semana incluem a despesa já paga» (+2)
+[t1]   reprovado  mensagem-da-obra-sempre-verde  (090)
+[t1]       teste_fumaca     «a mensagem avisa, em tom de aviso» (+2)
+[t2]   reprovado  historia-documentos-na-obra  (146)
+[t2]       run_tests        «T32: obra não revela documentos» (+1)
+[t1]   reprovado  passagem-sem-recomecar-reputacao  (104)
+[t1]       run_tests        «T20: a reputação recomeça na escala da Fase 2» (+5)
+[t4]   reprovado  historia-parcela-antecipa-cena  (146)
+[t4]       run_tests        «T32: antecipar parcela não antecipa capítulo» (+1)
+[t2]   reprovado  atracagem-conta-um-berco  (083)
+[t2]       run_tests        «conta todos os bercos livres»
+[t1]   reprovado  rosto-gasta-o-sorteio  (059)
+[t1]       teste_fumaca     «não mexe no sorteio da partida»
+[t4]   reprovado  equipe-do-pier-ignorada  (083)
+[t4]       run_tests        «o berco 2 chama o trabalhador 2»
+[t2]   reprovado  fecho-sem-reabrir-o-turno  (bug de travamento)
+[t2]       run_tests        «[igualar] botao AVANCAR DIA reabilitado» (+1)
+[t1]   reprovado  save-rosto-repetido  (059)
+[t1]       teste_fumaca     «rosto repetido»
+[t4]   reprovado  save-oferta-fora-da-fila  (083)
+[t4]       teste_fumaca     «oferta fora da fila»
+[t2]   reprovado  nivel-do-porto-pelo-maior  (testes-e-guardas.md, 06/09)
+[t2]       run_tests        «com pórtico e sem cais o porto FICA no nível 2» (+77)
+[t3]   reprovado  espera-com-dois-espacos  (083)
+[t3]       teste_design     «a espera do barco ao largo cabe»
+[t4]   reprovado  trabalhador-em-duas-docas  (T3)
+[t4]       run_tests        «segunda alocacao do MESMO trabalhador recusada» (+1)
+[t2]   reprovado  receita-sem-a-estrutura  (T5l)
+[t2]       run_tests        «T15: armazenagem ainda não recebe bônus»
+[t1]   reprovado  arranque-troca-o-save  (138)
+[t1]       run_tests        «T31: o arranque abre a partida gravada» (+2)
+[t4]   reprovado  derrota-sem-fechar-a-semana  (12/09, gdscript.md)
+[t4]       run_tests        «recusar a parcela FECHA a semana 4» (+3)
+[t2]   reprovado  segunda-chance-sem-limite  (102)
+[t2]       run_tests        «T18: e a segunda chance não abre outra vez»
+[t3]   reprovado  obra-pronta-um-dia-cedo  (087)
+[t3]       run_tests        «T15: segundo dia termina uma vez, abre no dia 3» (+11)
+[t1]   reprovado  cancelar-recusa-esquecida  (138)
+[t1]       run_tests        «T24: recusa pede reabrir» (+3)
+[t2]   reprovado  save-armazem-no-dia-9  (089)
+[t2]       run_tests        «T17: obra de armazem começada no dia em que abre (8) é aceita» (+23)
+[t1]   reprovado  meta-cedo-sem-fechar  (138)
+[t1]       run_tests        «T31: antes da Fase 2 a meta diz quando abre e deixa fechar» (+1)
+[t2]   reprovado  obra-recusada-um-dia-cedo  (090)
+[t2]       teste_fumaca     «no dia 84, o último da fase, a obra ainda não está de pé» (+11)
+[t1]   reprovado  volume-nao-grava  (138)
+[t1]       teste_audio      «e o 0,5 fica gravado no arquivo de volume»
+[t3]   reprovado  save-obra-na-vespera  (089)
+[t3]       run_tests        «T17: obra de armazem começada na véspera (dia 7) é recusada» (+1)
+[t1]   reprovado  ambiente-sem-relogio  (138)
+[t1]       teste_audio      «o relógio do mar pede o som do mar» (+2)
+[t1]   reprovado  registro-turno-nasce-com-aviso  (138)
+[t1]       teste_registro   «o turno sem aviso vermelho conta zero avisos» (+1)
+[t4]   reprovado  antecipacao-abate-capital  (085)
+[t4]       run_tests        «T14: antecipar nunca perdoa o capital emprestado» (+1)
+[t2]   reprovado  rosto-sem-filtro-dos-usados  (059)
+[t2]       teste_fumaca     «trinta rostos diferentes» (+1)
+[t3]   reprovado  plural-da-obra-a-mao  (090)
+[t3]       teste_fumaca     «F9: nenhum número escreve o plural à mão»
+[t1]   reprovado  espacos-nova-sem-titulo  (138)
+[t1]       run_tests        «T27: Nova partida com espaços ocupados pergunta onde» (+1)
+[t4]   reprovado  save-obra-sem-cobranca  (089)
+[t4]       run_tests        «T17: com uma quitada a menos o save de patio é recusado»
+[t2]   reprovado  armazem-sem-criar-a-pasta  (061)
+[t2]       teste_fumaca     «já tem pasta para gravar»
+[t4]   reprovado  aviso-de-obra-um-dia-cedo  (090)
+[t4]       teste_fumaca     «na véspera o Construir não avisa» (+5)
+[t1]   reprovado  doca-realce-some-reduzido  (138)
+[t1]       run_tests        «T29: doca com barco à espera mantém realce fixo» (+1)
+[t3]   reprovado  cargueiro-sem-piso  (106)
+[t3]       run_tests        «T22: abaixo do piso só novas chegadas de pesca» (+29)
+[t4]   reprovado  privado-lido-por-string-renomeado  (093)
+[t4]       teste_fumaca     «F19: todo nome lido por string existe no alvo»
+[t4]   reprovado  registro-sem-obra-pronta  (088)
+[t4]       teste_registro   «grava UMA linha de obra pronta»
+[t4]   reprovado  som-sem-espera-minima  (audio.md)
+[t4]       teste_audio      «o mesmo som dentro da espera não repete»
+[t3]   reprovado  migracao-15-esquece-a-vitoria  (104)
+[t3]       run_tests        «T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar» (+2)
+[t2]   reprovado  progresso-com-dois-espacos  (083)
+[t2]       teste_design     «a linha do progresso cabe»
+[t4]   reprovado  caixa-entrou-ao-contrario  (138)
+[t4]       run_tests        «T31: o caixa diz o que entrou ontem» (+1)
+[t2]   reprovado  moeda-ao-gastar  (audio.md)
+[t2]       teste_audio      «caixa caindo NÃO pede moeda»
+[t3]   reprovado  atalho-s-nao-e-ferramenta  (061)
+[t3]       teste_fumaca     «`-s` conta como ferramenta»
+[t3]   reprovado  som-nunca-repete  (117)
+[t3]       teste_audio      «passada a espera, o mesmo som volta a tocar»
+[t1]   reprovado  memoria-marca-inicio  (138)
+[t1]       teste_design     «RB5: a marca e o primeiro caractere a vista»
+[t4]   reprovado  parcela-falta-sem-fechar  (138)
+[t4]       run_tests        «T31: a parcela com falta deixa fechar» (+1)
+[t1]   reprovado  save-recusa-a-fila-cheia  (118)
+[t1]       run_tests        «o save que o jogo grava, o próprio jogo aceita» (+51)
+[t3]   reprovado  servir-sem-reputacao  (138)
+[t3]       run_tests        «T31: atender um barco sobe a reputação» (+1)
+[t2]   reprovado  cancelar-sem-botao  (138)
+[t2]       run_tests        «T24: a confirmação mostra o botão Cancelar serviço» (+1)
+[t3]   reprovado  fila-cascos-a-zero  (138)
+[t3]       run_tests        «T31: cada barco ao largo tem casco à vista» (+1)
+
+interrompido — a parar os trabalhadores.
+[t1] 
+[t1] interrompido — a restaurar o alvo.
+[t4] 
+[t4] interrompido — a restaurar o alvo.
+[t3] 
+[t3] interrompido — a restaurar o alvo.
+[t2] 
+[t2] interrompido — a restaurar o alvo.

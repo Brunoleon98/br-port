@@ -1,0 +1,27 @@
+extends "res://tools/capturar_cena.gd"
+
+func _initialize() -> void:
+	if OS.get_environment("BRPORT_FOTO_TAMANHO") == "maior":
+		PreferenciasDeApresentacao.atual().tamanho_do_texto = PreferenciasDeApresentacao.MAIOR
+
+func _montar_estado() -> void:
+	super()
+	var gs: Node = root.get_node("GameState")
+	var voltas := 0
+	while (gs.turn < 57 or gs.phase != gs.ESTADO_JOGANDO or gs.parcelas_quitadas < 2) and voltas < 400:
+		voltas += 1
+		if gs.phase == gs.ESTADO_OFERTA:
+			gs.resolve_rival_offer(true)
+		elif gs.phase == gs.ESTADO_COBRANCA:
+			gs.pay_debt()
+		elif gs.phase == gs.ESTADO_JOGANDO:
+			if not gs.fila.is_empty():
+				gs.atracar(0, false)
+			gs.advance_turn()
+		else:
+			break
+	if gs.turn != 57 or not gs.capitulos_do_porto().has("mesa"):
+		push_error("não alcançou a mesa jogando")
+		quit(1)
+		return
+	print("MESA JOGADA: dia ", gs.turn, ", parcelas ", gs.parcelas_quitadas, ", dinheiro ", gs.cash)

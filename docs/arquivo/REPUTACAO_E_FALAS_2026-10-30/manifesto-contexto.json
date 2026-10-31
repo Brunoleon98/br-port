@@ -1,0 +1,558 @@
+{
+  "formato": 1,
+  "escopo": "catálogo narrativo integral e contexto de chamadas; mensagens operacionais emitidas pelos scripts/autoloads",
+  "limites": [
+    "Não é inventário de todos os rótulos da interface.",
+    "Não executa o jogo, não resolve tokens e não prova gatilhos.",
+    "Não produz veredito editorial; a skill lê as fontes e escreve o relatório."
+  ],
+  "fontes": [
+    {
+      "arquivo": ".claude/rules/narrativa.md",
+      "sha256": "46b3d2f1be0ed1045c7a66983c29b99362df4ab2978e0ed9990376e83151c240",
+      "linhas_no_arquivo": 242,
+      "trechos": [
+        [
+          1,
+          242
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "brport_vs/autoload/GameState.gd",
+      "sha256": "a1bbb5edb0dc1344265f4a94d04f5b6dae091a3276dd97353d277ef295f57ede",
+      "linhas_no_arquivo": 3431,
+      "trechos": [
+        [
+          1110,
+          1114
+        ],
+        [
+          1115,
+          1121
+        ],
+        [
+          1122,
+          1129
+        ],
+        [
+          1142,
+          1159
+        ],
+        [
+          1171,
+          1202
+        ],
+        [
+          1398,
+          1440
+        ],
+        [
+          1494,
+          1529
+        ],
+        [
+          1530,
+          1556
+        ],
+        [
+          1591,
+          1620
+        ],
+        [
+          1705,
+          1761
+        ],
+        [
+          1789,
+          1801
+        ],
+        [
+          1802,
+          1816
+        ],
+        [
+          1817,
+          1931
+        ],
+        [
+          1944,
+          1972
+        ],
+        [
+          2220,
+          2236
+        ],
+        [
+          2276,
+          2313
+        ],
+        [
+          2394,
+          2410
+        ],
+        [
+          2533,
+          2553
+        ],
+        [
+          2646,
+          2688
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/AvisoDeReputacao.gd",
+      "sha256": "15047860feeb30303a629c128e8cacc92fc3a5ed3d0ea61478acd37c4604004c",
+      "linhas_no_arquivo": 12,
+      "trechos": [
+        [
+          1,
+          12
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "brport_vs/scripts/BarcoFila.gd",
+      "sha256": "ef73a954694d6d1c9dfc88d25aec7f31697f3a28b4b9f7e5dabc8849633ac1a0",
+      "linhas_no_arquivo": 283,
+      "trechos": [
+        [
+          167,
+          178
+        ],
+        [
+          179,
+          193
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/ConteudoComoJogar.gd",
+      "sha256": "91745554b475726f26ab89509f72e9f1bad2174427b9f35957fa094b82b84094",
+      "linhas_no_arquivo": 18,
+      "trechos": [
+        [
+          5,
+          18
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/ConteudoMeuPorto.gd",
+      "sha256": "ef003d721bbb51f1d60351395ffd2b6685a488e25cf3011aa73889d83c771d7b",
+      "linhas_no_arquivo": 92,
+      "trechos": [
+        [
+          5,
+          52
+        ],
+        [
+          71,
+          92
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/CounterOfferPanel.gd",
+      "sha256": "57a3339308072393e4c1ad16a0fa909fdbb88388ca9a09f9b5ac9696da8b739a",
+      "linhas_no_arquivo": 329,
+      "trechos": [
+        [
+          64,
+          181
+        ],
+        [
+          208,
+          232
+        ],
+        [
+          233,
+          263
+        ],
+        [
+          264,
+          329
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/DebtPaymentPanel.gd",
+      "sha256": "1a927e02d5140f010683e47a4f70a8897c08109caec3966e553ea3dc23bc197b",
+      "linhas_no_arquivo": 235,
+      "trechos": [
+        [
+          1,
+          55
+        ],
+        [
+          62,
+          110
+        ],
+        [
+          150,
+          178
+        ],
+        [
+          202,
+          235
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/DiarioFase2.gd",
+      "sha256": "c2029f4f28d1188c1fac1aeb2bb348abe3a6c278b0080ba92e527d1fe4898f47",
+      "linhas_no_arquivo": 10,
+      "trechos": [
+        [
+          5,
+          10
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/DocaCartao.gd",
+      "sha256": "ee84286e2672418d93b967955eedd199d5bf2348905ee6e2fd18104cf486d23f",
+      "linhas_no_arquivo": 250,
+      "trechos": [
+        [
+          164,
+          173
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/EndGame.gd",
+      "sha256": "e717d89944bb7b2e372bf81d4e98f3338a40c37d5d146f33cec7b970a6d40f38",
+      "linhas_no_arquivo": 252,
+      "trechos": [
+        [
+          74,
+          113
+        ],
+        [
+          114,
+          120
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/Main.gd",
+      "sha256": "50e3d9316a19caa612d5202f142ca37c7a0322de07ea2435dc7b8a2ade50522f",
+      "linhas_no_arquivo": 1408,
+      "trechos": [
+        [
+          184,
+          279
+        ],
+        [
+          737,
+          781
+        ],
+        [
+          782,
+          840
+        ],
+        [
+          1210,
+          1216
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/NarradoraDaCida.gd",
+      "sha256": "c9176c67973fe4f736eb2944ace37b71386f365b1f4832b92c4b2b6ab61956d4",
+      "linhas_no_arquivo": 295,
+      "trechos": [
+        [
+          1,
+          295
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "brport_vs/scripts/Narrativa.gd",
+      "sha256": "e0fc81ea53e555e3f6260f0dff96f23ac02224671ad66e92ab05871be9cbb80e",
+      "linhas_no_arquivo": 826,
+      "trechos": [
+        [
+          1,
+          826
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelAjustes.gd",
+      "sha256": "75e022f83df439e8e0276ae06a21f043eade2940bf254bd683d1b1eb6ceffcc7",
+      "linhas_no_arquivo": 185,
+      "trechos": [
+        [
+          154,
+          185
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelBoletim.gd",
+      "sha256": "db717cf9add1e956234b0c539d8f3cbc5de31bb34881a3fc1209460dfecd4a2f",
+      "linhas_no_arquivo": 127,
+      "trechos": [
+        [
+          33,
+          103
+        ],
+        [
+          104,
+          111
+        ],
+        [
+          112,
+          127
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelCaixa.gd",
+      "sha256": "5318835977a57362b7da6bdb245e6d9d39c659b7a8578d52f5df1f87b90a2a29",
+      "linhas_no_arquivo": 168,
+      "trechos": [
+        [
+          35,
+          87
+        ],
+        [
+          116,
+          134
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelCalendario.gd",
+      "sha256": "50cf63f07329c934c3d4fe82ff331f314a93c00d3cf868cbc88b2fef3488865c",
+      "linhas_no_arquivo": 201,
+      "trechos": [
+        [
+          69,
+          141
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelCancelarServico.gd",
+      "sha256": "d8bc128e377f3d2ed5c31abc900e7a4e4c33830b94cc8ee6462a2b811c54b37c",
+      "linhas_no_arquivo": 67,
+      "trechos": [
+        [
+          11,
+          53
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelDiario.gd",
+      "sha256": "0fbb1c97b08775615760ff7174dadd9e80681889250bd0cd2e90f04b84b35fda",
+      "linhas_no_arquivo": 55,
+      "trechos": [
+        [
+          36,
+          51
+        ],
+        [
+          52,
+          55
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelDocas.gd",
+      "sha256": "17b9bf8147eb95facb57c9783020f96c0057437d31d0f5f6484f3a68e7996423",
+      "linhas_no_arquivo": 177,
+      "trechos": [
+        [
+          34,
+          91
+        ],
+        [
+          92,
+          110
+        ],
+        [
+          111,
+          171
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelLojas.gd",
+      "sha256": "23a19d33cae920cf3ce85ef0a2429d48a5edd69f1226210255ddb05adbec97a1",
+      "linhas_no_arquivo": 162,
+      "trechos": [
+        [
+          1,
+          162
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelMensagens.gd",
+      "sha256": "7aaaa19ab2b039a754b19ed38d25dccdb699a67ca1c20a55a272658835a06a78",
+      "linhas_no_arquivo": 375,
+      "trechos": [
+        [
+          173,
+          201
+        ],
+        [
+          227,
+          234
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelMeta.gd",
+      "sha256": "1012fd82cce33bb51aeda7ca7a9732d97e7d00d58d775a18751248e5b2226644",
+      "linhas_no_arquivo": 45,
+      "trechos": [
+        [
+          5,
+          40
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/PainelParcela.gd",
+      "sha256": "c630c89085a9bbcaeb657e48087eb569d837d7e366afce491beed52908490848",
+      "linhas_no_arquivo": 143,
+      "trechos": [
+        [
+          36,
+          44
+        ],
+        [
+          45,
+          122
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/Retratos.gd",
+      "sha256": "d44f5f76928d53b3876db7625280c07ae8e7e9bce9d035b01249b90fd5c2186d",
+      "linhas_no_arquivo": 271,
+      "trechos": [
+        [
+          1,
+          90
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/TelaNomes.gd",
+      "sha256": "a6d9ad665442ca29067d338c7dc161e92dbc66e4d463761c7330a107ed4eb004",
+      "linhas_no_arquivo": 167,
+      "trechos": [
+        [
+          71,
+          116
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/TutorialDoToninho.gd",
+      "sha256": "7484ddc4a04b88b3bf13e1f10f545292411c1458f364b387249b02371d6485ca",
+      "linhas_no_arquivo": 232,
+      "trechos": [
+        [
+          1,
+          232
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "brport_vs/scripts/UpgradePanel.gd",
+      "sha256": "3546f0ba5274cc21e50880c9d75ac09fffa1e73395608c0d9f94a0e4c4cad69a",
+      "linhas_no_arquivo": 278,
+      "trechos": [
+        [
+          58,
+          156
+        ],
+        [
+          157,
+          278
+        ]
+      ],
+      "integral": false
+    },
+    {
+      "arquivo": "brport_vs/scripts/VidaDoPorto.gd",
+      "sha256": "583551ec5bf8291643804fdb588324151f44c474b7cf599837d433b426c3ffa7",
+      "linhas_no_arquivo": 69,
+      "trechos": [
+        [
+          1,
+          69
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "docs/REVISAO_FALAS_LOJAS_FASE_1.md",
+      "sha256": "cd4ec8755b9990efad66cdced20636b4ba38a7c4dd7f0b40d8deb13c0b6f70b4",
+      "linhas_no_arquivo": 215,
+      "trechos": [
+        [
+          1,
+          215
+        ]
+      ],
+      "integral": true
+    },
+    {
+      "arquivo": "docs/gdd/sistemas/voz_personagens.md",
+      "sha256": "898adefef416135557e640429f78aa0233909692807243408bfa934fee5d2040",
+      "linhas_no_arquivo": 95,
+      "trechos": [
+        [
+          1,
+          95
+        ]
+      ],
+      "integral": true
+    }
+  ],
+  "commit": "6fd918c6cc68ff47ebd9ed3070af11c04efc009b",
+  "branch": "codex/revisor-de-mensagens",
+  "arvore_suja": true,
+  "metodo": {
+    "tools/preparar_revisao_mensagens.py": "574052fc042b6180db6e2e0bfa20a7da5b63d213f0bec83876c59d16b1c91a1f",
+    ".claude/skills/revisar-mensagens/SKILL.md": "49762911670273a8b3420f63f68a9b2ee04cb91f3adc6962a586236dc6bfd689"
+  }
+}

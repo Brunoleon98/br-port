@@ -1,0 +1,73 @@
+{
+  "reputacao-queda-saudavel-alarma": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "7 reprovada(s)",
+      "reprovadas": [
+        "T33: queda ainda saudável não alarma",
+        "T33: entrar no patamar baixo avisa",
+        "T33: permanecer baixo não repete aviso",
+        "T33: recuperar e cair de novo permite outro aviso",
+        "T33: abrir já baixo avisa uma vez",
+        "T33: abrir baixo não repete no primeiro sinal",
+        "T33: reputação baixa, aviso e indicador"
+      ]
+    }
+  },
+  "reputacao-baixa-sem-memoria": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "4 reprovada(s)",
+      "reprovadas": [
+        "T33: permanecer baixo não repete aviso",
+        "T33: recuperar e cair de novo permite outro aviso",
+        "T33: abrir baixo não repete no primeiro sinal",
+        "T33: reputação baixa, aviso e indicador"
+      ]
+    }
+  },
+  "reputacao-retomada-sem-alerta": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "3 reprovada(s)",
+      "reprovadas": [
+        "T33: abrir já baixo avisa uma vez",
+        "T33: subir de patamar mantém elogio",
+        "T33: reputação baixa, aviso e indicador"
+      ]
+    }
+  },
+  "reputacao-alerta-nao-rearma": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "2 reprovada(s)",
+      "reprovadas": [
+        "T33: recuperar e cair de novo permite outro aviso",
+        "T33: reputação baixa, aviso e indicador"
+      ]
+    }
+  },
+  "reputacao-indicador-sem-vermelho": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "2 reprovada(s)",
+      "reprovadas": [
+        "T33: indicador baixo usa estilo de alerta",
+        "T33: reputação baixa, aviso e indicador"
+      ]
+    }
+  },
+  "reputacao-baixa-inclui-confiavel": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "5 reprovada(s)",
+      "reprovadas": [
+        "T33: patamar de alerta em 41.0",
+        "T33: queda ainda saudável não alarma",
+        "T33: recuperar e cair de novo permite outro aviso",
+        "T33: recuperar restaura estilo habitual",
+        "T33: reputação baixa, aviso e indicador"
+      ]
+    }
+  }
+}

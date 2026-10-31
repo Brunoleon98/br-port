@@ -1,0 +1,11 @@
+Base:
+  verde     run_tests (13 s)
+
+1 mutante(s):
+  reputacao-hud-nao-atualiza  (147)
+      run_tests        2 reprovada(s): T33: HUD acompanha entrada no patamar baixo | T33: reputação baixa, aviso e indicador
+
+Base no fim:
+  verde     run_tests
+
+Explorado — relatório em /tmp/brport-reputacao-exploracao-hud/relatorio.json.

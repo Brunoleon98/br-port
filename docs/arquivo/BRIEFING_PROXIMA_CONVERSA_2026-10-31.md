@@ -1,95 +1,60 @@
-# BR Port — a peça que assenta e o botão que afunda (`145`); a próxima conversa é a T1
+# Próxima conversa — reputação e vínculo com os personagens
 
-**31/10/2026.** Branch `claude/sharp-lamport-kf55gf`, da main `53b923b` (o
-PR #156 da `144` fundiu a meio da conversa, com o conserto da partilha dos
-mutantes por cima, e a branch avançou por fast-forward). Nenhum PR aberto
-desta branch: não foi pedido nesta conversa.
+31/10/2026. Branch `codex/revisor-de-mensagens`, main incorporada em
+`9c36e97` (#157, reforço de testes), após integrar o gráfico #156. História local é
+146, revisor é 145, retorno da revisão é 147; gráfico do barco é 144.
 
-**Decisão `145` — o A1, o segundo item do tema animação e toque.** Medido
-antes: a virada que conclui cada uma das oito obras trocava a textura num
-quadro e nada mais. **Aceite à quarta passagem em vídeo**: a peça nova
-assenta de 94% a 100% em 0,3 s com o pivô no chão (a lança com o píer, à
-volta do mesmo chão), a obra velha esvai-se por baixo dela em 0,25 s (no
-pátio, o canteiro e os cones em 0,1 s, e o chão de terra por cima do
-pavimentado), e o «Avançar dia» e o cartão «Ao largo» afundam ao premir —
-pelo estilo, não pela escala. Só o botão arma o assentar; com o movimento
-reduzido não há. O D53 prova-o, com 30 defeitos no catálogo.
+## Entrega
 
-⚠️ O premido desenha-se no estilo, não na escala, e quem encolhe a borda
-move o conteúdo com ela (`.claude/rules/interface.md`, a seguir a «UM
-`Container` DESFAZ O GIRO DO FILHO»).
+Cida avisa uma vez ao entrar/abrir no patamar baixo de reputação. Recuperar e
+cair novamente permite novo aviso. HUD vermelho abaixo de Confiável, com
+número/classificação preservados; volta ao âmbar ao recuperar. Integração de
+uma linha no Main, aplicada somente depois do merge gráfico, como Bruno pediu.
 
-⚠️ No telefone o «passar por cima» fica depois do toque; só o rodapé o trata
-(`.claude/rules/interface.md`, logo a seguir).
+Elogio de bom contrato: «Esse valeu a conversa. Anota aí.» Cena `mesa` agora
+«Mais uma cadeira», aproximando Mané da equipe sem entrega fixa ou conta
+mensal. Condições dos capítulos, preços e save não mudaram. Chave/almoço
+seguem aceitos e aplicados. Outros trechos e retorno das lojas são propostas
+em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`.
 
-⚠️ Num teste que não deixa passar quadros, o toque pede o contentor arrumado
-à mão e o `push_input(…, true)` (`.claude/rules/testes-e-guardas.md`, a
-seguir a «E O BOTÃO ESCOLHE-SE PELO QUE ELE DIZ»).
+A decisão 147 registra gatilhos, falas e espera/integração do HUD. Provas
+visuais e limites em `REPUTACAO_E_FALAS_2026-10-30/README.md`: HUD real, aviso
+pela fila normal e cena do Mané em Padrão/Maior. Telefone pendente.
 
-⚠️ O `--explorar` corre em série; um bloco num arquivo próprio explora-se
-sozinho, e renomear a asserção deixa o rótulo declarado para trás
-(`.claude/rules/testes-e-guardas.md`, «Guarda nova»).
+## Verificação
 
-⚠️ A suíte disse `DESIGN OK` com o sub-bloco de contraste do D43 rebentado
-(`.claude/rules/testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»);
-ficou sugerida uma tarefa à parte para lhe dar a bandeira.
+Na base com #156, seis suítes aprovadas em 179 s e catálogo completo de
+259 mutantes aprovado. A espera no chat foi interrompida, mas o processo
+terminou normalmente. Após incorporar #157, as seis suítes passaram em 65 s;
+catálogo de 263 em conclusão, atualizar antes do commit.
+Sete defeitos novos explorados e detectados pela guarda específica,
+incluindo a remoção da linha do HUD. Preparador do revisor inclui o novo
+predicado e o consumidor no Main.
 
-⚠️ Tween que compensa a posição não volta ao número exato
-(`.claude/rules/gdscript.md`).
+Bruno perguntou «Vai abrir um novo PR?» em 31/10. A entrega segue para um
+PR em rascunho com a verificação pendente explícita, incluindo os commits
+anteriores da história e do revisor. Conferir PR/CI antes de recomendar merge;
+não reiniciar a branch a partir da main, que ainda não contém esta entrega.
 
-⚠️ O veredito em quatro passagens, e o «procure mais melhorias» respondido
-com uma terceira pergunta medida (a skill `/arte`, §8, a `145`).
+## Continuação
 
-**Ficou por pedir:** o «Dia N» a marcar a virada e os postes do pátio a
-esvaírem-se (a `145`, «O que fica de fora»). O fundeadouro, a esteira e a
-fumaça continuam depois do A3 (a `144`).
+Bruno prioriza vínculo com os personagens. Próxima leitura possível: envelope,
+descrições das compras e retorno das lojas. Essas propostas ainda exigem
+leitura/aceite; não aplicar como se já tivessem sido aprovadas.
 
-**Pendente:** o PR desta branch (pergunte ao Bruno se o abre), e com ele o
-CI — o catálogo com os 30 defeitos novos, e a captura igual à da main (o
-assentar só existe nos 0,3 s depois de uma obra acabar pelo botão).
+O revisor é acionado pelo chat, com recomendações oportunas, conforme a skill
+`.claude/skills/revisar-mensagens/SKILL.md` e decisão 145. Recomendar nova
+rodada agora faz sentido porque mudaram texto e gatilho; ainda não foi feita
+uma segunda revisão contextual. A ferramenta preparar fontes não equivale ao
+parecer editorial.
 
-**A próxima conversa, pela ordem do Bruno:** a T1, a háptica, com o desenho
-na `144`. A guarda nova e os defeitos dela são F6 (Opus); o resto é receita.
-
-Prompt para colar:
+## Prompt para colar
 
 ```text
-Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
-e as decisões 144 (o desenho dos quatro itens do tema animação e toque) e
-145 (o A1: a peça que assenta e o botão que afunda). Confira a main remota,
-os PRs abertos e o CI do último merge, e rode python3
-tools/conferir_colaboracao.py com o trabalho commitado (ele lê o HEAD). Se o
-trabalho da 145 (branch claude/sharp-lamport-kf55gf) ainda não estiver na
-main, pergunte ao Bruno se abre o PR dele e conduza-o até verde antes de
-começar: o CI deve mostrar a captura igual à da main (o assentar só existe
-nos 0,3 s depois de uma obra acabar pelo botão) e o catálogo com 30 defeitos
-novos na secção da 145.
-
-O item desta conversa, na ordem que o Bruno escolheu (A1′ → A1 → T1 → A3):
-a T1, a háptica. Um ponto único, como o Audio.gd, que recebe o MOMENTO
-(atracar ~20 ms; obra pronta e parcela paga ~40 ms) e chama
-Input.vibrate_handheld(); «Vibração» nos Ajustes, na
-PreferenciasDeApresentacao (fora do save), ligada por omissão; a permissão
-VIBRATE no preset Android (plataforma.md). A virada simples não vibra. O
-desenho, a prova e os mutantes estão na 144 («T1 — a háptica»). Atenção: a
-obra pronta sai do obra_concluida, que também dispara nas bancadas e nas
-suítes — veja na 145 como o assentar só arma pelo botão (_virada_armada), e
-decida se a vibração segue a mesma porta.
-
-1. Meça antes: nenhuma chamada de vibração no jogo e nenhuma permissão
-   VIBRATE (144); confira-o no código e no export_presets.cfg.
-2. Implemente com a guarda nova (o ponto único conta os pedidos por momento:
-   um por atracar, por obra e por parcela, zero por virada simples, zero com
-   a preferência desligada; o teste_fumaca lê a permissão no preset), o
-   defeito injetado de cada pergunta no catálogo (secção nova, ao lado da
-   145), e a linha nova dos Ajustes no D33 e no RB5.
-3. O gate é o telefone, que só o Bruno tem: mostre a linha dos Ajustes
-   (captura) e diga-lhe o que sentir em cada momento; o APK sai do CI do PR.
-   Pergunte o veredito sozinho, logo a seguir (a skill /arte, §8).
-
-Depois vem o casco que rola (A3), uma conversa, e a esteira, a fumaça e o
-fundeadouro (a ordem entre estes três pergunta-se). As duas melhorias que a
-145 encontrou e o Bruno não pediu estão escritas lá. A luz, o som e o resto
-abrem-se quando ele os pedir (143). Ao encerrar, aplique /fechar-sessao e
-entregue o prompt completo da próxima conversa em bloco copiável.
+Retome /workspace/br-port na branch codex/revisor-de-mensagens.
+Leia AGENTS.md, docs/ESTADO_DO_PROJETO.md e as decisões 145, 146 e 147.
+O PR gráfico #156 está incorporado. Aviso da Cida, HUD vermelho e falas aceitas foram aplicados localmente.
+Confira docs/arquivo/REPUTACAO_E_FALAS_2026-10-30/README.md.
+Minha prioridade é vínculo com os personagens. Envelope e retorno das lojas ainda são propostas.
+Vamos continuar a revisão contextual; a parte gráfica segue com Claude.
 ```
