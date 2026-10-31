@@ -128,8 +128,8 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **RB6 (`129`) e RB5 (`134`, `135`)** nos Ajustes; telefone pendente.
-**Animação e toque** (`143`): A1′, A1 e T1 feitos (`144`, `148`, `149`;
-T1 no telefone); segue A3, depois esteira, fumaça e fundeadouro (§7).
+**Animação e toque** (`143`): A1′, A1 e T1 aceites (`144`, `148`, `149`);
+segue A3, depois esteira, fumaça e fundeadouro (§7).
 **A4, caderno, leitura e telefone pendentes.** `Safe save failed` sem causa
 (`110`); `107` local, sem publicação ou teste no telefone.
 

@@ -44,8 +44,8 @@ export do Godot»).
 dos irmãos por varrer do rodapé (`.claude/rules/interface.md`, «NO TELEFONE O
 "PASSAR POR CIMA" FICA DEPOIS DO TOQUE»).
 
-**Pendente:** o veredito do Bruno à segunda passagem, no telefone (o APK é o
-`brport-apk` do CI do PR desta conversa); o merge do #160 e depois o deste, que são dele.
+**Aceite à segunda passagem, no telefone** (o `brport-apk` da corrida de
+`bff02c2`). **Pendente:** o merge do #160 e depois o deste, que são dele.
 Escolha desta conversa que ele pode reverter: a segunda chance não vibra.
 
 **A próxima conversa, pela ordem do Bruno:** o casco que rola (A3), com o
@@ -59,12 +59,11 @@ Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
 e as decisões 144 (o desenho dos quatro itens do tema animação e toque), 148
 (o A1) e 149 (a T1, a háptica). Confira a main remota, os PRs abertos e o CI
 do último merge, e rode python3 tools/conferir_colaboracao.py com o trabalho
-commitado (ele lê o HEAD). O PR #160 (a 148) e o #161 (a 149, branch
+commitado (ele lê o HEAD). O PR #160 (a 148) e o #161 (a 149, aceite, branch
 claude/hopeful-ride-f61g1m, que arranca da cabeça do #160) são do Bruno para
 fundir: se algum ainda estiver aberto, confira o CI dele, e a branch nova
 arranca da main depois deles — se não tiverem fundido, da cabeça do #161,
-como a 149 arrancou da 148. Se o Bruno trouxer o veredito da háptica no
-telefone, trate-o primeiro (a 149, «O gate»).
+como a 149 arrancou da 148.
 
 O item desta conversa, na ordem que o Bruno escolheu (A1′ → A1 → T1 → A3):
 o A3, o casco que rola 1,5°. O barco atracado (Dock._iniciar_balanco(), uma

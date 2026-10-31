@@ -378,6 +378,12 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   sessão voltaram 3 de 3 (**19 de 19** somando as sessões). O envio da
   prancha tende a ser o fim do turno: escreva na legenda o que se pergunta
   e com que opções, e leia a resposta em texto como veredito.
+  ⚠️ **E O «AJUSTAR» PODE VOLTAR COMO UM PEDIDO DE PESQUISA** (31/10, a
+  háptica, `149`): à pergunta do quê ele escreveu no «Outro» *«pesquise as
+  melhores práticas… e aplique, sem exagerar»*. O que voltou «Aceito» à
+  passagem seguinte foi pesquisar pela busca (as fontes como pistas,
+  `063`), escrever a tabela prática → antes → depois na decisão, e não
+  acrescentar momento nenhum que ele não tivesse pedido.
   ⚠️ **E NA ANIMAÇÃO (`075`) A PERGUNTA SOZINHA FOI DISPENSADA, duas vezes**
   — a primeira logo a seguir ao envio, e a segunda depois de ele escrever
   «Mande pergunta». A resposta veio em TEXTO, e não era veredito, era uma

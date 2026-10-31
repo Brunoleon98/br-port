@@ -161,12 +161,14 @@ conquista.
 
 ## O gate, passagem a passagem
 
-O telefone, que só o Bruno tem: o APK sai do CI do PR (`brport-apk`).
+O telefone, que só o Bruno tem: o APK sai do CI do PR (`brport-apk`; o da
+segunda passagem é o da corrida de `bff02c2`, e o log do export mostra
+`android.permission.VIBRATE` no manifesto). **Aceite à segunda passagem.**
 
 | Passagem | Resposta |
 |---|---|
 | 1 (um pulso: 20 ms ao atracar, 40 ms nas conquistas) | «Ajustar», e o quê: *pesquisar as melhores práticas e aplicá-las ao que o jogo tem, sem exagerar, como complemento* |
-| 2 (os padrões acima) | por perguntar |
+| 2 (os padrões acima) | **«Aceito»** |
 
 ## O que fica de fora
 
