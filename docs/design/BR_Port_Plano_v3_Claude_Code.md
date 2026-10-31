@@ -732,6 +732,12 @@ com a dor que pagou, desceu para `docs/arquivo/PLANO_V3_FECHADOS.md` (`092`).
 
 ## 7. A fila
 
+**30/10, retorno do Bruno (`147`):** Cida comenta reputação baixa; elogio ao
+bom contrato sem prever as contas e Mané sem entrega fixa/conta mensal. Falas
+e narradora integradas localmente. Após Bruno avisar do merge do PR gráfico
+#156, a cor foi integrada ao HUD na base `53b923b`. Provas em
+`docs/arquivo/REPUTACAO_E_FALAS_2026-10-30/README.md`.
+
 **30/10, pedido do Bruno (`145`):** revisor de mensagens em contexto, como
 skill acionada na conversa, com preparador de fontes e primeiro parecer em
 `docs/arquivo/REVISAO_MENSAGENS_2026-10-30/README.md`. Não altera as falas nem

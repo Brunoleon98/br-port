@@ -164,3 +164,13 @@ Naturalidade é julgamento editorial; os riscos apontados não são defeitos
 de cobrança demonstrados. As capturas anteriores da chave/almoço continuam
 válidas para aqueles textos, mas não provam o encaixe das candidatas novas.
 Nenhuma fala ou mecânica foi alterada por este parecer.
+
+## Retorno do Bruno — implementação posterior (`147`)
+
+O parecer acima preserva o texto e os hashes da primeira leitura. No retorno,
+Bruno reformulou R1: Cida deve comentar ao ficar baixa, com possibilidade de
+alerta vermelho, em vez de comentar toda queda. Aceitou os ajustes de R2 e R3.
+A cena do Mané e o elogio foram aplicados, assim como o aviso da narradora ao
+entrar/abrir no patamar baixo. Bruno pediu aguardar o PR gráfico #156; após
+informar o merge, a cor também foi integrada ao Main. Detalhes/provas em
+`docs/arquivo/REPUTACAO_E_FALAS_2026-10-30/README.md`. R4–R6 continuam propostas.

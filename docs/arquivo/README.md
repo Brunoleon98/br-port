@@ -31,6 +31,8 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-31.md` | 31/10 | Reputação e falas integradas após #156 (`147`); provas e continuação da revisão |
+| `REPUTACAO_E_FALAS_2026-10-30/README.md` | 30–31/10 | Aviso de reputação baixa, Cida/Mané e provas (`147`); HUD integrado após Bruno confirmar o merge do #156 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-30b.md` | 30/10 | Revisor contextual (`145`), modo pelo chat, primeira rodada, base preservada e continuação |
 | `REVISAO_MENSAGENS_2026-10-30/README.md` | 30/10 | Primeira aplicação do revisor contextual (`145`): cobertura declarada, fatos, riscos, candidatos e o que manter |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-25d.md` | 25/10 | Chave/almoço aceitos e integrados; história renumerada para 141 após incorporar a rua da main; revisão restante |

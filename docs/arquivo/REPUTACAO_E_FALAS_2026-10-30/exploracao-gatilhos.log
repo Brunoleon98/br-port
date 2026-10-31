@@ -1,0 +1,21 @@
+Base:
+  verde     run_tests (13 s)
+
+6 mutante(s):
+  reputacao-queda-saudavel-alarma  (147)
+      run_tests        7 reprovada(s): T33: queda ainda saudável não alarma | T33: entrar no patamar baixo avisa | T33: permanecer baixo não repete aviso | T33: recuperar e cair de novo permite outro aviso
+  reputacao-baixa-sem-memoria  (147)
+      run_tests        4 reprovada(s): T33: permanecer baixo não repete aviso | T33: recuperar e cair de novo permite outro aviso | T33: abrir baixo não repete no primeiro sinal | T33: reputação baixa, aviso e indicador
+  reputacao-retomada-sem-alerta  (147)
+      run_tests        3 reprovada(s): T33: abrir já baixo avisa uma vez | T33: subir de patamar mantém elogio | T33: reputação baixa, aviso e indicador
+  reputacao-alerta-nao-rearma  (147)
+      run_tests        2 reprovada(s): T33: recuperar e cair de novo permite outro aviso | T33: reputação baixa, aviso e indicador
+  reputacao-indicador-sem-vermelho  (147)
+      run_tests        2 reprovada(s): T33: indicador baixo usa estilo de alerta | T33: reputação baixa, aviso e indicador
+  reputacao-baixa-inclui-confiavel  (147)
+      run_tests        5 reprovada(s): T33: patamar de alerta em 41.0 | T33: queda ainda saudável não alarma | T33: recuperar e cair de novo permite outro aviso | T33: recuperar restaura estilo habitual
+
+Base no fim:
+  verde     run_tests
+
+Explorado — relatório em /tmp/brport-reputacao-exploracao/relatorio.json.

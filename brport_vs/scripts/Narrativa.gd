@@ -155,7 +155,9 @@ const CIDA_LINHAS := {
 	# Dizia "Dois contratos recusados essa semana", e o gatilho é a queda de
 	# FAIXA da reputação — nunca dois contratos. Número em fala tem de sair de
 	# onde o evento sai, e este não saía de lado nenhum.
-	"reputacao_caiu": "Andaram recusando contrato, chefia. Arlindo vai saber antes de nós.",
+	# Na `147`, Bruno escolheu comentar só ao entrar no patamar BAIXO; a causa
+	# não é atribuída a uma decisão específica do jogador.
+	"reputacao_caiu": "A fama do cais tá por baixo, chefia. Vamos caprichar nos próximos serviços.",
 	# ⚠️ DUAS VARIANTES PORQUE A PARCELA PODE JÁ TER SIDO PAGA. O
 	# `pagar_parcela_adiantado()` existe desde o playtest, então um jogador que
 	# quite no turno 5 ouviria "a parcela não vai esperar" nos 27 turnos
@@ -170,7 +172,7 @@ const CIDA_LINHAS := {
 	"dinheiro_curto_livre": "O banco saiu da conta, chefia. Os salários continuam nela.",
 	# "Perdeu pro Arlindo" narrava o que o jogador acabou de ver acontecer.
 	"perdeu_para_arlindo": "O Arlindo vai contar essa na padaria amanhã. Deixa contar, chefia.",
-	"bom_contrato": "Esse contrato fecha a semana. Anota aí.",
+	"bom_contrato": "Esse valeu a conversa. Anota aí.",
 	# ⚠️ QUATRO VARIANTES, E NENHUMA AFIRMA O QUE A CONDIÇÃO DELA NÃO GARANTE.
 	# A linha única dizia "Barcos na fila, caixa no limite" em TODA semana ≥ 2,
 	# sem olhar nem uma coisa nem outra: medido em 18/09, na semente padrão ela
@@ -768,10 +770,10 @@ const HISTORIA_DO_PORTO := {
 		["toninho", "Toninho", "No verso tem letra dele: enquanto tiver quem volte, eu fico."],
 	],
 	"mesa": [
-		["cida", "Dona Cida", "O Mané perguntou se já pode pôr o nome do nosso cais na lista das entregas fixas."],
-		["toninho", "Toninho", "Ele tem essa lista desde antes de ter telefone."],
-		["cida", "Dona Cida", "Pois é. Quem entra nela ganha um lugar na cidade. E uma conta no fim do mês."],
-		["toninho", "Toninho", "Lugar a gente aceita. A conta ele manda separada, chefia."],
+		["cida", "Dona Cida", "O Mané perguntou se ainda tem lugar pra ele quando passar no cais."],
+		["toninho", "Toninho", "Na mesa? Achei que ele só vinha dar palpite."],
+		["cida", "Dona Cida", "Disse que tá cansado de conversar com a gente só na hora de entregar."],
+		["toninho", "Toninho", "Então manda trazer a cadeira da esquina. A que não balança."],
 	],
 	"arlindo": [
 		["arlindo", "Capitão Arlindo", "Meu caro, tanta madeira velha pros dois cuidarem. Um dia a gente devia conversar sobre juntar esforços."],

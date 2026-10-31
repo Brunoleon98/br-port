@@ -3,10 +3,15 @@
 Documento de trabalho sobre a implementação local da decisão `146`, no
 commit `2056dad`. Bruno escolheu **mais vínculo com os personagens** como
 prioridade desta revisão. **Chave e almoço foram aceitos em 25/10/2026 e
-aplicados ao jogo**, com a redação final abaixo. Os demais trechos e o retorno
-das lojas continuam como propostas para leitura.
+aplicados ao jogo**, com a redação final abaixo. Em 30/10, Bruno aceitou a cena
+do Mané sem entregas fixas e o elogio ao bom contrato sem previsão financeira;
+escolheu também aviso da Cida no patamar baixo de reputação (`147`). Demais
+trechos e retorno das lojas continuam propostas. Após o #156, a cor do HUD foi integrada.
 
-## O que precisa melhorar primeiro
+## Diagnóstico da primeira implementação
+
+A tabela registra a leitura inicial do commit `2056dad`. A situação atual das
+cenas e os ajustes aplicados estão na tabela de leitura e nas notas abaixo.
 
 O arco já mostra a falta do Seu Maneco, sobretudo na caneca e no café. Falta
 mostrar melhor a relação que está nascendo entre a equipe e quem assumiu o
@@ -15,7 +20,7 @@ o protagonista apenas escuta. A revisão pode dar ao jogador um lugar nas
 pequenas rotinas: receber a confiança do Toninho, dividir uma preocupação com
 Cida, sentar para almoçar e conhecer Mané pelo que ele faz hoje.
 
-| Prioridade | Evidência no jogo atual | Revisão proposta |
+| Prioridade | Evidência na primeira implementação | Revisão proposta |
 |---|---|---|
 | 1 — Aproximação no presente | Chave, recibo, café e visitas voltam ao avô. A cena do almoço termina numa piada sobre a forma da mesa. | Preservar caneca/café; usar chave e almoço para incluir diretamente a chefia na vida da equipe. |
 | 1 — Compra com motivo humano | O catálogo começa por «Desbloqueia a conversa». Vê-se nas fotos `mercado.png` e `delivery.png` da verificação. | Apresentar primeiro o café e a refeição para dividir; manter em seguida a consequência narrativa, preço e compra única. |
@@ -37,7 +42,7 @@ Referências verificadas: `brport_vs/scripts/Narrativa.gd`, linhas 744–804;
 | A chave do galpão | Toninho entregar algo que estava sob sua guarda. | Aplicado: lembrança breve e oferta de ajuda, sem presumir o estado do galpão. |
 | O nome no recibo | A cidade começar a reconhecer quem ficou. | Fazer o recibo aparecer de fato na conversa; Toninho se oferece para buscar o pão. |
 | O envelope | A oferta antiga do Grupo Atlântico e a frase no verso. | Encontrar o envelope no armário da chave; trocar a explicação bancária por uma reação da equipe e disposição de olhar os papéis juntos. |
-| A mesa da esquina | Mané aproximar cidade e cais. | Fazer o encontro importar pelo lugar que ele tem entre as pessoas, sem anunciar entrega fixa ou conta mensal. |
+| Mais uma cadeira (`mesa`) | Mané aproximar cidade e cais. | Aplicado em 30/10: convite para sentar com a equipe, sem entrega fixa ou conta mensal. |
 | Uma proposta informal | A simpatia interessada de Arlindo e «meu caro», escolha já registrada de Bruno. | Manter nesta passagem. É o contraponto à confiança da equipe; intensificar a ameaça não é a prioridade escolhida. |
 | Café no cais | O café fraco para a conversa durar, a resposta seca de Cida e a garrafa que fica. | Manter nesta passagem. Já cumpre o objetivo de vínculo. |
 | A mesa do cais | A compra resultar numa pausa compartilhada com a equipe. | Aplicado: Toninho reserva um lugar para a chefia e brinca com Cida. |
@@ -97,7 +102,7 @@ antiga; o empréstimo atual para reconstruir continua sendo o contrato já
 explicado no banco. Não se atribui o documento ao Arlindo nem se resolve o
 mistério do Grupo Atlântico.
 
-### A mesa da esquina
+### Mais uma cadeira — antes A mesa da esquina
 
 **Cida:** O Mané perguntou se ainda tem lugar pra ele quando passar no cais.
 
@@ -107,8 +112,7 @@ mistério do Grupo Atlântico.
 
 **Toninho:** Então manda trazer a cadeira da esquina. A que não balança.
 
-Aqui o título que melhor acompanha a versão seria **Mais uma cadeira**,
-mantendo o id `mesa`. É sugestão de título, ainda não aplicada. O convite
+O título aplicado em 30/10 é **Mais uma cadeira**, mantendo o id `mesa`. O convite
 aproxima Mané; não representa uma encomenda nem uma assinatura de entregas.
 
 ### A mesa do cais — depois de comprar o almoço
@@ -201,9 +205,11 @@ essas cenas como referência para o restante: a equipe acolher quem joga, cada
 voz continuar reconhecível e o humor parecer uma conversa. O aceite das outras
 cenas continua aberto; suíte verde não resolve gosto de escrita.
 
-A implementação da `146` recebeu somente as falas aceitas da chave e do
-almoço. Preços, save, gatilhos e percurso continuam iguais. Provas dessa
-integração em `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`.
+A implementação da `146` recebeu as falas aceitas da chave e do almoço;
+provas em `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`. A `147` aplica
+a cena do Mané, o elogio e o aviso ao entrar no patamar baixo de reputação;
+provas em `docs/arquivo/REPUTACAO_E_FALAS_2026-10-30/README.md`. Preços, save,
+condições dos capítulos e percurso das lojas continuam iguais.
 As capturas da entrega anterior não representam os textos novos. Telefone e
 as propostas restantes continuam por conferir; envelope e catálogo precisarão
 ser vistos no painel real em Padrão/Maior quando forem integrados.

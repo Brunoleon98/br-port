@@ -19,12 +19,13 @@ import tempfile
 RAIZ = Path(__file__).resolve().parents[1]
 CATALOGO = "brport_vs/scripts/Narrativa.gd"
 FUNC = re.compile(r"^(?:static )?func\s+\w+")
-RELACIONADO = re.compile(r"\bNarrativa\.|\bmessage\.emit\(|\bcapitulos_do_porto\(|\bproxima_historia_do_porto\(|\b_on_historia_pedida\(")
+RELACIONADO = re.compile(r"\bNarrativa\.|\bAvisoDeReputacao\.|\bmessage\.emit\(|\bcapitulos_do_porto\(|\bproxima_historia_do_porto\(|\b_on_historia_pedida\(")
 INTEIROS = (
     CATALOGO,
     "brport_vs/scripts/VidaDoPorto.gd",
     "brport_vs/scripts/PainelLojas.gd",
     "brport_vs/scripts/NarradoraDaCida.gd",
+    "brport_vs/scripts/AvisoDeReputacao.gd",
     "brport_vs/scripts/TutorialDoToninho.gd",
     ".claude/rules/narrativa.md",
     "docs/gdd/sistemas/voz_personagens.md",

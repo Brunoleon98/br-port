@@ -14,7 +14,7 @@ const CAPITULOS := {
 	"chave": "A chave do galpão",
 	"recibo": "O nome no recibo",
 	"envelope": "O envelope",
-	"mesa": "A mesa da esquina",
+	"mesa": "Mais uma cadeira",
 	"arlindo": "Uma proposta informal",
 	"cafe": "Café no cais",
 	"almoco": "A mesa do cais",

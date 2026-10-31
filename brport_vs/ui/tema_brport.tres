@@ -1385,6 +1385,11 @@ GanhoNoMapa/font_sizes/font_size = 18
 ; mais. Trocar um pelo outro é a migração cega que quebra o medido.
 TextoPilulaDestaque/base_type = "Label"
 TextoPilulaDestaque/colors/font_color = Color(0.961, 0.725, 0.227, 1)
+
+; Alerta no HUD escuro: vermelho claro legível sem depender só da cor (`147`).
+; O número e o nome do patamar continuam presentes no indicador.
+TextoPilulaAlerta/base_type = "Label"
+TextoPilulaAlerta/colors/font_color = Color(1, 0.55, 0.55, 1)
 ; O rótulo acima dos cartões de trabalhador, nos seus DOIS estados. O script
 ; troca a VARIAÇÃO em runtime — como o `DocaCartao.refresh()` já faz com o
 ; painel — em vez de pintar cor à mão nos três ramos do

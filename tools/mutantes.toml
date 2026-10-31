@@ -24,6 +24,71 @@
 # Literais TOML entre aspas simples: nada se escapa, e o tab do GDScript entra
 # como tab. O `'''` seguido de quebra de linha come essa quebra.
 
+# ── AVISO DE REPUTAÇÃO BAIXA (`147`) ──────────────────────────────────────
+
+[[mutante]]
+id = "reputacao-hud-nao-atualiza"
+de = "147"
+o_que = "a lógica de alerta existe mas o HUD não acompanha a reputação real"
+alvo = "brport_vs/scripts/Main.gd"
+antes = 'AvisoDeReputacao.atualizar(_rep_label, GameState.reputation)'
+depois = 'pass'
+reprova = { run_tests = "T33: HUD acompanha entrada no patamar baixo" }
+
+[[mutante]]
+id = "reputacao-queda-saudavel-alarma"
+de = "147"
+o_que = "Cida avisa em uma queda que ainda deixa o cais confiável"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = 'if baixa and not _reputacao_estava_baixa:'
+depois = 'if _faixa_reputacao != "" and valor < _reputacao_vista:'
+reprova = { run_tests = "T33: queda ainda saudável não alarma" }
+
+[[mutante]]
+id = "reputacao-baixa-sem-memoria"
+de = "147"
+o_que = "o aviso se repete em cada sinal enquanto a reputação continua baixa"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = '_reputacao_estava_baixa = baixa'
+depois = '_reputacao_estava_baixa = false'
+reprova = { run_tests = "T33: permanecer baixo não repete aviso" }
+
+[[mutante]]
+id = "reputacao-retomada-sem-alerta"
+de = "147"
+o_que = "abrir o porto já em patamar baixo não avisa"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = '_cida_reputacao(GameState.reputation)'
+depois = 'pass'
+reprova = { run_tests = "T33: abrir já baixo avisa uma vez" }
+
+[[mutante]]
+id = "reputacao-alerta-nao-rearma"
+de = "147"
+o_que = "recuperar não permite um novo aviso quando cair de novo"
+alvo = "brport_vs/scripts/NarradoraDaCida.gd"
+antes = '_reputacao_estava_baixa = baixa'
+depois = '_reputacao_estava_baixa = _reputacao_estava_baixa or baixa'
+reprova = { run_tests = "T33: recuperar e cair de novo permite outro aviso" }
+
+[[mutante]]
+id = "reputacao-indicador-sem-vermelho"
+de = "147"
+o_que = "o indicador continua no estilo habitual mesmo com reputação baixa"
+alvo = "brport_vs/scripts/AvisoDeReputacao.gd"
+antes = 'rotulo.theme_type_variation = &"TextoPilulaAlerta" if baixa(valor) else &"TextoPilulaDestaque"'
+depois = 'rotulo.theme_type_variation = &"TextoPilulaDestaque"'
+reprova = { run_tests = "T33: indicador baixo usa estilo de alerta" }
+
+[[mutante]]
+id = "reputacao-baixa-inclui-confiavel"
+de = "147"
+o_que = "o patamar Confiável acende o alerta de reputação baixa"
+alvo = "brport_vs/scripts/AvisoDeReputacao.gd"
+antes = 'in ["Questionável", "Desconhecido"]'
+depois = 'in ["Questionável", "Desconhecido", "Confiável"]'
+reprova = { run_tests = "T33: patamar de alerta em 41.0" }
+
 # ── HISTÓRIA E LOJAS (`146`) ───────────────────────────────────────────────
 
 [[mutante]]

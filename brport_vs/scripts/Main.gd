@@ -743,6 +743,7 @@ func _refresh_hud() -> void:
 	else:
 		_day_label.text = "Dia %d" % GameState.turn
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
+	AvisoDeReputacao.atualizar(_rep_label, GameState.reputation)
 	_docks_label.text = "%d/%d" % [GameState.docks.size(), GameState.bercos_no_mapa()]
 	# O botão não some quando tudo está construído: vira o registo de que o
 	# porto está completo, que é uma informação, não um beco sem saída.

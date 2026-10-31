@@ -1,0 +1,46 @@
+extends "res://tools/capturar_tela.gd"
+
+var _esperou_aviso := 0
+var _registrou_aviso := false
+
+func _initialize() -> void:
+	if OS.get_environment("BRPORT_FOTO_TAMANHO") == "maior":
+		PreferenciasDeApresentacao.atual().tamanho_do_texto = PreferenciasDeApresentacao.MAIOR
+
+func _montar() -> void:
+	super()
+	var valor := float(OS.get_environment("BRPORT_FOTO_REPUTACAO"))
+	GS._change_reputation(valor - GS.reputation)
+	var rotulo: Label = _main.get_node("HudBar/RepPilula/Linha/RepTexto")
+	# Agora o próprio Main escolhe o estilo; este wrapper só monta o estado.
+	var motor = load("res://scripts/validation/contraste_ui.gd").new()
+	var fundo: Dictionary = motor.fundo_de(rotulo, _main)
+	print("HUD INTEGRADO: ", rotulo.text, " | ", rotulo.theme_type_variation)
+	print("FUNDO: ", fundo)
+	for cor in fundo["cores"]:
+		print("CONTRASTE: ", motor.contraste(rotulo.get_theme_color("font_color"), cor))
+
+func _process(delta: float) -> bool:
+	if _montado and is_instance_valid(_main):
+		GS.reputation = float(OS.get_environment("BRPORT_FOTO_REPUTACAO"))
+		_main._refresh_hud()
+		if OS.get_environment("BRPORT_FOTO_AVISO") == "1":
+			var principal = _main
+			var mensagem: Label = principal._message_label
+			if not mensagem.text.contains(Narrativa.cida("reputacao_caiu")):
+				_esperou_aviso += 1
+				_frames = 0
+				if _esperou_aviso > 1800:
+					push_error("o aviso não chegou à faixa")
+					quit(1)
+					return false
+			else:
+				if not _registrou_aviso:
+					print("AVISO VISÍVEL: ", mensagem.text)
+					_registrou_aviso = true
+				var pai: Node = mensagem.get_parent()
+				while pai != null and not (pai is ScrollContainer):
+					pai = pai.get_parent()
+				if pai is ScrollContainer:
+					pai.ensure_control_visible(mensagem)
+	return super(delta)
