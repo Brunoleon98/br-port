@@ -3,7 +3,7 @@
 **31/10/2026.** Branch `claude/hopeful-ride-f61g1m`, que arranca da cabeça
 do PR #160 (a `148`, branch `claude/sharp-lamport-kf55gf`, `0e39079`), aberto
 e acompanhado noutra conversa — como a `148` arrancou da `144`. O PR desta
-conversa é o #PR_DESTA, contra a `main`: até o #160 fundir, ele leva também
+conversa é o #161, contra a `main`: até o #160 fundir, ele leva também
 os cinco commits da `148`.
 
 **Decisão `149` — a T1, o terceiro item do tema animação e toque.** Medido
@@ -53,10 +53,10 @@ Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
 e as decisões 144 (o desenho dos quatro itens do tema animação e toque), 148
 (o A1) e 149 (a T1, a háptica). Confira a main remota, os PRs abertos e o CI
 do último merge, e rode python3 tools/conferir_colaboracao.py com o trabalho
-commitado (ele lê o HEAD). O PR #160 (a 148) e o #PR_DESTA (a 149, branch
+commitado (ele lê o HEAD). O PR #160 (a 148) e o #161 (a 149, branch
 claude/hopeful-ride-f61g1m, que arranca da cabeça do #160) são do Bruno para
 fundir: se algum ainda estiver aberto, confira o CI dele, e a branch nova
-arranca da main depois deles — se não tiverem fundido, da cabeça do #PR_DESTA,
+arranca da main depois deles — se não tiverem fundido, da cabeça do #161,
 como a 149 arrancou da 148. Se o Bruno trouxer o veredito da háptica no
 telefone, trate-o primeiro (a 149, «O gate»).
 
