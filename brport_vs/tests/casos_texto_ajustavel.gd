@@ -584,11 +584,20 @@ func _proporcoes() -> bool:
 			var tela: Control = motor.montar_caso(visor, gs, caso, TextoDaInterface.TEMA)
 			await assentar()
 			var cabe := true
+			# As alternâncias dos Ajustes — «Reduzir movimento» e, desde a
+			# `149`, «Vibração» — são botões, e a pergunta dos rótulos não as
+			# via: contam-se e cabem como eles.
+			var alternancias := 0
 			for texto in medidor.medir(tela).textos:
-				if texto.classe == "Label":
+				if texto.classe == "Label" or texto.classe == "CheckButton":
 					cabe = cabe and texto.excesso_local <= 2.0 \
 						and (texto.em_rolagem or texto.excesso_janela <= 2.0)
+				if texto.classe == "CheckButton":
+					alternancias += 1
 			conferir("leitura maior cabe em %s: %s" % [tamanho, cena], cabe)
+			if cena == "PainelAjustes":
+				conferir("leitura maior em %s: as duas alternâncias dos Ajustes medidas (%d)"
+					% [tamanho, alternancias], alternancias == 2)
 			visor.free()
 	return true
 

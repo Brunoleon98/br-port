@@ -46,6 +46,16 @@ jobs:
       - name: Provar a identificação do build contra commits reais
         run: python3 tools/testar_identificacao_build.py
 
+      - name: Provar a régua do manifesto do APK
+        # Manifestos falsos, em milissegundos: a régua acha a permissão nas
+        # duas codificações do pool de strings, e reprova sem ela e sem o
+        # elemento `uses-permission`. A de verdade lê o APK no job do export
+        # (`149`).
+        run: |
+          set -euo pipefail
+          python3 tools/conferir_permissoes_apk.py --provar 2>&1 | tee /tmp/permissoes_provar.txt
+          grep -q "^=== PERMISSOES OK" /tmp/permissoes_provar.txt
+
       - name: Provar que o import do CI chega ao motor com um trabalhador
         # A prova de 14/10 lia a chave num `--script`, e o `--import` não a
         # lia: a base do PR #144 caiu duas vezes na fonte (`106`).
@@ -970,6 +980,16 @@ jobs:
           test -s build/android/brport.apk || { echo "::error::o APK saiu vazio."; exit 1; }
           ls -la build/android
           echo "APK: $(du -h build/android/brport.apk | cut -f1)"
+
+      - name: Conferir a permissão de vibrar no APK
+        # O preset pede-a (`149`; o F5 do teste_fumaca lê-a lá), e é aqui que
+        # se prova que chegou ao telefone: sem ela o `vibrate_handheld()` não
+        # faz nada no aparelho, e não se queixa.
+        run: |
+          set -euo pipefail
+          python3 tools/conferir_permissoes_apk.py build/android/brport.apk \
+            android.permission.VIBRATE 2>&1 | tee /tmp/permissoes_apk.txt
+          grep -q "^=== PERMISSOES OK" /tmp/permissoes_apk.txt
 
       - name: Guardar o APK
         uses: actions/upload-artifact@v4

@@ -683,13 +683,13 @@ de = "148"
 o_que = "o assentar ignora o movimento reduzido (RB6)"
 alvo = "brport_vs/scripts/Main.gd"
 antes = '''
-	if not _virada_armada or PreferenciasDeApresentacao.atual().reduzir_movimento:
+	Haptica.pedir("obra_pronta")
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
 		return
 	var pecas := pecas_da_obra(id)
 '''
 depois = '''
-	if not _virada_armada:
-		return
+	Haptica.pedir("obra_pronta")
 	var pecas := pecas_da_obra(id)
 '''
 reprova = { teste_design = "D53: §6 com o movimento reduzido a obra conclui e nada assenta" }
@@ -700,11 +700,16 @@ de = "148"
 o_que = "qualquer obra concluída assenta, também a da bancada: a peça a 97% numa foto ou numa régua"
 alvo = "brport_vs/scripts/Main.gd"
 antes = '''
-	if not _virada_armada or PreferenciasDeApresentacao.atual().reduzir_movimento:
+	if not _virada_armada:
+		return
+	Haptica.pedir("obra_pronta")
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
 		return
 	var pecas := pecas_da_obra(id)
 '''
 depois = '''
+	if _virada_armada:
+		Haptica.pedir("obra_pronta")
 	if PreferenciasDeApresentacao.atual().reduzir_movimento:
 		return
 	var pecas := pecas_da_obra(id)
@@ -933,12 +938,10 @@ alvo = "brport_vs/scripts/BarcoFila.gd"
 antes = '''
 	_premido = false
 	refresh()
-	GameState.atracar(indice)
-'''
+	# A VIBRAÇÃO SÓ DEPOIS DE ATRACAR'''
 depois = '''
 	refresh()
-	GameState.atracar(indice)
-'''
+	# A VIBRAÇÃO SÓ DEPOIS DE ATRACAR'''
 reprova = { teste_design = "D53: §9 e o cartão volta a desenhar-se inteiro" }
 
 [[mutante]]
@@ -993,6 +996,296 @@ alvo = "brport_vs/tests/casos_assentar_obra.gd"
 antes = 'get_script_constant_map()["EQUIPAMENTO_DE_PATIO"]'
 depois = 'get_script_constant_map()["EQUIPAMENTO_DO_PATIO"]'
 reprova = { teste_design = "D53: pier_2 correu até ao fim" }
+
+# ── A HÁPTICA (`149`) ─────────────────────────────────────────────────────
+
+[[mutante]]
+id = "haptica-preferencia-ignorada"
+de = "149"
+o_que = "a «Vibração» desligada nos Ajustes e o telefone a vibrar na mesma"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '''
+	if not PreferenciasDeApresentacao.atual().vibrar:
+		return
+'''
+depois = '''
+'''
+reprova = { teste_design = "D54: §3 desligada, atracar não vibra" }
+
+[[mutante]]
+id = "haptica-toda-virada"
+de = "149"
+o_que = "a vibração pendurada na virada e não na obra: todo «Avançar dia» vibra"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	_virada_armada = true
+	GameState.advance_turn()
+'''
+depois = '''
+	_virada_armada = true
+	Haptica.pedir("obra_pronta")
+	GameState.advance_turn()
+'''
+reprova = { teste_design = "D54: §2 a virada simples não vibra" }
+
+[[mutante]]
+id = "haptica-permissao-fora"
+de = "149"
+o_que = "o preset Android sem a permissão de vibrar: o vibrate_handheld() não faz nada no telefone, e não se queixa"
+alvo = "brport_vs/export_presets.cfg"
+antes = 'permissions/vibrate=true'
+depois = 'permissions/vibrate=false'
+reprova = { teste_fumaca = "o preset Android pede a permissão de vibrar" }
+
+[[mutante]]
+id = "haptica-permissao-no-web"
+de = "149"
+o_que = "a permissão escrita no preset errado (o do Web), onde o export Android não a lê"
+alvo = "brport_vs/export_presets.cfg"
+antes = '''
+permissions/vibrate=true
+
+[preset.1]
+'''
+depois = '''
+
+[preset.1]
+permissions/vibrate=true
+'''
+reprova = { teste_fumaca = "o preset Android pede a permissão de vibrar" }
+
+[[mutante]]
+id = "haptica-obra-sem-porta"
+de = "149"
+o_que = "a obra pronta vibra fora do botão: a bancada, as suítes e o simulador pediriam vibração sem ninguém tocar"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	if not _virada_armada:
+		return
+	Haptica.pedir("obra_pronta")
+'''
+depois = '''
+	Haptica.pedir("obra_pronta")
+	if not _virada_armada:
+		return
+'''
+reprova = { teste_design = "D54: §2 a obra concluída pela bancada não vibra" }
+
+[[mutante]]
+id = "haptica-reduzido-cala"
+de = "149"
+o_que = "o movimento reduzido cala a vibração da obra pronta, que é outra preferência"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	if not _virada_armada:
+		return
+	Haptica.pedir("obra_pronta")
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+'''
+depois = '''
+	if not _virada_armada or PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	Haptica.pedir("obra_pronta")
+'''
+reprova = { teste_design = "D54: §4 com o movimento reduzido, a obra pronta vibra na mesma" }
+
+[[mutante]]
+id = "haptica-atracar-recusado"
+de = "149"
+o_que = "o toque no cartão vibra antes de o GameState aceitar: com o berço cheio o dedo sente o que não houve"
+alvo = "brport_vs/scripts/BarcoFila.gd"
+antes = '''
+	if GameState.atracar(indice):
+		Haptica.pedir("atracar")
+'''
+depois = '''
+	GameState.atracar(indice)
+	Haptica.pedir("atracar")
+'''
+reprova = { teste_design = "D54: §2 o toque com o berço cheio não vibra" }
+
+[[mutante]]
+id = "haptica-atracar-no-sinal"
+de = "149"
+o_que = "o atracar pendurado no sinal atracou: o simulador e as suítes, que atracam pelo GameState, pediriam vibração"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+func _ao_atracar(doca: int, barco: Dictionary, _valores_ao_largo: Array) -> void:
+'''
+depois = '''
+func _ao_atracar(doca: int, barco: Dictionary, _valores_ao_largo: Array) -> void:
+	Haptica.pedir("atracar")
+'''
+reprova = { teste_design = "D54: §2 o atracar pelo GameState direto não vibra" }
+
+[[mutante]]
+id = "haptica-segunda-chance-vibra"
+de = "149"
+o_que = "a segunda chance vibra como conquista: quem pagou o boleto foi o banco, com acréscimo"
+alvo = "brport_vs/scripts/DebtPaymentPanel.gd"
+antes = '''
+func _on_aceitar() -> void:
+	GameState.aceitar_segunda_chance()
+'''
+depois = '''
+func _on_aceitar() -> void:
+	GameState.aceitar_segunda_chance()
+	Haptica.pedir("parcela_paga")
+'''
+reprova = { teste_design = "D54: §2 a segunda chance não vibra: quem pagou foi o banco" }
+
+[[mutante]]
+id = "haptica-quitar-esquecido"
+de = "149"
+o_que = "o «Quitar agora» esquecido: a parcela paga antes do prazo não vibra, e a do vencimento sim"
+alvo = "brport_vs/scripts/PainelParcela.gd"
+antes = '''
+		if GameState.pagar_parcela_adiantado():
+			Haptica.pedir("parcela_paga")
+'''
+depois = '''
+		GameState.pagar_parcela_adiantado()
+'''
+reprova = { teste_design = "D54: §1 o «Quitar agora» pede uma parcela paga, e só ela" }
+
+[[mutante]]
+id = "haptica-desligada-por-omissao"
+de = "149"
+o_que = "a vibração nasce desligada: quem nunca abriu os Ajustes não a sente"
+alvo = "brport_vs/scripts/PreferenciasDeApresentacao.gd"
+antes = 'var vibrar := true'
+depois = 'var vibrar := false'
+reprova = { teste_design = "D54: §5 sem arquivo, a vibração nasce ligada" }
+
+[[mutante]]
+id = "haptica-ajustes-sem-gravar"
+de = "149"
+o_que = "o toque na «Vibração» vale na sessão e não grava: o jogo seguinte volta a vibrar"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = 'var erro := PreferenciasDeApresentacao.atual().definir_vibrar(ligada)'
+depois = '''PreferenciasDeApresentacao.atual().vibrar = ligada
+	var erro: Error = OK'''
+reprova = { teste_design = "D54: §5 e grava fora do save, lido de novo do disco" }
+
+[[mutante]]
+id = "haptica-ajustes-mostra-errado"
+de = "149"
+o_que = "a linha «Vibração» abre desligada com a vibração ligada"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = '_vibracao.button_pressed = PreferenciasDeApresentacao.atual().vibrar'
+depois = '_vibracao.button_pressed = false'
+reprova = { teste_design = "D54: §5 e ela mostra a preferência, ligada" }
+
+[[mutante]]
+id = "haptica-duracao-trocada"
+de = "149"
+o_que = "o atracar vibra tão forte quanto as conquistas, e o gesto de todos os dias deixa de ser o leve"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"atracar": [[15, 0.4]],'
+depois = '"atracar": [[15, 0.9]],'
+reprova = { teste_design = "D54: §6 o atracar é um toque só, e o mais leve" }
+
+[[mutante]]
+id = "haptica-pulso-zumbido"
+de = "149"
+o_que = "o marco num pulso longo: o motor ressoa depois dele, o zumbido que a orientação do Android desaconselha"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"parcela_paga": [[22, 0.6], [36, 1.0]],'
+depois = '"parcela_paga": [[22, 0.6], [120, 1.0]],'
+reprova = { teste_design = "D54: §6 todo pulso é curto e com força entre 0 e 1" }
+
+[[mutante]]
+id = "haptica-sucesso-num-toque"
+de = "149"
+o_que = "a obra pronta num toque só, como o atracar: o sucesso perde a forma dele"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"obra_pronta": [[18, 0.5], [28, 0.8]],'
+depois = '"obra_pronta": [[28, 0.8]],'
+reprova = { teste_design = "D54: §6 a obra pronta e a parcela paga são dois toques a subir" }
+
+[[mutante]]
+id = "haptica-parcela-como-obra"
+de = "149"
+o_que = "a parcela paga igual à obra pronta: o marco da fase sem mais força"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"parcela_paga": [[22, 0.6], [36, 1.0]],'
+depois = '"parcela_paga": [[18, 0.5], [28, 0.8]],'
+reprova = { teste_design = "D54: §6 e a parcela, o marco, mais forte do que a obra" }
+
+[[mutante]]
+id = "haptica-segundo-toque-perdido"
+de = "149"
+o_que = "o padrão sem o relógio: só o primeiro toque chega, e o sucesso lê como um toque só"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '		arvore.create_timer(INTERVALO_SEG * i).timeout.connect(func(): _pulsar(pulso))'
+depois = '		pass'
+reprova = { teste_fumaca = "F24: o segundo chega depois do intervalo, e nada mais" }
+
+[[mutante]]
+id = "haptica-segundo-toque-colado"
+de = "149"
+o_que = "os dois toques no mesmo instante: o motor soma-os num pulso só, mais longo"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '		arvore.create_timer(INTERVALO_SEG * i).timeout.connect(func(): _pulsar(pulso))'
+depois = '		_pulsar(pulso)'
+reprova = { teste_fumaca = "F24: e o segundo ainda não, a meio do intervalo" }
+
+[[mutante]]
+id = "haptica-sem-aparelho"
+de = "149"
+o_que = "o ponto único conta o pedido e não chama o aparelho: a régua verde e o telefone parado"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '	Input.vibrate_handheld(int(pulso[0]), float(pulso[1]))'
+depois = '	pass'
+reprova = { teste_fumaca = "F24: o aparelho é chamado uma vez, no Haptica.gd" }
+
+[[mutante]]
+id = "haptica-momento-renomeado"
+de = "149"
+o_que = "um momento renomeado na tabela e não no pedido: a obra pronta rebenta em vez de vibrar"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"obra_pronta": [[18, 0.5], [28, 0.8]],'
+depois = '"obra_concluida": [[18, 0.5], [28, 0.8]],'
+reprova = { teste_fumaca = "F24: ninguém pede um momento fora da tabela" }
+
+[[mutante]]
+id = "haptica-linha-escondida"
+de = "149"
+o_que = "a linha «Vibração» escondida nos Ajustes: a preferência existe e ninguém a alcança. O D33 não a vê — o motor do contraste mede o nó mesmo invisível —, e quem a conta é o RB5"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = '	_vbox.add_child(_vibracao)'
+depois = '''	_vibracao.visible = false
+	_vbox.add_child(_vibracao)'''
+reprova = { teste_design = "RB5: leitura maior em (720, 1152): as duas alternâncias dos Ajustes medidas" }
+
+[[mutante]]
+id = "haptica-linha-sem-alvo"
+de = "149"
+o_que = "a linha «Vibração» abaixo do alvo de toque de 44 px"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = '_vibracao.custom_minimum_size = Vector2(0, TOQUE_MIN)'
+depois = '_vibracao.custom_minimum_size = Vector2(0, 20)'
+reprova = { run_tests = "T29: a Vibração alcançável com alvo mínimo" }
+
+[[mutante]]
+id = "haptica-linha-hover-vazio"
+de = "149"
+o_que = "a «Vibração» com o hover_pressed vazio: ligada e tocada no telefone, letra branca sobre o cartão branco (o defeito da 132)"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = '	_vbox.add_child(_vibracao)'
+depois = '''	_vibracao.add_theme_stylebox_override("hover_pressed", StyleBoxEmpty.new())
+	_vbox.add_child(_vibracao)'''
+reprova = { run_tests = "T30: vibração hover_pressed tem fundo opaco e contraste AA" }
+
+[[mutante]]
+id = "haptica-explicacao-ilegivel"
+de = "149"
+o_que = "a explicação da «Vibração» no tom claro da tela do celular, ilegível no cartão branco"
+alvo = "brport_vs/scripts/PainelAjustes.gd"
+antes = 'vibra.theme_type_variation = &"RotuloApoio"'
+depois = 'vibra.theme_type_variation = &"TextoCelularFraco"'
+reprova = { teste_design = "D33: a linha «Vibração» dos Ajustes e a explicação dela medidas" }
 
 # ── O TRABALHADOR E O CAIXA ────────────────────────────────────────────────
 

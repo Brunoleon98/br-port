@@ -411,6 +411,12 @@ func _rodar() -> void:
 	_falhas += int(assentar.falhas)
 	_confere("o bloco D53 correu até ao fim", assentar.completo)
 
+	print("=== D54: a háptica — os três momentos pela porta do jogador, nada sem toque nem conquista, a preferência, os Ajustes e a duração ===")
+	var haptica = load("res://tests/casos_haptica.gd").new()
+	haptica.rodar(root.get_node("GameState"), self)
+	_falhas += int(haptica.falhas)
+	_confere("o bloco D54 correu até ao fim", haptica.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
@@ -5112,6 +5118,12 @@ func _d33_contraste_efetivo() -> void:
 	var vivos := {}
 	var inativos: Array = []
 	var medidos := 0
+	# A LINHA DA VIBRAÇÃO (`149`), contada: «já é medido pelo D33» é
+	# afirmação a conferir, nunca a herdar (`042`). A explicação lê-se da
+	# constante do painel, pelos 46 caracteres que o motor guarda: escrita
+	# aqui, prendia a guarda à frase, que mudou na segunda passagem.
+	var vibracao: Array[String] = []
+	var explicacao: String = String(load("res://scripts/PainelAjustes.gd").EXPLICACAO_VIBRACAO).substr(0, 46)
 
 	for caso in motor.percurso():
 		var no: Node = motor.montar_caso(root, GS, caso, tema)
@@ -5124,6 +5136,10 @@ func _d33_contraste_efetivo() -> void:
 		_confere("D33: %s produziu texto para medir" % caso["nome"],
 			not linhas.is_empty())
 		medidos += linhas.size()
+		if String(caso["nome"]) == "Ajustes":
+			for l in linhas:
+				if String(l["texto"]) == "Vibração" or String(l["texto"]) == explicacao:
+					vibracao.append(String(l["estado"]))
 
 		for l in linhas:
 			match String(l["estado"]):
@@ -5143,6 +5159,8 @@ func _d33_contraste_efetivo() -> void:
 		root.remove_child(no)
 		no.queue_free()
 
+	_confere("D33: a linha «Vibração» dos Ajustes e a explicação dela medidas (%s)" % ", ".join(vibracao),
+		vibracao == ["passa", "passa"])
 	_confere("D33: nenhum texto abaixo do AA em %d medidos" % medidos,
 		reprovados.is_empty(),
 		"\n      ".join(reprovados))

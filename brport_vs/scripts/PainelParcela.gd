@@ -109,7 +109,8 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	quitar.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	quitar.theme_type_variation = &"BotaoPrimario"
 	quitar.pressed.connect(func() -> void:
-		GameState.pagar_parcela_adiantado()
+		if GameState.pagar_parcela_adiantado():
+			Haptica.pedir("parcela_paga")
 		_fechar()
 	)
 	_vbox.add_child(quitar)

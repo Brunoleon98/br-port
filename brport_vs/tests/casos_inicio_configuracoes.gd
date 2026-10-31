@@ -78,17 +78,25 @@ func rodar(gs: Node, arvore: SceneTree) -> void:
 
 
 func _contraste(painel: Control) -> void:
-	var escolha: CheckButton = painel.find_child("ReduzirMovimento", true, false)
 	var motor = load("res://scripts/validation/contraste_ui.gd").new()
 	# O D33 mede normal/disabled; o defeito do telefone mora em hover_pressed.
 	# Ler o estado efetivo do tema apanha a omissão que cai no StyleBoxEmpty.
-	for estado in ["normal", "hover", "pressed", "hover_pressed"]:
-		var estilo: StyleBox = escolha.get_theme_stylebox(estado)
-		var chave := "font_color" if estado == "normal" else "font_%s_color" % estado
-		var fundo: Color = (estilo as StyleBoxFlat).bg_color if estilo is StyleBoxFlat else Color.TRANSPARENT
-		var opaco := fundo.a == 1.0
-		var razao: float = motor.contraste(escolha.get_theme_color(chave), fundo) if opaco else 0.0
-		conferir("movimento %s tem fundo opaco e contraste AA" % estado, opaco and razao >= 4.5)
+	# A «Vibração» (`149`) nasce ligada, e é por isso a que o telefone mostra
+	# em `hover_pressed` logo ao primeiro toque.
+	var rotulos := {"ReduzirMovimento": "movimento", "Vibracao": "vibração"}
+	for nome in rotulos:
+		var escolha: CheckButton = painel.find_child(nome, true, false)
+		conferir("%s está nos Ajustes" % nome, escolha != null)
+		if escolha == null:
+			continue
+		var rotulo: String = rotulos[nome]
+		for estado in ["normal", "hover", "pressed", "hover_pressed"]:
+			var estilo: StyleBox = escolha.get_theme_stylebox(estado)
+			var chave := "font_color" if estado == "normal" else "font_%s_color" % estado
+			var fundo: Color = (estilo as StyleBoxFlat).bg_color if estilo is StyleBoxFlat else Color.TRANSPARENT
+			var opaco := fundo.a == 1.0
+			var razao: float = motor.contraste(escolha.get_theme_color(chave), fundo) if opaco else 0.0
+			conferir("%s %s tem fundo opaco e contraste AA" % [rotulo, estado], opaco and razao >= 4.5)
 
 
 func _botoes(no: Node) -> Array:

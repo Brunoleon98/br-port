@@ -1,11 +1,8 @@
 # BR Port — Estado do Projeto
 
-> **Como o jogo está hoje.** É a segunda das quatro camadas de documentação
-> deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
-> calada.
+> **Como o jogo está hoje.** Segunda das quatro camadas; histórico no arquivo.
 >
-> **Atualização:** 31/10/2026 — reputação baixa e falas (`147`); a peça que
-> assenta (`148`)
+> **Atualização:** 31/10/2026 — peça que assenta (`148`), háptica (`149`) e #159
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -64,10 +61,9 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 **A fauna tem seis espécies em nove pontos**, com toque de **44 px**
 (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo do mapa (`069`).
 
-**A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
-na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
-os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **19** na main (`146`, #158), com migração desde a 14 e exemplos preservados;
+**Moeda e preços (`085`–`087`):** valores na tabela gerada; taxas, perfis e
+medição em `economia.md`. Não se certificaram preços de mercado.
+Save **19** (`146`), com migração desde a 14 e exemplos preservados;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
@@ -89,10 +85,12 @@ Pescado, Armazenagem, Contêiner ou Granel —, lido no cartão da doca. O efeit
 o da ESTRUTURA a que o motivo está preso; oficina e posto são Fase 2 (`008`).
 
 **A partida grava-se** — uma linha JSON por acontecimento, com o tempo de cada
-turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa.
+turno, sem o nome de quem jogou (`006`). Sai pelos Ajustes (`066`).
 
 **O jogo tem som:** 14 efeitos de `tools/gerar_sons.py`, num autoload com
 prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
+**E vibra** (`149`): um toque leve ao atracar, dois a subir na obra pronta e
+na parcela paga; «Vibração» nos Ajustes.
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`, `066`): aparelho de
 400×680 (460×782 na conversa), com o **diário**, as **mensagens** (a conversa do porto, `067`) e
@@ -126,15 +124,15 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **RB6 (`129`) e RB5 (`134`, `135`)** nos Ajustes; telefone pendente.
-**Animação e toque** (`143`): A1′ (`144`) e A1 (`148`) feitos; seguem T1 →
-A3, uma conversa cada, e a esteira, a fumaça e o fundeadouro (§7).
-**A4, caderno, leitura e telefone
-pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
-ou teste no telefone.
+**Animação e toque** (`143`): A1′, A1 e T1 aceites (`144`, `148`, `149`);
+segue A3, depois esteira, fumaça e fundeadouro (§7).
+**A4, caderno, leitura e telefone pendentes.** `Safe save failed` sem causa
+(`110`); `107` local, sem publicação ou teste no telefone.
 
-**História/lojas (`146`, #158):** chave/almoço/Mané na main; envelope, retornos
-e reencontros aceitos no #159. Telefone/incorporação pendentes.
-**Revisor de mensagens (`145`):** skill `revisar-mensagens`, com parecer contextual.
+**História/lojas (`146`):** chave/almoço/Mané integrados; envelope, retornos e
+reencontros aceitos no #159, com a main #161 integrada. Incorporação/telefone
+pendentes. Revisão: `docs/REVISAO_FALAS_LOJAS_FASE_1.md`.
+**Revisor (`145`):** skill `revisar-mensagens`, com parecer contextual.
 **Reputação (`147`):** aviso da Cida e HUD vermelho quando baixa.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;
