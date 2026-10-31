@@ -102,3 +102,19 @@ desbloqueio; a cena é percorrida pelos botões. Logs, fotos e folhas de leitura
 em `/tmp/brport-envelope-verificacao/`. Telefone pendente. `Narrativa.gd` não
 é alvo de mutante do catálogo; nenhuma suíte ou alvo mudou, portanto não se
 repetiu a execução integral de 263 já aprovada.
+
+## Retorno e reencontros — 31/10
+
+Bruno aceitou o parecer seguinte («Pode ser»): conversas voltam à loja ou ao
+arquivo de onde foram abertas; o boletim já ficava por baixo e continua assim.
+Interromper preserva compra e leitura pendente, inclusive na última fala;
+concluir registra a leitura uma vez. A compra aparece na loja ao voltar,
+com releitura gratuita. O botão de retorno nomeia o destino.
+
+Seu Biu pergunta pelo café e brinca com o Toninho; Mané pergunta pelo almoço
+e pelo prato da Cida. São variantes de visita após concluir `cafe`/`almoco`,
+não só comprar. As primeiras visitas e as cenas já aceitas permanecem.
+Nenhum campo persistente, preço ou condição de capítulo mudou. Implementação
+em `PainelLojas.gd` e `Narrativa.gd`, sem editar o Main ou a frente gráfica.
+T34 tem percursos próprios por loja, arquivo e boletim, com bandeiras de fim;
+as regressões entram em seção própria do catálogo. Verificação em andamento.

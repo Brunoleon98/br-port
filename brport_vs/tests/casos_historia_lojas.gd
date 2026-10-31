@@ -188,16 +188,16 @@ func _interface() -> void:
 	await tocar(painel, "Confirmar compra por R$180")
 	conferir("confirmar compra abre a história e debita", gs.cash == antes - 180
 		and rotulos(painel).contains("Esse cheiro chega na ponta do píer"))
-	await tocar(painel, "Ler depois")
+	await tocar(painel, "Voltar ao mercado")
 	await assentar()
 	conferir("sair cedo não consome cena", not gs.vida_do_porto["cenas_lidas"].has("cafe"))
-	main._on_historia_pedida("cafe")
-	painel = overlay.get_child(overlay.get_child_count() - 1)
+	await tocar(painel, "Ler a conversa")
 	for _i in range(3):
 		await tocar(painel, "Continuar a conversa")
 	await tocar(painel, "Concluir conversa")
 	await assentar()
 	conferir("ler até o fim grava conclusão", gs.vida_do_porto["cenas_lidas"].has("cafe"))
+	await tocar(painel, "Voltar ao porto")
 	# A oferta do capítulo entra pela pausa semanal, sem empilhar automaticamente
 	# outra decisão. O botão é o caminho para quem não abre as lojas.
 	gs.turn = 8
@@ -208,7 +208,7 @@ func _interface() -> void:
 	await tocar(boletim, "Ler história: A caneca que ficou")
 	painel = overlay.get_child(overlay.get_child_count() - 1)
 	conferir("boletim leva ao capítulo disponível", rotulos(painel).contains("Separei uma caneca a mais"))
-	await tocar(painel, "Ler depois")
+	await tocar(painel, "Voltar ao boletim")
 	await assentar()
 	await tocar(boletim, "Fechar o boletim")
 	main._on_menu_pressed()

@@ -808,6 +808,26 @@ const VISITAS_AS_LOJAS := {
 }
 
 
+const REENCONTROS_NAS_LOJAS := {
+	"mercado": [
+		["biu", "Seu Biu", "E o café lá no cais, chefia? O pessoal gostou?"],
+		["biu", "Seu Biu", "Se o Toninho disser que tá forte, manda ele tomar mais devagar."],
+	],
+	"delivery": [
+		["mane", "Mané", "E o almoço, chefia? Deu pra sentar com o pessoal?"],
+		["mane", "Mané", "Espero que o Toninho tenha respeitado o prato da Cida."],
+	],
+}
+
+
+static func falas_da_visita(loja: String, cenas_lidas: Array) -> Array:
+	# Comprar não prova que o jogador viveu a cena: a interrupção mantém a
+	# compra e a leitura pendente. O reencontro só comenta uma cena concluída.
+	var capitulo := "cafe" if loja == "mercado" else "almoco"
+	var fontes: Dictionary = REENCONTROS_NAS_LOJAS if cenas_lidas.has(capitulo) else VISITAS_AS_LOJAS
+	return fontes[loja].duplicate(true)
+
+
 static func falas_da_historia(id: String) -> Array:
 	var falas: Array = HISTORIA_DO_PORTO.get(id, [])
 	var resolvidas := []

@@ -8,6 +8,8 @@ var _capitulo := ""
 var _linha := 0
 var _falas: Array = []
 var _visita := false
+enum Origem { BOLETIM, LOJA, HISTORIAS }
+var _origem_conversa := Origem.BOLETIM
 
 
 func _ready() -> void:
@@ -66,7 +68,7 @@ func mostrar_loja(id: String) -> void:
 		paragrafo(String(item["efeito"]))
 		if GameState.vida_do_porto["compras"].has(produto):
 			paragrafo("Já comprado. A conversa está na História do porto.")
-			_acao("Ler a conversa", abrir_capitulo.bind(produto))
+			_acao("Ler a conversa", abrir_capitulo.bind(produto, Origem.LOJA))
 		else:
 			var motivo: String = GameState.impedimento_compra_loja(produto)
 			paragrafo("Preço: %s" % GameState.moeda(int(item["preco"])))
@@ -92,15 +94,16 @@ func confirmar_compra(id: String) -> void:
 
 func comprar(id: String) -> void:
 	if GameState.comprar_na_loja(id):
-		abrir_capitulo(id)
+		abrir_capitulo(id, Origem.LOJA)
 	else:
 		mostrar_loja(_loja)
 
 
 func conversar() -> void:
 	_visita = true
+	_origem_conversa = Origem.LOJA
 	_linha = 0
-	_falas = Narrativa.VISITAS_AS_LOJAS[_loja].duplicate(true)
+	_falas = Narrativa.falas_da_visita(_loja, GameState.vida_do_porto["cenas_lidas"])
 	_mostrar_fala()
 
 
@@ -111,15 +114,18 @@ func mostrar_historias() -> void:
 		paragrafo("A primeira história chega depois da primeira semana. As visitas às lojas já estão abertas.")
 	for id in disponiveis:
 		var lida: bool = GameState.vida_do_porto["cenas_lidas"].has(id)
-		_acao(("Reler: " if lida else "Nova: ") + String(VidaDoPorto.CAPITULOS[id]), abrir_capitulo.bind(id))
+		_acao(("Reler: " if lida else "Nova: ") + String(VidaDoPorto.CAPITULOS[id]), abrir_capitulo.bind(id, Origem.HISTORIAS))
 	_acao("Voltar às lojas", mostrar_lojas)
 	botao_fechar("Voltar ao porto")
 
 
-func abrir_capitulo(id: String) -> void:
+func abrir_capitulo(id: String, origem: Origem = Origem.BOLETIM) -> void:
 	if not GameState.capitulos_do_porto().has(id):
 		return
 	_visita = false
+	# A origem pertence à conversa aberta, não ao save. O boletim continua
+	# por baixo; loja e arquivo precisam reconstruir a tela de onde se veio.
+	_origem_conversa = origem
 	_linha = 0
 	_falas = Narrativa.falas_da_historia(id)
 	_capitulo = id
@@ -146,7 +152,7 @@ func _mostrar_fala() -> void:
 		_acao("Continuar a conversa", _proxima_fala)
 	else:
 		_acao("Concluir conversa", _concluir_conversa)
-	botao_fechar("Ler depois")
+	_acao(_texto_de_retorno(), _voltar_da_conversa)
 
 
 func _proxima_fala() -> void:
@@ -157,6 +163,23 @@ func _proxima_fala() -> void:
 func _concluir_conversa() -> void:
 	if not _visita:
 		GameState.concluir_capitulo(_capitulo)
-		_fechar()
-	else:
-		mostrar_loja(_loja)
+	_voltar_da_conversa()
+
+
+func _texto_de_retorno() -> String:
+	match _origem_conversa:
+		Origem.LOJA:
+			return "Voltar ao mercado" if _loja == "mercado" else "Voltar ao delivery"
+		Origem.HISTORIAS:
+			return "Voltar às histórias"
+	return "Voltar ao boletim"
+
+
+func _voltar_da_conversa() -> void:
+	match _origem_conversa:
+		Origem.LOJA:
+			mostrar_loja(_loja)
+		Origem.HISTORIAS:
+			mostrar_historias()
+		Origem.BOLETIM:
+			_fechar()

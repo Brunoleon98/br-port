@@ -1,0 +1,156 @@
+Em paralelo: 272 mutante(s) em 4 cópia(s) de 4968 arquivo(s).
+[t1] Base:
+[t3] Base:
+[t4] Base:
+[t2] Base:
+[t3]   verde     run_tests (23 s)
+[t2]   verde     run_tests (29 s)
+[t1]   verde     run_tests (33 s)
+[t4]   verde     run_tests (42 s)
+[t3]   verde     teste_design (71 s)
+[t3]   verde     teste_audio (1 s)
+[t2]   verde     teste_design (67 s)
+[t2]   verde     teste_audio (1 s)
+[t3]   verde     teste_fumaca (20 s)
+[t3]   verde     teste_registro (1 s)
+[t3] 
+[t3] 68 mutante(s):
+[t2]   verde     teste_fumaca (20 s)
+[t2]   verde     teste_registro (1 s)
+[t2] 
+[t2] 68 mutante(s):
+[t4]   verde     teste_design (94 s)
+[t4]   verde     teste_audio (1 s)
+[t2]   reprovado  reputacao-queda-saudavel-alarma  (147)
+[t2]       run_tests        «T33: queda ainda saudável não alarma» (+6)
+[t1]   verde     teste_design (109 s)
+[t1]   verde     teste_audio (0 s)
+[t4]   verde     teste_fumaca (14 s)
+[t4]   verde     teste_registro (1 s)
+[t4] 
+[t4] 68 mutante(s):
+[t1]   verde     teste_fumaca (14 s)
+[t1]   verde     teste_registro (1 s)
+[t1] 
+[t1] 68 mutante(s):
+[t3]   reprovado  reputacao-baixa-sem-memoria  (147)
+[t3]       run_tests        «T33: permanecer baixo não repete aviso» (+3)
+[t2]   reprovado  reputacao-baixa-inclui-confiavel  (147)
+[t2]       run_tests        «T33: patamar de alerta em 41.0» (+5)
+[t4]   reprovado  reputacao-hud-nao-atualiza  (147)
+[t4]       run_tests        «T33: HUD acompanha entrada no patamar baixo» (+1)
+[t3]   reprovado  reputacao-retomada-sem-alerta  (147)
+[t3]       run_tests        «T33: abrir já baixo avisa uma vez» (+2)
+[t1]   reprovado  reputacao-alerta-nao-rearma  (147)
+[t1]       run_tests        «T33: recuperar e cair de novo permite outro aviso» (+1)
+[t4]   reprovado  retorno-compra-fecha-app  (146)
+[t4]       run_tests        «T34: compra volta à loja com item visível: mercado» (+17)
+[t2]   reprovado  retorno-arquivo-perde-origem  (146)
+[t2]       run_tests        «T34: releitura volta ao arquivo sem cobrar: mercado» (+16)
+[t1]   reprovado  reputacao-indicador-sem-vermelho  (147)
+[t1]       run_tests        «T33: indicador baixo usa estilo de alerta» (+2)
+[t4]   reprovado  retorno-visita-fecha-app  (146)
+[t4]       run_tests        «T34: interromper visita volta à loja: mercado» (+8)
+[t3]   reprovado  retorno-releitura-perde-loja  (146)
+[t3]       run_tests        «T34: concluir compra volta à loja e grava leitura: mercado» (+26)
+[t2]   reprovado  retorno-nao-grava-leitura  (146)
+[t2]       run_tests        «T34: concluir compra volta à loja e grava leitura: mercado» (+22)
+[t4]   reprovado  loja-sem-debito  (146)
+[t4]       run_tests        «T32: compra debita uma vez e libera a conversa» (+13)
+[t1]   reprovado  retorno-interrupcao-consome  (146)
+[t1]       run_tests        «T34: interromper preserva compra e leitura pendente: mercado» (+11)
+[t2]   reprovado  reencontro-antecipa-na-compra  (146)
+[t2]       run_tests        «T34: comprar sem concluir não antecipa reencontro: mercado» (+2)
+[t3]   reprovado  reencontro-cruza-lojas  (146)
+[t3]       run_tests        «T34: reencontro acompanha cena concluída: mercado» (+10)
+[t4]   reprovado  historia-migracao-perde-saldo  (146)
+[t4]       run_tests        «T32: 18 migra sem perder saldo, fase, obra ou nomes» (+6)
+[t2]   reprovado  historia-consome-ao-abrir  (146)
+[t2]       run_tests        «T32: sair cedo não consome cena» (+11)
+[t3]   reprovado  retorno-boletim-abre-lojas  (146)
+[t3]       run_tests        «T34: interromper volta ao mesmo boletim sem consumir capítulo» (+2)
+[t1]   reprovado  loja-compra-repetida  (146)
+[t1]       run_tests        «T32: clique repetido não duplica item nem cobrança» (+5)
+[t4]   reprovado  atracar-sem-trabalhador  (083)
+[t4]       run_tests        «com o trabalhador junto» (+24)
+[t2]   reprovado  loja-confirmar-nao-compra  (146)
+[t2]       run_tests        «T32: confirmar compra abre a história e debita» (+48)
+[t3]   reprovado  loja-retomada-esquece-itens  (146)
+[t3]       run_tests        «T32: retomada conserva compra, leitura e dinheiro» (+21)
+[t1]   reprovado  loja-sem-lancamento-semanal  (146)
+[t1]       run_tests        «T32: dia e semana incluem a despesa já paga» (+2)
+[t3]   reprovado  historia-documentos-na-obra  (146)
+[t3]       run_tests        «T32: obra não revela documentos» (+1)
+[t2]   reprovado  desistencia-de-graca  (083)
+[t2]       run_tests        «e custa reputacao»
+[t1]   reprovado  historia-parcela-antecipa-cena  (146)
+[t1]       run_tests        «T32: antecipar parcela não antecipa capítulo» (+1)
+[t4]   reprovado  espera-com-dois-espacos  (083)
+[t4]       teste_design     «a espera do barco ao largo cabe»
+[t2]   reprovado  save-fila-sem-teto  (083)
+[t2]       teste_fumaca     «mais barcos do que lugares»
+[t3]   reprovado  atracagem-conta-um-berco  (083)
+[t3]       run_tests        «conta todos os bercos livres»
+[t3]   reprovado  save-oferta-fora-da-fila  (083)
+[t3]       teste_fumaca     «oferta fora da fila»
+[t1]   reprovado  equipe-do-pier-ignorada  (083)
+[t1]       run_tests        «o berco 2 chama o trabalhador 2»
+[t2]   reprovado  deslize-sem-faixa  (144)
+[t2]       teste_design     «D52: §3 entra de ré pela faixa»
+[t2]   reprovado  save-obra-na-vespera  (089)
+[t2]       run_tests        «T17: obra de armazem começada na véspera (dia 7) é recusada» (+1)
+[t1]   reprovado  viragem-parada  (144)
+[t1]       teste_design     «D52: §3 vira 90° de cada vez a deslizar devagar»
+[t2]   reprovado  plural-da-obra-a-mao  (090)
+[t2]       teste_fumaca     «F9: nenhum número escreve o plural à mão»
+[t4]   reprovado  deslize-espelho-trocado  (144)
+[t4]       teste_design     «D52: §3 nunca anda de lado» (+4)
+[t3]   reprovado  deslize-sem-origem  (144)
+[t3]       teste_design     «D52: §2 o casco começa no lugar ao largo que se tocou» (+9)
+[t2]   reprovado  passagem-sem-recomecar-reputacao  (104)
+[t2]       run_tests        «T20: a reputação recomeça na escala da Fase 2» (+5)
+[t1]   reprovado  deslize-trabalho-nao-espera  (144)
+[t1]       teste_design     «D52: §4 ninguém no tabuado enquanto o casco desliza»
+[t2]   reprovado  atalho-s-nao-e-ferramenta  (061)
+[t2]       teste_fumaca     «`-s` conta como ferramenta»
+[t2]   reprovado  som-nunca-repete  (117)
+[t2]       teste_audio      «passada a espera, o mesmo som volta a tocar»
+[t3]   reprovado  ancorados-por-posicao  (144)
+[t3]       teste_design     «D52: §1 os outros dois ficam no lugar deles» (+1)
+[t4]   reprovado  viragem-mistura-o-passo-todo  (144)
+[t4]       teste_design     «D52: §3 na viragem a arte que chega aparece por cima da que sai, só no fim de cada passo»
+[t1]   reprovado  deslize-lanca-parada  (144)
+[t1]       teste_design     «D52: §4 a lança varre como numa doca vazia»
+[t2]   reprovado  d6-alvo-mudou-de-sitio  (testes-e-guardas.md, 31/10)
+[t2]       teste_design     «o bloco D6 correu até ao fim»
+Traceback (most recent call last):
+  File "/workspace/br-port/tools/conferir_mutantes.py", line 730, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/workspace/br-port/tools/conferir_mutantes.py", line 622, in main
+    rc = em_paralelo(args, mutantes)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/br-port/tools/conferir_mutantes.py", line 429, in em_paralelo
+    p.wait()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1264, in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 2053, in _wait
+    (pid, sts) = self._try_wait(0)
+                 ^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 2011, in _try_wait
+    (pid, sts) = os.waitpid(self.pid, wait_flags)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+[t2]   reprovado  servir-sem-reputacao  (138)
+[t2]       run_tests        «T31: atender um barco sobe a reputação» (+1)
+[t3]   reprovado  deslize-de-re-outra-vez  (144)
+[t3]       teste_design     «D52: §3 o casco navega de proa do largo à boca do berço» (+4)
+[t2] 
+[t2] interrompido — a restaurar o alvo.
+[t3] 
+[t3] interrompido — a restaurar o alvo.
+[t1] 
+[t1] interrompido — a restaurar o alvo.
+[t4] 
+[t4] interrompido — a restaurar o alvo.

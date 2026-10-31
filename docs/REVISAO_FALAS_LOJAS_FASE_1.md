@@ -6,8 +6,8 @@ prioridade desta revisão. **Chave e almoço foram aceitos em 25/10/2026 e
 aplicados ao jogo**, com a redação final abaixo. Em 30/10, Bruno aceitou a cena
 do Mané sem entregas fixas e o elogio ao bom contrato sem previsão financeira;
 escolheu também aviso da Cida no patamar baixo de reputação (`147`). Em 31/10,
-aceitou a versão do envelope abaixo, aplicada localmente. Demais trechos e
-retorno das lojas continuam propostas. Após o #156, a cor do HUD foi integrada.
+aceitou o envelope, o retorno às lojas e os reencontros abaixo, aplicados
+localmente. Demais trechos continuam propostas. Após o #156, a cor do HUD foi integrada.
 
 ## Diagnóstico da primeira implementação
 
@@ -177,13 +177,13 @@ quando a descrição fica mais natural.
 
 ## Percurso de leitura e retorno
 
-Na versão atual, a visita gratuita termina na loja. A compra bem-sucedida abre
+Na versão anterior, a visita gratuita termina na loja. A compra bem-sucedida abre
 a cena imediatamente; tanto «Concluir conversa» quanto «Ler depois» fecham o
 painel. Para encontrar o item comprado, é preciso abrir o app novamente. Uma
 cena escolhida no arquivo também fecha o app ao terminar. Esses caminhos foram
 conferidos no código; não foram classificados como perda de compra ou save.
 
-A proposta de retorno é:
+O retorno aceito por Bruno em 31/10 e aplicado localmente é:
 
 | Entrada | Depois da última fala | Ao interromper |
 |---|---|---|
@@ -196,10 +196,30 @@ A proposta de retorno é:
 continua primeiro no boletim; esta revisão não recoloca a história antes da
 ação habitual, cuja ordem já foi provada na entrega da `146`.
 
-O retorno é uma proposta de comportamento, ainda sem alteração de código.
-Pode ser mantido só durante a abertura do painel, sem novo campo no save. Sua
-implementação deve conferir os quatro percursos com os botões reais e depois
-deixar uma prova de defeito no catálogo, como pedem as regras do projeto.
+O painel guarda a origem durante a conversa, sem campo novo no save. Os
+botões indicam o destino: mercado, delivery, histórias ou boletim. O retorno
+ao boletim já existia e foi preservado. T34 percorre os botões reais, incluindo
+interrupção na última fala sem concluir, releitura, compra e retomada.
+
+## Reencontros aceitos em 31/10
+
+As primeiras visitas permanecem. Comprar sem concluir a cena não antecipa o
+reencontro; as variantes consultam as leituras já salvas da própria loja.
+
+Depois de concluir **Café no cais**:
+
+**Seu Biu:** E o café lá no cais, chefia? O pessoal gostou?
+
+**Seu Biu:** Se o Toninho disser que tá forte, manda ele tomar mais devagar.
+
+Depois de concluir **A mesa do cais**:
+
+**Mané:** E o almoço, chefia? Deu pra sentar com o pessoal?
+
+**Mané:** Espero que o Toninho tenha respeitado o prato da Cida.
+
+São falas de visita, não alterações das cenas de almoço/Mané já aceitas.
+Nenhum bônus, resposta selecionável, entrega recorrente ou nova cobrança.
 
 ## O que esta revisão já permite avaliar
 
@@ -212,7 +232,7 @@ A implementação da `146` recebeu as falas aceitas da chave e do almoço;
 provas em `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`. A `147` aplica
 a cena do Mané, o elogio e o aviso ao entrar no patamar baixo de reputação;
 provas em `docs/arquivo/REPUTACAO_E_FALAS_2026-10-30/README.md`. Preços, save,
-condições dos capítulos e percurso das lojas continuam iguais.
+condições dos capítulos continuam iguais; o retorno do painel foi atualizado.
 As capturas da entrega anterior não representam os textos novos. Telefone e
 as propostas restantes continuam por conferir; catálogo precisará ser visto
 no painel real em Padrão/Maior quando for integrado.
