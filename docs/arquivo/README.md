@@ -31,7 +31,7 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
-| `BRIEFING_PROXIMA_CONVERSA_2026-10-31d.md` | 31/10 | Envelope e retorno aceitos no #159, main #160 incorporada, provas e revisão seguinte |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-31e.md` | 31/10 | Envelope e retorno aceitos no #159, main #160 incorporada, provas e revisão seguinte |
 | `RETORNO_LOJAS_2026-10-31/README.md` | 31/10 | Retorno ao contexto da conversa, reencontros Biu/Mané, T34 e provas locais (`146`) |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-31b.md` | 31/10 | #158 já incorporado, CI com seis suítes/263 mutantes aprovado; complemento documental e retorno à revisão contextual |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-31.md` | 31/10 | Reputação e falas integradas após #156 (`147`); provas e continuação da revisão |

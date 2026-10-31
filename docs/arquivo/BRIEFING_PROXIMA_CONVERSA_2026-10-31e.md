@@ -44,7 +44,7 @@ menores: registros e ajustes curtos acompanham uma entrega relevante.
 
 ```text
 Retome /workspace/br-port na branch codex/revisor-de-mensagens.
-Leia AGENTS.md, docs/ESTADO_DO_PROJETO.md, as decisões 145–148 e docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-10-31d.md.
+Leia AGENTS.md, docs/ESTADO_DO_PROJETO.md, as decisões 145–148 e docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-10-31e.md.
 O PR #159 reúne envelope, retorno às lojas e reencontros de Biu/Mané, além dos registros do #158; consulte o head e o CI atuais. Não faça merge.
 Essas mudanças estão aceitas. Não repita testes concluídos nem volte a tratá-las como propostas.
 Minha prioridade continua sendo vínculo com os personagens. Podemos revisar a apresentação das compras pelo chat, usando a skill revisar-mensagens, sem aplicar propostas automaticamente.

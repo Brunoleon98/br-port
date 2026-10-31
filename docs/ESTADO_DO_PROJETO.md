@@ -4,7 +4,8 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 31/10/2026 — peça que assenta (`148`); retornos no #159 (`146`)
+> **Atualização:** 31/10/2026 — reputação baixa e falas (`147`); a peça que
+> assenta (`148`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
