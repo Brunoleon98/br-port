@@ -1,9 +1,9 @@
 extends RefCounted
 
 # ============================================================
-# D53 — a peça nova assenta, e o «Avançar dia» afunda (`docs/decisoes/145`)
+# D53 — a peça nova assenta, e o «Avançar dia» afunda (`docs/decisoes/148`)
 #
-# Medido na `145` antes de escrever uma linha: em cada uma das oito obras do
+# Medido na `148` antes de escrever uma linha: em cada uma das oito obras do
 # catálogo, a virada que a conclui trocava a textura num quadro e nada mais —
 # a escala dos nós ficou em 1,000 nos 40 quadros seguintes. O desenho é o da
 # `144`: o que a obra levantou cresce até 100% em 0,3 s, a travar, com o pivô
@@ -227,12 +227,16 @@ func _escalados(foto: Dictionary) -> Array:
 func _as_obras() -> bool:
 	var ids: Array = _gs.ESTRUTURAS.keys()
 	conferir("o catálogo tem estruturas para percorrer (%d)" % ids.size(), ids.size() >= 2)
+	# Cada obra leva a sua bandeira (a regra do #157): um erro a meio de uma
+	# só aborta ela. Medido sem a bandeira: o defeito reprovava só de raspão —
+	# a cena que ficava aberta deixava 15 rastos, e o §1 acusava-os, longe da
+	# causa; com ela, reprova pelo nome da obra.
 	for id in ids:
-		_uma_obra(String(id))
+		conferir("%s correu até ao fim" % id, _uma_obra(String(id)) == true)
 	return true
 
 
-func _uma_obra(id: String) -> void:
+func _uma_obra(id: String) -> bool:
 	var tela := _abrir_com_obra(id)
 	tela._concluir_virada()
 	var antes := _foto(tela)
@@ -461,6 +465,7 @@ func _uma_obra(id: String) -> void:
 		str(cedo_demais))
 	conferir("%s §8: no fim não fica rasto nenhum" % id, _rastos_na_arvore().is_empty())
 	_fechar(tela)
+	return true
 
 
 ## Os rastos da obra que estão na árvore, a desenhar-se.
@@ -482,13 +487,14 @@ func _sem_obra_a_acabar() -> bool:
 	var tela := _abrir_cena()
 	tela._concluir_virada()
 	conferir("§1 o porto completo tem tudo construído", _gs.estruturas.size() == _gs.ESTRUTURAS.size())
-	_nada_assenta(tela, "§1 a virada do porto completo não assenta nada")
+	var correu := _nada_assenta(tela, "§1 a virada do porto completo não assenta nada") == true
 	_fechar(tela)
 
 	# Uma obra que ainda não acaba nesta virada.
 	tela = _abrir_com_obra("armazem", 2)
 	tela._concluir_virada()
-	_nada_assenta(tela, "§1 a virada de uma obra que ainda não acaba não assenta nada")
+	correu = _nada_assenta(tela, "§1 a virada de uma obra que ainda não acaba não assenta nada") == true \
+		and correu
 	conferir("§1 e a obra continua por acabar", not _gs.tem_estrutura("armazem"))
 	_fechar(tela)
 
@@ -503,10 +509,10 @@ func _sem_obra_a_acabar() -> bool:
 	algum.append_array(_escalados(foto))
 	conferir("§1 a obra concluída fora do botão não assenta nada", algum.is_empty(), str(algum))
 	_fechar(tela)
-	return true
+	return correu
 
 
-func _nada_assenta(tela: Control, nome: String) -> void:
+func _nada_assenta(tela: Control, nome: String) -> bool:
 	var foto := _foto(tela)
 	var tw0 := _tweens()
 	var dia: int = _gs.turn
@@ -519,6 +525,7 @@ func _nada_assenta(tela: Control, nome: String) -> void:
 				algum.append(k)
 	conferir(nome, algum.is_empty() and _gs.turn == dia + 1 and _rastos_na_arvore().is_empty(),
 		"escalaram %s; dia %d → %d; %d rasto(s)" % [algum, dia, _gs.turn, _rastos_na_arvore().size()])
+	return true
 
 
 # §5 ────────────────────────────────────────────────────────────────────────

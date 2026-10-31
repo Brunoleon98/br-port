@@ -531,7 +531,7 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   punha a proa para o cais (aponta-a para `+my`), e só a medição o disse —
   depois de ele a ter marcado. As perguntas sozinhas, a seguir ao vídeo,
   voltaram todas, com reinícios do worker pelo meio.
-  ⚠️ **E NO A1 (`145`) TAMBÉM QUATRO, e o vídeo seguido da pergunta SOZINHA
+  ⚠️ **E NO A1 (`148`) TAMBÉM QUATRO, e o vídeo seguido da pergunta SOZINHA
   no bloco seguinte voltou nas quatro**, duas com um reinício do worker
   entre os dois. O primeiro «Ajustar» trouxe, como opção marcada, *«veja que
   outras melhorias podem ser feitas»*: a resposta foi uma TERCEIRA pergunta

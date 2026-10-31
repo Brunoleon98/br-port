@@ -34,7 +34,7 @@ em três fatias de quatro cópias, que um job final exige somarem o catálogo
   `--explorar` espera `MUTANTES OK`.
   O `--explorar` corre em SÉRIE e a suíte inteira por defeito; com o bloco
   num arquivo próprio, aplicar cada defeito e correr só o bloco (~10 s) diz
-  quem reprova, e o executor confirma as declaradas em paralelo (`145`, 30
+  quem reprova, e o executor confirma as declaradas em paralelo (`148`, 30
   defeitos). ⚠️ **E renomear a asserção deixa o rótulo declarado para
   trás**: o executor dá o mutante por FURADO, e a guarda está boa.
 - **Bug corrigido:** o bug é o primeiro mutante — o `antes` é a linha
@@ -120,7 +120,7 @@ equivalentes). A lógica perguntada está guardada; o que escapa é outra coisa:
   `ScreenDrag` no `push_input`, que os entrega crus: o rato emulado é do
   `Input`, e o gesto do rato rolava com o ramo do dedo partido.
   ⚠️ **E NUM TESTE QUE NÃO DEIXA PASSAR QUADROS O TOQUE PEDE DUAS COISAS À
-  MÃO** (`145`): o contentor arrumado (`notification(NOTIFICATION_SORT_
+  MÃO** (`148`): o contentor arrumado (`notification(NOTIFICATION_SORT_
   CHILDREN)`), senão o botão tem o tamanho mínimo (188 × 50 em vez de
   692 × 58) e o toque cai fora dele; e a coordenada da cena
   (`push_input(ev, true)`), que a janela do `--headless` não tem o tamanho da
@@ -254,7 +254,7 @@ guarda.
    dela. Quando o teste monta um estado que o jogo devia montar, a outra ponta
    — o jogo a escrevê-lo — pede a sua guarda (`052`). E um sub-bloco leva a
    sua BANDEIRA: um erro de execução lá dentro só aborta ele, e a bandeira do
-   chamador ficava verde. Medido outra vez na `145`: com o «Avançar dia» num
+   chamador ficava verde. Medido outra vez na `148`: com o «Avançar dia» num
    `Control`, o sub-bloco do contraste do D43 rebentou, dez asserções não
    correram, e a suíte disse `DESIGN OK` e «o bloco D43 correu até ao fim».
    ⚠️ **E O VALOR DEVOLVIDO NÃO É BANDEIRA.** O erro devolve o zero do tipo

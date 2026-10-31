@@ -162,7 +162,7 @@ As do «Estilo de código» do `CLAUDE.md` que são do GDScript. O essencial
   imprime o nó ao longo dos frames — uma foto é um instante, e não diz se
   anda; o D51 lê-o com `custom_step`.
 - **⚠️ TWEEN QUE COMPENSA A POSIÇÃO NÃO VOLTA AO NÚMERO EXATO.** O assentar
-  (`145`) escala à volta do chão e recalcula a `position` a cada passo; no
+  (`148`) escala à volta do chão e recalcula a `position` a cada passo; no
   fim, a 1,0, a conta em vírgula flutuante deu −35,60001 para um repouso de
   −35,6. Quem anima por conta repõe o repouso guardado no fim, e a guarda
   pergunta-o EXATO — foi o que mostrou que a reposição não era só limpeza.

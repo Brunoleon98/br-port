@@ -905,7 +905,7 @@ const OBRAS_DE_TODA_DOCA := ["trelica", "guindaste", "cais"]
 
 
 ## O que a obra `id` levantou nesta vaga, para o `Main` o assentar na virada
-## que a conclui (`145`): `[[nó, chão no pai], …]`, ou nada. São o píer e a
+## que a conclui (`148`): `[[nó, chão no pai], …]`, ou nada. São o píer e a
 ## lança, com o MESMO chão — o centro do quadro do píer —, porque a lança pousa
 ## na base que o PNG do píer desenha, e cada um no seu chão descolava-a da base
 ## a meio. O píer N é da vaga dele; as `OBRAS_DE_TODA_DOCA`, de todas.

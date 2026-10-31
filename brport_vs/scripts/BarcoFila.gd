@@ -159,7 +159,7 @@ func refresh() -> void:
 	_vestir_premido()
 
 
-# O CARTÃO AFUNDA ENQUANTO O DEDO ESTÁ NELE (`145`), como o «Avançar dia»: a
+# O CARTÃO AFUNDA ENQUANTO O DEDO ESTÁ NELE (`148`), como o «Avançar dia»: a
 # mesma variação com o fundo um passo mais escuro (o do botão), 4% mais
 # estreita e com o conteúdo 1 px abaixo — a altura fica, que encolhida a
 # última linha pisava a borda —, e volta ao soltar. Era o único dos três

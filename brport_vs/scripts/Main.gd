@@ -665,7 +665,7 @@ func _connect_game_state() -> void:
 	# mesmo dia: até aqui nada redesenhava o porto ao comprar, porque a obra
 	# só mudava alguma coisa na virada, quando ficava pronta.
 	GameState.estrutura_comprada.connect(func(_id): _refresh_all())
-	# E O DIA EM QUE ELA ACABA, a peça nova assenta (`145`). O sinal sai depois
+	# E O DIA EM QUE ELA ACABA, a peça nova assenta (`148`). O sinal sai depois
 	# do `roster_changed`, que já pôs a textura nova no nó.
 	GameState.obra_concluida.connect(_ao_concluir_obra)
 	GameState.fila_mudou.connect(_refresh_fila)
@@ -1030,7 +1030,7 @@ const GANHO_SEG := 1.2
 ## barco cai no FUNDO do casco, e por isso o meio dele está acima do centro.
 const GANHO_SUBIDA_PX := 20.0
 const GANHO_ACIMA_PX := 12.0
-## A PEÇA NOVA ASSENTA (`145`, desenho da `144`): na virada que conclui uma
+## A PEÇA NOVA ASSENTA (`148`, desenho da `144`): na virada que conclui uma
 ## obra, o que ela levantou cresce de 94% a 100% em 0,3 s, a travar, com o
 ## pivô no CHÃO — o centro do quadro de 512, que é a origem do mundo do prop
 ## (`projecao.md`). Até aqui a textura trocava num quadro e mais nada. Não
@@ -1038,7 +1038,7 @@ const GANHO_ACIMA_PX := 12.0
 ## vídeo a 1:1 quase não se via — no armazém, uns 6 px. O Bruno pediu o dobro.
 const ASSENTAR_DE := 0.94
 const ASSENTAR_SEG := 0.3
-## E A OBRA ESVAI-SE POR BAIXO DELA (veredito da `145`): o andaime, a ruína,
+## E A OBRA ESVAI-SE POR BAIXO DELA (veredito da `148`): o andaime, a ruína,
 ## as estacas, o canteiro e os cones sumiam num quadro, e só depois a peça
 ## assentava. O aspeto de antes fica num RASTO — uma cópia com a textura
 ## velha, logo abaixo da peça — que se apaga em 0,25 s, dentro dos 0,3 do

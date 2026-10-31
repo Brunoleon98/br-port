@@ -889,11 +889,11 @@ som → resto, e só essa conversa abriu; as outras abrem quando ele as pedir.
 primeiro (`144`), aceite à quarta passagem**: o barco tocado ao largo navega
 de proa do lugar dele à boca do berço, vira e entra de ré (A1′), com arte
 nova (o casco virado para o cais) e as boias do lado do mar. A ordem do
-Bruno é **A1′ → A1 → T1 → A3**. **O A1 fechou na `145`**, aceite à quarta
+Bruno é **A1′ → A1 → T1 → A3**. **O A1 fechou na `148`**, aceite à quarta
 passagem: a peça nova assenta de 94% e a obra velha esvai-se por baixo dela,
 e o «Avançar dia» e o cartão ao largo afundam ao premir. **A próxima conversa
 é a háptica (T1)**, depois o casco que rola (A3), uma por conversa, com o
-desenho de cada uma na `144`. Das melhorias que a `145` encontrou ficaram por
+desenho de cada uma na `144`. Das melhorias que a `148` encontrou ficaram por
 pedir o «Dia N» a marcar a virada e os postes do pátio. **Abriram-se três
 itens a pedido dele, para depois deles**: a esteira e a fumaça dos navios a
 navegar, e **o fundeadouro** — 3 dos 9 caminhos passam por cima do barco

@@ -1,11 +1,14 @@
-# 145 — A peça nova que assenta, e o «Avançar dia» que afunda
+# 148 — A peça nova que assenta, e o «Avançar dia» que afunda
 
 **30/10/2026 · o segundo item do tema animação e toque, pela ordem do Bruno
 (A1′ → A1 → T1 → A3, `144`): o A1, o retorno ao toque.** Branch
 `claude/sharp-lamport-kf55gf`, que arranca da cabeça da `144`
 (`ccr-83914c2f-kuj4zq`, `68ed363`): o PR #156 dela estava aberto e com o CI a
-correr, e é acompanhado noutra conversa. Main `0a2e16f`. 145 livre pelo
-`tools/conferir_colaboracao.py`.
+correr, e é acompanhado noutra conversa. Main `0a2e16f` no arranque e
+`d11311b` no fecho (os PRs #156, #157 e #158 fundiram durante a conversa).
+**Escrita como 145**, que o pré-PR deu por livre no arranque; o Codex fundiu
+a 145 dele (o revisor de mensagens) primeiro, e esta passou a 148 pelo
+`tools/renumerar_decisao.py`, só nas linhas desta branch.
 
 ## O que se mediu antes
 
@@ -149,7 +152,7 @@ a cada 1/60 s.
    estados, pelo tema) e o fundo a escurecer o passo do botão (−0,070 nos
    dois), e ainda não atracou; solto, inteiro, e atracou.
 
-Trinta defeitos no catálogo (`tools/mutantes.toml`, secção da `145`), cada
+Trinta e um defeitos no catálogo (`tools/mutantes.toml`, secção da `148`), cada
 um apanhado pela pergunta escrita para ele; os que nasceram de um veredito
 dizem-no no `o_que`:
 
@@ -172,6 +175,13 @@ dizem-no no `o_que`:
 | O chão sem rasto; o chão por cima do cenário | §8 (dois) |
 | O cartão sem premido; preso premido; atraca ao premir | §9 (três) |
 | O cartão premido com o fundo de sempre; a encolher na altura | §9 (dois, dos vereditos 3 e 4) |
+| Uma obra do D53 que rebenta a meio | a bandeira dela, «pier_2 correu até ao fim» |
+
+⚠️ **E A BANDEIRA DE CADA OBRA veio com a `main` do fecho**: o PR #157 deu
+bandeira a todo sub-bloco dos arquivos de casos, e os dois ajudantes
+aninhados do D53 (`_uma_obra` e `_nada_assenta`) passaram a devolvê-la.
+Medido sem ela, o defeito não passava verde — reprovava de raspão, pelos
+rastos que a cena deixada aberta largava no §1, longe da causa.
 
 ⚠️ **E «a meio do tempo dele ainda se vê» não apanhava o rasto rápido**: o
 de 0,15 s, o que o Bruno achou rápido, ainda se via aos 0,125 s de um de
@@ -192,7 +202,7 @@ apanhou-o: a reposição é precisa, e não é só limpeza.
   quatro rastos (o pátio), e no pátio uma cópia do mapa de terra, cuja
   textura já está na memória.
 - **Tema:** quatro estilos novos (o premido do rodapé e os três do cartão).
-- **O catálogo**: 30 defeitos a mais. O catálogo inteiro, 273, em 3.609 s
+- **O catálogo**: 31 defeitos a mais. O catálogo inteiro, 273, em 3.609 s
   em quatro cópias, `MUTANTES OK`; as seis suítes em 58 s.
 
 ## O veredito, passagem a passagem

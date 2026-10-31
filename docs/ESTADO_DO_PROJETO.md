@@ -5,7 +5,7 @@
 > calada.
 >
 > **Atualização:** 31/10/2026 — reputação baixa e falas (`147`); a peça que
-> assenta (`145`)
+> assenta (`148`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -28,7 +28,7 @@ que não será usada nesta fase (`090`).
 **O rodapé é escuro, e só o "Avançar dia" é âmbar cheio** (`081`): o
 desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
 Premido, ele e o cartão ao largo afundam; a obra que acaba esvai-se e a peça
-nova assenta (`145`, **D53**).
+nova assenta (`148`, **D53**).
 **As conversas falam como no celular, e o fim de fase é uma página do diário**
 (`082`, **D44**, **D22**). **Atracar é a escolha do dia** (`083`): até três
 barcos esperam ao largo, dois dias cada; tocar num atraca-o com o trabalhador
@@ -127,7 +127,7 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **RB6 (`129`) e RB5 (`134`, `135`)** nos Ajustes; telefone pendente.
-**Animação e toque** (`143`): A1′ (`144`) e A1 (`145`) feitos; seguem T1 →
+**Animação e toque** (`143`): A1′ (`144`) e A1 (`148`) feitos; seguem T1 →
 A3, uma conversa cada, e a esteira, a fumaça e o fundeadouro (§7).
 **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação

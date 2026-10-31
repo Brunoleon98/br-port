@@ -433,7 +433,7 @@ paths:
   direito, com o giro escrito ao lado. Peça rodada vive num `Control` simples
   que o contentor arruma, e é ela, lá dentro, que roda (`067`).
   ⚠️ **E O PREMIDO DESENHA-SE NO ESTILO, NÃO NA ESCALA.** Para o «Avançar dia»
-  afundar 4% (`145`) mediram-se as duas saídas: o botão num `Control` mudava
+  afundar 4% (`148`) mediram-se as duas saídas: o botão num `Control` mudava
   o caminho `AcoesTurno/Avancar` e o D43 deixava de medir o contraste; o
   `pressed` com margens de expansão NEGATIVAS encolhe o desenho sem mexer no
   tamanho nem no caminho. E quem encolhe a borda move o conteúdo com ela: a
@@ -443,7 +443,7 @@ paths:
   última linha pisava a borda. Uma régua compara o passo de escuro em OKLab.
 - ⚠️ **NO TELEFONE O «PASSAR POR CIMA» FICA DEPOIS DO TOQUE.** O rato é
   emulado do toque e fica onde o dedo saiu: o botão solto ficava no âmbar
-  claro do `hover` (`145`). Só o rodapé o trata (`hover` = `normal`); os
+  claro do `hover` (`148`). Só o rodapé o trata (`hover` = `normal`); os
   outros botões continuam com o deles, e são os irmãos por varrer.
 - ⚠️ **SHADER SÓ COMPILA ONDE É DESENHADO — e as suítes headless não desenham
   nada.** O primeiro shader da virada da folha redefinia `PI`, e as seis
