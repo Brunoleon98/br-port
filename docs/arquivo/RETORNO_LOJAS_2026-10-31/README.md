@@ -42,7 +42,8 @@ Não se mudou versão do save, preço, condição de capítulo, Main ou arte.
 `fontes.json` identifica os arquivos de código/testes/catálogo verificados.
 A execução integral de 272 foi interrompida com **48 defeitos detectados**,
 sem resultado integral, porque a main recebeu o PR gráfico #160 em `28c2f2d`.
-`catalogo-parcial.log` e `.json` preservam o ponto de parada. O primeiro sinal
+`catalogo-parcial.log.gz` (bytes originais, compactados sem perda) e
+`catalogo-parcial.json` preservam o ponto de parada. O primeiro sinal
 SIGINT encerrou o pai com KeyboardInterrupt; os quatro trabalhadores foram
 identificados por PID e receberam SIGTERM, o sinal tratado pelo executor,
 restaurando suas cópias. O original permaneceu intacto, conferido pelos hashes.
