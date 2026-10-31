@@ -2,9 +2,9 @@
 
 **31/10/2026.** Branch `claude/hopeful-ride-f61g1m`, que arranca da cabeça
 do PR #160 (a `148`, branch `claude/sharp-lamport-kf55gf`, `0e39079`), aberto
-e acompanhado noutra conversa — como a `148` arrancou da `144`. O PR desta
-conversa é o #161, contra a `main`: até o #160 fundir, ele leva também
-os cinco commits da `148`.
+e acompanhado noutra conversa — como a `148` arrancou da `144`. O #160
+fundiu no fim desta conversa (`28c2f2d`), e a `main` está junta à branch.
+O PR desta conversa é o #161, contra a `main`.
 
 **Decisão `149` — a T1, o terceiro item do tema animação e toque.** Medido
 antes: nenhuma vibração no jogo, nenhuma permissão `VIBRATE`, e no Linux o
@@ -45,7 +45,7 @@ dos irmãos por varrer do rodapé (`.claude/rules/interface.md`, «NO TELEFONE O
 "PASSAR POR CIMA" FICA DEPOIS DO TOQUE»).
 
 **Aceite à segunda passagem, no telefone** (o `brport-apk` da corrida de
-`bff02c2`). **Pendente:** o merge do #160 e depois o deste, que são dele.
+`bff02c2`). **Pendente:** o merge do #161, que é dele.
 Escolha desta conversa que ele pode reverter: a segunda chance não vibra.
 
 **A próxima conversa, pela ordem do Bruno:** o casco que rola (A3), com o
@@ -59,11 +59,10 @@ Continuando o BR Port. Leia CLAUDE.md, ESTADO_DO_PROJETO.md, a §7 do plano v3
 e as decisões 144 (o desenho dos quatro itens do tema animação e toque), 148
 (o A1) e 149 (a T1, a háptica). Confira a main remota, os PRs abertos e o CI
 do último merge, e rode python3 tools/conferir_colaboracao.py com o trabalho
-commitado (ele lê o HEAD). O PR #160 (a 148) e o #161 (a 149, aceite, branch
-claude/hopeful-ride-f61g1m, que arranca da cabeça do #160) são do Bruno para
-fundir: se algum ainda estiver aberto, confira o CI dele, e a branch nova
-arranca da main depois deles — se não tiverem fundido, da cabeça do #161,
-como a 149 arrancou da 148.
+commitado (ele lê o HEAD). O PR #161 (a 149, aceite no telefone, branch
+claude/hopeful-ride-f61g1m) é do Bruno para fundir: se ainda estiver aberto,
+confira o CI dele, e a branch nova arranca da main depois dele — se não
+tiver fundido, da cabeça do #161, como a 149 arrancou da 148.
 
 O item desta conversa, na ordem que o Bruno escolheu (A1′ → A1 → T1 → A3):
 o A3, o casco que rola 1,5°. O barco atracado (Dock._iniciar_balanco(), uma
