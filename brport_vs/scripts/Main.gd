@@ -54,6 +54,7 @@ const EndGameScene := preload("res://scenes/EndGame.tscn")
 const TelaNomesScene := preload("res://scenes/panels/TelaNomes.tscn")
 const PainelDiarioScene := preload("res://scenes/panels/PainelDiario.tscn")
 const PainelBoletimScene := preload("res://scenes/panels/PainelBoletim.tscn")
+const PainelLojasScene := preload("res://scenes/panels/PainelLojas.tscn")
 const PainelCaixaScene := preload("res://scenes/panels/PainelCaixa.tscn")
 const PainelMensagensScene := preload("res://scenes/panels/PainelMensagens.tscn")
 const PainelReputacaoScene := preload("res://scenes/panels/PainelReputacao.tscn")
@@ -742,6 +743,7 @@ func _refresh_hud() -> void:
 	else:
 		_day_label.text = "Dia %d" % GameState.turn
 	_rep_label.text = "%d %s" % [int(GameState.reputation), GameState.reputation_label()]
+	AvisoDeReputacao.atualizar(_rep_label, GameState.reputation)
 	_docks_label.text = "%d/%d" % [GameState.docks.size(), GameState.bercos_no_mapa()]
 	# O botão não some quando tudo está construído: vira o registo de que o
 	# porto está completo, que é uma informação, não um beco sem saída.
@@ -1200,7 +1202,14 @@ func _abrir_painel(cena: PackedScene) -> Control:
 	# chamador fazer `setup()`, que é onde a primeira fala sai.
 	if painel.has_signal("falou"):
 		painel.connect("falou", _ao_falar)
+	if painel.has_signal("ver_historia"):
+		painel.connect("ver_historia", _on_historia_pedida)
 	return painel
+
+
+func _on_historia_pedida(id: String) -> void:
+	var painel := _abrir_painel(PainelLojasScene)
+	painel.call("setup", id)
 
 
 # Grava sem mostrar: a fala já está na tela do painel, e passá-la também pela

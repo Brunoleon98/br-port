@@ -1,0 +1,2667 @@
+{
+  "historia-consome-ao-abrir": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: sair cedo não consome cena» (+1)",
+      "reprovadas": [
+        "T32: sair cedo não consome cena",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "loja-confirmar-nao-compra": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: confirmar compra abre a história e debita» (+8)",
+      "reprovadas": [
+        "T32: confirmar compra abre a história e debita",
+        "T32: botão alcançável: Ler depois",
+        "T32: botão alcançável: Continuar a conversa",
+        "T32: botão alcançável: Continuar a conversa",
+        "T32: botão alcançável: Continuar a conversa",
+        "T32: botão alcançável: Concluir conversa",
+        "T32: ler até o fim grava conclusão",
+        "T32: delivery entrega item e conversa próprios",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "desistencia-de-graca": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«e custa reputacao»",
+      "reprovadas": [
+        "e custa reputacao"
+      ]
+    }
+  },
+  "save-obra-na-vespera": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T17: obra de armazem começada na véspera (dia 7) é recusada» (+1)",
+      "reprovadas": [
+        "T17: obra de armazem começada na véspera (dia 7) é recusada",
+        "T17: obra de patio começada na véspera (dia 28) é recusada"
+      ]
+    }
+  },
+  "reparos-uma-semana-depois": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T14: armazém abre no dia 8» (+48)",
+      "reprovadas": [
+        "pier 2 comprado",
+        "roster_changed disparou ao concluir",
+        "docas subiram para 2",
+        "trabalhadores subiram para 2",
+        "Fase 1 fica com duas docas e dois trabalhadores",
+        "sem caixa, o pier 2 diz quanto falta",
+        "comprar duas vezes nao acontece",
+        "estrutura ja construida diz isso",
+        "armazem soma 50% ao barco de armazenagem (200 -> 300)",
+        "os dois pieres dao exatamente 3 docas",
+        "e a doca invisivel foi cortada",
+        "o pátio foi comprado para o teste",
+        "o pátio soma 30% ao contêiner (1000 -> 1000)",
+        "T14: píer 2 abre no início",
+        "T14: armazém abre no dia 8",
+        "T14: pátio abre após a cobrança paga",
+        "T15: paga o píer ao iniciar",
+        "T15: pagamento não libera capacidade, trabalhador ou fala de pronto",
+        "T15: só uma obra, sem cobrar outra vez",
+        "T15: obra não esconde abertura na segunda semana",
+        "T15: primeiro dia não termina o píer",
+        "T15: decisão pendente não avança dia nem obra",
+        "T15: Save 14 retoma prazo e saldo, limpando bancada",
+        "T15: segundo dia termina uma vez, abre no dia 3",
+        "T15: conclusão repetida não duplica o porto",
+        "T15: inicia armazém no dia 8",
+        "T15: armazém pronto no dia 10 paga só armazenagem",
+        "T15: inicia pátio no dia 29",
+        "T15: pátio pronto no dia 32 dobra renda sem mudar madeira",
+        "T19: o save da 14 carrega",
+        "T20: o píer 3 abre na Fase 2, depois do píer 2",
+        "T20: o escritório abre no primeiro dia dela",
+        "T20: monta o save da Fase 2 com a obra do píer 3",
+        "o bloco T20 (o save pela fase do arquivo) correu até ao fim",
+        "T20: o save da 15 carrega na Fase 1",
+        "T21: a treliça abre no primeiro dia da Fase 2",
+        "T21: pede o píer 2 para garantir o píer de nível 2",
+        "T21: compra o píer 2",
+        "T21: inicia a treliça e paga o preço inteiro uma vez",
+        "T21: a treliça retoma do save ainda em obra, sem cobrar de novo",
+        "T21: concluída, a treliça põe píer, guindaste e porto no nível 2",
+        "T21: recebe pesca e cargueiro, mantendo longo curso bloqueado",
+        "T21: save da treliça pronta volta ao nível 2 sem meta de bancada",
+        "T21: a doca real escolhe o píer e a lança aprovados do nível 2",
+        "T21: o sorteio do porto de nível 2 produz cargueiro com contêiner",
+        "o bloco T21 correu até ao fim",
+        "T22: degrau 16→17 conserva porto e começa acompanhamento",
+        "T27: controle: compra real inicia obra",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "obra-recusada-um-dia-cedo": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«no dia 84, o último da fase, a obra ainda não está de pé» (+11)",
+      "reprovadas": [
+        "F18 pier_2, dia 82: o Construir avisa ANTES de comprar, em âmbar  — Reconstruir o Píer 2 | +1 doca e +1 trabalhador · 2 dias de obra",
+        "F18 pier_2, dia 82: a mensagem avisa, em tom de aviso  — [\"Reconstruir o Píer 2 — obra iniciada. 2 dias; pronto no dia 84.\", \"good\"]",
+        "F18 pier_2, dia 82: com a obra a andar, o cartão continua a avisar  — Reconstruir o Píer 2 | +1 doca e +1 trabalhador · 2 dias de obra | Em obra · 2 dias restantes · pronto no dia 84 | Pago",
+        "F18 pier_2: no dia 84, o último da fase, a obra ainda não está de pé  — dia 84, de pé true",
+        "F18 armazem, dia 82: o Construir avisa ANTES de comprar, em âmbar  — Consertar o armazém | +50% no barco que vem deixar carga · 2 dias de obra",
+        "F18 armazem, dia 82: a mensagem avisa, em tom de aviso  — [\"Consertar o armazém — obra iniciada. 2 dias; pronto no dia 84.\", \"good\"]",
+        "F18 armazem, dia 82: com a obra a andar, o cartão continua a avisar  — Consertar o armazém | +50% no barco que vem deixar carga · 2 dias de obra | Em obra · 2 dias restantes · pronto no dia 84 | Pago",
+        "F18 armazem: no dia 84, o último da fase, a obra ainda não está de pé  — dia 84, de pé true",
+        "F18 patio, dia 81: o Construir avisa ANTES de comprar, em âmbar  — Pavimentar o pátio | dobra a renda do píer e +30% no contêiner · 3 dias de obra",
+        "F18 patio, dia 81: a mensagem avisa, em tom de aviso  — [\"Pavimentar o pátio — obra iniciada. 3 dias; pronto no dia 84.\", \"good\"]",
+        "F18 patio, dia 81: com a obra a andar, o cartão continua a avisar  — Pavimentar o pátio | dobra a renda do píer e +30% no contêiner · 3 dias de obra | Em obra · 3 dias restantes · pronto no dia 84 | Pago",
+        "F18 patio: no dia 84, o último da fase, a obra ainda não está de pé  — dia 84, de pé true"
+      ]
+    }
+  },
+  "passagem-sem-recomecar-reputacao": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T20: a reputação recomeça na escala da Fase 2» (+5)",
+      "reprovadas": [
+        "T20: a reputação recomeça na escala da Fase 2 (91.0)",
+        "T21: recebe pesca e cargueiro, mantendo longo curso bloqueado",
+        "T21: o sorteio do porto de nível 2 produz cargueiro com contêiner",
+        "o bloco T21 correu até ao fim",
+        "T27: controle: cargueiro com armazenagem sorteado",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "rosto-sem-filtro-dos-usados": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«trinta rostos diferentes» (+1)",
+      "reprovadas": [
+        "F12: trinta trabalhadores, trinta rostos diferentes (19)",
+        "F15 recordes: o save guarda-os e devolve-os iguais  — { \"melhor_dia\": { \"valor\": 73764, \"turno\": 8 }, \"mais_barcos\": { \"n\": 3, \"turno\": 8 }, \"maior_negocio\": { \"valor\": 39587, \"turno\": 8, \"motivo\": \"armazenagem\", \"classe\": \"grande\" }, \"melhor_semana\": { \"valor\": 299491, \"semana\": 2 } } → { \"melhor_dia\": { \"valor\": 73764, \"turno\": 8 }, \"mais_barcos\": { \"n\": 3, \"turno\": 8 }, \"maior_negocio\": { \"valor\": 39587, \"turno\": 8, \"motivo\": \"armazenagem\", \"classe\": \"grande\" }, \"melhor_semana\": { \"valor\": 299491, \"semana\": 2 } }"
+      ]
+    }
+  },
+  "armazem-sem-criar-a-pasta": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«já tem pasta para gravar»",
+      "reprovadas": [
+        "F13: o caminho que o ArmazemLocal dá já tem pasta para gravar  — user://ferramentas/f13_sonda/sonda.txt"
+      ]
+    }
+  },
+  "som-nunca-repete": {
+    "teste_audio": {
+      "aprovado": true,
+      "frase": "«passada a espera, o mesmo som volta a tocar»",
+      "reprovadas": [
+        "passada a espera, o mesmo som volta a tocar"
+      ]
+    }
+  },
+  "servir-sem-reputacao": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: atender um barco sobe a reputação» (+1)",
+      "reprovadas": [
+        "T31: atender um barco sobe a reputação em 0.8",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "arranque-troca-o-save": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: o arranque abre a partida gravada» (+2)",
+      "reprovadas": [
+        "T31: o arranque abre a partida gravada, e não uma nova",
+        "T31: sem save, o arranque abre partida nova",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "cancelar-recusa-esquecida": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: recusa pede reabrir» (+3)",
+      "reprovadas": [
+        "T24: recusa pede reabrir: confirmar outra vez não cancela",
+        "T24: confirmação real cobra uma vez",
+        "T24: registro 5 observa uma vez, sem identidade pessoal",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "meta-cedo-sem-fechar": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: antes da Fase 2 a meta diz quando abre e deixa fechar» (+1)",
+      "reprovadas": [
+        "T31: antes da Fase 2 a meta diz quando abre e deixa fechar",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "registro-docas-ao-contrario": {
+    "teste_registro": {
+      "aprovado": true,
+      "frase": "«o turno conta as duas docas com trabalhador»",
+      "reprovadas": [
+        "o turno conta as duas docas com trabalhador  — [{ \"alocados\": 0.0, \"avisos_ruins\": 0.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 1.0, \"perdidos\": 0.0, \"rep\": 65.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 2.0, \"trab\": 2.0 }]"
+      ]
+    }
+  },
+  "espacos-nova-sem-titulo": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: Nova partida com espaços ocupados pergunta onde» (+1)",
+      "reprovadas": [
+        "T27: Nova partida com espaços ocupados pergunta onde, com o título",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "leitura-maior-nao-acomoda": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: o Construir no Maior cabe na tela baixa»",
+      "reprovadas": [
+        "RB5: o Construir no Maior cabe na tela baixa e rola por dentro"
+      ]
+    }
+  },
+  "doca-realce-some-reduzido": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: doca com barco à espera mantém realce fixo» (+1)",
+      "reprovadas": [
+        "T29: doca com barco à espera mantém realce fixo",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "cancelamento-sem-conferir-o-orcamento": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«a confirmação aceitou um orçamento que não era o lido» (+7)",
+      "reprovadas": [
+        "T24: orçamento alterado exige nova confirmação",
+        "T24: recusa pede reabrir: confirmar outra vez não cancela",
+        "T24: confirmação real cobra uma vez",
+        "T24: registro 5 observa uma vez, sem identidade pessoal",
+        "T24: cancelamento, contas, migração, interface e registro",
+        "T26: partida 9 ao acaso: a confirmação aceitou um orçamento que não era o lido  — semente 9, 465 ação(ões): construir trelica, atracar 0, construir pier_2, adiantar, carregar, construir cais, avancar, atracar 0, devolver 0, atracar 0, atracar 0, atracar 0, devolver -1, avancar, atracar 0, atracar 0, atracar 0, devolver -1, tocar 1, adiantar, atracar 0, cancelar 0, cancelar 0, atracar 99, avancar, atracar 0, atracar 0, construir inexistente, atracar 0, avancar, atracar 1, atracar 0, cancelar 1, atracar 0, atracar 0, construir armazem, avancar, negociar manter, negociar igualar, avancar, atracar 0, atracar 0, avancar, atracar 1, atracar 0, atracar 0, cancelar 0, adiantar, carregar, avancar, construir patio, atracar 0, carregar, avancar, negociar manter, atracar 0, avancar, atracar 0, atracar 0, construir pier_3, avancar, negociar manter, negociar igualar, atracar 0, atracar 1, avancar, construir armazem, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, cancelar 1, adiantar, carregar, devolver 0, atracar 0, cancelar 0, atracar 0, cancelar 0, devolver -1, atracar 0, atracar 0, carregar, avancar, tocar 0, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, avancar, negociar metade, avancar, atracar 0, atracar 0, adiantar, avancar, construir guindaste, atracar 0, atracar 1, avancar, atracar 0, atracar 0, atracar 0, construir cais, construir patio, devolver 1, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, avancar, atracar 0, atracar 0, devolver 0, atracar 1, carregar, construir pier_2, avancar, negociar igualar, avancar, construir guindaste, atracar 0, atracar 0, atracar 0, construir cais, avancar, construir patio, atracar 0, atracar 0, adiantar, carregar, cancelar 0, construir patio, atracar 0, tocar 0, atracar 0, cancelar 1, cancelar 0, avancar, negociar igualar, atracar 0, atracar 0, construir escritorio, atracar 0, cancelar 0, avancar, avancar, cancelar 1, atracar 2, atracar 0, atracar 0, avancar, construir pier_3, atracar 0, atracar 0, cancelar 0, tocar 1, atracar 0, atracar 0, atracar 0, tocar 0, atracar 0, avancar, atracar 0, devolver -1, atracar 0, construir trelica, cancelar 1, avancar, avancar, avancar, carregar, avancar, atracar 1, carregar, atracar 0, avancar, negociar igualar, atracar 0, atracar 0, avancar, atracar 0, atracar 0, adiantar, atracar 0, atracar 0, carregar, atracar 0, cancelar 0, cancelar 0, devolver 0, devolver 0, atracar 0, atracar 0, carregar, cancelar_errado 0, avancar, negociar metade, atracar 0, atracar 0, construir cais, avancar, devolver 0, atracar 0, construir armazem, atracar 0, avancar, devolver -1, atracar 0, atracar 0, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, construir armazem, atracar 99, atracar 0, devolver 0, avancar, atracar 0, atracar 0, atracar 0, atracar 0, carregar, atracar 0, cancelar 1, cancelar 1, avancar, negociar metade, atracar 0, cancelar 1, atracar 0, avancar, construir pier_3, atracar 0, atracar 0, atracar 0, carregar, construir guindaste, atracar 0, cancelar 0, avancar, avancar, atracar 1, atracar 0, avancar, avancar, recusar_oferta, atracar 0, atracar 0, carregar, atracar 0, avancar, atracar 0, cancelar 1, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar igualar, atracar 0, atracar 0, atracar 0, atracar 0, atracar 0, construir pier_2, construir inexistente, tocar 1, atracar 0, adiantar, carregar, avancar, atracar 0, tocar 1, atracar 0, atracar 0, carregar, avancar, construir cais, atracar 1, adiantar, atracar 0, construir armazem, atracar 0, atracar 0, atracar 0, construir patio, construir inexistente, carregar, devolver 1, avancar, negociar igualar, atracar 0, atracar 0, atracar 0, adiantar, avancar, atracar 0, avancar, atracar 0, atracar 0, devolver -1, avancar, atracar 0, atracar 0, avancar, negociar metade, atracar 0, atracar 0, atracar 0, devolver -1, atracar 0, tocar 1, avancar, atracar 0, atracar 0, cancelar 1, avancar, negociar metade, atracar 0, atracar 0, atracar 0, atracar 0, atracar 99, atracar 0, avancar, atracar 0, avancar, atracar 0, avancar, atracar 0, atracar 0, avancar, adiantar, devolver 1, atracar 0, atracar 0, atracar 0, avancar, atracar 0, avancar, recusar_oferta, atracar 0, atracar 0, carregar, devolver -1, avancar, atracar 0, atracar 0, cancelar_errado 1, atracar 0, avancar, atracar 0, carregar, adiantar, atracar 0, tocar 0, avancar, atracar 0, atracar 0, atracar 0, avancar, atracar 0, atracar 0, tocar 0, atracar 0, construir pier_2, carregar, carregar, construir cais, avancar, atracar 0, atracar 0, atracar 0, atracar 0, adiantar, atracar 0, atracar 0, carregar, adiantar, carregar, avancar, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar manter, negociar igualar, atracar 0, atracar 0, avancar, atracar 0, avancar, atracar 0, atracar 0, avancar, avancar, avancar, negociar manter, recusar_oferta, avancar, negociar manter, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, avancar, atracar 0, atracar 0, avancar, construir pier_3, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, recusar_oferta, atracar 0, avancar, construir trelica, atracar 0, atracar 0, atracar 0, avancar, negociar manter, avancar, avancar, atracar 0, avancar, negociar manter, atracar 1, avancar, avancar, negociar igualar, atracar 0, atracar 0, avancar, negociar manter, negociar manter, avancar, atracar 0, atracar 0, avancar, cancelar_errado 2",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "o bloco T26 correu até ao fim, sem invariante quebrado"
+      ]
+    }
+  },
+  "cancelamento-de-outro-barco": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: confirmação velha não cobra outro barco» (+3)",
+      "reprovadas": [
+        "T24: confirmação velha não cobra outro barco",
+        "T24: confirmação real cobra uma vez",
+        "T24: registro 5 observa uma vez, sem identidade pessoal",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "ajuda-multa-dobrada": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T25: custos reais e regra sem parcial na ajuda» (+1)",
+      "reprovadas": [
+        "T25: custos reais e regra sem parcial na ajuda",
+        "T25: consulta, navegação e preservação da partida"
+      ]
+    }
+  },
+  "ajuda-deixa-o-toque-passar": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T25: toque no fundo não atravessa a ajuda» (+14)",
+      "reprovadas": [
+        "T25: toque no fundo não atravessa a ajuda",
+        "T25: controle: toque volta a alcançar a origem",
+        "T25: toque no fundo não atravessa a ajuda",
+        "T25: controle: toque volta a alcançar a origem",
+        "T25: toque no fundo não atravessa a ajuda",
+        "T25: controle: toque volta a alcançar a origem",
+        "T25: toque no fundo não atravessa a ajuda",
+        "T25: controle: toque volta a alcançar a origem",
+        "T25: toque no fundo não atravessa a ajuda",
+        "T25: controle: toque volta a alcançar a origem",
+        "T25: toque no fundo não atravessa a ajuda",
+        "T25: controle: toque volta a alcançar a origem",
+        "T25: toque no fundo não atravessa a ajuda",
+        "T25: controle: toque volta a alcançar a origem",
+        "T25: consulta, navegação e preservação da partida"
+      ]
+    }
+  },
+  "obra-patio-copia-velha": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: o trecho 2 do pátio é o da tabela» (+2)",
+      "reprovadas": [
+        "D45: o trecho 2 do pátio é o da tabela  — cópia [16.0, 22.5, 9.22, 13.2], tabela [16.0, 22.5, 9.22, 12.7]",
+        "D45: o asfalto vai do avental a 55% do pátio no dia 2 da obra, nos cantos da tabela  — trecho 2, canto 3: (109.22, 413.2767) contra (104.72, 411.0267)",
+        "D45: o asfalto vai do avental a 80% do pátio no dia 3 da obra, nos cantos da tabela  — trecho 2, canto 3: (89.32, 403.3267) contra (87.32, 402.3267)"
+      ]
+    }
+  },
+  "obra-uv-sem-razao": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: a UV do recorte» (+1)",
+      "reprovadas": [
+        "D45: a UV do recorte é o vértice × 1.500, a razão textura/rect no dia 2 da obra",
+        "D45: a UV do recorte é o vértice × 1.500, a razão textura/rect no dia 3 da obra"
+      ]
+    }
+  },
+  "destaque-tapado": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma árvore tapa a copa de um destaque» (+1)",
+      "reprovadas": [
+        "D47: a cópia da mata confere com a tabela  — árvore 24: arvore_embauba_b em (-1.5, 69.8) na cópia, arvore_embauba_b em (2.1, 75.1) na tabela",
+        "D47: nenhuma árvore tapa a copa de um destaque  — Arvore24 (arvore_embauba_b): 90% da copa debaixo de outra árvore"
+      ]
+    }
+  },
+  "mata-contorno-cego": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«o contorno sobe acima de cada casa»",
+      "reprovadas": [
+        "D47: o contorno sobe acima de cada casa  — o lote em my=0.14 tem o chão do meio em y=38.5 e o contorno do terreno em 720.0"
+      ]
+    }
+  },
+  "mata-parada": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«cada árvore tem a sua rajada» (+19)",
+      "reprovadas": [
+        "Caminhao0 pode ficar na ponta de praia  — está em my=42.00, dentro da praia 22.5..42.1 — equipamento de porto não fica onde o porto acabou",
+        "CaminhaoRetorno0 pode ficar na ponta de praia  — está em my=-14.00, dentro da praia -14.0..1.2 — equipamento de porto não fica onde o porto acabou",
+        "Caminhao1 pode ficar na ponta de praia  — está em my=42.00, dentro da praia 22.5..42.1 — equipamento de porto não fica onde o porto acabou",
+        "CaminhaoRetorno1 pode ficar na ponta de praia  — está em my=-14.00, dentro da praia -14.0..1.2 — equipamento de porto não fica onde o porto acabou",
+        "Caminhao2 pode ficar na ponta de praia  — está em my=42.00, dentro da praia 22.5..42.1 — equipamento de porto não fica onde o porto acabou",
+        "a 'caminhao_granel.png' pousa na ponta da 'caminhao_granel.png' (0.526 da altura dela, teto 0.26)  — as duas metades partilham a âncora e a de cima ficou a pairar longe da ponta da de baixo",
+        "a 'caminhao_granel_retorno.png' pousa na ponta da 'caminhao_granel_retorno.png' (0.555 da altura dela, teto 0.26)  — as duas metades partilham a âncora e a de cima ficou a pairar longe da ponta da de baixo",
+        "D33: o motor montou todos os estados  — HUD (berços cheios, faixa boa) pediu a faixa «TextoFaixaBom» e ela vestiu «TextoFaixa» («»), HUD (faixa de aviso) pediu a faixa «TextoFaixaAviso» e ela vestiu «TextoFaixa» («»), HUD (faixa ruim) pediu a faixa «TextoFaixaRuim» e ela vestiu «TextoFaixa» («»)",
+        "a previsão das curvas correu até ao fim",
+        "D47: cada árvore tem a sua rajada  — 0 rajadas para 62 árvores",
+        "RB5: toque sem arrasto continua atracando",
+        "RB5: arrasto sobre barco atracado nao libera ao premir",
+        "RB5: montou HUD (berços cheios, faixa boa)",
+        "RB5: montou HUD (faixa de aviso)",
+        "RB5: montou HUD (faixa ruim)",
+        "RB5: percurso montou todos os estados",
+        "RB5: abertura direta montou HUD (berços cheios, faixa boa)",
+        "RB5: abertura direta montou HUD (faixa de aviso)",
+        "RB5: abertura direta montou HUD (faixa ruim)",
+        "RB5: aberturas diretas terminaram"
+      ]
+    }
+  },
+  "restinga-tapa-coqueiro": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma árvore tapa um prop parado»",
+      "reprovadas": [
+        "D47: nenhuma árvore tapa um prop parado  — Arvore58 ([P: (104.1667, 441.1667), S: (58.66667, 60.66667)]) tapa Coqueiro2Tronco ([P: (99.0, 413.5034), S: (24.0, 52.66667)])"
+      ]
+    }
+  },
+  "cones-sempre-do-dia-0": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: os cones ficam nos pontos da tabela» (+1)",
+      "reprovadas": [
+        "D45: os cones ficam nos pontos da tabela no dia 2 da obra",
+        "D45: os cones ficam nos pontos da tabela no dia 3 da obra"
+      ]
+    }
+  },
+  "retomada-cobra-quitada": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: antecipação mantém recibo e próxima cobrança futura» (+2)",
+      "reprovadas": [
+        "T27: antecipação mantém recibo e próxima cobrança futura",
+        "T27: última antecipação não inventa parcela seguinte",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-inventa-cobranca-fase2": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: Fase 2 sem cobrança nem prazo fictícios» (+2)",
+      "reprovadas": [
+        "T27: Fase 2 sem cobrança nem prazo fictícios",
+        "T27: jogo livre conserva conquista sem novo objetivo",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-recusa-inicia-nova": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: recusa não inicia partida nem apaga arquivo» (+1)",
+      "reprovadas": [
+        "T27: recusa não inicia partida nem apaga arquivo",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "diagnostico-copia-diferente": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T28: copia exatamente a prévia por ação explícita» (+2)",
+      "reprovadas": [
+        "T28: copia exatamente a prévia por ação explícita",
+        "T28: copia exatamente a prévia por ação explícita",
+        "T28: identidade, prévia, cópia e consulta sem efeitos"
+      ]
+    }
+  },
+  "movimento-padrao-ativado": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: ausência mantém padrão e leitura não cria arquivo» (+5)",
+      "reprovadas": [
+        "T29: ausência mantém padrão e leitura não cria arquivo",
+        "T29: valor inválido mantém movimento atual: true",
+        "T29: valor inválido mantém movimento atual: 1",
+        "T29: valor inválido mantém movimento atual: []",
+        "T29: bancada pode derivar padrão sem herdar outra ferramenta",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-nao-pausa-fundo": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: comparação temporal: fundo reduzido fica estável» (+3)",
+      "reprovadas": [
+        "T29: escolha para fundo já aberto e repõe pose inteira",
+        "T29: comparação temporal: fundo reduzido fica estável",
+        "T29: elementos criados depois nascem com fundo parado",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-sem-pose-inteira": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: escolha para fundo já aberto e repõe pose inteira» (+1)",
+      "reprovadas": [
+        "T29: escolha para fundo já aberto e repõe pose inteira",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-apaga-realce-da-fila": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: barco chamável mantém realce e ação» (+1)",
+      "reprovadas": [
+        "T29: barco chamável mantém realce e ação",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-fauna-continua-andando": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: fauna reduzida mantém pose e toque» (+9)",
+      "reprovadas": [
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "texto-bancada-caixa-cega": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«BT: a mesma caixa distingue texto que cabe de texto que transborda»",
+      "reprovadas": [
+        "BT: a mesma caixa distingue texto que cabe de texto que transborda"
+      ]
+    }
+  },
+  "inicio-movimento-sem-fundo": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T30: movimento hover_pressed tem fundo opaco e contraste AA» (+2)",
+      "reprovadas": [
+        "T30: movimento hover_pressed tem fundo opaco e contraste AA",
+        "T30: movimento hover_pressed tem fundo opaco e contraste AA",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "inicio-consulta-sem-retorno": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T30: fechar a consulta devolve o mesmo menu visível» (+6)",
+      "reprovadas": [
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "inicio-fundo-provisorio": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D48: inicial desenha a fonte v3 aceita»",
+      "reprovadas": [
+        "D48: inicial desenha a fonte v3 aceita"
+      ]
+    }
+  },
+  "texto-tema-ignora-maior": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: exemplo usa fonte maior do tema» (+54)",
+      "reprovadas": [
+        "RB5: nome de 24 letras cabe na pausa sem encolher",
+        "RB5: exemplo usa fonte maior do tema",
+        "RB5: nome de 24 letras cabe no balao sem encolher",
+        "RB5: fontes do painel Configurações do início",
+        "RB5: fontes do painel Versão e diagnóstico",
+        "RB5: fontes do painel Diagnóstico (cópia indisponível)",
+        "RB5: fontes do painel Meu porto agora (Fase 1)",
+        "RB5: fontes do painel Meu porto agora (Fase 2)",
+        "RB5: fontes do painel Meu porto agora (indisponível)",
+        "RB5: fontes do painel Como jogar (índice)",
+        "RB5: fontes do painel Como jogar (artigo)",
+        "RB5: fontes do painel Como jogar (glossário)",
+        "RB5: fontes do painel Cancelar serviço",
+        "RB5: fontes do painel Diário",
+        "RB5: fontes do painel Lojas",
+        "RB5: fontes do painel Mercado",
+        "RB5: fontes do painel Mercado sem dinheiro",
+        "RB5: fontes do painel Confirmar compra",
+        "RB5: fontes do painel Delivery",
+        "RB5: fontes do painel História",
+        "RB5: fontes do painel História de Arlindo",
+        "RB5: fontes do painel Meta da Fase 2",
+        "RB5: fontes do painel Meta conquistada",
+        "RB5: fontes do painel Cargueiros suspensos",
+        "RB5: fontes do painel Diário da Fase 2",
+        "RB5: fontes do painel Nomes",
+        "RB5: fontes do painel Construir",
+        "RB5: fontes do painel Calendário",
+        "RB5: fontes do painel Docas",
+        "RB5: fontes do painel Reputação",
+        "RB5: fontes do painel Parcela",
+        "RB5: fontes do painel Mensagens",
+        "RB5: fontes do painel Menu-celular",
+        "RB5: fontes do painel Pausa",
+        "RB5: fontes do painel Ajustes",
+        "RB5: fontes do painel Espaços (partida nova)",
+        "RB5: fontes do painel Espaços (confirmar)",
+        "RB5: fontes do painel Tela inicial",
+        "RB5: fontes do painel Caixa",
+        "RB5: fontes do painel Boletim",
+        "RB5: fontes do painel Contra-oferta",
+        "RB5: fontes do painel Ribeiro (pode pagar)",
+        "RB5: fontes do painel Ribeiro (NÃO pode pagar)",
+        "RB5: fontes do painel Fim de jogo (ganhou)",
+        "RB5: fontes do painel Fim de jogo (perdeu)",
+        "RB5: fontes do painel HUD (falta para a parcela)",
+        "RB5: fontes do painel HUD (já dá para quitar)",
+        "RB5: fontes do painel HUD (berços cheios, faixa boa)",
+        "RB5: fontes do painel HUD (faixa de aviso)",
+        "RB5: fontes do painel HUD (faixa ruim)",
+        "RB5: fontes do painel HUD (barco ao largo sob oferta do rival)",
+        "RB5: fontes do painel HUD (barco que vai embora hoje)",
+        "RB5: fontes do painel Construir (com estrutura de pé)",
+        "RB5: fontes do painel Construir (obra em andamento)",
+        "RB5: fontes do painel Construir (obra sem uso na fase)"
+      ]
+    }
+  },
+  "texto-padrao-nao-restaura": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: ciclo restaura todas as fontes» (+1)",
+      "reprovadas": [
+        "RB5: ciclo restaura todas as fontes",
+        "RB5: ciclo restaura a composicao padrao"
+      ]
+    }
+  },
+  "texto-acoes-fora-da-tela": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: acoes fixas cabem fora do rolo» (+2)",
+      "reprovadas": [
+        "RB5: acoes fixas cabem fora do rolo",
+        "RB5: arrastar rola sem executar acao da partida",
+        "RB5: arrasto com um dedo rola sem executar acao da partida"
+      ]
+    }
+  },
+  "movimento-apaga-texto": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: duas preferencias no disco maior/true ordem 1» (+5)",
+      "reprovadas": [
+        "RB5: duas preferencias no disco padrao/false ordem 1",
+        "RB5: duas preferencias no disco padrao/true ordem 1",
+        "RB5: duas preferencias no disco maior/false ordem 1",
+        "RB5: leitor restaura maior/false ordem 1",
+        "RB5: duas preferencias no disco maior/true ordem 1",
+        "RB5: leitor restaura maior/true ordem 1"
+      ]
+    }
+  },
+  "texto-nao-persiste": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: leitor restaura maior/false ordem 0» (+13)",
+      "reprovadas": [
+        "RB5: duas preferencias no disco padrao/false ordem 0",
+        "RB5: duas preferencias no disco padrao/false ordem 1",
+        "RB5: duas preferencias no disco padrao/true ordem 0",
+        "RB5: duas preferencias no disco padrao/true ordem 1",
+        "RB5: duas preferencias no disco maior/false ordem 0",
+        "RB5: leitor restaura maior/false ordem 0",
+        "RB5: duas preferencias no disco maior/false ordem 1",
+        "RB5: leitor restaura maior/false ordem 1",
+        "RB5: duas preferencias no disco maior/true ordem 0",
+        "RB5: leitor restaura maior/true ordem 0",
+        "RB5: duas preferencias no disco maior/true ordem 1",
+        "RB5: leitor restaura maior/true ordem 1",
+        "RB5: falha de escrita conserva texto na sessao",
+        "RB5: falha ao lembrar texto aparece nos Ajustes"
+      ]
+    }
+  },
+  "texto-rolo-rouba-painel": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: painel aberto bloqueia gesto no porto de baixo»",
+      "reprovadas": [
+        "RB5: painel aberto bloqueia gesto no porto de baixo"
+      ]
+    }
+  },
+  "texto-consulta-selecao-ausente": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: campo sem selecao nao gera erro do motor»",
+      "reprovadas": [
+        "RB5: campo sem selecao nao gera erro do motor"
+      ]
+    }
+  },
+  "texto-captura-fila-antiga": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: captura jogada encontra o barco dentro do rolo»",
+      "reprovadas": [
+        "RB5: captura jogada encontra o barco dentro do rolo"
+      ]
+    }
+  },
+  "loja-retomada-esquece-itens": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: retomada conserva compra, leitura e dinheiro» (+2)",
+      "reprovadas": [
+        "T32: retomada conserva compra, leitura e dinheiro",
+        "T32: voltar ao espaço recupera seus itens",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "historia-documentos-na-obra": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: obra não revela documentos» (+1)",
+      "reprovadas": [
+        "T32: obra não revela documentos",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "atracagem-conta-um-berco": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«conta todos os bercos livres»",
+      "reprovadas": [
+        "conta todos os bercos livres, e nao só o primeiro"
+      ]
+    }
+  },
+  "save-fila-sem-teto": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«mais barcos do que lugares»",
+      "reprovadas": [
+        "save com mais barcos do que lugares é recusado, e sem ter tocado em nada  — carregou=true turn=5"
+      ]
+    }
+  },
+  "espera-com-dois-espacos": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«a espera do barco ao largo cabe»",
+      "reprovadas": [
+        "a espera do barco ao largo cabe (202 de 200 px)  — [aguarda mais 1 dia  ·  acordo]"
+      ]
+    }
+  },
+  "trabalhador-em-duas-docas": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«segunda alocacao do MESMO trabalhador recusada» (+1)",
+      "reprovadas": [
+        "segunda alocacao do MESMO trabalhador recusada",
+        "doca 1 continua sem trabalhador"
+      ]
+    }
+  },
+  "fecho-sem-reabrir-o-turno": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«[igualar] botao AVANCAR DIA reabilitado» (+1)",
+      "reprovadas": [
+        "[igualar] botao AVANCAR DIA reabilitado  <-- o bug reportado",
+        "botao AVANCAR DIA reabilitado depois do painel"
+      ]
+    }
+  },
+  "nivel-do-porto-pelo-maior": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«com pórtico e sem cais o porto FICA no nível 2» (+77)",
+      "reprovadas": [
+        "reparos básicos não compram guindaste intermediário",
+        "com pórtico e sem cais o porto FICA no nível 2 (píer 2, guindaste 3, porto 3)",
+        "e o longo curso continua sem atracar ([\"grande\", \"pesqueiro\", \"medio\"])",
+        "T14: dia 10 mantém a madeira e só recebe pesca",
+        "T14: dia 11 mantém a madeira e só recebe pesca",
+        "T14: dia 12 mantém a madeira e só recebe pesca",
+        "T14: dia 13 mantém a madeira e só recebe pesca",
+        "T14: dia 14 mantém a madeira e só recebe pesca",
+        "T14: dia 15 mantém a madeira e só recebe pesca",
+        "T14: dia 16 mantém a madeira e só recebe pesca",
+        "T14: dia 17 mantém a madeira e só recebe pesca",
+        "T14: dia 18 mantém a madeira e só recebe pesca",
+        "T14: dia 19 mantém a madeira e só recebe pesca",
+        "T14: dia 20 mantém a madeira e só recebe pesca",
+        "T14: dia 21 mantém a madeira e só recebe pesca",
+        "T14: dia 22 mantém a madeira e só recebe pesca",
+        "T14: dia 23 mantém a madeira e só recebe pesca",
+        "T14: dia 24 mantém a madeira e só recebe pesca",
+        "T14: dia 25 mantém a madeira e só recebe pesca",
+        "T14: dia 26 mantém a madeira e só recebe pesca",
+        "T14: dia 27 mantém a madeira e só recebe pesca",
+        "T14: dia 28 mantém a madeira e só recebe pesca",
+        "T14: dia 29 mantém a madeira e só recebe pesca",
+        "T14: dia 30 mantém a madeira e só recebe pesca",
+        "T14: dia 31 mantém a madeira e só recebe pesca",
+        "T14: dia 32 mantém a madeira e só recebe pesca",
+        "T14: dia 33 mantém a madeira e só recebe pesca",
+        "T14: dia 34 mantém a madeira e só recebe pesca",
+        "T14: dia 35 mantém a madeira e só recebe pesca",
+        "T14: dia 36 mantém a madeira e só recebe pesca",
+        "T14: dia 37 mantém a madeira e só recebe pesca",
+        "T14: dia 38 mantém a madeira e só recebe pesca",
+        "T14: dia 39 mantém a madeira e só recebe pesca",
+        "T14: dia 40 mantém a madeira e só recebe pesca",
+        "T14: dia 41 mantém a madeira e só recebe pesca",
+        "T14: dia 42 mantém a madeira e só recebe pesca",
+        "T14: dia 43 mantém a madeira e só recebe pesca",
+        "T14: dia 44 mantém a madeira e só recebe pesca",
+        "T14: dia 45 mantém a madeira e só recebe pesca",
+        "T14: dia 46 mantém a madeira e só recebe pesca",
+        "T14: dia 47 mantém a madeira e só recebe pesca",
+        "T14: dia 48 mantém a madeira e só recebe pesca",
+        "T14: dia 49 mantém a madeira e só recebe pesca",
+        "T14: dia 50 mantém a madeira e só recebe pesca",
+        "T14: dia 51 mantém a madeira e só recebe pesca",
+        "T14: dia 52 mantém a madeira e só recebe pesca",
+        "T14: dia 53 mantém a madeira e só recebe pesca",
+        "T14: dia 54 mantém a madeira e só recebe pesca",
+        "T14: dia 55 mantém a madeira e só recebe pesca",
+        "T14: dia 56 mantém a madeira e só recebe pesca",
+        "T14: dia 57 mantém a madeira e só recebe pesca",
+        "T14: dia 58 mantém a madeira e só recebe pesca",
+        "T14: dia 59 mantém a madeira e só recebe pesca",
+        "T14: dia 60 mantém a madeira e só recebe pesca",
+        "T14: dia 61 mantém a madeira e só recebe pesca",
+        "T14: dia 62 mantém a madeira e só recebe pesca",
+        "T14: dia 63 mantém a madeira e só recebe pesca",
+        "T14: dia 64 mantém a madeira e só recebe pesca",
+        "T14: dia 65 mantém a madeira e só recebe pesca",
+        "T14: dia 66 mantém a madeira e só recebe pesca",
+        "T14: dia 67 mantém a madeira e só recebe pesca",
+        "T14: dia 68 mantém a madeira e só recebe pesca",
+        "T14: dia 69 mantém a madeira e só recebe pesca",
+        "T14: dia 70 mantém a madeira e só recebe pesca",
+        "T14: dia 71 mantém a madeira e só recebe pesca",
+        "T14: dia 72 mantém a madeira e só recebe pesca",
+        "T14: dia 73 mantém a madeira e só recebe pesca",
+        "T14: dia 74 mantém a madeira e só recebe pesca",
+        "T14: dia 75 mantém a madeira e só recebe pesca",
+        "T14: dia 76 mantém a madeira e só recebe pesca",
+        "T14: dia 77 mantém a madeira e só recebe pesca",
+        "T14: dia 78 mantém a madeira e só recebe pesca",
+        "T14: dia 79 mantém a madeira e só recebe pesca",
+        "T14: dia 80 mantém a madeira e só recebe pesca",
+        "T14: dia 81 mantém a madeira e só recebe pesca",
+        "T14: dia 82 mantém a madeira e só recebe pesca",
+        "T14: dia 83 mantém a madeira e só recebe pesca",
+        "T14: dia 84 mantém a madeira e só recebe pesca"
+      ]
+    }
+  },
+  "receita-sem-a-estrutura": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T15: armazenagem ainda não recebe bônus»",
+      "reprovadas": [
+        "T15: armazenagem ainda não recebe bônus"
+      ]
+    }
+  },
+  "save-obra-sem-cobranca": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T17: com uma quitada a menos o save de patio é recusado»",
+      "reprovadas": [
+        "T17: com uma quitada a menos o save de patio é recusado"
+      ]
+    }
+  },
+  "plural-da-obra-a-mao": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«F9: nenhum número escreve o plural à mão»",
+      "reprovadas": [
+        "F9: nenhum número escreve o plural à mão («%d dias»)  —"
+      ]
+    }
+  },
+  "atalho-s-nao-e-ferramenta": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«`-s` conta como ferramenta»",
+      "reprovadas": [
+        "F13: `-s` conta como ferramenta"
+      ]
+    }
+  },
+  "som-sem-espera-minima": {
+    "teste_audio": {
+      "aprovado": true,
+      "frase": "«o mesmo som dentro da espera não repete»",
+      "reprovadas": [
+        "o mesmo som dentro da espera não repete  — espera de 0.12 s não segurou"
+      ]
+    }
+  },
+  "cancelar-sem-botao": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: a confirmação mostra o botão Cancelar serviço» (+1)",
+      "reprovadas": [
+        "T24: a confirmação mostra o botão Cancelar serviço",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "doca-sem-valor": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: o cartão da doca mostra o valor do barco atracado» (+2)",
+      "reprovadas": [
+        "T31: o cartão da doca mostra o valor do barco atracado",
+        "T31: e, com o acordo, o valor acordado",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "rolo-ignora-o-dedo": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: arrasto com um dedo rola»",
+      "reprovadas": [
+        "RB5: arrasto com um dedo rola sem executar acao da partida"
+      ]
+    }
+  },
+  "registro-partida-nova-retomada": {
+    "teste_registro": {
+      "aprovado": true,
+      "frase": "«a partida nova do dia 1 grava-se como nova»",
+      "reprovadas": [
+        "a partida nova do dia 1 grava-se como nova, não retomada  — [{ \"caixa_inicial\": 400000.0, \"e\": \"abriu\", \"jogo\": \"\", \"numero_da_fase\": 1.0, \"parcela\": 140000.0, \"plataforma\": \"Linux\", \"quando\": \"2026-10-25T00:57:19\", \"retomada\": true, \"t_inicial\": 1.0, \"turnos_por_semana\": 7.0, \"turnos_totais\": 84.0, \"versao\": 5.0 }]"
+      ]
+    }
+  },
+  "meu-porto-sem-dia": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: o resumo escreve o dia e a semana» (+1)",
+      "reprovadas": [
+        "T27: o resumo escreve o dia e a semana",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "devolver-deixa-o-trabalhador": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«e o trabalhador fica livre» (+1)",
+      "reprovadas": [
+        "e o trabalhador fica livre",
+        "a suíte não chegou ao fim: o _run() abortou (veja o SCRIPT ERROR acima)"
+      ]
+    }
+  },
+  "reputacao-sem-teto": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«a reputação fica entre 0 e 100» (+5)",
+      "reprovadas": [
+        "T24: granel, acordo e arredondamento",
+        "T24: cancelamento, contas, migração, interface e registro",
+        "T26: partida 1 ao acaso: a reputação fica entre 0 e 100  — semente 1, 304 ação(ões): cancelar 0, atracar 0, tocar 0, atracar 0, carregar, atracar 0, devolver 0, tocar 0, devolver 0, atracar 0, avancar, negociar manter, recusar_oferta, atracar 0, atracar 0, construir armazem, atracar 0, tocar 0, atracar 1, avancar, devolver 0, atracar 0, avancar, atracar 0, avancar, atracar 0, cancelar_errado 0, devolver 0, atracar 0, tocar 0, carregar, atracar 1, atracar 1, atracar 99, atracar 0, atracar 0, avancar, devolver 0, atracar 0, avancar, atracar 0, avancar, atracar 0, avancar, negociar metade, atracar 0, carregar, cancelar 0, atracar 1, cancelar 0, atracar 0, avancar, negociar metade, atracar 0, devolver 0, atracar 2, atracar 0, construir patio, avancar, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar metade, negociar igualar, avancar, atracar 0, avancar, atracar 0, tocar 0, atracar 1, avancar, atracar 0, avancar, atracar 0, avancar, avancar, atracar 0, atracar 1, construir trelica, cancelar 0, avancar, atracar 0, cancelar 0, avancar, atracar 0, construir guindaste, cancelar 0, atracar 0, tocar 0, atracar 0, construir pier_2, construir armazem, atracar 0, atracar 0, carregar, atracar 0, avancar, atracar 0, atracar 0, atracar 0, avancar, negociar manter, atracar 0, atracar 0, avancar, negociar igualar, atracar 0, avancar, negociar igualar, avancar, atracar 0, atracar 0, construir trelica, construir armazem, avancar, cancelar 1, atracar 0, cancelar 1, atracar 0, avancar, atracar 99, atracar 0, devolver 1, atracar 0, avancar, pagar, avancar, atracar 1, atracar 0, cancelar_errado 0, atracar 99, construir inexistente, atracar 0, avancar, negociar metade, atracar 0, devolver -1, atracar 0, construir armazem, avancar, atracar 0, atracar 0, avancar, negociar metade, atracar 0, atracar 0, cancelar 1, devolver -1, avancar, negociar igualar, atracar 0, atracar 0, atracar 99, avancar, atracar 0, atracar 1, cancelar 0, carregar, avancar, atracar 99, atracar 0, atracar 0, carregar, avancar, tocar 1, atracar 0, devolver -1, avancar, atracar 0, atracar 0, cancelar 0, avancar, negociar manter, negociar metade, avancar, atracar 0, atracar 0, devolver 1, atracar 0, atracar 0, devolver 1, atracar 0, avancar, negociar igualar, atracar 0, atracar 0, carregar, atracar 0, carregar, avancar, atracar 0, construir inexistente, avancar, recusar_oferta, atracar 1, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar manter, recusar_oferta, atracar 0, avancar, negociar igualar, atracar 0, avancar, atracar 0, atracar 0, atracar 0, cancelar 0, cancelar 1, construir inexistente, avancar, atracar 0, atracar 0, avancar, avancar, atracar 0, atracar 0, tocar 1, atracar 0, avancar, atracar 0, atracar 0, atracar 0, construir guindaste, tocar 0, atracar 1, tocar 1, atracar 0, atracar 0, atracar 0, construir pier_3, carregar, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar manter, negociar igualar, atracar 0, atracar 0, avancar, negociar manter, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, pagar, atracar 0, atracar 0, avancar, negociar metade, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar igualar, atracar 0, atracar 0, avancar, avancar, atracar 0, atracar 0, avancar, atracar 0, avancar, recusar_oferta, atracar 0, atracar 0, avancar, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar metade, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar metade, atracar 0, atracar 0, avancar",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: cancelar, adiantar, chance",
+        "o bloco T26 correu até ao fim, sem invariante quebrado"
+      ]
+    }
+  },
+  "cancelamento-sem-multa": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: multa e reputação únicas, sem pagar serviço» (+9)",
+      "reprovadas": [
+        "T24: multa e reputação únicas, sem pagar serviço",
+        "T24: repetição não cobra",
+        "T24: granel, acordo e arredondamento",
+        "T24: negativo permitido até ao fecho",
+        "T24: negativo e despesas sobrevivem à retomada",
+        "T24: recupera sem nova multa no fecho",
+        "T24: sem recuperação perde no fecho",
+        "T24: fecho semanal e projeção contam multa exatamente uma vez",
+        "T24: confirmação real cobra uma vez",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "cancelamento-fora-da-semana": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: multa lançada nas contas» (+4)",
+      "reprovadas": [
+        "T24: multa lançada nas contas",
+        "T24: negativo e despesas sobrevivem à retomada",
+        "T24: fecho semanal e projeção contam multa exatamente uma vez",
+        "T24: boletim identifica a despesa",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "ajuda-voltar-fecha-o-artigo": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T25: Voltar retorna ao índice» (+7)",
+      "reprovadas": [
+        "T25: Voltar retorna ao índice: atracar",
+        "T25: Voltar retorna ao índice: atracar",
+        "T25: Voltar retorna ao índice: atracar",
+        "T25: Voltar retorna ao índice: atracar",
+        "T25: Voltar retorna ao índice: atracar",
+        "T25: Voltar retorna ao índice: atracar",
+        "T25: Voltar retorna ao índice: atracar",
+        "T25: consulta, navegação e preservação da partida"
+      ]
+    }
+  },
+  "ajuda-empilha": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T25: pedido repetido não duplica ajuda» (+10)",
+      "reprovadas": [
+        "T25: pedido repetido não duplica ajuda",
+        "T25: pausa permanece na origem: fase1",
+        "T25: pedido repetido não duplica ajuda",
+        "T25: pausa permanece na origem: iniciado",
+        "T25: pedido repetido não duplica ajuda",
+        "T25: pausa permanece na origem: negativo",
+        "T25: pedido repetido não duplica ajuda",
+        "T25: pausa permanece na origem: livre",
+        "T25: pedido repetido não duplica ajuda",
+        "T25: pausa permanece na origem: fim",
+        "T25: consulta, navegação e preservação da partida"
+      ]
+    }
+  },
+  "obra-cartao-diz-ruinas": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: o cartão diz «píer em obra»» (+1)",
+      "reprovadas": [
+        "D45: o cartão diz «píer em obra» no dia da compra  — «píer em ruínas»",
+        "D45: o cartão diz «píer em obra» no dia 2 da obra  — «píer em ruínas»"
+      ]
+    }
+  },
+  "obra-patio-sem-sinalizacao": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: a barreira e o cone sinalizam a obra» (+2)",
+      "reprovadas": [
+        "D45: a barreira e o cone sinalizam a obra, e a empilhadeira não está no dia 1 da obra",
+        "D45: a barreira e o cone sinalizam a obra, e a empilhadeira não está no dia 2 da obra",
+        "D45: a barreira e o cone sinalizam a obra, e a empilhadeira não está no dia 3 da obra"
+      ]
+    }
+  },
+  "mar-largo-clareia": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«a água escurece para o largo» (+2)",
+      "reprovadas": [
+        "D46: a água escurece para o largo  — a luminância anda -0.17 por unidade, em média, e tem de descer mais de 0.55",
+        "D46: nenhuma mancha clara no mar aberto  — a água clareia 13.7 acima da mais escura já atravessada (doca 2+2, a 20.5 u do berço)",
+        "D49: nada muda entre os dois mapas fora da obra (104368 px fora, o máximo é 50)  — o pixel (1078, 324) — tela (719, 216) — muda e não é da obra"
+      ]
+    }
+  },
+  "mata-copia-desalinhada": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«a cópia da mata confere com a tabela» (+1)",
+      "reprovadas": [
+        "D47: a cópia da mata confere com a tabela  — árvore 11: arvore_mata_b em (19.3, 41.4) na cópia, arvore_mata_b em (19.3, 31.4) na tabela",
+        "D47: nenhuma árvore pinta por cima de uma pedra à frente  — Arvore11 (prof. -1.10) desce a y=57.4 na coluna 32.6, sobre a pedra de prof. -0.05 que começa em y=52.7"
+      ]
+    }
+  },
+  "mata-sobre-a-orla": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma árvore pinta por cima de uma embutida à frente» (+1)",
+      "reprovadas": [
+        "D47: nenhuma árvore pinta por cima de uma embutida à frente  — Arvore21 (prof. 1.86) desce a y=124.8 na coluna 82, sobre a embutida de prof. 4.96 que começa em y=122.0",
+        "D47: nenhuma árvore tapa a copa de um destaque  — Arvore19 (arvore_jucara_c): 99% da copa debaixo de outra árvore"
+      ]
+    }
+  },
+  "copa-no-telhado": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma copa embutida pousa num telhado» (+1)",
+      "reprovadas": [
+        "D47: nenhuma copa embutida pousa num telhado  — a casa do lote em my=5.88 tem 49 de 49 pixels verdes no telhado",
+        "D49: nada muda entre os dois mapas fora da obra (7447 px fora, o máximo é 50)  — o pixel (172, 59) — tela (115, 40) — muda e não é da obra"
+      ]
+    }
+  },
+  "viela-troca-com-o-patio": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D49: nada muda entre os dois mapas fora da obra»",
+      "reprovadas": [
+        "D49: nada muda entre os dois mapas fora da obra (12280 px fora, o máximo é 50)  — o pixel (503, 0) — tela (336, 0) — muda e não é da obra"
+      ]
+    }
+  },
+  "praia-norte-acaba-no-porto": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D49: terra: a água não aparece na borda norte do pátio»",
+      "reprovadas": [
+        "D49: terra: a água não aparece na borda norte do pátio (azul +90.5, o máximo é +54.0)  — em mx 1.3, my 1.140, 1d82aa"
+      ]
+    }
+  },
+  "retomada-consome-rng": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: gerar conteúdo preserva estado, RNG, arquivos e registro» (+15)",
+      "reprovadas": [
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: consulta visual preserva estado, RNG, arquivos e registro",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-regrava-save": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: gerar conteúdo preserva estado, RNG, arquivos e registro» (+14)",
+      "reprovadas": [
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: gerar conteúdo preserva estado, RNG, arquivos e registro",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-meta-esquecida": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: jogo livre conserva conquista sem novo objetivo» (+2)",
+      "reprovadas": [
+        "T27: jogo livre conserva conquista sem novo objetivo",
+        "T27: conquista fica registrada após encerramento",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "diagnostico-falso-sucesso": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T28: falha não anuncia sucesso e permite tentar de novo» (+2)",
+      "reprovadas": [
+        "T28: falha não anuncia sucesso e permite tentar de novo",
+        "T28: falha não anuncia sucesso e permite tentar de novo",
+        "T28: identidade, prévia, cópia e consulta sem efeitos"
+      ]
+    }
+  },
+  "movimento-nao-persiste": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: nova instância relê escolha persistente» (+8)",
+      "reprovadas": [
+        "T29: nova instância relê escolha persistente",
+        "T29: preferência independe do espaço 1",
+        "T29: preferência independe do espaço 2",
+        "T29: preferência independe do espaço 3",
+        "T29: toque aplica imediatamente e permanece no disco",
+        "T29: falha ao lembrar é explícita e escolha vale na sessão",
+        "T29: toque aplica imediatamente e permanece no disco",
+        "T29: falha ao lembrar é explícita e escolha vale na sessão",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-preferencia-no-jogador": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: preferência de ferramenta é isolada» (+1)",
+      "reprovadas": [
+        "T29: preferência de ferramenta é isolada",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-folha-ainda-espera": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: transição reduzida conclui próximo callback sem espera» (+1)",
+      "reprovadas": [
+        "T29: transição reduzida conclui próximo callback sem espera",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-barco-ainda-transita": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: serviço e dia concluem com movimento reduzido» (+1)",
+      "reprovadas": [
+        "T29: serviço e dia concluem com movimento reduzido",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "texto-bancada-janela-cega": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«BT: texto fora da janela nao recebe o zero do texto dentro»",
+      "reprovadas": [
+        "BT: texto fora da janela nao recebe o zero do texto dentro"
+      ]
+    }
+  },
+  "inicio-consultas-sobrepostas": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T30: a consulta oculta o menu de Configurações» (+6)",
+      "reprovadas": [
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "inicio-saves-sem-porta": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T30: Saves abre a lista compartilhada de espaços» (+2)",
+      "reprovadas": [
+        "T30: Saves abre a lista compartilhada de espaços",
+        "T30: Saves abre a lista compartilhada de espaços",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "inicio-fundo-vaza-celular": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D48: celular conserva o degrade»",
+      "reprovadas": [
+        "D48: celular conserva o degrade"
+      ]
+    }
+  },
+  "texto-no-tardio-ignorado": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: no criado depois recebe tamanho escolhido»",
+      "reprovadas": [
+        "RB5: no criado depois recebe tamanho escolhido"
+      ]
+    }
+  },
+  "texto-painel-sem-rolagem": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: leitura maior cabe em (720, 1152): PainelAjustes» (+7)",
+      "reprovadas": [
+        "RB5: ajustes novos no maior nao guardam faixa vazia",
+        "RB5: aparelho conserva medidas e centro Menu-celular",
+        "RB5: leitura maior cabe em (720, 1152): PainelAjustes",
+        "RB5: leitura maior cabe em (720, 1152): PainelDiagnostico",
+        "RB5: leitura maior cabe em (720, 1152): PainelDiario",
+        "RB5: leitura maior cabe em (720, 1600): PainelAjustes",
+        "RB5: leitura maior cabe em (720, 1600): PainelDiagnostico",
+        "RB5: o Construir no Maior cabe na tela baixa e rola por dentro"
+      ]
+    }
+  },
+  "texto-doca-libera-ao-premir": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: arrasto sobre barco atracado nao libera ao premir»",
+      "reprovadas": [
+        "RB5: arrasto sobre barco atracado nao libera ao premir"
+      ]
+    }
+  },
+  "texto-apaga-movimento": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: duas preferencias no disco maior/true ordem 0» (+5)",
+      "reprovadas": [
+        "RB5: duas preferencias no disco padrao/false ordem 0",
+        "RB5: duas preferencias no disco padrao/true ordem 0",
+        "RB5: leitor restaura padrao/true ordem 0",
+        "RB5: duas preferencias no disco maior/false ordem 0",
+        "RB5: duas preferencias no disco maior/true ordem 0",
+        "RB5: leitor restaura maior/true ordem 0"
+      ]
+    }
+  },
+  "texto-cartao-guarda-faixa-vazia": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: ajustes novos no maior nao guardam faixa vazia»",
+      "reprovadas": [
+        "RB5: ajustes novos no maior nao guardam faixa vazia"
+      ]
+    }
+  },
+  "texto-rouba-posicao-inicial": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: conversa nova mostra fim do historico»",
+      "reprovadas": [
+        "RB5: conversa nova mostra fim do historico"
+      ]
+    }
+  },
+  "loja-sem-debito": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: compra debita uma vez e libera a conversa» (+6)",
+      "reprovadas": [
+        "T32: compra debita uma vez e libera a conversa",
+        "T32: clique repetido não duplica item nem cobrança",
+        "T32: retomada conserva compra, leitura e dinheiro",
+        "T32: virar dia não cobra compra novamente",
+        "T32: confirmar compra abre a história e debita",
+        "T32: delivery entrega item e conversa próprios",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "historia-migracao-perde-saldo": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: 18 migra sem perder saldo, fase, obra ou nomes» (+6)",
+      "reprovadas": [
+        "T19: o save da 14 carrega",
+        "T20: o save da 15 carrega na Fase 1",
+        "T22: degrau 16→17 conserva porto e começa acompanhamento",
+        "T24: 17→18 preserva toda a partida",
+        "T24: cancelamento, contas, migração, interface e registro",
+        "T32: 18 migra sem perder saldo, fase, obra ou nomes",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "atracar-sem-trabalhador": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«com o trabalhador junto» (+24)",
+      "reprovadas": [
+        "com o trabalhador junto",
+        "o atracado foi servido",
+        "a desistencia conta como barco perdido",
+        "o berco 2 chama o trabalhador 2, e nao o primeiro livre",
+        "e elas jogaram — serviram barcos (0)",
+        "T21: após um dia permanece na doca sem pagamento",
+        "T21: o cargueiro retoma do save com um dia trabalhado",
+        "T21: o segundo dia fecha o contrato e libera o trabalhador",
+        "T22: descarga cumpriu missão e fechou fase uma vez",
+        "T22: conquista e missão voltam mesmo com reputação baixa",
+        "T22: jogo livre avança sem repetir diário",
+        "T22: contratado termina abaixo do piso",
+        "T24: recupera sem nova multa no fecho",
+        "T24: cancelamento, contas, migração, interface e registro",
+        "T26: partida 1 ao acaso: barco e trabalhador entram e saem da doca juntos  — semente 1, 1 ação(ões): atracar 0",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: devolver, cancelar, construir, adiantar, pagar, chance, negociar, carregar, avancar",
+        "o bloco T26 correu até ao fim, sem invariante quebrado",
+        "T27: serviço mostra progresso guardado e receita com bônus",
+        "T27: resumo de retomada e consulta sem efeitos",
+        "T29: operação mantém trabalhador e ciclo de serviço",
+        "T29: visita operacional do caminhão continua visível",
+        "T29: serviço e dia concluem com movimento reduzido",
+        "T29: resultado do serviço continua visível e imóvel",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "save-oferta-fora-da-fila": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«oferta fora da fila»",
+      "reprovadas": [
+        "save com oferta fora da fila é recusado, e sem ter tocado em nada  — carregou=true turn=5"
+      ]
+    }
+  },
+  "obra-pronta-um-dia-cedo": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T15: segundo dia termina uma vez, abre no dia 3» (+11)",
+      "reprovadas": [
+        "T15: primeiro dia não termina o píer",
+        "T15: decisão pendente não avança dia nem obra",
+        "T15: Save 14 retoma prazo e saldo, limpando bancada",
+        "T15: segundo dia termina uma vez, abre no dia 3",
+        "T15: armazém pronto no dia 10 paga só armazenagem",
+        "T15: pátio pronto no dia 32 dobra renda sem mudar madeira",
+        "T15: conclusão não pula a cobrança do dia 28",
+        "T15: semana encerrada paga somente trabalhador que já existia",
+        "T15: cobrança e porto concluído retomam juntos",
+        "T21: a treliça retoma do save ainda em obra, sem cobrar de novo",
+        "T27: prazo mostrado corresponde à conclusão no jogo",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "aviso-de-obra-um-dia-cedo": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«na véspera o Construir não avisa» (+5)",
+      "reprovadas": [
+        "F18 pier_2, dia 82: na véspera o Construir não avisa  — Reconstruir o Píer 2 | +1 doca e +1 trabalhador · 2 dias de obra | Fica pronto só no fim do dia 84, e não será usado nesta fase.",
+        "F18 pier_2, dia 82: a mensagem é boa e diz o dia, sem aviso  — [\"Reconstruir o Píer 2 — obra iniciada. 2 dias; pronto só no fim do dia 84, e não será usado nesta fase.\", \"warn\"]",
+        "F18 armazem, dia 82: na véspera o Construir não avisa  — Consertar o armazém | +50% no barco que vem deixar carga · 2 dias de obra | Fica pronto só no fim do dia 84, e não será usado nesta fase.",
+        "F18 armazem, dia 82: a mensagem é boa e diz o dia, sem aviso  — [\"Consertar o armazém — obra iniciada. 2 dias; pronto só no fim do dia 84, e não será usado nesta fase.\", \"warn\"]",
+        "F18 patio, dia 81: na véspera o Construir não avisa  — Pavimentar o pátio | dobra a renda do píer e +30% no contêiner · 3 dias de obra | Fica pronto só no fim do dia 84, e não será usado nesta fase.",
+        "F18 patio, dia 81: a mensagem é boa e diz o dia, sem aviso  — [\"Pavimentar o pátio — obra iniciada. 3 dias; pronto só no fim do dia 84, e não será usado nesta fase.\", \"warn\"]"
+      ]
+    }
+  },
+  "cargueiro-sem-piso": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T22: abaixo do piso só novas chegadas de pesca» (+29)",
+      "reprovadas": [
+        "T22: abaixo do piso só novas chegadas de pesca",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão",
+        "T22: sorteio respeita suspensão"
+      ]
+    }
+  },
+  "migracao-15-esquece-a-vitoria": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar» (+2)",
+      "reprovadas": [
+        "T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar",
+        "T20: com os recomeços da passagem",
+        "T20: e joga-se: o dia anda sem cobrança nem fim"
+      ]
+    }
+  },
+  "privado-lido-por-string-renomeado": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«F19: todo nome lido por string existe no alvo»",
+      "reprovadas": [
+        "F19: todo nome lido por string existe no alvo, com o tipo que a leitura pede  —"
+      ]
+    }
+  },
+  "progresso-com-dois-espacos": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«a linha do progresso cabe»",
+      "reprovadas": [
+        "a linha do progresso cabe (205 de 200 px)  — [Armazenagem  ·  parte em 4 dias]"
+      ]
+    }
+  },
+  "registro-sem-obra-pronta": {
+    "teste_registro": {
+      "aprovado": true,
+      "frase": "«grava UMA linha de obra pronta»",
+      "reprovadas": [
+        "grava UMA linha de obra pronta  — 0 linhas"
+      ]
+    }
+  },
+  "volume-nao-grava": {
+    "teste_audio": {
+      "aprovado": true,
+      "frase": "«e o 0,5 fica gravado no arquivo de volume»",
+      "reprovadas": [
+        "e o 0,5 fica gravado no arquivo de volume  — o arquivo diz -1.000"
+      ]
+    }
+  },
+  "ambiente-sem-relogio": {
+    "teste_audio": {
+      "aprovado": true,
+      "frase": "«o relógio do mar pede o som do mar» (+2)",
+      "reprovadas": [
+        "o relógio do mar pede o som do mar  — pediu «»",
+        "e o relógio do mar volta a armar-se entre 6.5 e 9.5 s  — 2.00 s",
+        "o relógio da gaivota pede o som da gaivota  — pediu «»"
+      ]
+    }
+  },
+  "fila-cascos-a-zero": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: cada barco ao largo tem casco à vista» (+1)",
+      "reprovadas": [
+        "T31: cada barco ao largo tem casco à vista ([0, 0, 0] px)",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "recordes-vazam-no-load": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: o recorde malformado no save carrega a zero» (+1)",
+      "reprovadas": [
+        "T31: o recorde malformado no save carrega a zero, sem herdar o da partida viva",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "alocar-fora-do-array": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: alocar fora do array recusa sem erro do motor» (+1)",
+      "reprovadas": [
+        "T31: alocar fora do array recusa sem erro do motor",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "docas-sem-quem-opera": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: o painel das docas diz a classe, quando paga e quem opera» (+1)",
+      "reprovadas": [
+        "T31: o painel das docas diz a classe, quando paga e quem opera",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "save-recusa-a-fila-cheia": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«o save que o jogo grava, o próprio jogo aceita» (+51)",
+      "reprovadas": [
+        "save da versao corrente carrega",
+        "e traz o caixa de volta",
+        "save com doca a mais carrega",
+        "e a doca invisivel foi cortada",
+        "junto com o trabalhador que so ela tinha",
+        "o autosave preserva a semana enquanto a parcela espera",
+        "depois do pagamento, a semana fecha uma vez",
+        "T14: save preserva a janela seguinte",
+        "T14: save retoma o recibo antecipado",
+        "T14: save retoma o recibo antecipado",
+        "T15: Save 14 retoma prazo e saldo, limpando bancada",
+        "T15: segundo dia termina uma vez, abre no dia 3",
+        "T15: conclusão repetida não duplica o porto",
+        "T15: inicia armazém no dia 8",
+        "T15: armazém pronto no dia 10 paga só armazenagem",
+        "T15: inicia pátio no dia 29",
+        "T15: pátio pronto no dia 32 dobra renda sem mudar madeira",
+        "T17: obra de pier_2 começada no dia em que abre (1) é aceita",
+        "T17: com o mínimo de quitadas (0) o save de pier_2 é aceito",
+        "T17: obra de pier_2 carregada sai com inteiros",
+        "T17: obra de armazem começada no dia em que abre (8) é aceita",
+        "T17: com o mínimo de quitadas (0) o save de armazem é aceito",
+        "T17: obra de armazem carregada sai com inteiros",
+        "T17: obra de patio começada no dia em que abre (29) é aceita",
+        "T17: com o mínimo de quitadas (1) o save de patio é aceito",
+        "T17: obra de patio carregada sai com inteiros",
+        "T18: o save devolve a dívida e a chance gasta",
+        "T18: quitar antes paga a dívida junto",
+        "T20: com a Fase 1 viva, o espaço da Fase 2 lê-se pela fase dele",
+        "T20: com a Fase 2 viva, o espaço da Fase 1 no dia 30 lê-se pela fase dele",
+        "T20: o save bom da Fase 2 passa",
+        "T20: a obra da Fase 2 não tem teto de dia",
+        "T21: o cargueiro retoma do save com um dia trabalhado",
+        "T22: save e load guardam o dia sem contar outro",
+        "T22: conquista e missão voltam mesmo com reputação baixa",
+        "T22: jogo livre avança sem repetir diário",
+        "T26: partida 1 ao acaso: o save que o jogo grava, o próprio jogo aceita  — semente 1, 1 ação(ões): avancar",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: cancelar, construir, adiantar, pagar, chance, negociar",
+        "o bloco T26 correu até ao fim, sem invariante quebrado",
+        "T27: consulta mantém decisão pendente rival_offer",
+        "T27: porto recupera painel original rival_offer",
+        "T27: consulta mantém decisão pendente debt_payment",
+        "T27: porto recupera painel original debt_payment",
+        "T27: consulta mantém decisão pendente game_over",
+        "T27: porto recupera painel original game_over",
+        "T27: recusa não inicia partida nem apaga arquivo",
+        "T27: resumo de retomada e consulta sem efeitos",
+        "T30: Continuar só está habilitado quando há partida salva",
+        "T30: quatro entradas, retorno das consultas e movimento legível",
+        "T32: voltar ao espaço recupera seus itens",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "load-esquece-a-paciencia-do-cliente": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«o save que o jogo grava não volta igual» (+3)",
+      "reprovadas": [
+        "T26: partida 1 ao acaso: o save que o jogo grava não volta igual (paciencia_rival: 1 → 2)  — semente 1, 210 ação(ões): cancelar 0, atracar 0, tocar 0, atracar 0, carregar, atracar 0, devolver 0, tocar 0, devolver 0, atracar 0, avancar, negociar manter, recusar_oferta, atracar 0, atracar 0, construir armazem, atracar 0, tocar 0, atracar 1, avancar, devolver 0, atracar 0, avancar, atracar 0, avancar, atracar 0, cancelar_errado 0, devolver 0, atracar 0, tocar 0, carregar, atracar 1, atracar 1, atracar 99, atracar 0, atracar 0, avancar, devolver 0, atracar 0, avancar, atracar 0, avancar, atracar 0, avancar, negociar metade, atracar 0, carregar, cancelar 0, atracar 1, cancelar 0, atracar 0, avancar, negociar metade, atracar 0, devolver 0, atracar 2, atracar 0, construir patio, avancar, atracar 0, avancar, atracar 0, atracar 0, avancar, negociar metade, negociar igualar, avancar, atracar 0, avancar, atracar 0, tocar 0, atracar 1, avancar, atracar 0, avancar, atracar 0, avancar, avancar, atracar 0, atracar 1, construir trelica, cancelar 0, avancar, atracar 0, cancelar 0, avancar, atracar 0, construir guindaste, cancelar 0, atracar 0, tocar 0, atracar 0, construir pier_2, construir armazem, atracar 0, atracar 0, carregar, atracar 0, avancar, atracar 0, atracar 0, atracar 0, avancar, negociar manter, atracar 0, atracar 0, avancar, negociar igualar, atracar 0, avancar, negociar igualar, avancar, atracar 0, atracar 0, construir trelica, construir armazem, avancar, cancelar 1, atracar 0, cancelar 1, atracar 0, avancar, atracar 99, atracar 0, devolver 1, atracar 0, avancar, pagar, avancar, atracar 1, atracar 0, cancelar_errado 0, atracar 99, construir inexistente, atracar 0, avancar, negociar metade, atracar 0, devolver -1, atracar 0, construir armazem, avancar, atracar 0, atracar 0, avancar, negociar metade, atracar 0, atracar 0, cancelar 1, devolver -1, avancar, negociar igualar, atracar 0, atracar 0, avancar, atracar 1, avancar, atracar 0, atracar 0, avancar, avancar, avancar, negociar manter, negociar metade, avancar, avancar, negociar igualar, atracar 0, atracar 0, avancar, recusar_oferta, atracar 1, avancar, atracar 0, avancar, recusar_oferta, avancar, negociar igualar, atracar 0, avancar, avancar, atracar 0, atracar 0, avancar, avancar, avancar, atracar 0, atracar 0, avancar, atracar 0, atracar 0, avancar, atracar 0, avancar, negociar igualar, atracar 0, atracar 0, avancar, negociar manter, atracar 0, atracar 0, avancar, atracar 0, avancar, pagar, atracar 0, atracar 0, avancar, negociar manter, carregar",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: cancelar, adiantar, chance",
+        "o bloco T26 correu até ao fim, sem invariante quebrado"
+      ]
+    }
+  },
+  "cancelamento-nunca-disponivel": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«o robô exerceu cada ação que o jogo aceitou» (+2)",
+      "reprovadas": [
+        "T24: cancelamento, contas, migração, interface e registro",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: cancelar",
+        "o bloco T26 correu até ao fim, sem invariante quebrado"
+      ]
+    }
+  },
+  "cancelamento-sem-registro": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: registro 5 observa uma vez» (+1)",
+      "reprovadas": [
+        "T24: registro 5 observa uma vez, sem identidade pessoal",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "ajuda-gasta-o-sorteio": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T25: consulta preserva estado, RNG, arquivos e registro» (+17)",
+      "reprovadas": [
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta, navegação e preservação da partida",
+        "T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro",
+        "T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "obra-longa-sem-repartir": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: três dias em dois quadros»",
+      "reprovadas": [
+        "D45: três dias em dois quadros dão 0, 0, 1 — o último no último dia [0, 1, 1]"
+      ]
+    }
+  },
+  "vila-coreto-sem-telhado": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«pinta telha_d à volta» (+1)",
+      "reprovadas": [
+        "o praca (lote 7) pinta telha_d à volta de (184, 325) — 0 px em 19x19  — achou 0 e o mínimo é 18; o mapa pinta b3bd92 no centro",
+        "D49: nada muda entre os dois mapas fora da obra (240 px fora, o máximo é 50)  — o pixel (188, 316) — tela (126, 211) — muda e não é da obra"
+      ]
+    }
+  },
+  "fauna-cao-em-cima-da-casa": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«CachorroCaramelo aparece sobre o relvado»",
+      "reprovadas": [
+        "CachorroCaramelo aparece sobre o relvado  — posição (105.0, 190.0), cor #828d83 (g−r 11, g−b 10)"
+      ]
+    }
+  },
+  "mar-mancha-rasa-ao-largo": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma mancha clara no mar aberto» (+1)",
+      "reprovadas": [
+        "D46: nenhuma mancha clara no mar aberto  — a água clareia 16.4 acima da mais escura já atravessada (doca 3-2, a 16.5 u do berço)",
+        "D49: nada muda entre os dois mapas fora da obra (18685 px fora, o máximo é 50)  — o pixel (463, 331) — tela (309, 221) — muda e não é da obra"
+      ]
+    }
+  },
+  "mata-sobre-a-pedra": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma árvore pinta por cima de uma pedra à frente» (+2)",
+      "reprovadas": [
+        "D47: nenhuma árvore pinta por cima de uma pedra à frente  — Arvore11 (prof. -1.10) desce a y=52.7 na coluna 32.6, sobre a pedra de prof. -0.05 que começa em y=52.7",
+        "D47: nenhuma árvore pinta por cima de uma embutida à frente  — Arvore43 (prof. 5.42) desce a y=135.9 na coluna 14, sobre a embutida de prof. 9.58 que começa em y=135.3",
+        "D47: nenhuma árvore tapa a copa de um destaque  — Arvore39 (arvore_embauba_a): 79% da copa debaixo de outra árvore"
+      ]
+    }
+  },
+  "ipe-sem-flor": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhum ipê embutido fica escondido» (+1)",
+      "reprovadas": [
+        "D47: nenhum ipê embutido fica escondido  — arvore_ipe_amarelo em (43.9, 276.8) mostra 6 pixels de flor, de 206 à escala 0.64",
+        "D49: nada muda entre os dois mapas fora da obra (972 px fora, o máximo é 50)  — o pixel (463, 331) — tela (309, 221) — muda e não é da obra"
+      ]
+    }
+  },
+  "mata-fora-da-profundidade": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«vem depois de quem está atrás» (+62)",
+      "reprovadas": [
+        "Cenario/Arvore00 vem depois de quem está atrás  — profundidade -4.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore01 vem depois de quem está atrás  — profundidade -2.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore02 vem depois de quem está atrás  — profundidade -5.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore03 vem depois de quem está atrás  — profundidade -4.0, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore04 vem depois de quem está atrás  — profundidade -2.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore05 vem depois de quem está atrás  — profundidade -5.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore06 vem depois de quem está atrás  — profundidade -3.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore07 vem depois de quem está atrás  — profundidade -1.7, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore08 vem depois de quem está atrás  — profundidade -3.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore09 vem depois de quem está atrás  — profundidade -4.2, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore10 vem depois de quem está atrás  — profundidade -3.4, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore11 vem depois de quem está atrás  — profundidade -4.7, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore12 vem depois de quem está atrás  — profundidade -5.4, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore13 vem depois de quem está atrás  — profundidade -3.8, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore14 vem depois de quem está atrás  — profundidade -3.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore15 vem depois de quem está atrás  — profundidade 0.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore16 vem depois de quem está atrás  — profundidade -2.6, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore17 vem depois de quem está atrás  — profundidade 1.3, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore18 vem depois de quem está atrás  — profundidade 1.4, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore19 vem depois de quem está atrás  — profundidade 1.7, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore20 vem depois de quem está atrás  — profundidade -1.6, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore21 vem depois de quem está atrás  — profundidade 1.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore22 vem depois de quem está atrás  — profundidade 1.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore23 vem depois de quem está atrás  — profundidade 2.2, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore24 vem depois de quem está atrás  — profundidade -0.3, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore25 vem depois de quem está atrás  — profundidade 2.4, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore26 vem depois de quem está atrás  — profundidade 2.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore27 vem depois de quem está atrás  — profundidade -0.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore28 vem depois de quem está atrás  — profundidade 2.7, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore29 vem depois de quem está atrás  — profundidade 0.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore30 vem depois de quem está atrás  — profundidade 0.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore31 vem depois de quem está atrás  — profundidade 2.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore32 vem depois de quem está atrás  — profundidade 1.0, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore33 vem depois de quem está atrás  — profundidade 0.7, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore34 vem depois de quem está atrás  — profundidade 2.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore35 vem depois de quem está atrás  — profundidade 2.3, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore36 vem depois de quem está atrás  — profundidade 1.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore37 vem depois de quem está atrás  — profundidade 3.2, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore38 vem depois de quem está atrás  — profundidade 3.8, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore39 vem depois de quem está atrás  — profundidade 2.7, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore40 vem depois de quem está atrás  — profundidade 3.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore41 vem depois de quem está atrás  — profundidade 3.3, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore42 vem depois de quem está atrás  — profundidade 4.3, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore43 vem depois de quem está atrás  — profundidade 3.4, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore44 vem depois de quem está atrás  — profundidade 4.2, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore45 vem depois de quem está atrás  — profundidade 4.6, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore46 vem depois de quem está atrás  — profundidade 20.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore47 vem depois de quem está atrás  — profundidade 21.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore48 vem depois de quem está atrás  — profundidade 21.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore49 vem depois de quem está atrás  — profundidade 21.2, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore50 vem depois de quem está atrás  — profundidade 21.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore51 vem depois de quem está atrás  — profundidade 22.1, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore52 vem depois de quem está atrás  — profundidade -0.5, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore53 vem depois de quem está atrás  — profundidade 0.2, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore54 vem depois de quem está atrás  — profundidade 3.9, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore55 vem depois de quem está atrás  — profundidade 4.0, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore56 vem depois de quem está atrás  — profundidade 40.3, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore57 vem depois de quem está atrás  — profundidade 42.0, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "Cenario/Arvore58 vem depois de quem está atrás  — profundidade 42.2, mas BarcoEspera2 vem antes dele e está em 46.8",
+        "D45: cada cone fica entre os irmãos pela profundidade no dia 1 da obra  — ConeDaRua2 (y -78.0, índice 55) e Arvore55 (y -137.5, índice 89)",
+        "D45: cada cone fica entre os irmãos pela profundidade no dia 2 da obra  — ConeDaRua2 (y 42.0, índice 66) e Arvore55 (y -137.5, índice 89)",
+        "D45: cada cone fica entre os irmãos pela profundidade no dia 3 da obra  — ConeDaRua2 (y 162.0, índice 80) e Arvore55 (y -137.5, índice 89)",
+        "D47: nenhuma árvore tapa a copa de um destaque  — Arvore24 (arvore_embauba_b): 87% da copa debaixo de outra árvore"
+      ]
+    }
+  },
+  "obra-rua-copia-velha": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«da obra da rua é o da tabela» (+4)",
+      "reprovadas": [
+        "D45: o pedaço 8 da obra da rua é o da tabela  — cópia [1, [(3.09, 8.0), (5.11, 8.0), (5.11, 13.7), (3.09, 13.7)]]",
+        "D45: a rua por recapear cai nos pedaços da tabela no dia 1 da obra",
+        "D45: a rua recapeada cai nos pedaços da tabela no dia 2 da obra",
+        "D45: a rua recapeada cai nos pedaços da tabela no dia 3 da obra",
+        "D49: nada muda entre os dois mapas fora da obra (377 px fora, o máximo é 50)  — o pixel (463, 331) — tela (309, 221) — muda e não é da obra"
+      ]
+    }
+  },
+  "rua-por-recapear-do-mapa-pronto": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: a rua por recapear recorta o mapa de terra»",
+      "reprovadas": [
+        "D45: a rua por recapear recorta o mapa de terra, e a recapeada o pavimentado"
+      ]
+    }
+  },
+  "curva-de-fora-larga-demais": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma carroçaria sai do asfalto nas curvas abertas»",
+      "reprovadas": [
+        "nenhuma carroçaria sai do asfalto nas curvas abertas (a que mais se aproxima: 0.082)  — armazenagem (empresa 1) na diagonal (-0.35, 6.65) -> (0.1, 7.1), quina (-0.8, 8.0)"
+      ]
+    }
+  },
+  "retomada-adianta-progresso": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: serviço mostra progresso guardado e receita com bônus» (+1)",
+      "reprovadas": [
+        "T27: serviço mostra progresso guardado e receita com bônus",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-voltar-entra": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: consulta visual preserva estado, RNG, arquivos e registro» (+2)",
+      "reprovadas": [
+        "T27: consulta visual preserva estado, RNG, arquivos e registro",
+        "T27: Voltar do aparelho fica na inicial e preserva consulta",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-conta-obra-como-pronta": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: meta não conta estrutura ainda em obra» (+1)",
+      "reprovadas": [
+        "T27: meta não conta estrutura ainda em obra",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-promete-apos-encerrar": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: encerrada não promete obra nem recebimento futuros» (+1)",
+      "reprovadas": [
+        "T27: encerrada não promete obra nem recebimento futuros",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "diagnostico-consulta-grava": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T28: consulta e cópia preservam estado, RNG, arquivos e registro» (+7)",
+      "reprovadas": [
+        "T28: consulta e cópia preservam estado, RNG, arquivos e registro",
+        "T28: fechar preserva a partida",
+        "T28: consulta e cópia preservam estado, RNG, arquivos e registro",
+        "T28: fechar preserva a partida",
+        "T28: identidade, prévia, cópia e consulta sem efeitos",
+        "T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro",
+        "T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "diagnostico-sem-marca-modificado": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T28: identidade conserva commit completo e marca modificada» (+1)",
+      "reprovadas": [
+        "T28: identidade conserva commit completo e marca modificada",
+        "T28: identidade, prévia, cópia e consulta sem efeitos"
+      ]
+    }
+  },
+  "movimento-novos-ignoram-escolha": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: elementos criados depois nascem com fundo parado» (+1)",
+      "reprovadas": [
+        "T29: elementos criados depois nascem com fundo parado",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-folha-perde-callback": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: mudar a meio conclui callback da transição» (+1)",
+      "reprovadas": [
+        "T29: mudar a meio conclui callback da transição",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-duplica-ajustes": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: Ajustes repetidos não duplicam painel» (+15)",
+      "reprovadas": [
+        "T29: Ajustes repetidos não duplicam painel",
+        "T29: Voltar do aparelho fecha somente os Ajustes",
+        "T29: preferência, movimento, informação e isolamento",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: pedido repetido conserva um único painel",
+        "T30: Voltar do aparelho fecha somente a consulta",
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: Configurações usa a consulta compartilhada: Como jogar",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: pedido repetido conserva um único painel",
+        "T30: Voltar do aparelho fecha somente a consulta",
+        "T30: fechar a consulta devolve o mesmo menu visível",
+        "T30: Configurações usa a consulta compartilhada: Como jogar",
+        "T30: a consulta oculta o menu de Configurações",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "movimento-resultado-nao-termina": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: resultado termina sem esperar tween decorativo pausado» (+1)",
+      "reprovadas": [
+        "T29: resultado termina sem esperar tween decorativo pausado",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "texto-bancada-sem-ampliacao": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«BT: amplia o override real do rotulo e do botao de 19 para 24» (+2)",
+      "reprovadas": [
+        "BT: amplia o override real do rotulo e do botao de 19 para 24",
+        "BT: reaplicar no mesmo no nao acumula escala",
+        "BT: voltar ao padrao e ampliar conserva a base 19"
+      ]
+    }
+  },
+  "inicio-continuar-sem-partida": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T30: Continuar só está habilitado quando há partida salva» (+1)",
+      "reprovadas": [
+        "T30: Continuar só está habilitado quando há partida salva",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "texto-arrasto-executa-acao": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: arrasto sobre barco atracado nao libera ao premir»",
+      "reprovadas": [
+        "RB5: arrasto sobre barco atracado nao libera ao premir"
+      ]
+    }
+  },
+  "texto-perde-cursor": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: troca conserva campo texto cursor e foco»",
+      "reprovadas": [
+        "RB5: troca conserva campo texto cursor e foco"
+      ]
+    }
+  },
+  "texto-sinal-ignorado": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: controle aplica tamanho e preserva foco» (+1)",
+      "reprovadas": [
+        "RB5: controle aplica tamanho e preserva foco",
+        "RB5: exemplo usa fonte maior do tema"
+      ]
+    }
+  },
+  "texto-esconde-falha-de-gravacao": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: falha ao lembrar texto aparece nos Ajustes»",
+      "reprovadas": [
+        "RB5: falha ao lembrar texto aparece nos Ajustes"
+      ]
+    }
+  },
+  "texto-nome-longo-sem-quebra": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: nome de 24 letras cabe no balao sem encolher»",
+      "reprovadas": [
+        "RB5: nome de 24 letras cabe no balao sem encolher"
+      ]
+    }
+  },
+  "texto-celular-sem-medida": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: aparelho conserva medidas e centro Menu-celular» (+1)",
+      "reprovadas": [
+        "RB5: aparelho conserva medidas e centro Mensagens",
+        "RB5: aparelho conserva medidas e centro Menu-celular"
+      ]
+    }
+  },
+  "loja-compra-repetida": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: clique repetido não duplica item nem cobrança» (+5)",
+      "reprovadas": [
+        "T32: clique repetido não duplica item nem cobrança",
+        "T32: dia e semana incluem a despesa já paga",
+        "T32: retomada conserva compra, leitura e dinheiro",
+        "T32: virar dia não cobra compra novamente",
+        "T32: voltar ao espaço recupera seus itens",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "loja-sem-lancamento-semanal": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: dia e semana incluem a despesa já paga» (+2)",
+      "reprovadas": [
+        "T32: compra debita uma vez e libera a conversa",
+        "T32: dia e semana incluem a despesa já paga",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "historia-parcela-antecipa-cena": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T32: antecipar parcela não antecipa capítulo» (+1)",
+      "reprovadas": [
+        "T32: antecipar parcela não antecipa capítulo",
+        "T32: história, lojas, compra, contas e retomada"
+      ]
+    }
+  },
+  "equipe-do-pier-ignorada": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«o berco 2 chama o trabalhador 2»",
+      "reprovadas": [
+        "o berco 2 chama o trabalhador 2, e nao o primeiro livre"
+      ]
+    }
+  },
+  "derrota-sem-fechar-a-semana": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«recusar a parcela FECHA a semana 4» (+3)",
+      "reprovadas": [
+        "recusar a parcela FECHA a semana 4  <-- o adiamento orfao",
+        "e a quarta semana entra no historico na derrota",
+        "e a semana zera, mesmo tendo-se perdido o porto",
+        "recusar duas vezes fecha a semana uma vez so"
+      ]
+    }
+  },
+  "antecipacao-abate-capital": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T14: antecipar nunca perdoa o capital emprestado» (+1)",
+      "reprovadas": [
+        "T14: antecipar nunca perdoa o capital emprestado",
+        "T18: antecipar não abate a devolução — ela soma inteira ao valor de hoje"
+      ]
+    }
+  },
+  "segunda-chance-sem-limite": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T18: e a segunda chance não abre outra vez»",
+      "reprovadas": [
+        "T18: e a segunda chance não abre outra vez"
+      ]
+    }
+  },
+  "save-armazem-no-dia-9": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T17: obra de armazem começada no dia em que abre (8) é aceita» (+23)",
+      "reprovadas": [
+        "T15: Save 14 retoma prazo e saldo, limpando bancada",
+        "T15: segundo dia termina uma vez, abre no dia 3",
+        "T15: conclusão repetida não duplica o porto",
+        "T15: inicia armazém no dia 8",
+        "T15: armazém pronto no dia 10 paga só armazenagem",
+        "T15: inicia pátio no dia 29",
+        "T15: pátio pronto no dia 32 dobra renda sem mudar madeira",
+        "T17: obra de pier_2 começada no dia em que abre (1) é aceita",
+        "T17: com o mínimo de quitadas (0) o save de pier_2 é aceito",
+        "T17: obra de pier_2 carregada sai com inteiros",
+        "T17: obra de armazem começada no dia em que abre (8) é aceita",
+        "T17: com o mínimo de quitadas (0) o save de armazem é aceito",
+        "T17: obra de armazem carregada sai com inteiros",
+        "T17: obra de patio começada no dia em que abre (29) é aceita",
+        "T17: com o mínimo de quitadas (1) o save de patio é aceito",
+        "T17: obra de patio carregada sai com inteiros",
+        "T19: o save da 14 carrega",
+        "T20: com a Fase 1 viva, o espaço da Fase 2 lê-se pela fase dele",
+        "T20: o save bom da Fase 2 passa",
+        "T22: degrau 16→17 conserva porto e começa acompanhamento",
+        "T26: partida 3 ao acaso: o save que o jogo grava, o próprio jogo aceita  — semente 3, 1 ação(ões): construir pier_2",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: chance",
+        "o bloco T26 correu até ao fim, sem invariante quebrado"
+      ]
+    }
+  },
+  "mensagem-da-obra-sempre-verde": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«a mensagem avisa, em tom de aviso» (+2)",
+      "reprovadas": [
+        "F18 pier_2, dia 83: a mensagem avisa, em tom de aviso  — [\"Reconstruir o Píer 2 — obra iniciada. 2 dias; pronto só no fim do dia 84, e não será usado nesta fase.\", \"good\"]",
+        "F18 armazem, dia 83: a mensagem avisa, em tom de aviso  — [\"Consertar o armazém — obra iniciada. 2 dias; pronto só no fim do dia 84, e não será usado nesta fase.\", \"good\"]",
+        "F18 patio, dia 82: a mensagem avisa, em tom de aviso  — [\"Pavimentar o pátio — obra iniciada. 3 dias; pronto só no fim do dia 84, e não será usado nesta fase.\", \"good\"]"
+      ]
+    }
+  },
+  "rosto-gasta-o-sorteio": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«não mexe no sorteio da partida»",
+      "reprovadas": [
+        "F12: escolher o rosto não mexe no sorteio da partida"
+      ]
+    }
+  },
+  "save-rosto-repetido": {
+    "teste_fumaca": {
+      "aprovado": true,
+      "frase": "«rosto repetido»",
+      "reprovadas": [
+        "F12: save com rosto repetido é recusado, e sem ter tocado em nada  — carregou=true turn=5"
+      ]
+    }
+  },
+  "moeda-ao-gastar": {
+    "teste_audio": {
+      "aprovado": true,
+      "frase": "«caixa caindo NÃO pede moeda»",
+      "reprovadas": [
+        "caixa caindo NÃO pede moeda  — pediu moeda ao gastar"
+      ]
+    }
+  },
+  "caixa-entrou-ao-contrario": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: o caixa diz o que entrou ontem» (+1)",
+      "reprovadas": [
+        "T31: o caixa diz o que entrou ontem (R$8.000), com o total de cada dia",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "parcela-falta-sem-fechar": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: a parcela com falta deixa fechar» (+1)",
+      "reprovadas": [
+        "T31: a parcela com falta deixa fechar",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "ajustes-rotulos-trocados": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: o botao que diz Maior aplica o maior»",
+      "reprovadas": [
+        "RB5: o botao que diz Maior aplica o maior e o que diz Padrao volta"
+      ]
+    }
+  },
+  "registro-turno-nasce-com-aviso": {
+    "teste_registro": {
+      "aprovado": true,
+      "frase": "«o turno sem aviso vermelho conta zero avisos» (+1)",
+      "reprovadas": [
+        "o turno sem aviso vermelho conta zero avisos  — [{ \"alocados\": 2.0, \"avisos_ruins\": 1.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 0.0, \"perdidos\": 0.0, \"rep\": 65.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 2.0, \"trab\": 2.0 }]",
+        "e um aviso vermelho no turno conta um  — [{ \"alocados\": 2.0, \"avisos_ruins\": 1.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 0.0, \"perdidos\": 0.0, \"rep\": 65.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 2.0, \"trab\": 2.0 }, { \"alocados\": 2.0, \"avisos_ruins\": 2.0, \"barcos\": 2.0, \"caixa\": 400000.0, \"docas\": 2.0, \"e\": \"turno\", \"ms\": 2.0, \"perdidos\": 0.0, \"rep\": 66.0, \"s\": 1.0, \"servidos\": 0.0, \"t\": 3.0, \"trab\": 2.0 }]"
+      ]
+    }
+  },
+  "diario-fase-2-sem-legenda": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T31: a página da Fase 2 relida diz que a fase acabou» (+1)",
+      "reprovadas": [
+        "T31: a página da Fase 2 relida diz que a fase acabou",
+        "T31: reputação, arranque e o que os painéis mostram e fazem"
+      ]
+    }
+  },
+  "memoria-marca-inicio": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: a marca e o primeiro caractere a vista»",
+      "reprovadas": [
+        "RB5: a marca e o primeiro caractere a vista no paragrafo cortado"
+      ]
+    }
+  },
+  "recusa-da-obra-cobra": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«a recusa de «construir» mexeu no estado» (+6)",
+      "reprovadas": [
+        "T15: só uma obra, sem cobrar outra vez",
+        "T15: obra que excederia a fase não cobra nem começa",
+        "T21: a treliça não se compra na Fase 1",
+        "T26: partida 1 ao acaso: a recusa de «construir» mexeu no estado (cash: 405657 → 405656)  — semente 1, 7 ação(ões): atracar 0, tocar 0, atracar 0, devolver 0, atracar 0, avancar, construir armazem",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: cancelar, construir, adiantar, pagar, chance",
+        "o bloco T26 correu até ao fim, sem invariante quebrado"
+      ]
+    }
+  },
+  "fila-guarda-quem-desistiu": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«na fila nenhum barco começou a operar nem esgotou a paciência» (+7)",
+      "reprovadas": [
+        "o de paciencia 1 desistiu",
+        "a desistencia conta como barco perdido",
+        "e no dia que fechou",
+        "e custa reputacao",
+        "T26: partida 1 ao acaso: na fila nenhum barco começou a operar nem esgotou a paciência  — semente 1, 4 ação(ões): avancar, recusar_oferta, avancar, avancar",
+        "T26: 24 partidas ao acaso guardam os invariantes",
+        "T26: o robô exerceu cada ação que o jogo aceitou  — nunca aceitas: cancelar, construir, adiantar, pagar, chance",
+        "o bloco T26 correu até ao fim, sem invariante quebrado"
+      ]
+    }
+  },
+  "cancelamento-sem-reputacao": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: multa e reputação únicas, sem pagar serviço» (+4)",
+      "reprovadas": [
+        "T24: multa e reputação únicas, sem pagar serviço",
+        "T24: granel, acordo e arredondamento",
+        "T24: a sequência é avaliada só no fecho",
+        "T24: fecho abaixo da meta interrompe a sequência",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "cancelamento-prende-o-trabalhador": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: equipe reutilizada no mesmo dia» (+1)",
+      "reprovadas": [
+        "T24: equipe reutilizada no mesmo dia",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "migracao-18-inventa-multa": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T24: migração não inventa multa passada» (+1)",
+      "reprovadas": [
+        "T24: migração não inventa multa passada",
+        "T24: cancelamento, contas, migração, interface e registro"
+      ]
+    }
+  },
+  "ajuda-grava-a-partida": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T25: consulta não tem porta de escrita» (+17)",
+      "reprovadas": [
+        "T25: consulta não tem porta de escrita: PainelComoJogar",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta preserva estado, RNG, arquivos e registro",
+        "T25: fechar por Voltar também preserva tudo",
+        "T25: consulta, navegação e preservação da partida",
+        "T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro",
+        "T30: abrir e fechar as consultas preserva partida, RNG, arquivos e registro",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "obra-nao-redesenha-na-compra": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: o píer mostra o quadro 0 no dia da compra» (+9)",
+      "reprovadas": [
+        "D45: o píer mostra o quadro 0 no dia da compra  — textura res://art/props/pier_vazio.png",
+        "D45: o cartão diz «píer em obra» no dia da compra  — «píer em ruínas»",
+        "D45: o cartão diz o prazo do jogo no dia da compra («»)",
+        "D45: o armazém mostra o quadro 0 no dia 1 da obra  — textura res://art/props/galpao_velho.png",
+        "D45: o canteiro mostra o quadro 0 no dia 1 da obra",
+        "D45: a barreira e o cone sinalizam a obra, e a empilhadeira não está no dia 1 da obra",
+        "D45: a rua recapeada mostra 5 pedaço(s) no dia 1 da obra  — 0 grupos, visível false",
+        "D45: a rua por recapear mostra 16 pedaço(s) no dia 1 da obra  — 0 grupos, visível false",
+        "D45: 3 cones na frente da obra no dia 1 da obra  — há 0",
+        "D45: os cones ficam nos pontos da tabela no dia 1 da obra"
+      ]
+    }
+  },
+  "obra-um-dia-adiantada": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: o armazém mostra o quadro 0 no dia 1 da obra» (+12)",
+      "reprovadas": [
+        "D45: o píer mostra o quadro 0 no dia da compra  — textura res://art/props/pier_obra_1.png",
+        "D45: o armazém mostra o quadro 0 no dia 1 da obra  — textura res://art/props/galpao_obra_1.png",
+        "D45: o canteiro mostra o quadro 0 no dia 1 da obra",
+        "D45: sem asfalto novo no dia 1 da obra (o dia da brita)",
+        "D45: a rua recapeada mostra 5 pedaço(s) no dia 1 da obra  — 9 grupos, visível true",
+        "D45: a rua por recapear mostra 16 pedaço(s) no dia 1 da obra  — 12 grupos, visível true",
+        "D45: os cones ficam nos pontos da tabela no dia 1 da obra",
+        "D45: o canteiro mostra o quadro 1 no dia 2 da obra",
+        "D45: o asfalto vai do avental a 55% do pátio no dia 2 da obra, nos cantos da tabela  — trecho 2, canto 3: (87.32, 402.3267) contra (104.72, 411.0267)",
+        "D45: a rua recapeada mostra 9 pedaço(s) no dia 2 da obra  — 13 grupos, visível true",
+        "D45: a rua por recapear mostra 12 pedaço(s) no dia 2 da obra  — 8 grupos, visível true",
+        "D45: os cones ficam nos pontos da tabela no dia 2 da obra",
+        "D45: três dias em dois quadros dão 0, 0, 1 — o último no último dia [0, 1, 1]"
+      ]
+    }
+  },
+  "vila-torre-da-cor-das-vizinhas": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«pinta telha_torre à volta»",
+      "reprovadas": [
+        "o igreja (lote 8) pinta telha_torre à volta de (178, 401) — 0 px em 13x13  — achou 0 e o mínimo é 14; o mapa pinta b1512a no centro"
+      ]
+    }
+  },
+  "mata-arvore-maior": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma árvore pinta por cima da vila» (+3)",
+      "reprovadas": [
+        "D47: nenhuma árvore pinta por cima da vila  — Arvore00 desce a y=52.5 na coluna 94, e a vila à frente dela começa em 51.0",
+        "D47: nenhuma árvore pinta por cima de uma pedra à frente  — Arvore06 (prof. -1.86) desce a y=53.4 na coluna 32.8, sobre a pedra de prof. -0.05 que começa em y=52.7",
+        "D47: nenhuma árvore pinta por cima de uma embutida à frente  — Arvore00 (prof. -2.69) desce a y=52.5 na coluna 87, sobre a embutida de prof. -0.29 que começa em y=48.5",
+        "D47: nenhuma árvore tapa a copa de um destaque  — Arvore19 (arvore_jucara_c): 100% da copa debaixo de outra árvore"
+      ]
+    }
+  },
+  "restinga-pe-na-areia": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhuma planta da restinga desce à areia» (+7)",
+      "reprovadas": [
+        "Arvore53 fora da areia  — a pegada ocupa mx 3.45..5.44 e a areia 4.50..6.00",
+        "Arvore54 fora da areia  — a pegada ocupa mx 3.36..5.35 e a areia 4.50..6.00",
+        "Arvore55 fora da areia  — a pegada ocupa mx 2.87..4.85 e a areia 4.50..6.00",
+        "Arvore57 fora da areia  — a pegada ocupa mx 15.43..17.42 e a areia 16.50..18.00",
+        "Arvore61 fora da areia  — a pegada ocupa mx 19.26..21.25 e a areia 20.50..22.00",
+        "D47: nenhuma planta da restinga desce à areia  — Arvore53 desce a y=94.6 na coluna 511.7, e a crista à frente está em 88.2278961389243",
+        "D47: nenhum bicho da fauna cai em cima de uma árvore  — MariaFarinha ([P: (560.6667, 73.83334), S: (12.0, 6.666667)]) toca Arvore53 ([P: (474.7333, 31.23334), S: (102.6667, 97.33334)])",
+        "D47: nenhuma árvore tapa um prop parado  — Arvore57 ([P: (118.0, 450.2), S: (74.66667, 64.66667)]) tapa Coqueiro2Tronco ([P: (99.0, 413.5034), S: (24.0, 52.66667)])"
+      ]
+    }
+  },
+  "destaque-debaixo-da-barra": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«a copa de cada destaque fica à vista»",
+      "reprovadas": [
+        "D47: a copa de cada destaque fica à vista  — Arvore24 (arvore_embauba_b) tem o desenho a começar em y=-20.2, acima do recorte do mapa"
+      ]
+    }
+  },
+  "fauna-em-cima-da-arvore": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«nenhum bicho da fauna cai em cima de uma árvore»",
+      "reprovadas": [
+        "D47: nenhum bicho da fauna cai em cima de uma árvore  — QueroQuero ([P: (425.3333, 102.0), S: (12.66667, 9.333334)]) toca Arvore54 ([P: (418.8667, 103.3667), S: (34.0, 23.33333)])"
+      ]
+    }
+  },
+  "mata-gira-fora-do-pe": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«cada árvore gira em volta do pé»",
+      "reprovadas": [
+        "D47: cada árvore gira em volta do pé  — Arvore00 com 0.002 rad tem o pé em (60.3398, 29.19984), e não em (60.5, 29.2)"
+      ]
+    }
+  },
+  "rua-por-recapear-sumida": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D45: a rua por recapear mostra» (+2)",
+      "reprovadas": [
+        "D45: a rua por recapear mostra 16 pedaço(s) no dia 1 da obra  — 0 grupos, visível false",
+        "D45: a rua por recapear mostra 12 pedaço(s) no dia 2 da obra  — 0 grupos, visível false",
+        "D45: a rua por recapear mostra 8 pedaço(s) no dia 3 da obra  — 0 grupos, visível false"
+      ]
+    }
+  },
+  "junta-do-cotovelo-sem-costura": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«D49: pavimentado: nenhuma junta de cotovelo tem fio claro»",
+      "reprovadas": [
+        "D49: pavimentado: nenhuma junta de cotovelo tem fio claro (pior +30.8, o máximo é +16.0)  — na junta em my 8.0, mx 4.55"
+      ]
+    }
+  },
+  "retomada-receita-sem-bonus": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: serviço mostra progresso guardado e receita com bônus» (+1)",
+      "reprovadas": [
+        "T27: serviço mostra progresso guardado e receita com bônus",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-carrega-espaco-errado": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: Carregar mostra o espaço escolhido» (+1)",
+      "reprovadas": [
+        "T27: Carregar mostra o espaço escolhido",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "retomada-dia-pendente-adiantado": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T27: vencimento identifica dia fechado sem adiantar decisão» (+1)",
+      "reprovadas": [
+        "T27: vencimento identifica dia fechado sem adiantar decisão",
+        "T27: resumo de retomada e consulta sem efeitos"
+      ]
+    }
+  },
+  "diagnostico-copia-ao-abrir": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T28: abrir não inicia cópia automaticamente» (+2)",
+      "reprovadas": [
+        "T28: abrir não inicia cópia automaticamente",
+        "T28: abrir não inicia cópia automaticamente",
+        "T28: identidade, prévia, cópia e consulta sem efeitos"
+      ]
+    }
+  },
+  "movimento-sem-aviso-aos-abertos": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: escolha para fundo já aberto e repõe pose inteira» (+17)",
+      "reprovadas": [
+        "T29: escolha para fundo já aberto e repõe pose inteira",
+        "T29: comparação temporal: fundo reduzido fica estável",
+        "T29: berço livre mantém realce fixo",
+        "T29: barco chamável mantém realce e ação",
+        "T29: trânsito sem serviço fica oculto",
+        "T29: trânsito sem serviço fica oculto",
+        "T29: trânsito sem serviço fica oculto",
+        "T29: trânsito sem serviço fica oculto",
+        "T29: trânsito sem serviço fica oculto",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: fauna reduzida mantém pose e toque",
+        "T29: mudar a meio conclui callback da transição",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-grava-a-partida": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: Ajustes preservam partida, RNG, arquivos e registro» (+4)",
+      "reprovadas": [
+        "T29: Ajustes preservam partida, RNG, arquivos e registro",
+        "T29: fechar Ajustes preserva a partida",
+        "T29: Ajustes preservam partida, RNG, arquivos e registro",
+        "T29: fechar Ajustes preserva a partida",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-oculta-visita-operacional": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: visita operacional do caminhão continua visível» (+1)",
+      "reprovadas": [
+        "T29: visita operacional do caminhão continua visível",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "movimento-esconde-falha-de-gravacao": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T29: falha ao lembrar é explícita e escolha vale na sessão» (+2)",
+      "reprovadas": [
+        "T29: falha ao lembrar é explícita e escolha vale na sessão",
+        "T29: falha ao lembrar é explícita e escolha vale na sessão",
+        "T29: preferência, movimento, informação e isolamento"
+      ]
+    }
+  },
+  "texto-bancada-acumula": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«BT: reaplicar no mesmo no nao acumula escala» (+1)",
+      "reprovadas": [
+        "BT: reaplicar no mesmo no nao acumula escala",
+        "BT: voltar ao padrao e ampliar conserva a base 19"
+      ]
+    }
+  },
+  "inicio-extras-na-inicial": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "«T30: início tem exatamente quatro entradas em ambas as situações» (+2)",
+      "reprovadas": [
+        "T30: início tem exatamente quatro entradas em ambas as situações",
+        "T30: início tem exatamente quatro entradas em ambas as situações",
+        "T30: quatro entradas, retorno das consultas e movimento legível"
+      ]
+    }
+  },
+  "texto-override-ignorado": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: override da cena amplia de 19 para 24» (+14)",
+      "reprovadas": [
+        "RB5: override da cena amplia de 19 para 24",
+        "RB5: no criado depois recebe tamanho escolhido",
+        "RB5: reaplicar nao acumula escala",
+        "RB5: fontes do painel Construir",
+        "RB5: fontes do painel Calendário",
+        "RB5: fontes do painel HUD (falta para a parcela)",
+        "RB5: fontes do painel HUD (já dá para quitar)",
+        "RB5: fontes do painel HUD (berços cheios, faixa boa)",
+        "RB5: fontes do painel HUD (faixa de aviso)",
+        "RB5: fontes do painel HUD (faixa ruim)",
+        "RB5: fontes do painel HUD (barco ao largo sob oferta do rival)",
+        "RB5: fontes do painel HUD (barco que vai embora hoje)",
+        "RB5: fontes do painel Construir (com estrutura de pé)",
+        "RB5: fontes do painel Construir (obra em andamento)",
+        "RB5: fontes do painel Construir (obra sem uso na fase)"
+      ]
+    }
+  },
+  "texto-perde-leitura": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: troca conserva caractere na dobra da leitura»",
+      "reprovadas": [
+        "RB5: troca conserva caractere na dobra da leitura"
+      ]
+    }
+  },
+  "texto-tamanho-invalido": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: leitor recusa tamanho invalido MAIOR» (+1)",
+      "reprovadas": [
+        "RB5: leitor recusa tamanho invalido MAIOR",
+        "RB5: leitor recusa tamanho invalido maior"
+      ]
+    }
+  },
+  "texto-fita-alarga-celular": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: aparelho conserva medidas e centro Menu-celular»",
+      "reprovadas": [
+        "RB5: aparelho conserva medidas e centro Menu-celular"
+      ]
+    }
+  },
+  "texto-botao-horizontal-sem-largura": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: acao de obra permanece legivel Construir» (+1)",
+      "reprovadas": [
+        "RB5: acao de obra permanece legivel Construir",
+        "RB5: acao de obra permanece legivel Construir (obra sem uso na fase)"
+      ]
+    }
+  },
+  "texto-consulta-nasce-sem-leitura": {
+    "teste_design": {
+      "aprovado": true,
+      "frase": "«RB5: abertura maior conserva area de leitura Meu porto agora (Fase 1)» (+1)",
+      "reprovadas": [
+        "RB5: abertura maior conserva area de leitura Meu porto agora (Fase 1)",
+        "RB5: abertura maior conserva area de leitura Meu porto agora (Fase 2)"
+      ]
+    }
+  }
+}

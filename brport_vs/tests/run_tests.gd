@@ -1718,6 +1718,12 @@ func _run() -> void:
 	var mostra_e_faz = load("res://tests/casos_mostra_e_faz.gd").new()
 	await mostra_e_faz.rodar(GS, self)
 	_check("T31: reputação, arranque e o que os painéis mostram e fazem", mostra_e_faz.completo and mostra_e_faz.falhas == 0)
+	var historia_lojas = load("res://tests/casos_historia_lojas.gd").new()
+	await historia_lojas.rodar(GS, self)
+	_check("T32: história, lojas, compra, contas e retomada", historia_lojas.completo and historia_lojas.falhas == 0)
+	var reputacao_baixa = load("res://tests/casos_reputacao_baixa.gd").new()
+	await reputacao_baixa.rodar(GS, self)
+	_check("T33: reputação baixa, aviso e indicador", reputacao_baixa.completo and reputacao_baixa.falhas == 0)
 
 	print("")
 	if _fails == 0:

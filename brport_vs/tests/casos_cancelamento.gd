@@ -138,7 +138,7 @@ func rodar(estado, tree: SceneTree) -> void:
 	montar()
 	var anterior: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tests/saves/v17.json"))
 	var migrado: Dictionary = gs._save_aceite(JSON.stringify(anterior))
-	conferir("17→18 preserva toda a partida", not migrado.is_empty() and migrado["versao"] == 18
+	conferir("17→18 preserva toda a partida", not migrado.is_empty() and migrado["versao"] == gs.SAVE_VERSION
 		and migrado["cash"] == anterior["cash"] and migrado["docks"] == anterior["docks"]
 		and migrado["workers"] == anterior["workers"] and migrado["obra_em_andamento"] == anterior["obra_em_andamento"]
 		and migrado["meta_concluida"] == anterior["meta_concluida"] and migrado["metrics"]["servicos_cancelados"] == 0)

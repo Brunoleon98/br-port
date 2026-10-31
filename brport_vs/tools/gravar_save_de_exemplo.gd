@@ -109,6 +109,13 @@ func _rodar() -> void:
 				continue
 			if GS.impedimento_estrutura(id) == "":
 				GS.comprar_estrutura(id)
+		# A 19 precisa dos direitos e de uma leitura reais no exemplo; estado
+		# vazio não denunciaria um load_game que esquecesse estes campos.
+		for produto in VidaDoPorto.PRODUTOS:
+			if GS.impedimento_compra_loja(produto) == "":
+				GS.comprar_na_loja(produto)
+		for capitulo in GS.capitulos_do_porto():
+			GS.concluir_capitulo(capitulo)
 		for _b in range(GS.bercos_livres()):
 			if GS.atracagem_pendente() == Vector2i.ZERO or not GS.atracar(0, false):
 				break

@@ -1,0 +1,590 @@
+Em paralelo: 259 mutante(s) em 4 cópia(s) de 4915 arquivo(s).
+[t1] Base:
+[t3] Base:
+[t2] Base:
+[t4] Base:
+[t3]   verde     run_tests (21 s)
+[t1]   verde     run_tests (22 s)
+[t4]   verde     run_tests (35 s)
+[t2]   verde     run_tests (35 s)
+[t3]   verde     teste_design (80 s)
+[t1]   verde     teste_design (80 s)
+[t3]   verde     teste_audio (1 s)
+[t1]   verde     teste_audio (1 s)
+[t3]   verde     teste_fumaca (17 s)
+[t3]   verde     teste_registro (1 s)
+[t3] 
+[t3] 65 mutante(s):
+[t1]   verde     teste_fumaca (23 s)
+[t1]   verde     teste_registro (1 s)
+[t1] 
+[t1] 65 mutante(s):
+[t4]   verde     teste_design (105 s)
+[t4]   verde     teste_audio (1 s)
+[t3]   reprovado  reputacao-alerta-nao-rearma  (147)
+[t3]       run_tests        «T33: recuperar e cair de novo permite outro aviso» (+1)
+[t1]   reprovado  reputacao-baixa-sem-memoria  (147)
+[t1]       run_tests        «T33: permanecer baixo não repete aviso» (+3)
+[t2]   verde     teste_design (123 s)
+[t2]   verde     teste_audio (1 s)
+[t4]   verde     teste_fumaca (24 s)
+[t4]   verde     teste_registro (1 s)
+[t4] 
+[t4] 64 mutante(s):
+[t2]   verde     teste_fumaca (15 s)
+[t2]   verde     teste_registro (1 s)
+[t2] 
+[t2] 65 mutante(s):
+[t1]   reprovado  reputacao-retomada-sem-alerta  (147)
+[t1]       run_tests        «T33: abrir já baixo avisa uma vez» (+2)
+[t3]   reprovado  reputacao-indicador-sem-vermelho  (147)
+[t3]       run_tests        «T33: indicador baixo usa estilo de alerta» (+2)
+[t4]   reprovado  reputacao-queda-saudavel-alarma  (147)
+[t4]       run_tests        «T33: queda ainda saudável não alarma» (+6)
+[t1]   reprovado  loja-compra-repetida  (146)
+[t1]       run_tests        «T32: clique repetido não duplica item nem cobrança» (+5)
+[t4]   reprovado  reputacao-baixa-inclui-confiavel  (147)
+[t4]       run_tests        «T33: patamar de alerta em 41.0» (+5)
+[t3]   reprovado  loja-retomada-esquece-itens  (146)
+[t3]       run_tests        «T32: retomada conserva compra, leitura e dinheiro» (+2)
+[t2]   reprovado  reputacao-hud-nao-atualiza  (147)
+[t2]       run_tests        «T33: HUD acompanha entrada no patamar baixo» (+1)
+[t4]   reprovado  loja-sem-debito  (146)
+[t4]       run_tests        «T32: compra debita uma vez e libera a conversa» (+6)
+[t3]   reprovado  historia-documentos-na-obra  (146)
+[t3]       run_tests        «T32: obra não revela documentos» (+1)
+[t1]   reprovado  loja-sem-lancamento-semanal  (146)
+[t1]       run_tests        «T32: dia e semana incluem a despesa já paga» (+2)
+[t4]   reprovado  historia-migracao-perde-saldo  (146)
+[t4]       run_tests        «T32: 18 migra sem perder saldo, fase, obra ou nomes» (+6)
+[t3]   reprovado  atracagem-conta-um-berco  (083)
+[t3]       run_tests        «conta todos os bercos livres»
+[t4]   reprovado  atracar-sem-trabalhador  (083)
+[t4]       run_tests        «com o trabalhador junto» (+24)
+[t2]   reprovado  historia-consome-ao-abrir  (146)
+[t2]       run_tests        «T32: sair cedo não consome cena» (+1)
+[t1]   reprovado  historia-parcela-antecipa-cena  (146)
+[t1]       run_tests        «T32: antecipar parcela não antecipa capítulo» (+1)
+[t1]   reprovado  equipe-do-pier-ignorada  (083)
+[t1]       run_tests        «o berco 2 chama o trabalhador 2»
+[t2]   reprovado  loja-confirmar-nao-compra  (146)
+[t2]       run_tests        «T32: confirmar compra abre a história e debita» (+8)
+[t1]   reprovado  save-fila-sem-teto  (083)
+[t1]       teste_fumaca     «mais barcos do que lugares»
+[t2]   reprovado  desistencia-de-graca  (083)
+[t2]       run_tests        «e custa reputacao»
+[t2]   reprovado  save-oferta-fora-da-fila  (083)
+[t2]       teste_fumaca     «oferta fora da fila»
+[t4]   reprovado  deslize-sem-faixa  (144)
+[t4]       teste_design     «D52: §3 entra de ré pela faixa»
+[t3]   reprovado  espera-com-dois-espacos  (083)
+[t3]       teste_design     «a espera do barco ao largo cabe»
+[t4]   reprovado  segunda-chance-sem-limite  (102)
+[t4]       run_tests        «T18: e a segunda chance não abre outra vez»
+[t4]   reprovado  obra-pronta-um-dia-cedo  (087)
+[t4]       run_tests        «T15: segundo dia termina uma vez, abre no dia 3» (+11)
+[t1]   reprovado  viragem-parada  (144)
+[t1]       teste_design     «D52: §3 vira 90° de cada vez a deslizar devagar»
+[t4]   reprovado  save-armazem-no-dia-9  (089)
+[t4]       run_tests        «T17: obra de armazem começada no dia em que abre (8) é aceita» (+23)
+[t2]   reprovado  deslize-sem-origem  (144)
+[t2]       teste_design     «D52: §2 o casco começa no lugar ao largo que se tocou» (+9)
+[t4]   reprovado  obra-recusada-um-dia-cedo  (090)
+[t4]       teste_fumaca     «no dia 84, o último da fase, a obra ainda não está de pé» (+11)
+[t1]   reprovado  deslize-trabalho-nao-espera  (144)
+[t1]       teste_design     «D52: §4 ninguém no tabuado enquanto o casco desliza»
+[t4]   reprovado  cargueiro-sem-piso  (106)
+[t4]       run_tests        «T22: abaixo do piso só novas chegadas de pesca» (+29)
+[t3]   reprovado  deslize-espelho-trocado  (144)
+[t3]       teste_design     «D52: §3 nunca anda de lado» (+4)
+[t2]   reprovado  ancorados-por-posicao  (144)
+[t2]       teste_design     «D52: §1 os outros dois ficam no lugar deles» (+1)
+[t4]   reprovado  migracao-15-esquece-a-vitoria  (104)
+[t4]       run_tests        «T20: a partida ganha da 15 chega à 16 na Fase 2, a jogar» (+2)
+[t1]   reprovado  deslize-lanca-parada  (144)
+[t1]       teste_design     «D52: §4 a lança varre como numa doca vazia»
+[t4]   reprovado  rosto-sem-filtro-dos-usados  (059)
+[t4]       teste_fumaca     «trinta rostos diferentes» (+1)
+[t2]   reprovado  deslize-de-re-outra-vez  (144)
+[t2]       teste_design     «D52: §3 o casco navega de proa do largo à boca do berço» (+4)
+[t4]   reprovado  armazem-sem-criar-a-pasta  (061)
+[t4]       teste_fumaca     «já tem pasta para gravar»
+[t4]   reprovado  moeda-ao-gastar  (audio.md)
+[t4]       teste_audio      «caixa caindo NÃO pede moeda»
+[t3]   reprovado  viragem-mistura-o-passo-todo  (144)
+[t3]       teste_design     «D52: §3 na viragem a arte que chega aparece por cima da que sai, só no fim de cada passo»
+[t1]   reprovado  deslize-reduzido-guarda-origem  (144)
+[t1]       run_tests        «T29: operação mantém trabalhador e ciclo de serviço» (+1)
+[t1]       teste_design     «D52: §6 e o trabalhador também, com o ciclo do guindaste a correr»
+[t2]   reprovado  viragem-de-uma-vez  (144)
+[t2]       teste_design     «D52: §3 vira 90° de cada vez a deslizar devagar» (+1)
+[t3]   reprovado  deslize-sem-rearmar  (144)
+[t3]       teste_design     «D52: §4 encostado, o trabalhador aparece» (+1)
+[t4]   reprovado  ajustes-rotulos-trocados  (138)
+[t4]       teste_design     «RB5: o botao que diz Maior aplica o maior»
+[t2]   reprovado  trabalhador-em-duas-docas  (T3)
+[t2]       run_tests        «segunda alocacao do MESMO trabalhador recusada» (+1)
+[t4]   reprovado  fila-cascos-a-zero  (138)
+[t4]       run_tests        «T31: cada barco ao largo tem casco à vista» (+1)
+[t3]   reprovado  fecho-sem-reabrir-o-turno  (bug de travamento)
+[t3]       run_tests        «[igualar] botao AVANCAR DIA reabilitado» (+1)
+[t3]   reprovado  nivel-do-porto-pelo-maior  (testes-e-guardas.md, 06/09)
+[t3]       run_tests        «com pórtico e sem cais o porto FICA no nível 2» (+77)
+[t1]   reprovado  cone-no-corredor  (144)
+[t1]       teste_design     «D52: §7 nenhum casco passa por cima da ancoragem nos 9 caminhos»
+[t2]   reprovado  save-obra-sem-cobranca  (089)
+[t2]       run_tests        «T17: com uma quitada a menos o save de patio é recusado»
+[t3]   reprovado  receita-sem-a-estrutura  (T5l)
+[t3]       run_tests        «T15: armazenagem ainda não recebe bônus»
+[t4]   reprovado  recordes-vazam-no-load  (138)
+[t4]       run_tests        «T31: o recorde malformado no save carrega a zero» (+1)
+[t1]   reprovado  derrota-sem-fechar-a-semana  (12/09, gdscript.md)
+[t1]       run_tests        «recusar a parcela FECHA a semana 4» (+3)
+[t3]   reprovado  mensagem-da-obra-sempre-verde  (090)
+[t3]       teste_fumaca     «a mensagem avisa, em tom de aviso» (+2)
+[t2]   reprovado  reparos-uma-semana-depois  (089)
+[t2]       run_tests        «T14: armazém abre no dia 8» (+48)
+[t4]   reprovado  alocar-fora-do-array  (138)
+[t4]       run_tests        «T31: alocar fora do array recusa sem erro do motor» (+1)
+[t4]   reprovado  registro-docas-ao-contrario  (138)
+[t4]       teste_registro   «o turno conta as duas docas com trabalhador»
+[t1]   reprovado  antecipacao-abate-capital  (085)
+[t1]       run_tests        «T14: antecipar nunca perdoa o capital emprestado» (+1)
+[t3]   reprovado  rosto-gasta-o-sorteio  (059)
+[t3]       teste_fumaca     «não mexe no sorteio da partida»
+[t2]   reprovado  aviso-de-obra-um-dia-cedo  (090)
+[t2]       teste_fumaca     «na véspera o Construir não avisa» (+5)
+[t4]   reprovado  docas-sem-quem-opera  (138)
+[t4]       run_tests        «T31: o painel das docas diz a classe, quando paga e quem opera» (+1)
+[t1]   reprovado  save-obra-na-vespera  (089)
+[t1]       run_tests        «T17: obra de armazem começada na véspera (dia 7) é recusada» (+1)
+[t3]   reprovado  save-rosto-repetido  (059)
+[t3]       teste_fumaca     «rosto repetido»
+[t2]   reprovado  passagem-sem-recomecar-reputacao  (104)
+[t2]       run_tests        «T20: a reputação recomeça na escala da Fase 2» (+5)
+[t1]   reprovado  plural-da-obra-a-mao  (090)
+[t1]       teste_fumaca     «F9: nenhum número escreve o plural à mão»
+[t3]   reprovado  cancelar-sem-botao  (138)
+[t3]       run_tests        «T24: a confirmação mostra o botão Cancelar serviço» (+1)
+[t1]   reprovado  atalho-s-nao-e-ferramenta  (061)
+[t1]       teste_fumaca     «`-s` conta como ferramenta»
+[t1]   reprovado  som-nunca-repete  (117)
+[t1]       teste_audio      «passada a espera, o mesmo som volta a tocar»
+[t2]   reprovado  privado-lido-por-string-renomeado  (093)
+[t2]       teste_fumaca     «F19: todo nome lido por string existe no alvo»
+[t3]   reprovado  doca-sem-valor  (138)
+[t3]       run_tests        «T31: o cartão da doca mostra o valor do barco atracado» (+2)
+[t3]   reprovado  volume-nao-grava  (138)
+[t3]       teste_audio      «e o 0,5 fica gravado no arquivo de volume»
+[t3]   reprovado  ambiente-sem-relogio  (138)
+[t3]       teste_audio      «o relógio do mar pede o som do mar» (+2)
+[t3]   reprovado  registro-turno-nasce-com-aviso  (138)
+[t3]       teste_registro   «o turno sem aviso vermelho conta zero avisos» (+1)
+[t1]   reprovado  servir-sem-reputacao  (138)
+[t1]       run_tests        «T31: atender um barco sobe a reputação» (+1)
+[t4]   reprovado  memoria-marca-inicio  (138)
+[t4]       teste_design     «RB5: a marca e o primeiro caractere a vista»
+[t3]   reprovado  meu-porto-sem-dia  (138)
+[t3]       run_tests        «T27: o resumo escreve o dia e a semana» (+1)
+[t1]   reprovado  caixa-entrou-ao-contrario  (138)
+[t1]       run_tests        «T31: o caixa diz o que entrou ontem» (+1)
+[t3]   reprovado  save-recusa-a-fila-cheia  (118)
+[t3]       run_tests        «o save que o jogo grava, o próprio jogo aceita» (+51)
+[t3]   reprovado  devolver-deixa-o-trabalhador  (118)
+[t3]       run_tests        «e o trabalhador fica livre» (+1)
+[t1]   reprovado  parcela-falta-sem-fechar  (138)
+[t1]       run_tests        «T31: a parcela com falta deixa fechar» (+1)
+[t4]   reprovado  load-esquece-a-paciencia-do-cliente  (118)
+[t4]       run_tests        «o save que o jogo grava não volta igual» (+3)
+[t3]   reprovado  cancelamento-sem-multa  (111)
+[t3]       run_tests        «T24: multa e reputação únicas, sem pagar serviço» (+9)
+[t2]   reprovado  progresso-com-dois-espacos  (083)
+[t2]       teste_design     «a linha do progresso cabe»
+[t2]   reprovado  registro-sem-obra-pronta  (088)
+[t2]       teste_registro   «grava UMA linha de obra pronta»
+[t2]   reprovado  som-sem-espera-minima  (audio.md)
+[t2]       teste_audio      «o mesmo som dentro da espera não repete»
+[t3]   reprovado  cancelamento-fora-da-semana  (111)
+[t3]       run_tests        «T24: multa lançada nas contas» (+4)
+[t4]   reprovado  cancelamento-nunca-disponivel  (118)
+[t4]       run_tests        «o robô exerceu cada ação que o jogo aceitou» (+2)
+[t2]   reprovado  arranque-troca-o-save  (138)
+[t2]       run_tests        «T31: o arranque abre a partida gravada» (+2)
+[t3]   reprovado  ajuda-voltar-fecha-o-artigo  (115)
+[t3]       run_tests        «T25: Voltar retorna ao índice» (+7)
+[t1]   reprovado  rolo-ignora-o-dedo  (138)
+[t1]       teste_design     «RB5: arrasto com um dedo rola»
+[t1]   reprovado  registro-partida-nova-retomada  (138)
+[t1]       teste_registro   «a partida nova do dia 1 grava-se como nova»
+[t3]   reprovado  ajuda-empilha  (115)
+[t3]       run_tests        «T25: pedido repetido não duplica ajuda» (+10)
+[t4]   reprovado  cancelamento-sem-registro  (111)
+[t4]       run_tests        «T24: registro 5 observa uma vez» (+1)
+[t2]   reprovado  cancelar-recusa-esquecida  (138)
+[t2]       run_tests        «T24: recusa pede reabrir» (+3)
+[t1]   reprovado  diario-fase-2-sem-legenda  (138)
+[t1]       run_tests        «T31: a página da Fase 2 relida diz que a fase acabou» (+1)
+[t4]   reprovado  ajuda-gasta-o-sorteio  (115)
+[t4]       run_tests        «T25: consulta preserva estado, RNG, arquivos e registro» (+17)
+[t2]   reprovado  meta-cedo-sem-fechar  (138)
+[t2]       run_tests        «T31: antes da Fase 2 a meta diz quando abre e deixa fechar» (+1)
+[t3]   reprovado  obra-patio-copia-velha  (121)
+[t3]       teste_design     «D45: o trecho 2 do pátio é o da tabela» (+2)
+[t2]   reprovado  espacos-nova-sem-titulo  (138)
+[t2]       run_tests        «T27: Nova partida com espaços ocupados pergunta onde» (+1)
+[t2]   reprovado  doca-realce-some-reduzido  (138)
+[t2]       run_tests        «T29: doca com barco à espera mantém realce fixo» (+1)
+[t1]   reprovado  leitura-maior-nao-acomoda  (138)
+[t1]       teste_design     «RB5: o Construir no Maior cabe na tela baixa»
+[t3]   reprovado  obra-uv-sem-razao  (121)
+[t3]       teste_design     «D45: a UV do recorte» (+1)
+[t4]   reprovado  obra-longa-sem-repartir  (121)
+[t4]       teste_design     «D45: três dias em dois quadros»
+[t1]   reprovado  recusa-da-obra-cobra  (118)
+[t1]       run_tests        «a recusa de «construir» mexeu no estado» (+6)
+[t1]   reprovado  fila-guarda-quem-desistiu  (118)
+[t1]       run_tests        «na fila nenhum barco começou a operar nem esgotou a paciência» (+7)
+[t2]   reprovado  cancelamento-sem-conferir-o-orcamento  (118)
+[t2]       run_tests        «a confirmação aceitou um orçamento que não era o lido» (+7)
+[t1]   reprovado  cancelamento-sem-reputacao  (111)
+[t1]       run_tests        «T24: multa e reputação únicas, sem pagar serviço» (+4)
+[t3]   reprovado  mar-largo-clareia  (124)
+[t3]       teste_design     «a água escurece para o largo» (+2)
+[t1]   reprovado  cancelamento-prende-o-trabalhador  (111)
+[t1]       run_tests        «T24: equipe reutilizada no mesmo dia» (+1)
+[t2]   reprovado  reputacao-sem-teto  (118)
+[t2]       run_tests        «a reputação fica entre 0 e 100» (+5)
+[t1]   reprovado  migracao-18-inventa-multa  (111)
+[t1]       run_tests        «T24: migração não inventa multa passada» (+1)
+[t1]   reprovado  ajuda-grava-a-partida  (115)
+[t1]       run_tests        «T25: consulta não tem porta de escrita» (+13)
+[t2]   reprovado  cancelamento-de-outro-barco  (111)
+[t2]       run_tests        «T24: confirmação velha não cobra outro barco» (+3)
+[t4]   reprovado  vila-torre-da-cor-das-vizinhas  (123)
+[t4]       teste_design     «pinta telha_torre à volta»
+[t3]   reprovado  mata-copia-desalinhada  (127)
+[t3]       teste_design     «a cópia da mata confere com a tabela» (+1)
+[t2]   reprovado  ajuda-multa-dobrada  (115)
+[t2]       run_tests        «T25: custos reais e regra sem parcial na ajuda» (+1)
+[t2]   reprovado  ajuda-deixa-o-toque-passar  (115)
+[t2]       run_tests        «T25: toque no fundo não atravessa a ajuda» (+14)
+[t4]   reprovado  fauna-cao-em-cima-da-casa  (123)
+[t4]       teste_design     «CachorroCaramelo aparece sobre o relvado»
+[t1]   reprovado  obra-cartao-diz-ruinas  (121)
+[t1]       teste_design     «D45: o cartão diz «píer em obra»» (+1)
+[t3]   reprovado  mata-sobre-a-orla  (130)
+[t3]       teste_design     «nenhuma árvore pinta por cima de uma embutida à frente» (+1)
+[t2]   reprovado  obra-nao-redesenha-na-compra  (121)
+[t2]       teste_design     «D45: o píer mostra o quadro 0 no dia da compra» (+24)
+[t4]   reprovado  mata-arvore-maior  (127)
+[t4]       teste_design     «nenhuma árvore pinta por cima da vila» (+3)
+[t1]   reprovado  obra-patio-sem-sinalizacao  (121)
+[t1]       teste_design     «D45: a barreira e o cone sinalizam a obra» (+2)
+[t4]   reprovado  destaque-debaixo-da-barra  (130)
+[t4]       teste_design     «a copa de cada destaque fica à vista»
+[t3]   reprovado  restinga-tapa-coqueiro  (127)
+[t3]       teste_design     «nenhuma árvore tapa um prop parado»
+[t2]   reprovado  obra-um-dia-adiantada  (121)
+[t2]       teste_design     «D45: o armazém mostra o quadro 0 no dia 1 da obra» (+23)
+[t4]   reprovado  mata-gira-fora-do-pe  (127)
+[t4]       teste_design     «cada árvore gira em volta do pé»
+[t2]   reprovado  restinga-pe-na-areia  (127)
+[t2]       teste_design     «nenhuma planta da restinga desce à areia» (+7)
+[t1]   reprovado  vila-coreto-sem-telhado  (123)
+[t1]       teste_design     «pinta telha_d à volta» (+1)
+[t4]   reprovado  obra-rua-copia-velha  (136)
+[t4]       teste_design     «da obra da rua é o da tabela» (+4)
+[t2]   reprovado  destaque-tapado  (130)
+[t2]       teste_design     «nenhuma árvore tapa a copa de um destaque» (+1)
+[t3]   reprovado  viela-troca-com-o-patio  (136)
+[t3]       teste_design     «D49: nada muda entre os dois mapas fora da obra»
+[t4]   reprovado  cones-sempre-do-dia-0  (136)
+[t4]       teste_design     «D45: os cones ficam nos pontos da tabela» (+3)
+[t2]   reprovado  copa-no-telhado  (130)
+[t2]       teste_design     «nenhuma copa embutida pousa num telhado» (+1)
+[t1]   reprovado  mar-mancha-rasa-ao-largo  (124)
+[t1]       teste_design     «nenhuma mancha clara no mar aberto» (+1)
+[t3]   reprovado  junta-do-cotovelo-sem-costura  (136)
+[t3]       teste_design     «D49: pavimentado: nenhuma junta de cotovelo tem fio claro»
+[t4]   reprovado  rua-por-recapear-do-mapa-pronto  (136)
+[t4]       teste_design     «D45: a rua por recapear recorta o mapa de terra»
+[t1]   reprovado  mata-sobre-a-pedra  (130)
+[t1]       teste_design     «nenhuma árvore pinta por cima de uma pedra à frente» (+2)
+[t2]   reprovado  ipe-sem-flor  (130)
+[t2]       teste_design     «nenhum ipê embutido fica escondido» (+1)
+[t3]   reprovado  curva-de-fora-larga-demais  (136)
+[t3]       teste_design     «nenhuma carroçaria sai do asfalto nas curvas abertas»
+[t4]   reprovado  praia-norte-acaba-no-porto  (136)
+[t4]       teste_design     «D49: terra: a água não aparece na borda norte do pátio» (+1)
+[t1]   reprovado  mata-fora-da-profundidade  (127)
+[t1]       teste_design     «vem depois de quem está atrás» (+80)
+[t3]   reprovado  sodio-aceso-no-poste-novo  (140)
+[t3]       teste_design     «a lâmpada de sódio acende só no poste velho» (+3)
+[t2]   reprovado  mata-contorno-cego  (127)
+[t2]       teste_design     «o contorno sobe acima de cada casa»
+[t4]   reprovado  curva-sem-giro  (140)
+[t4]       teste_design     «pousa num isolador de cada» (+11)
+[t2]   reprovado  fauna-em-cima-da-arvore  (127)
+[t2]       teste_design     «nenhum bicho da fauna cai em cima de uma árvore»
+[t4]   reprovado  fio-por-cima-da-igreja  (140)
+[t4]       teste_design     «cada fio some atrás do lote da vila que lhe fica à frente» (+4)
+[t1]   reprovado  curva-fora-do-arco  (140)
+[t1]       teste_design     «cada peça do mobiliário pousa na calçada do lado dela» (+22)
+[t3]   reprovado  fio-corta-a-curva  (140)
+[t3]       teste_design     «a fiação corre por cima da calçada da vila» (+21)
+[t2]   reprovado  mata-parada  (127)
+[t2]       teste_design     «cada árvore tem a sua rajada» (+26)
+[t4]   reprovado  subestacao-na-areia  (140)
+[t4]       teste_design     «cada peça do mobiliário pousa na calçada do lado dela»
+[t1]   reprovado  quina-dentro-do-lote  (140)
+[t1]       teste_design     «cada peça do mobiliário pousa na calçada do lado dela» (+23)
+[t2]   reprovado  rua-por-recapear-sumida  (136)
+[t2]       teste_design     «D45: a rua por recapear mostra» (+2)
+[t3]   reprovado  fio-some-sem-casa  (140)
+[t3]       teste_design     «cada fio some atrás do lote da vila que lhe fica à frente» (+4)
+[t4]   reprovado  linha-com-a-arte-velha  (140)
+[t4]       teste_design     «pousa num isolador de cada» (+1)
+[t1]   reprovado  pedestres-sobre-a-zebra  (140)
+[t1]       teste_design     «cada peça do mobiliário pousa na calçada do lado dela» (+7)
+[t2]   reprovado  mobiliario-ignora-a-obra  (140)
+[t2]       teste_design     «cada peça do mobiliário mostra a arte do trecho dela» (+12)
+[t3]   reprovado  cavaletes-copia-velha  (140)
+[t3]       teste_design     «os cavaletes ficam nos pontos da tabela» (+1)
+[t4]   reprovado  rede-por-cima-de-tudo  (140)
+[t4]       teste_design     «a rede da rua desenha-se logo antes do Cenario» (+4)
+[t2]   reprovado  fio-sem-tombo  (140)
+[t2]       teste_design     «pousa num isolador de cada» (+7)
+[t1]   reprovado  fio-corta-a-esquina  (140)
+[t1]       teste_design     «a fiação corre por cima da calçada da vila» (+21)
+[t4]   reprovado  placa-na-guia-do-acesso  (140)
+[t4]       teste_design     «fora do cotovelo e da guia do acesso» (+6)
+[t2]   reprovado  linha-depois-da-rua  (140)
+[t2]       teste_design     «pousa num isolador de cada» (+4)
+[t3]   reprovado  poste-no-cotovelo  (140)
+[t3]       teste_design     «cada peça do mobiliário pousa na calçada do lado dela» (+22)
+[t4]   reprovado  carros-colados  (141)
+[t4]       teste_design     «dois carros da mesma margem da viela não se tocam» (+1)
+[t1]   reprovado  sombra-por-cima-da-igreja  (140)
+[t1]       teste_design     «cada peça do mobiliário some atrás do lote da vila» (+4)
+[t3]   reprovado  carro-atras-das-casas  (141)
+[t3]       teste_design     «cada carro está à vista» (+2)
+[t2]   reprovado  placa-no-asfalto  (140)
+[t2]       teste_design     «fora do cotovelo e da guia do acesso» (+6)
+[t4]   reprovado  carros-sem-refresh  (141)
+[t4]       teste_design     «Fase 1, 0 reparo(s) da 1 e 0 da 2: estacionados os da tabela» (+9)
+[t1]   reprovado  poste-troca-fora-do-dia  (140)
+[t1]       teste_design     «troca no dia do trecho de rua onde pousa» (+5)
+[t3]   reprovado  carros-fase-2-conta-a-1  (141)
+[t3]       teste_design     «Fase 2, 3 reparo(s) da 1 e 0 da 2: estacionados os da tabela» (+3)
+[t4]   reprovado  marolas-copia-velha  (142)
+[t4]       teste_design     «a cópia do Main.gd é a da tabela»
+[t2]   reprovado  carros-copia-velha  (141)
+[t2]       teste_design     «o carro 0 da cópia é o da tabela»
+[t3]   reprovado  marolas-troca-longa  (142)
+[t3]       teste_design     «a troca é curta»
+[t4]   reprovado  marolas-para-o-mar  (142)
+[t4]       teste_design     «a Marola0 só anda para a costa enquanto se vê» (+3)
+[t1]   reprovado  carro-na-rodovia  (141)
+[t1]       teste_design     «cada carro estaciona na viela de terra do degrau dele» (+1)
+[t4]   reprovado  retomada-receita-sem-bonus  (125)
+[t4]       run_tests        «T27: serviço mostra progresso guardado e receita com bônus» (+1)
+[t3]   reprovado  marolas-em-paralelo  (142)
+[t3]       teste_design     «a Marola0 acende e apaga» (+3)
+[t4]   reprovado  retomada-carrega-espaco-errado  (125)
+[t4]       run_tests        «T27: Carregar mostra o espaço escolhido» (+1)
+[t1]   reprovado  carros-sem-mascara  (141)
+[t1]       teste_design     «o que um lote da vila tapa de um carro, a máscara esconde»
+[t2]   reprovado  carros-uma-obra-a-mais  (141)
+[t2]       teste_design     «Fase 1, 0 reparo(s) da 1 e 0 da 2: estacionados os da tabela» (+9)
+[t4]   reprovado  retomada-dia-pendente-adiantado  (125)
+[t4]       run_tests        «T27: vencimento identifica dia fechado sem adiantar decisão» (+1)
+[t4]   reprovado  diagnostico-consulta-grava  (128)
+[t4]       run_tests        «T28: consulta e cópia preservam estado, RNG, arquivos e registro» (+7)
+[t4]   reprovado  diagnostico-sem-marca-modificado  (128)
+[t4]       run_tests        «T28: identidade conserva commit completo e marca modificada» (+1)
+[t2]   reprovado  marolas-em-fase  (142)
+[t2]       teste_design     «as duas marolas em contrafase» (+1)
+[t1]   reprovado  mascara-arredonda-como-python  (141)
+[t1]       teste_design     «o que um lote da vila tapa de um carro, a máscara esconde» (+1)
+[t4]   reprovado  movimento-novos-ignoram-escolha  (129)
+[t4]       run_tests        «T29: elementos criados depois nascem com fundo parado» (+1)
+[t4]   reprovado  movimento-folha-perde-callback  (129)
+[t4]       run_tests        «T29: mudar a meio conclui callback da transição» (+1)
+[t3]   reprovado  quina-com-fresta  (142)
+[t3]       teste_design     «terra: a água não aparece na quina norte do pátio»
+[t2]   reprovado  marolas-repouso-trocado  (142)
+[t2]       teste_design     «com o movimento reduzido a Marola0 fica no sítio» (+1)
+[t2]   reprovado  retomada-consome-rng  (125)
+[t2]       run_tests        «T27: gerar conteúdo preserva estado, RNG, arquivos e registro» (+15)
+[t3]   reprovado  retomada-adianta-progresso  (125)
+[t3]       run_tests        «T27: serviço mostra progresso guardado e receita com bônus» (+1)
+[t4]   reprovado  movimento-duplica-ajustes  (129)
+[t4]       run_tests        «T29: Ajustes repetidos não duplicam painel» (+15)
+[t2]   reprovado  retomada-regrava-save  (125)
+[t2]       run_tests        «T27: gerar conteúdo preserva estado, RNG, arquivos e registro» (+14)
+[t3]   reprovado  retomada-voltar-entra  (125)
+[t3]       run_tests        «T27: consulta visual preserva estado, RNG, arquivos e registro» (+2)
+[t3]   reprovado  retomada-conta-obra-como-pronta  (125)
+[t3]       run_tests        «T27: meta não conta estrutura ainda em obra» (+1)
+[t4]   reprovado  movimento-resultado-nao-termina  (129)
+[t4]       run_tests        «T29: resultado termina sem esperar tween decorativo pausado» (+1)
+[t1]   reprovado  marolas-em-terra  (142)
+[t1]       teste_design     «a camada 0 só pousa em água em todo o caminho»
+[t2]   reprovado  retomada-meta-esquecida  (125)
+[t2]       run_tests        «T27: jogo livre conserva conquista sem novo objetivo» (+2)
+[t3]   reprovado  retomada-promete-apos-encerrar  (125)
+[t3]       run_tests        «T27: encerrada não promete obra nem recebimento futuros» (+1)
+[t3]   reprovado  diagnostico-falso-sucesso  (128)
+[t3]       run_tests        «T28: falha não anuncia sucesso e permite tentar de novo» (+2)
+[t2]   reprovado  diagnostico-copia-diferente  (128)
+[t2]       run_tests        «T28: copia exatamente a prévia por ação explícita» (+2)
+[t3]   reprovado  movimento-nao-persiste  (129)
+[t3]       run_tests        «T29: nova instância relê escolha persistente» (+8)
+[t1]   reprovado  espuma-nao-lava  (142)
+[t1]       teste_design     «a Espuma0 lava»
+[t3]   reprovado  movimento-preferencia-no-jogador  (129)
+[t3]       run_tests        «T29: preferência de ferramenta é isolada» (+1)
+[t2]   reprovado  movimento-padrao-ativado  (129)
+[t2]       run_tests        «T29: ausência mantém padrão e leitura não cria arquivo» (+5)
+[t3]   reprovado  movimento-folha-ainda-espera  (129)
+[t3]       run_tests        «T29: transição reduzida conclui próximo callback sem espera» (+1)
+[t1]   reprovado  retomada-cobra-quitada  (125)
+[t1]       run_tests        «T27: antecipação mantém recibo e próxima cobrança futura» (+2)
+[t1]   reprovado  retomada-inventa-cobranca-fase2  (125)
+[t1]       run_tests        «T27: Fase 2 sem cobrança nem prazo fictícios» (+2)
+[t3]   reprovado  movimento-barco-ainda-transita  (129)
+[t3]       run_tests        «T29: serviço e dia concluem com movimento reduzido» (+1)
+[t4]   reprovado  texto-bancada-acumula  (RB5 bancada 2026-10-19)
+[t4]       teste_design     «BT: reaplicar no mesmo no nao acumula escala» (+1)
+[t2]   reprovado  movimento-nao-pausa-fundo  (129)
+[t2]       run_tests        «T29: comparação temporal: fundo reduzido fica estável» (+3)
+[t1]   reprovado  retomada-recusa-inicia-nova  (125)
+[t1]       run_tests        «T27: recusa não inicia partida nem apaga arquivo» (+1)
+[t4]   reprovado  inicio-continuar-sem-partida  (132)
+[t4]       run_tests        «T30: Continuar só está habilitado quando há partida salva» (+1)
+[t2]   reprovado  movimento-sem-pose-inteira  (129)
+[t2]       run_tests        «T29: escolha para fundo já aberto e repõe pose inteira» (+1)
+[t1]   reprovado  diagnostico-copia-ao-abrir  (128)
+[t1]       run_tests        «T28: abrir não inicia cópia automaticamente» (+2)
+[t2]   reprovado  movimento-apaga-realce-da-fila  (129)
+[t2]       run_tests        «T29: barco chamável mantém realce e ação» (+1)
+[t2]   reprovado  movimento-fauna-continua-andando  (129)
+[t2]       run_tests        «T29: fauna reduzida mantém pose e toque» (+9)
+[t1]   reprovado  movimento-sem-aviso-aos-abertos  (129)
+[t1]       run_tests        «T29: escolha para fundo já aberto e repõe pose inteira» (+17)
+[t3]   reprovado  texto-bancada-janela-cega  (RB5 bancada 2026-10-19)
+[t3]       teste_design     «BT: texto fora da janela nao recebe o zero do texto dentro»
+[t3]   reprovado  inicio-consultas-sobrepostas  (132)
+[t3]       run_tests        «T30: a consulta oculta o menu de Configurações» (+6)
+[t1]   reprovado  movimento-grava-a-partida  (129)
+[t1]       run_tests        «T29: Ajustes preservam partida, RNG, arquivos e registro» (+4)
+[t4]   reprovado  inicio-fundo-vaza-celular  (133)
+[t4]       teste_design     «D48: celular conserva o degrade»
+[t2]   reprovado  texto-bancada-caixa-cega  (RB5 bancada 2026-10-19)
+[t2]       teste_design     «BT: a mesma caixa distingue texto que cabe de texto que transborda»
+[t3]   reprovado  inicio-saves-sem-porta  (132)
+[t3]       run_tests        «T30: Saves abre a lista compartilhada de espaços» (+2)
+[t1]   reprovado  movimento-oculta-visita-operacional  (129)
+[t1]       run_tests        «T29: visita operacional do caminhão continua visível» (+1)
+[t2]   reprovado  inicio-movimento-sem-fundo  (132)
+[t2]       run_tests        «T30: movimento hover_pressed tem fundo opaco e contraste AA» (+2)
+[t2]   reprovado  inicio-consulta-sem-retorno  (132)
+[t2]       run_tests        «T30: fechar a consulta devolve o mesmo menu visível» (+6)
+[t1]   reprovado  movimento-esconde-falha-de-gravacao  (129)
+[t1]       run_tests        «T29: falha ao lembrar é explícita e escolha vale na sessão» (+2)
+[t4]   reprovado  texto-override-ignorado  (134)
+[t4]       teste_design     «RB5: override da cena amplia de 19 para 24» (+14)
+[t2]   reprovado  texto-tema-ignora-maior  (134)
+[t2]       teste_design     «RB5: exemplo usa fonte maior do tema» (+54)
+[t4]   reprovado  texto-perde-leitura  (134)
+[t4]       teste_design     «RB5: troca conserva caractere na dobra da leitura»
+[t3]   reprovado  texto-no-tardio-ignorado  (134)
+[t3]       teste_design     «RB5: no criado depois recebe tamanho escolhido»
+[t2]   reprovado  texto-padrao-nao-restaura  (134)
+[t2]       teste_design     «RB5: ciclo restaura todas as fontes» (+1)
+[t4]   reprovado  texto-tamanho-invalido  (135)
+[t4]       teste_design     «RB5: leitor recusa tamanho invalido MAIOR» (+1)
+[t1]   reprovado  texto-bancada-sem-ampliacao  (RB5 bancada 2026-10-19)
+[t1]       teste_design     «BT: amplia o override real do rotulo e do botao de 19 para 24» (+2)
+[t1]   reprovado  inicio-extras-na-inicial  (132)
+[t1]       run_tests        «T30: início tem exatamente quatro entradas em ambas as situações» (+2)
+[t2]   reprovado  texto-acoes-fora-da-tela  (134)
+[t2]       teste_design     «RB5: acoes fixas cabem fora do rolo» (+2)
+[t4]   reprovado  texto-fita-alarga-celular  (135)
+[t4]       teste_design     «RB5: aparelho conserva medidas e centro Menu-celular»
+[t3]   reprovado  texto-painel-sem-rolagem  (134)
+[t3]       teste_design     «RB5: leitura maior cabe em (720, 1152): PainelAjustes» (+7)
+[t1]   reprovado  inicio-fundo-provisorio  (133)
+[t1]       teste_design     «D48: inicial desenha a fonte v3 aceita»
+[t4]   reprovado  texto-botao-horizontal-sem-largura  (135)
+[t4]       teste_design     «RB5: acao de obra permanece legivel Construir» (+1)
+[t1]   reprovado  texto-arrasto-executa-acao  (134)
+[t1]       teste_design     «RB5: arrasto sobre barco atracado nao libera ao premir»
+[t2]   reprovado  texto-nao-persiste  (134)
+[t2]       teste_design     «RB5: leitor restaura maior/false ordem 0» (+13)
+[t4]   reprovado  texto-consulta-nasce-sem-leitura  (135)
+[t4]       teste_design     «RB5: abertura maior conserva area de leitura Meu porto agora (Fase 1)» (+1)
+[t4] 
+[t4] Base no fim:
+[t4]   verde     run_tests
+[t3]   reprovado  texto-doca-libera-ao-premir  (134)
+[t3]       teste_design     «RB5: arrasto sobre barco atracado nao libera ao premir»
+[t1]   reprovado  texto-perde-cursor  (134)
+[t1]       teste_design     «RB5: troca conserva campo texto cursor e foco»
+[t4]   verde     teste_design
+[t4]   verde     teste_audio
+[t4]   verde     teste_fumaca
+[t4]   verde     teste_registro
+[t4] 
+[t4] trabalhador verde — 64 defeito(s) reinjetado(s), cada um reprovado pela guarda declarada.
+[t1]   reprovado  texto-sinal-ignorado  (134)
+[t1]       teste_design     «RB5: controle aplica tamanho e preserva foco» (+1)
+[t2]   reprovado  texto-rolo-rouba-painel  (135)
+[t2]       teste_design     «RB5: painel aberto bloqueia gesto no porto de baixo»
+[t3]   reprovado  texto-apaga-movimento  (134)
+[t3]       teste_design     «RB5: duas preferencias no disco maior/true ordem 0» (+5)
+[t2]   reprovado  texto-consulta-selecao-ausente  (135)
+[t2]       teste_design     «RB5: campo sem selecao nao gera erro do motor»
+[t1]   reprovado  texto-esconde-falha-de-gravacao  (135)
+[t1]       teste_design     «RB5: falha ao lembrar texto aparece nos Ajustes»
+[t3]   reprovado  movimento-apaga-texto  (134)
+[t3]       teste_design     «RB5: duas preferencias no disco maior/true ordem 1» (+5)
+[t1]   reprovado  texto-nome-longo-sem-quebra  (135)
+[t1]       teste_design     «RB5: nome de 24 letras cabe no balao sem encolher»
+[t2]   reprovado  texto-captura-fila-antiga  (135)
+[t2]       teste_design     «RB5: captura jogada encontra o barco dentro do rolo»
+[t2] 
+[t2] Base no fim:
+[t3]   reprovado  texto-cartao-guarda-faixa-vazia  (135)
+[t3]       teste_design     «RB5: ajustes novos no maior nao guardam faixa vazia»
+[t2]   verde     run_tests
+[t1]   reprovado  texto-celular-sem-medida  (135)
+[t1]       teste_design     «RB5: aparelho conserva medidas e centro Menu-celular» (+1)
+[t1] 
+[t1] Base no fim:
+[t3]   reprovado  texto-rouba-posicao-inicial  (135)
+[t3]       teste_design     «RB5: conversa nova mostra fim do historico»
+[t3] 
+[t3] Base no fim:
+[t2]   verde     teste_design
+[t2]   verde     teste_audio
+[t1]   verde     run_tests
+[t2]   verde     teste_fumaca
+[t2]   verde     teste_registro
+[t2] 
+[t2] trabalhador verde — 65 defeito(s) reinjetado(s), cada um reprovado pela guarda declarada.
+[t3]   verde     run_tests
+[t1]   verde     teste_design
+[t1]   verde     teste_audio
+[t1]   verde     teste_fumaca
+[t1]   verde     teste_registro
+[t1] 
+[t1] trabalhador verde — 65 defeito(s) reinjetado(s), cada um reprovado pela guarda declarada.
+[t3]   verde     teste_design
+[t3]   verde     teste_audio
+[t3]   verde     teste_fumaca
+[t3]   verde     teste_registro
+[t3] 
+[t3] trabalhador verde — 65 defeito(s) reinjetado(s), cada um reprovado pela guarda declarada.
+
+MUTANTES OK — 259 defeito(s) reinjetado(s) em 4 cópia(s), cada um reprovado pela guarda declarada.

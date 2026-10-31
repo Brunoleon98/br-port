@@ -1,0 +1,122 @@
+Fontconfig error: No writable cache directories
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+=== A1: todo som registrado existe e carrega ===
+  PASS  o registro não está vazio
+  PASS  click: res://audio/sfx/sfx_ui_click.wav existe
+  PASS  click: carrega como AudioStream
+  PASS  click: 32000 Hz, mono, 16 bits
+  PASS  click: dura 90 ms (teto 1000)
+  PASS  bom: res://audio/sfx/sfx_ui_success.wav existe
+  PASS  bom: carrega como AudioStream
+  PASS  bom: 32000 Hz, mono, 16 bits
+  PASS  bom: dura 400 ms (teto 1000)
+  PASS  aviso: res://audio/sfx/sfx_ui_warn.wav existe
+  PASS  aviso: carrega como AudioStream
+  PASS  aviso: 32000 Hz, mono, 16 bits
+  PASS  aviso: dura 310 ms (teto 1000)
+  PASS  ruim: res://audio/sfx/sfx_ui_error.wav existe
+  PASS  ruim: carrega como AudioStream
+  PASS  ruim: 32000 Hz, mono, 16 bits
+  PASS  ruim: dura 340 ms (teto 1000)
+  PASS  moeda: res://audio/sfx/sfx_moeda.wav existe
+  PASS  moeda: carrega como AudioStream
+  PASS  moeda: 32000 Hz, mono, 16 bits
+  PASS  moeda: dura 245 ms (teto 1000)
+  PASS  alerta: res://audio/sfx/sfx_alerta.wav existe
+  PASS  alerta: carrega como AudioStream
+  PASS  alerta: 32000 Hz, mono, 16 bits
+  PASS  alerta: dura 370 ms (teto 1000)
+  PASS  navio: res://audio/sfx/sfx_navio_chega.wav existe
+  PASS  navio: carrega como AudioStream
+  PASS  navio: 32000 Hz, mono, 16 bits
+  PASS  navio: dura 1100 ms (teto 1500)
+  PASS  obra: res://audio/sfx/sfx_construir.wav existe
+  PASS  obra: carrega como AudioStream
+  PASS  obra: 32000 Hz, mono, 16 bits
+  PASS  obra: dura 300 ms (teto 1000)
+  PASS  vitoria: res://audio/sfx/sfx_vitoria.wav existe
+  PASS  vitoria: carrega como AudioStream
+  PASS  vitoria: 32000 Hz, mono, 16 bits
+  PASS  vitoria: dura 685 ms (teto 1000)
+  PASS  derrota: res://audio/sfx/sfx_derrota.wav existe
+  PASS  derrota: carrega como AudioStream
+  PASS  derrota: 32000 Hz, mono, 16 bits
+  PASS  derrota: dura 895 ms (teto 1000)
+  PASS  mar: res://audio/sfx/sfx_amb_mar.wav existe
+  PASS  mar: carrega como AudioStream
+  PASS  mar: 32000 Hz, mono, 16 bits
+  PASS  mar: dura 3600 ms (teto 4000)
+  PASS  gaivota: res://audio/sfx/sfx_fauna_gaivota.wav existe
+  PASS  gaivota: carrega como AudioStream
+  PASS  gaivota: 32000 Hz, mono, 16 bits
+  PASS  gaivota: dura 520 ms (teto 1000)
+  PASS  areia: res://audio/sfx/sfx_fauna_areia.wav existe
+  PASS  areia: carrega como AudioStream
+  PASS  areia: 32000 Hz, mono, 16 bits
+  PASS  areia: dura 270 ms (teto 1000)
+  PASS  mergulho: res://audio/sfx/sfx_fauna_mergulho.wav existe
+  PASS  mergulho: carrega como AudioStream
+  PASS  mergulho: 32000 Hz, mono, 16 bits
+  PASS  mergulho: dura 580 ms (teto 1000)
+=== A2: os buses estão de pé e roteados ===
+  PASS  bus Master existe
+  PASS  bus Musica existe
+  PASS  bus SFX existe
+  PASS  SFX manda para o Master
+  PASS  as 3 vozes estão no bus SFX
+=== A3: prioridade resolve o empilhamento de um frame ===
+  PASS  de click+alerta+moeda no mesmo frame sobra o alerta
+  PASS  nada passa à frente do fim de jogo
+=== A4: a espera mínima segura a repetição ===
+  PASS  o primeiro pedido toca
+  PASS  o mesmo som dentro da espera não repete
+  PASS  passada a espera, o mesmo som volta a tocar
+  PASS  click tem espera mínima
+  PASS  bom tem espera mínima
+  PASS  aviso tem espera mínima
+  PASS  ruim tem espera mínima
+  PASS  moeda tem espera mínima
+  PASS  alerta tem espera mínima
+  PASS  navio tem espera mínima
+  PASS  obra tem espera mínima
+  PASS  vitoria tem espera mínima
+  PASS  derrota tem espera mínima
+  PASS  mar tem espera mínima
+  PASS  gaivota tem espera mínima
+  PASS  areia tem espera mínima
+  PASS  mergulho tem espera mínima
+=== A5: os sinais do jogo pedem o som certo ===
+  PASS  Audio escuta message
+  PASS  Audio escuta boats_spawned
+  PASS  Audio escuta cash_changed
+  PASS  Audio escuta estrutura_comprada
+  PASS  Audio escuta rival_offer_triggered
+  PASS  Audio escuta debt_due
+  PASS  Audio escuta game_over
+  PASS  message(good) pede bom
+  PASS  message(warn) pede aviso
+  PASS  message(bad) pede ruim
+  PASS  message() pede click
+  PASS  caixa subindo pede moeda
+  PASS  caixa caindo NÃO pede moeda
+=== A6: volume vai ao bus e volta ===
+  PASS  volume 0,5 volta como 0,5
+  PASS  e o 0,5 fica gravado no arquivo de volume
+  PASS  volume zero silencia o bus
+  PASS  e volume() devolve 0 quando mudo
+  PASS  e volta ao que estava
+=== A7: o mar e a gaivota tocam quando o relógio deles dispara ===
+  PASS  o relógio do mar está armado ao abrir
+  PASS  o relógio do mar pede o som do mar
+  PASS  e o relógio do mar volta a armar-se entre 6.5 e 9.5 s
+  PASS  o relógio da gaivota está armado ao abrir
+  PASS  o relógio da gaivota pede o som da gaivota
+  PASS  e o relógio da gaivota volta a armar-se entre 42.0 e 72.0 s
+
+=== AUDIO OK — o encanamento confere ===
+    (nada aqui diz que os sons são BONS: ninguém os ouviu)
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2663)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

@@ -1,0 +1,12 @@
+{
+  "reputacao-hud-nao-atualiza": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "2 reprovada(s)",
+      "reprovadas": [
+        "T33: HUD acompanha entrada no patamar baixo",
+        "T33: reputação baixa, aviso e indicador"
+      ]
+    }
+  }
+}

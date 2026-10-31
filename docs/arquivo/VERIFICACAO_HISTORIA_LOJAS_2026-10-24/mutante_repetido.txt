@@ -1,0 +1,14 @@
+Em paralelo: 1 mutante(s) em 1 cópia(s) de 4385 arquivo(s).
+[t1] Base:
+[t1]   verde     run_tests (13 s)
+[t1] 
+[t1] 1 mutante(s):
+[t1]   reprovado  cancelamento-sem-conferir-o-orcamento  (118)
+[t1]       run_tests        «a confirmação aceitou um orçamento que não era o lido» (+7)
+[t1] 
+[t1] Base no fim:
+[t1]   verde     run_tests
+[t1] 
+[t1] trabalhador verde — 1 defeito(s) reinjetado(s), cada um reprovado pela guarda declarada.
+
+MUTANTES OK — 1 defeito(s) reinjetado(s) em 1 cópia(s), cada um reprovado pela guarda declarada.

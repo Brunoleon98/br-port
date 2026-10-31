@@ -155,7 +155,9 @@ const CIDA_LINHAS := {
 	# Dizia "Dois contratos recusados essa semana", e o gatilho é a queda de
 	# FAIXA da reputação — nunca dois contratos. Número em fala tem de sair de
 	# onde o evento sai, e este não saía de lado nenhum.
-	"reputacao_caiu": "Andaram recusando contrato, chefia. Arlindo vai saber antes de nós.",
+	# Na `147`, Bruno escolheu comentar só ao entrar no patamar BAIXO; a causa
+	# não é atribuída a uma decisão específica do jogador.
+	"reputacao_caiu": "A fama do cais tá por baixo, chefia. Vamos caprichar nos próximos serviços.",
 	# ⚠️ DUAS VARIANTES PORQUE A PARCELA PODE JÁ TER SIDO PAGA. O
 	# `pagar_parcela_adiantado()` existe desde o playtest, então um jogador que
 	# quite no turno 5 ouviria "a parcela não vai esperar" nos 27 turnos
@@ -170,7 +172,7 @@ const CIDA_LINHAS := {
 	"dinheiro_curto_livre": "O banco saiu da conta, chefia. Os salários continuam nela.",
 	# "Perdeu pro Arlindo" narrava o que o jogador acabou de ver acontecer.
 	"perdeu_para_arlindo": "O Arlindo vai contar essa na padaria amanhã. Deixa contar, chefia.",
-	"bom_contrato": "Esse contrato fecha a semana. Anota aí.",
+	"bom_contrato": "Esse valeu a conversa. Anota aí.",
 	# ⚠️ QUATRO VARIANTES, E NENHUMA AFIRMA O QUE A CONDIÇÃO DELA NÃO GARANTE.
 	# A linha única dizia "Barcos na fila, caixa no limite" em TODA semana ≥ 2,
 	# sem olhar nem uma coisa nem outra: medido em 18/09, na semente padrão ela
@@ -736,3 +738,89 @@ static func cida(id: String) -> String:
 # Uma fala do Toninho por id, com a mesma regra: id desconhecido é silêncio.
 static func toninho(id: String) -> String:
 	return _gs().texto(String(TONINHO_FALAS.get(id, "")))
+
+
+# A história entre a primeira página e o fim da fase (`146`). Cada linha é
+# uma vez de quem fala; o painel só apresenta e não inventa acontecimentos.
+# As condições ficam no VidaDoPorto, incluindo o armazém PRONTO do envelope.
+const HISTORIA_DO_PORTO := {
+	"caneca": [
+		["toninho", "Toninho", "Separei uma caneca a mais de novo, chefia."],
+		["toninho", "Toninho", "A lascada na borda era do Seu Maneco. Ninguém mais pegava."],
+		["cida", "Dona Cida", "Eu lavava e punha no mesmo lugar. Todo dia."],
+		["toninho", "Toninho", "Pode deixar lá. Não tá ocupando tanto espaço assim."],
+	],
+	"chave": [
+		["toninho", "Toninho", "Olha, chefia... essa chave era do Seu Maneco. Do armário lá no galpão."],
+		["toninho", "Toninho", "Ficava comigo. Ele sempre dizia que eu ia perder."],
+		["cida", "Dona Cida", "E nunca precisou pedir duas vezes."],
+		["toninho", "Toninho", "Agora fica com você. Se precisar, me chama."],
+	],
+	"recibo": [
+		["cida", "Dona Cida", "A moça da padaria perguntou se era pra continuar mandando pão pra cá."],
+		["cida", "Dona Cida", "Ela não perguntou no começo. Ficou esperando ver se a gente ia durar."],
+		["toninho", "Toninho", "E você falou o quê?"],
+		["cida", "Dona Cida", "Que pode mandar. Fiado, não. Seu Maneco já me deu trabalho suficiente com isso."],
+	],
+	"envelope": [
+		["toninho", "Toninho", "A chave ainda serve, chefia. Achei esse envelope atrás dos livros do galpão."],
+		["cida", "Dona Cida", "Grupo Atlântico. Uma oferta de compra. Pelo cais inteiro."],
+		["toninho", "Toninho", "O Seu Maneco guardou a oferta e continuou vindo trabalhar."],
+		["cida", "Dona Cida", "A dívida antiga é uma história. O empréstimo que fizemos pra reconstruir é outra. Não mistura os papéis."],
+		["toninho", "Toninho", "No verso tem letra dele: enquanto tiver quem volte, eu fico."],
+	],
+	"mesa": [
+		["cida", "Dona Cida", "O Mané perguntou se ainda tem lugar pra ele quando passar no cais."],
+		["toninho", "Toninho", "Na mesa? Achei que ele só vinha dar palpite."],
+		["cida", "Dona Cida", "Disse que tá cansado de conversar com a gente só na hora de entregar."],
+		["toninho", "Toninho", "Então manda trazer a cadeira da esquina. A que não balança."],
+	],
+	"arlindo": [
+		["arlindo", "Capitão Arlindo", "Meu caro, tanta madeira velha pros dois cuidarem. Um dia a gente devia conversar sobre juntar esforços."],
+		["arlindo", "Capitão Arlindo", "Você continua aqui, claro. Conhece o pessoal. O nome na placa é que não precisa dar tanto trabalho."],
+		["toninho", "Toninho", "O Seu Maneco pintava aquela placa à mão. Dava trabalho mesmo."],
+		["arlindo", "Capitão Arlindo", "Pense com carinho. Saudade é bonita, mas não paga tinta."],
+	],
+	"cafe": [
+		["toninho", "Toninho", "Esse cheiro chega na ponta do píer, chefia."],
+		["toninho", "Toninho", "O Seu Maneco fazia café fraco. Dizia que era pra render. Todo mundo sabia que era pra conversa durar."],
+		["cida", "Dona Cida", "O café dele era ruim. A conversa, não."],
+		["toninho", "Toninho", "Então deixa a garrafa aqui. Ainda tem assunto."],
+	],
+	"almoco": [
+		["cida", "Dona Cida", "O Mané mandou a comida. Esses papéis podem esperar um pouco."],
+		["toninho", "Toninho", "Senta aqui, chefia. Deixei esse canto pra você."],
+		["cida", "Dona Cida", "E esse prato aí é meu, Toninho."],
+		["toninho", "Toninho", "Eu tava guardando, Cida. Vai que alguém pega."],
+	],
+}
+
+const VISITAS_AS_LOJAS := {
+	"mercado": [
+		["biu", "Seu Biu", "Seu avô escolhia o café pelo cheiro. O preço ele perguntava depois."],
+		["biu", "Seu Biu", "Eu fazia o contrário. A gente acabava na mesma mesa."],
+	],
+	"delivery": [
+		["mane", "Mané", "Entrega no cais? Sei o caminho de olhos fechados. Seu Maneco me ensinou a não ir de olhos fechados."],
+		["mane", "Mané", "O pedido vem no seu nome agora. A panela continua a mesma."],
+	],
+}
+
+
+static func falas_da_historia(id: String) -> Array:
+	var falas: Array = HISTORIA_DO_PORTO.get(id, [])
+	var resolvidas := []
+	for linha in falas:
+		resolvidas.append([linha[0], linha[1], _gs().texto(String(linha[2]))])
+	return resolvidas
+
+
+static func retrato_da_historia(quem: String) -> Texture2D:
+	match quem:
+		"toninho":
+			return Retratos.de("toninho", "calmo")
+		"cida":
+			return Retratos.de("cida", "seria")
+		"arlindo":
+			return Retratos.de("arlindo", "sorriso")
+	return null

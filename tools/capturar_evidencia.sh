@@ -523,6 +523,17 @@ tirar ajuda_pausa_glossario 2 9 --script res://tools/capturar_tela.gd -- 8 "$SAI
 # foto verdadeira de um estado que só existe no primeiro segundo do jogo, que
 # é a armadilha que o `capturar_cena` já levou uma vez com o `setup()` saltado.
 tirar mensagens 1 11 --script res://tools/capturar_tela.gd -- 10 "$SAIDA/mensagens.png" completo limpo mensagens
+
+# A cidade abre pelo app Lojas; as mesmas cenas mostram catálogo, compra e
+# leitura. As conversas têm uma fala por vez e ficam disponíveis no save 19.
+tirar lojas - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/lojas.png"
+tirar mercado - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/mercado.png" "--tocar=Visitar o mercado"
+tirar delivery - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/delivery.png" "--tocar=Ver o delivery"
+tirar loja_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/loja_confirmar.png" "--tocar=Visitar o mercado" "--tocar=Comprar Kit de café"
+tirar historia_caneca - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/historia_caneca.png" turn=8 caneca
+tirar historia_arlindo - - --script res://tools/capturar_cena.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/historia_arlindo.png" turn=71 arlindo
+tirar mercado_maior - - --script res://tools/capturar_lojas_texto_maior.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/mercado_maior.png" "--tocar=Visitar o mercado"
+tirar historia_caneca_maior - - --script res://tools/capturar_lojas_texto_maior.gd -- res://scenes/panels/PainelLojas.tscn "$SAIDA/historia_caneca_maior.png" turn=8 caneca
 # AS TRÊS VOZES, cada uma com o SEU balão (quarta passagem, `067`). A partida
 # do tiro acima chega ao dia 11 só com a Dona Cida a falar — o Sr. Ribeiro só
 # fala no vencimento da parcela, e a fala do Arlindo sobe para fora da janela

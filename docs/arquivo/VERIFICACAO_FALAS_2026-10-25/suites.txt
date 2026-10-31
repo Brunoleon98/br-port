@@ -1,0 +1,8 @@
+Godot 4.6.3; --headless --fixed-fps 60; user:// separado por suíte.
+run_tests: TODOS OS TESTES PASSARAM (30 s)
+teste_design: DESIGN OK (136 s)
+teste_audio: AUDIO OK (1 s)
+teste_fumaca: FUMACA OK (13 s)
+teste_registro: REGISTRO OK (1 s)
+asset_validator: ASSET OK (35 s)
+SUITES OK — seis suítes, em 136 s.

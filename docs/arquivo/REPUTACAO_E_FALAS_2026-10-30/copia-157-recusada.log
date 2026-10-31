@@ -1,0 +1,2 @@
+Em paralelo: 263 mutante(s) em 4 cópia(s) de 4946 arquivo(s).
+::error::a cópia t4 não é igual à árvore: [('brport_vs/.godot/editor/filesystem_cache10', '0ab89f3715df339c384f5aa3b6967c6f139b1d5eff500e01870d46169cc53689'), ('brport_vs/.godot/editor/filesystem_cache10', '6e004d1439d781154ee9d098ac0b6a7a10686cea986816632d338f7e87a06b49')]
