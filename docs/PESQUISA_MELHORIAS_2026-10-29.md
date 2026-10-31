@@ -345,6 +345,10 @@ no Android pede a permissão `VIBRATE` no preset de exportação. Pistas:
 preferências de apresentação e fora do save da partida. Nenhuma suíte a
 sente: o gate é o telefone. **Ganho:** atracar, a obra pronta e a parcela
 paga sentem-se. Casa com o A1.
+**Continuada na `149`**, a pedido do Bruno: as boas práticas do Android e da
+Apple (pulsos curtos, força na amplitude e não na duração, força conforme a
+importância, o sucesso em dois toques), com as fontes e a tabela prática →
+antes → depois na secção «As boas práticas» dela.
 
 ### 4.2 A clareza do que fazer
 
