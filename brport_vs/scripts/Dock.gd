@@ -899,6 +899,28 @@ func esta_construida() -> bool:
 	return dock_index >= 0 and dock_index < GameState.docks.size()
 
 
+## As obras que mudam TODAS as vagas construídas: a treliça e o pórtico trocam
+## a lança e a base desenhada no píer, o cais troca a laje.
+const OBRAS_DE_TODA_DOCA := ["trelica", "guindaste", "cais"]
+
+
+## O que a obra `id` levantou nesta vaga, para o `Main` o assentar na virada
+## que a conclui (`148`): `[[nó, chão no pai], …]`, ou nada. São o píer e a
+## lança, com o MESMO chão — o centro do quadro do píer —, porque a lança pousa
+## na base que o PNG do píer desenha, e cada um no seu chão descolava-a da base
+## a meio. O píer N é da vaga dele; as `OBRAS_DE_TODA_DOCA`, de todas.
+##
+## ⚠️ A EMPILHADEIRA DO N3 FICA DE FORA: é veículo, e o ciclo do n3 anda-lhe a
+## `position` — a compensação do assentar e o ciclo escreveriam no mesmo campo.
+func pecas_da_obra(id: String) -> Array:
+	if not esta_construida():
+		return []
+	if id != GameState.id_do_pier(dock_index) and id not in OBRAS_DE_TODA_DOCA:
+		return []
+	var chao := _pier.position + _pier.size * 0.5
+	return [[_pier, chao], [_lanca, chao]]
+
+
 func refresh() -> void:
 	if dock_index < 0:
 		return

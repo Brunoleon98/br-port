@@ -2,7 +2,8 @@
 
 31/10/2026, decisão `146`, branch `codex/revisor-de-mensagens`, sobre o
 envelope local `3cdba77`. Bruno aceitou os retornos e as quatro falas de
-reencontro («Pode ser»). Entrega local, ainda não enviada ou publicada.
+reencontro («Pode ser»). Conjunto preparado para o PR #159 existente;
+incorporação e telefone pendentes.
 
 ## O que aparece no jogo
 
@@ -48,6 +49,16 @@ restaurando suas cópias. O original permaneceu intacto, conferido pelos hashes.
 Código de saída 130; não se declara catálogo completo aprovado dessa corrida.
 As nove regressões novas também foram detectadas com suas guardas declaradas.
 
-O conjunto será integrado à main #160 e reunido no PR #159 existente; a
-verificação integral da junção final fica no CI, sem repetir a base antiga.
-Nenhum PR novo foi aberto para este complemento.
+Incorporada a main #160 (`28c2f2d`), com conflito apenas no cabeçalho do
+estado. Catálogo integrado: **303 IDs únicos**. As seis suítes passaram
+nessa junção em **52 s**, com código/marcador/ausência de SCRIPT ERROR
+conferidos pelo executor; `suites-integracao.log`. A captura em Maior do
+remate de Biu e a do retorno ao Delivery foram repetidas após a integração:
+ambas idênticas aos PNGs anteriores. As fontes da integração ficam separadas
+em `fontes.json`, preservando os hashes da primeira verificação.
+
+O conjunto usa o PR #159 existente. A comprovação do catálogo **integral
+de 303** da junção final é o CI do head desse PR; conferir os jobs de fatias
+e seu agregador nos [checks do #159](https://github.com/Brunoleon98/br-port/pull/159/checks)
+antes de retirar o rascunho. Não se declara o catálogo inteiro aprovado pela
+execução local interrompida. Nenhum PR novo foi aberto para este complemento.

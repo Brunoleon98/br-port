@@ -117,4 +117,14 @@ não só comprar. As primeiras visitas e as cenas já aceitas permanecem.
 Nenhum campo persistente, preço ou condição de capítulo mudou. Implementação
 em `PainelLojas.gd` e `Narrativa.gd`, sem editar o Main ou a frente gráfica.
 T34 tem percursos próprios por loja, arquivo e boletim, com bandeiras de fim;
-as regressões entram em seção própria do catálogo. Verificação em andamento.
+as regressões entram em seção própria do catálogo. Nove defeitos foram
+explorados e detectados pelas guardas declaradas. Provas em
+`docs/arquivo/RETORNO_LOJAS_2026-10-31/README.md`.
+
+A main recebeu o gráfico #160 durante o catálogo local: a corrida foi
+interrompida com 48/272 detectados, preservando as provas, e incorporou-se
+`28c2f2d`. Seis suítes aprovadas na junção em 52 s. O catálogo integral de
+303 da base integrada é conferido no CI. Envelope e retorno formam agora
+uma entrega jogável no PR #159 existente, em vez de outro PR pequeno.
+O commit `3cdba77` do envelope segue preservado; a restrição a PRs menores
+não impediu agrupar e publicar o recorte aprovado. Sem merge pelo assistente.

@@ -138,6 +138,7 @@ func refresh() -> void:
 		_espera_icone.visible = true
 		_espera.text = "Arlindo quer este cliente"
 		_espera.theme_type_variation = &"TextoDocaProgressoRival"
+		_vestir_premido()
 		return
 
 	var paciencia := int(b["paciencia"])
@@ -155,6 +156,28 @@ func refresh() -> void:
 	var atracavel: bool = GameState.atracagem_pendente() != Vector2i.ZERO
 	theme_type_variation = &"CartaoDocaEspera" if atracavel else &"CartaoDoca"
 	_pulsar(atracavel)
+	_vestir_premido()
+
+
+# O CARTÃO AFUNDA ENQUANTO O DEDO ESTÁ NELE (`148`), como o «Avançar dia»: a
+# mesma variação com o fundo um passo mais escuro (o do botão), 4% mais
+# estreita e com o conteúdo 1 px abaixo — a altura fica, que encolhida a
+# última linha pisava a borda —, e volta ao soltar. Era o único dos três
+# toques do A1 que não dizia nada ao premir: atraca ao soltar, e até lá o
+# cartão ficava igual. Os nomes vão escritos por inteiro, para o
+# `conferir_escopo_ui.py` os ver (`043`).
+var _premido := false
+
+
+func _vestir_premido() -> void:
+	if not _premido:
+		return
+	if theme_type_variation == &"CartaoDocaEspera":
+		theme_type_variation = &"CartaoDocaEsperaPremido"
+	elif theme_type_variation == &"CartaoDoca":
+		theme_type_variation = &"CartaoDocaPremido"
+	elif theme_type_variation == &"CartaoDocaRival":
+		theme_type_variation = &"CartaoDocaRivalPremido"
 
 
 # OS TEXTOS DO CARTÃO SÃO FUNÇÕES pela razão do `DocaCartao`: o D18 mede o
@@ -274,10 +297,17 @@ static func _contorno(r: Rect2, raio: float) -> PackedVector2Array:
 func _gui_input(event: InputEvent) -> void:
 	# No RELEASE, como o cartão do trabalhador fazia: um dedo que arrasta pela
 	# barra não atraca nada por ter passado por cima.
-	if not (event is InputEventMouseButton and not event.pressed
-			and event.button_index == MOUSE_BUTTON_LEFT):
+	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT):
 		return
 	if barco() == null:
 		return
+	# Ao premir só afunda, e o toque não é aceite: com o texto Maior a fila
+	# vive num rolo, e é o arrastar a partir do cartão que o faz rolar.
+	if event.pressed:
+		_premido = true
+		_vestir_premido()
+		return
+	_premido = false
+	refresh()
 	GameState.atracar(indice)
 	accept_event()

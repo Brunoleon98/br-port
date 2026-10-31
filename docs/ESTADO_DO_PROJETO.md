@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 31/10/2026 — retorno e reencontros nas lojas locais (`146`)
+> **Atualização:** 31/10/2026 — peça que assenta (`148`); retornos no #159 (`146`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -26,6 +26,8 @@ que não será usada nesta fase (`090`).
 
 **O rodapé é escuro, e só o "Avançar dia" é âmbar cheio** (`081`): o
 desligado, a faixa, a parcela e os cartões recuam abaixo dele (**D43**).
+Premido, ele e o cartão ao largo afundam; a obra que acaba esvai-se e a peça
+nova assenta (`148`, **D53**).
 **As conversas falam como no celular, e o fim de fase é uma página do diário**
 (`082`, **D44**, **D22**). **Atracar é a escolha do dia** (`083`): até três
 barcos esperam ao largo, dois dias cada; tocar num atraca-o com o trabalhador
@@ -122,17 +124,15 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 **A fila em vigor é a §7 do plano.** Aqui fica só a posição.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
-**RB6 (`129`, #143):** reduzir movimento nos Ajustes; telefone pendente.
-**RB5 (`134`, `135`, #148):** Padrão/Maior nos Ajustes; telefone pendente.
-**A fila da `126`** acabou (`127`–`142`). **Da pesquisa de melhorias**
-(`143`), o tema animação e toque fechou o A1′ (`144`); seguem A1 → T1 →
+**RB6 (`129`) e RB5 (`134`, `135`)** nos Ajustes; telefone pendente.
+**Animação e toque** (`143`): A1′ (`144`) e A1 (`148`) feitos; seguem T1 →
 A3, uma conversa cada, e a esteira, a fumaça e o fundeadouro (§7).
 **A4, caderno, leitura e telefone
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
 **História/lojas (`146`, #158):** chave/almoço/Mané na main; envelope, retornos
-e reencontros locais aceitos. Telefone/publicação pendentes.
+e reencontros aceitos no #159. Telefone/incorporação pendentes.
 **Revisor de mensagens (`145`):** skill `revisar-mensagens`, com parecer contextual.
 **Reputação (`147`):** aviso da Cida e HUD vermelho quando baixa.
 
