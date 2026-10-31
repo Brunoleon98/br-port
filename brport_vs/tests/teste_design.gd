@@ -169,20 +169,25 @@ func _rodar() -> void:
 	_main = load(CENA).instantiate()
 	root.add_child(_main)
 
+	# Os blocos mais antigos devolvem a bandeira em vez de a escrever num campo:
+	# `true` na última linha (e nas saídas de propósito, que já reprovaram por
+	# nome ou não têm o que conferir). Até 31/10 não tinham bandeira nenhuma, e
+	# um erro de execução num deles abortava-o calado, com `DESIGN OK` no fim
+	# (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
 	print("=== D1: props ancorados onde o mapa os desenha ===")
-	_d1_encaixe_das_docas()
+	_confere("o bloco D1 correu até ao fim", _d1_encaixe_das_docas() == true)
 	print("=== D2: cenário em terra, e não em cima da rua ===")
-	_d2_cenario_em_terra()
+	_confere("o bloco D2 correu até ao fim", _d2_cenario_em_terra() == true)
 	print("=== D3: ordem dos nós = profundidade isométrica ===")
-	_d3_profundidade()
+	_confere("o bloco D3 correu até ao fim", _d3_profundidade() == true)
 	print("=== D4: nada estoura a viewport ===")
-	_d4_dentro_da_tela()
+	_confere("o bloco D4 correu até ao fim", _d4_dentro_da_tela() == true)
 	print("=== D5: o rodapé não se sobrepõe ===")
-	_d5_sem_sobreposicao()
+	_confere("o bloco D5 correu até ao fim", _d5_sem_sobreposicao() == true)
 	print("=== D6: alvo de toque cabe no dedo ===")
-	_d6_alvos_de_toque()
+	_confere("o bloco D6 correu até ao fim", _d6_alvos_de_toque() == true)
 	print("=== D8: o pipeline BRP concorda com a projeção do mapa ===")
-	_d8_contrato_brp()
+	_confere("o bloco D8 correu até ao fim", _d8_contrato_brp() == true)
 	print("=== D9: a escolha à espera avisa onde se resolve ===")
 	_d9_aviso_de_trabalho_parado()
 	_confere("o bloco D9 correu até ao fim", _d9_completo)
@@ -1063,11 +1068,20 @@ func _d14_vila() -> void:
 			"%.0fpx de separação para um telhado de %.0fpx — as duas fileiras "
 			% [separacao, telhado] + "leem como um borrão de telha")
 
-	_d14_completo = true
+	_d14_completo = _d14_vila_vista == ["em ruína", "porto completo"]
 
 
 # A pergunta (2) do D14 sobre o cenário COMO ESTÁ: devolve quantos prédios
 # passaram o corte de silhueta, para quem chama provar que montou o estado.
+#
+# ⚠️ E O RETORNO NÃO SERVE DE BANDEIRA: um erro de execução aqui dentro
+# devolve o 0 do `int`, e um 0 na ruína deixava o «completo > em_ruina» do
+# chamador passar com as asserções deste estado por correr. A bandeira é o
+# estado escrito na última linha, e o D14 exige os dois
+# (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
+var _d14_vila_vista: Array = []
+
+
 func _d14_predios_sobre_a_vila(lotes: Array, estado: String) -> int:
 	var cenario := _main.get_node("MapaWrap/Cenario")
 	var alt := float(_ancoras["projecao"]["alt_cais"])
@@ -1108,6 +1122,7 @@ func _d14_predios_sobre_a_vila(lotes: Array, estado: String) -> int:
 		conferidos > 0,
 		"nenhum prop passou de %.0fpx — o filtro comeu tudo"
 		% (SILHUETA_QUE_EXIGE_PEGADA_MUNDO * meia_larg))
+	_d14_vila_vista.append(estado)
 	return conferidos
 
 
@@ -1155,18 +1170,18 @@ func _no_mapa(no: Control) -> Vector2:
 const MANIFEST_BRP := "res://data/assets/BRP_EXPORT_MANIFEST.json"
 
 
-func _d8_contrato_brp() -> void:
+func _d8_contrato_brp() -> bool:
 	if not FileAccess.file_exists(MANIFEST_BRP):
 		# Sem pipeline BRP no repositório não há o que conferir, e isso não é
 		# falha: o jogo funciona sem ele.
 		print("  (sem manifest BRP — nada a conferir)")
-		return
+		return true
 	var f := FileAccess.open(MANIFEST_BRP, FileAccess.READ)
 	var lido: Variant = JSON.parse_string(f.get_as_text())
 	f.close()
 	if typeof(lido) != TYPE_DICTIONARY or not lido.has("contrato"):
 		_confere("manifest BRP tem bloco `contrato`", false, "JSON inválido")
-		return
+		return true
 
 	var c: Dictionary = lido["contrato"]
 	var pr: Dictionary = _ancoras["projecao"]
@@ -1181,16 +1196,17 @@ func _d8_contrato_brp() -> void:
 			and abs(float(c["rot_z"]) - 45.0) < 0.001,
 		"BRP usa %s/%s — o 54,736 do isométrico verdadeiro daria 1,732:1"
 			% [c["rot_x"], c["rot_z"]])
+	return true
 
 
 # ── D1 ── cada píer e cada barco em cima do que o gerador desenhou
-func _d1_encaixe_das_docas() -> void:
+func _d1_encaixe_das_docas() -> bool:
 	var vagas := _main.get_node("MapaWrap/Docas").get_children()
 	var esperado: Array = _ancoras["pieres"]
 	_confere("o mapa desenha %d berços e a cena tem %d vagas"
 		% [esperado.size(), vagas.size()], vagas.size() == esperado.size())
 	if vagas.size() != esperado.size():
-		return
+		return true
 
 	for i in range(vagas.size()):
 		var vaga: Control = vagas[i]
@@ -1215,6 +1231,7 @@ func _d1_encaixe_das_docas() -> void:
 			var d := (_no_mapa(trab) + Vector2(MEIO_QUADRO, MEIO_QUADRO)).distance_to(centro)
 			_confere("Doca %d · trabalhador no convés" % [i + 1], d <= 80.0,
 				"%.0f px do centro do píer — o tabuado tem ~70 de meia-diagonal" % d)
+	return true
 
 
 # ── D2 ── nada do cenário fixo pode nascer no asfalto da rua
@@ -1280,7 +1297,7 @@ const VIVEM_NA_AGUA := ["BarcoEspera", "Ancoragem", "Bote"]
 const SILHUETA_QUE_EXIGE_PEGADA_MUNDO := 4.33
 
 
-func _d2_cenario_em_terra() -> void:
+func _d2_cenario_em_terra() -> bool:
 	var cenario := _main.get_node("MapaWrap/Cenario")
 	var pegadas: Dictionary = _ancoras.get("pegadas", {})
 	var alt := float(_ancoras["projecao"]["alt_cais"])
@@ -1361,6 +1378,7 @@ func _d2_cenario_em_terra() -> void:
 		if not _comeca_com_algum(nome, PODEM_PISAR_A_RUA + VIVEM_NA_CALCADA):
 			_confere("%s fora do asfalto" % nome, not pisa_rua, pior)
 		_confere("%s em terra" % nome, not na_agua, pior)
+	return true
 
 
 func _comeca_com_algum(nome: String, lista: Array) -> bool:
@@ -1378,7 +1396,7 @@ func _id_do_prop(tex: Texture2D) -> String:
 
 
 # ── D3 ── num plano isométrico, ordem de irmão É profundidade
-func _d3_profundidade() -> void:
+func _d3_profundidade() -> bool:
 	var alt := float(_ancoras["projecao"]["alt_cais"])
 	for caminho in ["MapaWrap/Cenario", "MapaWrap/Docas"]:
 		var pai := _main.get_node(caminho)
@@ -1402,10 +1420,11 @@ func _d3_profundidade() -> void:
 			if profundidade > anterior:
 				anterior = profundidade
 				nome_anterior = String(no.name)
+	return true
 
 
 # ── D4 ── tudo dentro da viewport, com margem
-func _d4_dentro_da_tela() -> void:
+func _d4_dentro_da_tela() -> bool:
 	var tela := Vector2(
 		ProjectSettings.get_setting("display/window/size/viewport_width"),
 		ProjectSettings.get_setting("display/window/size/viewport_height"))
@@ -1418,10 +1437,11 @@ func _d4_dentro_da_tela() -> void:
 			r.position.x >= -0.5 and r.position.y >= -0.5
 			and r.end.x <= tela.x + 0.5 and r.end.y <= tela.y + 0.5,
 			"ocupa %s numa tela de %s" % [r, tela])
+	return true
 
 
 # ── D5 ── a pilha do rodapé não pode se atropelar
-func _d5_sem_sobreposicao() -> void:
+func _d5_sem_sobreposicao() -> bool:
 	# ⚠️ "Upgrade" ERA UM FILHO DIRETO E PASSOU A VIVER EM "LinhaConstruir".
 	# A pilha percorre-se por NOME, então um nó que se mova de sítio some
 	# desta conta sem erro nenhum: quem o apanhou foi a asserção "%s existe",
@@ -1452,10 +1472,11 @@ func _d5_sem_sobreposicao() -> void:
 	_confere("os cartões preenchem a barra de docas",
 		abs(soma - barra.size.x) <= 1.0,
 		"somam %.0f numa barra de %.0f" % [soma, barra.size.x])
+	return true
 
 
 # ── D6 ── nada clicável menor que o dedo
-func _d6_alvos_de_toque() -> void:
+func _d6_alvos_de_toque() -> bool:
 	var alvos: Array[Control] = []
 	alvos.append(_main.get_node("AcoesTurno/Avancar"))
 	alvos.append(_main.get_node("LinhaConstruir/Upgrade"))
@@ -1471,6 +1492,7 @@ func _d6_alvos_de_toque() -> void:
 		_confere("%s cabe no dedo (%.0fx%.0f)" % [c.name, c.size.x, c.size.y],
 			c.size.y >= TOQUE_MIN and c.size.x >= TOQUE_MIN,
 			"mínimo é %.0f em cada lado" % TOQUE_MIN)
+	return true
 
 
 # ── D9 ── o aviso de escolha à espera tem de aparecer ONDE ela se resolve
@@ -1639,24 +1661,33 @@ func _d11_toque_nos_outros_chips() -> void:
 	root.add_child(tela)
 	var overlay: Node = tela.get_node("Overlay")
 
-	_confere_chip_abre(tela, overlay, "HudBar/DiaPilula", "PainelCalendario.gd",
-		["Calendário", "SEMANA 1"])
-	_confere_chip_abre(tela, overlay, "HudBar/RepPilula", "PainelReputacao.gd",
-		["Reputação", GS.reputation_label()])
-	_confere_chip_abre(tela, overlay, "HudBar/DocasPilula", "PainelDocas.gd",
-		["Docas", "DE %d BERÇOS" % int(GS.bercos_no_mapa())])
+	# Cada chip é um sub-bloco com a SUA bandeira, e esta exige as três: um
+	# erro de execução lá dentro aborta só ele (ver `_confere_chip_abre`).
+	var abriram: Array = [
+		_confere_chip_abre(tela, overlay, "HudBar/DiaPilula", "PainelCalendario.gd",
+			["Calendário", "SEMANA 1"]) == true,
+		_confere_chip_abre(tela, overlay, "HudBar/RepPilula", "PainelReputacao.gd",
+			["Reputação", GS.reputation_label()]) == true,
+		_confere_chip_abre(tela, overlay, "HudBar/DocasPilula", "PainelDocas.gd",
+			["Docas", "DE %d BERÇOS" % int(GS.bercos_no_mapa())]) == true]
 
 	root.remove_child(tela)
 	tela.free()
-	_d11_completo = true
+	_d11_completo = not abriram.has(false)
 
 
 # Toca (release) no caminho `no_pilula` dentro de `tela`, confere que o
 # painel que abriu no `overlay` é o `script_esperado` e contém CADA um dos
 # `deve_conter`, e fecha o painel antes de devolver — para o próximo chip
 # testado não herdar o painel do anterior no topo da pilha.
+#
+# ⚠️ DEVOLVE `true` NA ÚLTIMA LINHA, e quem chama exige-o antes da bandeira
+# dele. Um erro de execução aqui dentro — um `no_pilula` que já não existe,
+# um toque que não abriu nada — aborta só esta função, que devolve o `false`
+# do tipo, e o bloco seguia verde com as asserções do chip por correr
+# (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
 func _confere_chip_abre(tela: Control, overlay: Node, no_pilula: String,
-		script_esperado: String, deve_conter: Array) -> void:
+		script_esperado: String, deve_conter: Array) -> bool:
 	var pilula: Control = tela.get_node(no_pilula)
 	var antes := overlay.get_child_count()
 
@@ -1679,6 +1710,7 @@ func _confere_chip_abre(tela: Control, overlay: Node, no_pilula: String,
 
 	overlay.remove_child(painel)
 	painel.free()
+	return true
 
 
 # ── D12 ── o cartão da parcela: o convite e a porta
@@ -1737,8 +1769,8 @@ func _d12_toque_na_parcela() -> void:
 		rotulo.text.contains(GS.moeda(hoje)),
 		"diz \"%s\", o valor de hoje é %s" % [rotulo.text, GS.moeda(hoje)])
 
-	_confere_chip_abre(tela, overlay, "MetaCartao", "PainelParcela.gd",
-		["Parcela do Sr. Ribeiro", "Quitar hoje"])
+	var abriu: bool = _confere_chip_abre(tela, overlay, "MetaCartao", "PainelParcela.gd",
+		["Parcela do Sr. Ribeiro", "Quitar hoje"]) == true
 
 	# Sem caixa, o convite SOME — senão ele prometeria uma ação que a porta
 	# do outro lado recusa.
@@ -1762,7 +1794,7 @@ func _d12_toque_na_parcela() -> void:
 
 	root.remove_child(tela)
 	tela.free()
-	_d12_completo = true
+	_d12_completo = abriu
 
 
 # ── D13 ── a travessia do caminhão: do lado de fora ao lado de fora
@@ -2204,9 +2236,13 @@ func _d13_travessia_do_caminhao() -> void:
 				% [float(lote["mx"][1]), float(avental[0])]
 	_confere("e nenhum deles transborda para o avental", no_avental == "", no_avental)
 
-	_d13_retorno(tela, cenario, consts, rota, regioes, desenho, visivel, pr)
-	_d13_saida_de_re(tela, cenario, consts)
-	_d13_completo = true
+	# Os dois sub-blocos devolvem `true` na última linha, e esta bandeira exige
+	# os dois: um erro de execução lá dentro aborta só ele, e o D13 seguia verde
+	# (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
+	var retornou: bool = _d13_retorno(tela, cenario, consts, rota, regioes, desenho,
+		visivel, pr) == true
+	var deu_re: bool = _d13_saida_de_re(tela, cenario, consts) == true
+	_d13_completo = retornou and deu_re
 
 
 # ── D13 §7j ── a carroçaria cabe no asfalto da curva aberta
@@ -2233,7 +2269,7 @@ func _d13_travessia_do_caminhao() -> void:
 # pergunta, e é do A5.
 const D13_AMOSTRAS_DIAGONAL := 8
 
-func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array) -> void:
+func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array) -> bool:
 	var trafego = tela.trafego
 	# As DUAS quinas salientes de cada cotovelo, com o sentido em que o asfalto
 	# fica: a de `(mx máx, my mín)` tem o asfalto a `-mx` e a `+my`, e a de
@@ -2288,6 +2324,7 @@ func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array)
 	_confere("há curvas abertas a medir (%d meias diagonais)" % diagonais, diagonais >= 4)
 	_confere("nenhuma carroçaria sai do asfalto nas curvas abertas (a que mais se aproxima: %.3f)"
 		% pior, diagonais > 0 and pior <= 0.0, onde)
+	return true
 
 
 # ── D13 §7 ── O RETORNO: a mão dupla de verdade (23/09)
@@ -2308,7 +2345,7 @@ func _d13_curva_aberta_no_asfalto(tela: Control, rotas: Array, cotovelos: Array)
 # a concordar consigo próprio. Por isso a ida é conferida aqui também: a
 # relação é entre as DUAS.
 func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
-		regioes: Array, desenho: Rect2, visivel: Rect2, pr: Dictionary) -> void:
+		regioes: Array, desenho: Rect2, visivel: Rect2, pr: Dictionary) -> bool:
 	var trafego = tela.trafego
 	var retorno: Array = consts["ROTA_RETORNO"]
 	var origens: Array = consts["CAMINHAO_RETORNO_ORIGENS"]
@@ -2418,8 +2455,9 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 	_confere("e a diagonal das curvas abertas também (%.4f)" % corte, corte_bate,
 		"o mapa diz %s" % str(cortes_do_mapa))
 
-	# ── j ── E NENHUMA CARROÇARIA SAI DO ASFALTO NA CURVA ABERTA.
-	_d13_curva_aberta_no_asfalto(tela, [rota, retorno], cotovelos)
+	# ── j ── E NENHUMA CARROÇARIA SAI DO ASFALTO NA CURVA ABERTA. Um sub-bloco
+	# dentro do sub-bloco: a bandeira dele sobe com a deste, na última linha.
+	var curvou: bool = _d13_curva_aberta_no_asfalto(tela, [rota, retorno], cotovelos) == true
 
 	# ── b ── o retorno SOBE: `my` a descer nos retos, `mx` a descer nos
 	# cotovelos, do primeiro ponto ao último.
@@ -2523,6 +2561,7 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 		errado == "", errado)
 	_confere("e as %d silhuetas do retorno entram em campo" % pedidas,
 		vistas.size() == pedidas, "só se viu %s" % str(vistas.keys()))
+	return curvou
 
 
 # ── D13 · A MANOBRA DO BERÇO: ENTRA DE RÉ, SAI DE FRENTE (23/09, `077`)
@@ -2547,7 +2586,7 @@ func _d13_retorno(tela: Control, cenario: Node, consts: Dictionary, rota: Array,
 # jogo (`_docas_mudaram()`, com o barco a ir embora) — nunca uma silhueta
 # suposta. As três docas, e não só a que o porto em ruínas tem: as outras duas
 # entram como fixture e saem no fim.
-func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
+func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> bool:
 	var trafego = tela.trafego
 	var GS: Node = root.get_node("GameState")
 	if GS.phase == "rival_offer":
@@ -2721,6 +2760,7 @@ func _d13_saida_de_re(tela: Control, cenario: Node, consts: Dictionary) -> void:
 		de_costas == "", de_costas)
 	_confere("a saída do berço marca o camião como a sair, e desmarca-o na faixa",
 		marca == "", marca)
+	return true
 
 
 ## Corre `acao` e anda até ao fim o tween que ela criou, a passos de 0,25 s,
@@ -3319,6 +3359,13 @@ func _d20_a_rua_no_desenho() -> void:
 		for tr in trafego.call("trechos_de", rota):
 			trechos.append([tr[0], tr[1]])
 
+	# ⚠️ O `null` DO `_mapa_lido` TEM DUAS CAUSAS: a falha que ele já reprovou
+	# pelo nome, e um erro de execução lá dentro, que devolve o `null` do tipo
+	# sem reprovar nada. O `continue` saltava o mapa nos dois casos, e o bloco
+	# dava-se por inteiro — por isso a bandeira exige os mapas todos lidos.
+	# Não é ela que segura esse erro, medido em 31/10: o D49 e o D51 leem os
+	# mesmos mapas e reprovam o `null` deles. Ela diz que foi o D20 a saltar.
+	var mapas_lidos := 0
 	for caminho in MAPAS_DA_RUA:
 		# O `_mapa_lido` carrega a textura e confere a escala dela contra a
 		# tabela. Ler no sítio errado é pior do que não ler — o relvado também
@@ -3326,6 +3373,7 @@ func _d20_a_rua_no_desenho() -> void:
 		var mapa := _mapa_lido(caminho)
 		if mapa == null:
 			continue
+		mapas_lidos += 1
 		var img := mapa.img
 
 		# A janela da prova, na régua desta imagem. Ver `D20_RAIO`/`D20_MINIMO`.
@@ -3379,7 +3427,7 @@ func _d20_a_rua_no_desenho() -> void:
 			pior_areia == "", pior_areia)
 		print("SONDA %s: janela %dx%d, mínimo %d — máx calçada %d, máx areia %d"
 			% [caminho.get_file(), raio*2+1, raio*2+1, minimo, _sonda_calcada, _sonda_areia])
-	_d20_completo = true
+	_d20_completo = mapas_lidos == MAPAS_DA_RUA.size()
 
 
 # ── D25 ── a fauna respeita a régua do mundo, e o toque continua tocável
@@ -6249,8 +6297,9 @@ func _d39_trabalhador_que_anda() -> void:
 				% [sexo, chao * 100.0], chao >= D39_CASCO_MIN)
 
 	# 5 ── a doca montada
-	_d39_na_doca(GS, DockS, Ret, k)
-	_d39_completo = true
+	# O sub-bloco devolve `true` na última linha, e a bandeira deste exige-o
+	# (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
+	_d39_completo = _d39_na_doca(GS, DockS, Ret, k) == true
 
 
 # Fração mínima de desenho à volta de um ponto para dizer que ele CAI em cima
@@ -6319,7 +6368,7 @@ func _d39_desenho_a_volta(tex: Texture2D, ponto: Vector2, raio: int) -> float:
 	return float(cheios) / float(todos)
 
 
-func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
+func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> bool:
 	GS.clear_save()
 	GS._rng.seed = 20261002
 	GS.new_game()
@@ -6454,6 +6503,7 @@ func _d39_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 		not trab.visible and not pilha.visible and no_lanca.texture == arte_lanca[0]
 			and varre is Tween and (varre as Tween).is_valid())
 	doca.queue_free()
+	return true
 
 
 # ── D40 ── o guindaste do nível 2 que descarrega (02/10, `docs/decisoes/077`)
@@ -6661,10 +6711,12 @@ func _d40_guindaste_n2() -> void:
 			!= PropIso.imagem(quadros["m"]["pilha"][1]).get_data())
 
 	# 4 ── a doca montada
-	_d40_na_doca(GS, DockS, Ret, k)
-	_d40_ida_ao_camiao(GS, DockS, k)
-	_d40_ninguem_a_frente(GS, DockS, k)
-	_d40_completo = true
+	# Os três sub-blocos devolvem `true` na última linha, e esta bandeira exige
+	# os três (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
+	var na_doca: bool = _d40_na_doca(GS, DockS, Ret, k) == true
+	var ida: bool = _d40_ida_ao_camiao(GS, DockS, k) == true
+	var a_frente: bool = _d40_ninguem_a_frente(GS, DockS, k) == true
+	_d40_completo = na_doca and ida and a_frente
 
 
 ## A fração dos pixels opacos da pilha que a figura tapa, com cada uma no
@@ -6690,7 +6742,7 @@ func _d40_tapa(figura: Texture2D, no_fig: Vector2, pilha: Texture2D,
 	return float(tapados) / float(maxi(total, 1))
 
 
-func _d40_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
+func _d40_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> bool:
 	GS.clear_save()
 	GS._rng.seed = 20261003
 	GS.new_game()
@@ -6818,6 +6870,7 @@ func _d40_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 			   pilha.get_index()])
 	doca.queue_free()
 	GS.estruturas = estruturas_antes
+	return true
 
 
 # A ida ao camião: os pés no fim do caminho contra o desenho do camião
@@ -6832,7 +6885,7 @@ const D40_ENTREGA_MIN := 0.03
 const D40_EIXO_MAX_GRAUS := 15.0
 
 
-func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
+func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> bool:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	var tweens_antes := {}
@@ -6971,6 +7024,7 @@ func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 		doca.get("_camiao") == null)
 	tela.queue_free()
 	GS.estruturas = estruturas_antes
+	return true
 
 
 # Quantos pixels dele (em PNG de prop) podem cair por cima do desenho de um
@@ -6980,7 +7034,7 @@ func _d40_ida_ao_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 const D40_A_FRENTE_MAX := 0
 
 
-func _d40_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
+func _d40_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> bool:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	var tweens_antes := {}
@@ -7051,6 +7105,7 @@ func _d40_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 	for dd in GS.docks:
 		dd["boat"] = null
 		dd["worker_id"] = null
+	return true
 
 
 ## Os pixels da figura (as texturas de `figura`, todas no mesmo quadro, com o
@@ -7745,10 +7800,12 @@ func _d42_portico_n3() -> void:
 			h / camiao <= D42_CAMIAO_MAX and h / pessoa >= D42_PESSOA_MIN)
 
 	# 4 ── a doca montada
-	_d42_na_doca(GS, DockS, Ret, k)
-	_d42_camiao(GS, DockS, k)
-	_d42_ninguem_a_frente(GS, DockS, k)
-	_d42_completo = true
+	# Os três sub-blocos devolvem `true` na última linha, e esta bandeira exige
+	# os três (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
+	var na_doca: bool = _d42_na_doca(GS, DockS, Ret, k) == true
+	var o_camiao: bool = _d42_camiao(GS, DockS, k) == true
+	var a_frente: bool = _d42_ninguem_a_frente(GS, DockS, k) == true
+	_d42_completo = na_doca and o_camiao and a_frente
 
 
 ## A altura, em px de tela, das linhas do PNG com algum pixel opaco (alfa
@@ -7806,7 +7863,7 @@ func _d42_sobre(a: Texture2D, no_a: Vector2, b: Texture2D, no_b: Vector2) -> flo
 	return float(sobre) / float(maxi(total, 1))
 
 
-func _d42_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
+func _d42_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> bool:
 	GS.clear_save()
 	GS._rng.seed = 20261004
 	GS.new_game()
@@ -7981,6 +8038,7 @@ func _d42_na_doca(GS: Node, DockS: Script, Ret: Script, k: Dictionary) -> void:
 	_confere("D42: no nível 2 a empilhadeira sai do cais", not emp_no.visible)
 	doca.queue_free()
 	GS.estruturas = estruturas_antes
+	return true
 
 
 # O pallet no fim do caminho, contra o desenho do camião encostado: a fração
@@ -7990,7 +8048,7 @@ const D42_ENTREGA_RAIO := 8
 const D42_ENTREGA_MIN := 0.03
 
 
-func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
+func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> bool:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	var tweens_antes := {}
@@ -8123,9 +8181,10 @@ func _d42_camiao(GS: Node, DockS: Script, k: Dictionary) -> void:
 	_confere("D42: o camião largou, e a doca deixou de o ter", doca.get("_camiao") == null)
 	tela.queue_free()
 	GS.estruturas = estruturas_antes
+	return true
 
 
-func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
+func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> bool:
 	if GS.phase == "rival_offer":
 		GS.resolve_rival_offer(true)
 	var tweens_antes := {}
@@ -8200,6 +8259,7 @@ func _d42_ninguem_a_frente(GS: Node, DockS: Script, k: Dictionary) -> void:
 	for dd in GS.docks:
 		dd["boat"] = null
 		dd["worker_id"] = null
+	return true
 
 
 # ── D43 ── o rodapé escuro (`docs/decisoes/081`)
@@ -8231,6 +8291,9 @@ var _d43_completo := false
 
 func _d43_rodape_escuro() -> void:
 	var GS: Node = root.get_node("GameState")
+	# A bandeira do sub-bloco do porto completo; nasce falsa, para que um laço
+	# que deixasse de chegar a ele também reprove.
+	var recuou := false
 	# 1 ── as colunas, com um trabalhador e com três
 	for porto_completo in [false, true]:
 		GS.clear_save()
@@ -8273,10 +8336,16 @@ func _d43_rodape_escuro() -> void:
 			% ("porto completo" if porto_completo else "em ruínas"),
 			fora.is_empty() and not cartoes.is_empty(), "; ".join(fora))
 		if porto_completo:
-			_d43_o_que_recua(tela)
+			recuou = _d43_o_que_recua(tela) == true
 		root.remove_child(tela)
 		tela.free()
-	_d43_completo = true
+	# ⚠️ O SUB-BLOCO LEVA A SUA BANDEIRA, e esta exige-a. Medido em 30/10, com
+	# o «AVANÇAR DIA» embrulhado num `Control` (`AcoesTurno/AvancarCaixa/Avancar`):
+	# o `get_node` do caminho velho deu `null`, o `_d43_o_que_recua` abortou
+	# no primeiro `get_theme_stylebox`, correram 4 das 14 asserções do D43, e a
+	# suíte imprimiu esta bandeira verde e `DESIGN OK` — só o passo do CI que
+	# reprova `SCRIPT ERROR` o apanhava, e à mão lia-se verde.
+	_d43_completo = recuou
 
 
 # A cor que uma superfície DESENHA sobre o fundo da tela: o stylebox chapado
@@ -8290,8 +8359,10 @@ func _d43_desenhada(caixa: StyleBox, fundo: Color) -> Color:
 	return cor
 
 
-# 2 ── o que só informa fica abaixo do primário
-func _d43_o_que_recua(tela: Control) -> void:
+# 2 ── o que só informa fica abaixo do primário. Devolve `true` na última
+# linha: um erro de execução aqui aborta só esta função, que devolve o `false`
+# do tipo a quem a chamou.
+func _d43_o_que_recua(tela: Control) -> bool:
 	var fundo: Color = (tela.get_node("Fundo") as ColorRect).color
 	var avancar := tela.get_node("AcoesTurno/Avancar") as Button
 	var teto := _contraste(_d43_desenhada(avancar.get_theme_stylebox("normal"), fundo), fundo)
@@ -8318,6 +8389,7 @@ func _d43_o_que_recua(tela: Control) -> void:
 		var razao := _contraste(m[1] as Color, fundo)
 		_confere("D43: %s recua — %.2f:1 contra o fundo, abaixo dos %.2f do «AVANÇAR DIA»"
 			% [m[0], razao, teto], razao < teto)
+	return true
 
 
 # ── D44 ── as conversas dos cartões (`docs/decisoes/082`)
@@ -8359,6 +8431,7 @@ func _d44_conversas_dos_cartoes() -> void:
 	var casos := {"Ribeiro (NÃO pode pagar)": ["ribeiro", 2],
 		"Contra-oferta": ["arlindo", 1], "Boletim": ["cida", 1]}
 	var vistos := 0
+	var cartoes_inteiros := 0
 	for caso in motor.percurso():
 		if not casos.has(String(caso["nome"])):
 			continue
@@ -8369,14 +8442,18 @@ func _d44_conversas_dos_cartoes() -> void:
 		if no == null:
 			continue
 		vistos += 1
-		_d44_um_cartao(no, quem, paragrafos, roupa)
+		# O sub-bloco devolve `true` na última linha (e nas saídas de propósito,
+		# que já reprovaram por nome); um erro de execução lá dentro devolve
+		# `false`, e a bandeira deste bloco exige os três.
+		if _d44_um_cartao(no, quem, paragrafos, roupa) == true:
+			cartoes_inteiros += 1
 		no.get_parent().remove_child(no)
 		no.free()
 	_confere("D44: mediu os três cartões de conversa (%d)" % vistos, vistos == casos.size())
-	_d44_completo = true
+	_d44_completo = cartoes_inteiros == vistos
 
 
-func _d44_um_cartao(no: Node, quem: String, paragrafos: int, roupa: Dictionary) -> void:
+func _d44_um_cartao(no: Node, quem: String, paragrafos: int, roupa: Dictionary) -> bool:
 	var retrato: TextureRect = null
 	for img in no.find_children("*", "TextureRect", true, false):
 		var t: Texture2D = (img as TextureRect).texture
@@ -8384,12 +8461,12 @@ func _d44_um_cartao(no: Node, quem: String, paragrafos: int, roupa: Dictionary) 
 			retrato = img
 	_confere("D44 %s: o cartão mostra o retrato de quem fala" % quem, retrato != null)
 	if retrato == null:
-		return
+		return true
 	var placa := retrato.get_parent() as PanelContainer
 	var linha := placa.get_parent() if placa != null else null
 	_confere("D44 %s: o retrato senta numa placa" % quem, placa != null and linha != null)
 	if placa == null or linha == null:
-		return
+		return true
 	var baloes: Array = []
 	for p in linha.find_children("*", "PanelContainer", true, false):
 		if p != placa and p.get_child_count() > 0 and p.get_child(0) is Label \
@@ -8444,3 +8521,4 @@ func _d44_um_cartao(no: Node, quem: String, paragrafos: int, roupa: Dictionary) 
 		% [quem, baloes.size(), paragrafos],
 		baloes.size() == paragrafos and com_bico == 1 and vazios == 0,
 		"%d com bico, %d vazios" % [com_bico, vazios])
+	return true

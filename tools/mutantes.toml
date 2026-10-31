@@ -617,6 +617,59 @@ antes = 'if agora - float(_ultima_vez.get(id, -999.0)) < float(SONS[id]["espera"
 depois = 'if _ultima_vez.has(id):'
 reprova = { teste_audio = "passada a espera, o mesmo som volta a tocar" }
 
+# ── AS BANDEIRAS DOS SUB-BLOCOS (`testes-e-guardas.md`) ────────────────────
+# Um erro de execução num sub-bloco aborta só ele, e a bandeira do bloco que
+# o chama ficava verde. Medido em 30/10 com o «AVANÇAR DIA» embrulhado num
+# `Control`: o D43 correu 4 das 14 asserções e a suíte disse `DESIGN OK`. O
+# mesmo defeito sobre o código anterior à correção passou verde — é o bug,
+# e este é o mutante dele. Em 31/10 a varredura chegou aos blocos sem
+# bandeira (D1 a D8) e aos sub-blocos dos `casos_*.gd` do `teste_design`.
+# Fica um mutante por FORMA — o bloco que devolve a bandeira (D6), o
+# sub-bloco que devolve um valor (D14), o sub-bloco de um arquivo de casos
+# (D49) —, e o resto provou-se à mão, um erro injetado por sub-bloco.
+
+[[mutante]]
+id = "d43-sub-bloco-rebenta"
+de = "testes-e-guardas.md, 30/10"
+o_que = "o sub-bloco do que recua lê um nó que já não existe e aborta; a bandeira do D43 ficava verde"
+alvo = "brport_vs/tests/teste_design.gd"
+antes = 'var avancar := tela.get_node("AcoesTurno/Avancar") as Button'
+depois = 'var avancar := tela.get_node("AcoesTurno/AvancarX") as Button'
+reprova = { teste_design = "o bloco D43 correu até ao fim" }
+
+[[mutante]]
+id = "d6-alvo-mudou-de-sitio"
+de = "testes-e-guardas.md, 31/10"
+o_que = "o D6 lê o «AVANÇAR DIA» pelo caminho velho e aborta; até 31/10 o D6 nem tinha bandeira"
+alvo = "brport_vs/tests/teste_design.gd"
+antes = 'alvos.append(_main.get_node("AcoesTurno/Avancar"))'
+depois = 'alvos.append(_main.get_node("AcoesTurno/AvancarX"))'
+reprova = { teste_design = "o bloco D6 correu até ao fim" }
+
+[[mutante]]
+id = "d14-ruina-rebenta"
+de = "testes-e-guardas.md, 31/10"
+o_que = "na ruína o sub-bloco do D14 aborta e devolve o 0 do int, que o «completo > em_ruina» deixava passar"
+alvo = "brport_vs/tests/teste_design.gd"
+antes = '''
+	var conferidos := 0
+'''
+depois = '''
+	var conferidos := 0
+	if estado == "em ruína":
+		conferidos = int(_ancoras["projecao"]["nao_existe"])
+'''
+reprova = { teste_design = "o bloco D14 correu até ao fim" }
+
+[[mutante]]
+id = "d49-borda-norte-rebenta"
+de = "testes-e-guardas.md, 31/10"
+o_que = "a borda norte do pátio lê uma chave que a tabela não tem e aborta; o D49 ficava verde"
+alvo = "brport_vs/tests/casos_estradas.gd"
+antes = 'var my0 := float(patio["my"][0])'
+depois = 'var my0 := float(patio["mi"][0])'
+reprova = { teste_design = "a borda norte correu até ao fim" }
+
 # ── AS TREZE LACUNAS GRAVES DA AMOSTRA (`137`, `138`) ──────────────────────
 # A amostra de mutação da `137` sorteou-os nas funções que as suítes executam,
 # e os treze passavam verdes nas seis. O `antes`/`depois` é o da amostra

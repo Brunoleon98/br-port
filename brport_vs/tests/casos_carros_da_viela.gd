@@ -76,15 +76,19 @@ func rodar(gs: Node, arvore: SceneTree, ancoras: Dictionary) -> void:
 	_arvore = arvore
 	_ancoras = ancoras
 	_ck = (load("res://scripts/CarrosDaViela.gd") as Script).get_script_constant_map()
-	_a_copia()
-	_na_viela()
+	# Cada sub-bloco devolve `true` na última linha, e reprova aqui pelo nome se
+	# um erro de execução o abortar a meio — senão só ele morria e a bandeira
+	# do bloco ficava verde (`testes-e-guardas.md`, «um sub-bloco leva a sua
+	# BANDEIRA»).
+	conferir("a cópia correu até ao fim", _a_copia() == true)
+	conferir("a viela correu até ao fim", _na_viela() == true)
 	_gs.clear_save()
 	_gs._rng.seed = SEMENTE
 	_gs.new_game()
 	var tela: Control = load(CENA).instantiate()
 	_arvore.root.add_child(tela)
-	_a_vista(tela)
-	_quem_aparece(tela)
+	conferir("a vista dos carros correu até ao fim", _a_vista(tela) == true)
+	conferir("a chegada dos carros correu até ao fim", _quem_aparece(tela) == true)
 	_arvore.root.remove_child(tela)
 	tela.free()
 	_gs.clear_save()
@@ -98,7 +102,7 @@ func _tela(mx: float, my: float) -> Vector2:
 
 
 # ── §1 ─────────────────────────────────────────────────────────────────────
-func _a_copia() -> void:
+func _a_copia() -> bool:
 	var tabela: Array = _ancoras.get("carros_da_viela", [])
 	var copia: Array = _ck["CARROS"]
 	conferir("a tabela publica %d carro(s), e a cópia tantos quantos" % tabela.size(),
@@ -131,10 +135,11 @@ func _a_copia() -> void:
 		for j in range(mini((c[2] as Array).size(), (t["teto"] as Array).size())):
 			igual = igual and absf(float(c[2][j]) - float(t["teto"][j])) < 0.05
 		conferir("a máscara %d da cópia é a da tabela (carro %s)" % [k, t["carro"]], igual)
+	return true
 
 
 # ── §2 ─────────────────────────────────────────────────────────────────────
-func _na_viela() -> void:
+func _na_viela() -> bool:
 	var tabela: Array = _ancoras.get("carros_da_viela", [])
 	var faixas: Array = _ancoras["faixas"]
 	var dentro := true
@@ -173,6 +178,7 @@ func _na_viela() -> void:
 				separados = false
 				onde = "%s e %s a %.2f, e precisam de %.2f" % [a["prop"], b["prop"], d, meio]
 	conferir("dois carros da mesma margem da viela não se tocam", separados, onde)
+	return true
 
 
 func _meio(t: Dictionary) -> float:
@@ -180,7 +186,7 @@ func _meio(t: Dictionary) -> float:
 
 
 # ── §3 ─────────────────────────────────────────────────────────────────────
-func _a_vista(tela: Control) -> void:
+func _a_vista(tela: Control) -> bool:
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var janela := (tela.get_node("MapaWrap") as Control).size
 	var vistos := true
@@ -244,6 +250,7 @@ func _a_vista(tela: Control) -> void:
 		vistos, onde)
 	conferir("o que um lote da vila tapa de um carro, a máscara esconde", mascaras, onde_m)
 	conferir("a vila tapa pixels de algum carro (%d)" % tapados, tapados > 0)
+	return true
 
 
 ## O topo dos lotes da vila à frente do pé `pe`, coluna a coluna desde `x0`:
@@ -265,7 +272,7 @@ func _teto(pe: Vector2, x0: int) -> Array:
 
 
 # ── §4 ─────────────────────────────────────────────────────────────────────
-func _quem_aparece(tela: Control) -> void:
+func _quem_aparece(tela: Control) -> bool:
 	var tabela: Array = _ancoras.get("carros_da_viela", [])
 	var cenario := tela.get_node("MapaWrap/Cenario")
 	var fases: Array = _gs.FASES
@@ -310,3 +317,4 @@ func _quem_aparece(tela: Control) -> void:
 	conferir("cada passo da fase e das obras traz pelo menos um carro", cresce, onde_c)
 	conferir("no fim estão todos na viela (%d de %d)" % [antes, tabela.size()],
 		antes == tabela.size())
+	return true
