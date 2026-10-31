@@ -187,16 +187,21 @@ func _porta(origem: Node, pai: Node, dono: Node = null) -> void:
 	pref.caminho = config
 	await apoio.assentar()
 	var voltar: Button = apoio.botao(painel, "Voltar")
+	# E a «Vibração» (`149`), a linha que entrou acima desta: o painel cresceu.
+	var vibracao: Button = apoio.botao(painel, "Vibração")
 	conferir("escolha e Voltar alcançáveis com alvo mínimo", escolha.size.y >= 44 and voltar.size.y >= 44
 		and painel.get_viewport_rect().encloses(escolha.get_global_rect())
 		and painel.get_viewport_rect().encloses(voltar.get_global_rect()))
+	conferir("a Vibração alcançável com alvo mínimo", vibracao != null and vibracao.size.y >= 44
+		and painel.get_viewport_rect().encloses(vibracao.get_global_rect()))
 	var tamanho := arvore.root.size
 	for altura in [1152, 1280, 1600]:
 		arvore.root.size = Vector2i(720, altura)
 		await apoio.assentar()
 		conferir("Ajustes cabem na altura lógica %d" % altura,
 			painel.get_viewport_rect().encloses(escolha.get_global_rect())
-			and painel.get_viewport_rect().encloses(voltar.get_global_rect()))
+			and painel.get_viewport_rect().encloses(voltar.get_global_rect())
+			and vibracao != null and painel.get_viewport_rect().encloses(vibracao.get_global_rect()))
 	arvore.root.size = tamanho
 	await apoio.assentar()
 	var motor = load("res://scripts/validation/contraste_ui.gd").new()

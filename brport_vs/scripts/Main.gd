@@ -1148,8 +1148,15 @@ func _pintar_caixa_f(valor: float) -> void:
 ## estado que o jogo nunca mostra parado. E com o movimento reduzido a peça
 ## aparece já inteira (RB6, `129`) — é transição, e não ciclo de fundo, por
 ## isso não passa pelo `MovimentoDeFundo`.
+##
+## A VIBRAÇÃO SEGUE A MESMA PORTA (`149`): a obra que a bancada conclui não
+## foi tocada por ninguém. O movimento reduzido, esse, não a cala — é outra
+## preferência, a «Vibração» dos Ajustes.
 func _ao_concluir_obra(id: String) -> void:
-	if not _virada_armada or PreferenciasDeApresentacao.atual().reduzir_movimento:
+	if not _virada_armada:
+		return
+	Haptica.pedir("obra_pronta")
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
 		return
 	var pecas := pecas_da_obra(id)
 	_assentar(pecas, _rastos_da_obra(id, pecas))

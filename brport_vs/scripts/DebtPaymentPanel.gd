@@ -130,6 +130,9 @@ func _montar_decisao() -> void:
 
 func _on_pagar() -> void:
 	GameState.pay_debt()
+	# Junto da resposta «pagou», e com a mesma porta (`149`): sem dinheiro o
+	# «Pagar» nasce desligado, e o toque nele não chega aqui.
+	Haptica.pedir("parcela_paga")
 	tempo = &"pagou"
 	_mostrar_resposta("pagou")
 

@@ -50,6 +50,10 @@ em três fatias de quatro cópias, que um job final exige somarem o catálogo
   coisas, dois trabalhadores verdes e um furado davam o job por verde
   (`137`; `tools/testar_conferir_mutantes.py` reinjeta este e os outros
   defeitos da camada paralela).
+- ⚠️ **E O RÓTULO DECLARADO TEM DE SER ÚNICO SEM O DADO.** O D54 nasceu com
+  quatro asserções «§2 e não vibra (…)», separadas só pelo dicionário entre
+  parênteses: declarar uma era declarar qualquer delas, ou prender a guarda
+  ao dado. Cada pergunta leva o nome dela antes do parêntese (`149`).
 - ⚠️ **O FIM DO CATÁLOGO É ONDE OS DOIS AGENTES COLIDEM.** Os dois
   acrescentam mutantes lá, a junção conflita, e o pré-PR acusa órfãos que
   são só os dois catálogos por juntar (`136`, contra o PR #148). Mutantes de
@@ -96,6 +100,16 @@ subida» do mapa certo de 3,9 a 7,3 (sair de uma faixa escura também é
 subir), e a inclinação do degradê invertido de +0,13 a −0,17. Guarda raster
 sobre arte que ainda se está a desenhar re-mede o PAR — o certo e o defeito
 do catálogo — a cada passagem, antes do `--so` (`124`).
+
+⚠️ **E O MOTOR DO CONTRASTE MEDE O NÓ INVISÍVEL.** Na `149` a linha
+«Vibração» escondida passou o D33 com as duas medidas a «passa»: a régua
+mede o que existe, não o que se vê. Quem a contou foi o RB5, cujo medidor
+salta o invisível. Pergunta «a linha está na tela?» faz-se a quem olha a
+visibilidade.
+⚠️ **E O BOTÃO DESLIGADO PREMIDO PELO `pressed.emit()` NÃO É UM TOQUE.** O
+toque num botão desligado não emite nada; o `emit` emite. Uma conferência
+que só ele prova é a porta do botão escrita outra vez — a regra em dois
+sítios —, e o painel do Sr. Ribeiro já confiava nela (`149`).
 
 ## O que as suítes executam e não conferem (`137`)
 

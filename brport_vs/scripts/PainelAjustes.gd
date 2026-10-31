@@ -18,10 +18,18 @@ extends PainelNarrativo
 #
 # O valor vai direto ao bus e é gravado na hora (`Audio.definir_volume`), sem
 # botão de confirmar: mexer no volume e ouvir mudar É a confirmação.
+#
+# A VIBRAÇÃO MORA AO LADO DO SOM (`149`), como nos Ajustes do próprio
+# telefone: é o outro retorno que o jogo dá ao toque. Ligada por omissão, e
+# fora do save, na `PreferenciasDeApresentacao`.
 # ============================================================
 
 const LARGURA := 460
+## O que se sente, por baixo da «Vibração». Constante porque o D33 a conta,
+## e a frase já mudou uma vez (a segunda passagem da `149`).
+const EXPLICACAO_VIBRACAO := "Um toque leve ao atracar; dois toques quando uma obra fica pronta, mais fortes quando a parcela é paga."
 var _movimento: CheckButton
+var _vibracao: CheckButton
 var _aviso_preferencia: Label
 var _texto_padrao: Button
 var _texto_maior: Button
@@ -31,9 +39,19 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	montar(LARGURA, 0, ESCURO_DECISAO)
 	titulo_encorpado(Icones.AJUSTES, "Ajustes")
 
-	secao("SOM")
+	secao("SOM E VIBRAÇÃO")
 	_vbox.add_child(_slider_de_volume("Música", "Musica"))
 	_vbox.add_child(_slider_de_volume("Efeitos", "SFX"))
+	_vibracao = CheckButton.new()
+	_vibracao.name = "Vibracao"
+	_vibracao.text = "Vibração"
+	_vibracao.custom_minimum_size = Vector2(0, TOQUE_MIN)
+	_vibracao.button_pressed = PreferenciasDeApresentacao.atual().vibrar
+	_vbox.add_child(_vibracao)
+	var vibra := paragrafo(EXPLICACAO_VIBRACAO)
+	vibra.theme_type_variation = &"RotuloApoio"
+	_vibracao.toggled.connect(_escolher_vibracao)
+	PreferenciasDeApresentacao.atual().vibracao_mudou.connect(_mostrar_vibracao)
 
 	fio()
 	secao("APRESENTAÇÃO")
@@ -89,6 +107,16 @@ func _escolher_movimento(reduzido: bool) -> void:
 
 func _mostrar_movimento(reduzido: bool) -> void:
 	_movimento.set_pressed_no_signal(reduzido)
+
+
+func _escolher_vibracao(ligada: bool) -> void:
+	var erro := PreferenciasDeApresentacao.atual().definir_vibrar(ligada)
+	_aviso_preferencia.text = "Não foi possível lembrar a escolha. Ela vale nesta sessão."
+	_aviso_preferencia.visible = erro != OK
+
+
+func _mostrar_vibracao(ligada: bool) -> void:
+	_vibracao.set_pressed_no_signal(ligada)
 
 
 func _escolher_texto(modo: String) -> void:

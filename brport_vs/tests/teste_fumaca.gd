@@ -187,6 +187,11 @@ func _rodar() -> void:
 	await _f23_a_fase_2()
 	_confere("o bloco F23 correu até ao fim", _f23_terminou)
 
+	print("=== F24: a háptica tem um ponto só, e cada momento dele é pedido no jogo ===")
+	_f24_um_ponto_so()
+	_confere("F24: o segundo toque correu até ao fim", (await _f24_o_segundo_toque()) == true)
+	_confere("o bloco F24 correu até ao fim", _f24_terminou)
+
 	_acabou = true
 	if _falhas == 0:
 		print("\n=== FUMACA OK — as cenas abrem, os ícones existem, o save migra só o que sabe ler, o texto resolve, o export vale ===")
@@ -1000,6 +1005,35 @@ func _f5_exportavel_para_android() -> void:
 			if not ("," + f + ",").contains("," + pasta + ","):
 				em_todos = false
 		_confere("%s fica fora dos dois pacotes" % pasta, em_todos)
+
+	# A PERMISSÃO DE VIBRAR (`149`), como ITEM da secção de opções do preset
+	# Android — a do Web não serve, e um comentário que a cite também não. Sem
+	# ela o `vibrate_handheld()` não faz nada no telefone, e não se queixa. O
+	# CI confere a outra ponta: que ela chegou ao manifesto do APK.
+	var secoes := _f5_secoes(valores, texto)
+	var android := ""
+	for nome in secoes:
+		if (secoes[nome] as Array).has('platform="Android"'):
+			android = String(nome)
+	var opcoes: Array = secoes.get(android + ".options", [])
+	_confere("o preset Android pede a permissão de vibrar (permissions/vibrate=true)",
+		android != "" and opcoes.has("permissions/vibrate=true"),
+		"secção %s, %d opções" % [android, opcoes.size()])
+
+
+## As linhas de valor de cada secção do preset, `{nome: [linha, …]}`. O
+## `ConfigFile` engasga-se nos valores, por isso a secção sai do cabeçalho.
+func _f5_secoes(valores: Array[String], texto: String) -> Dictionary:
+	var r := {}
+	var atual := ""
+	for linha in texto.split("\n"):
+		var limpa := linha.strip_edges()
+		if limpa.begins_with("[") and limpa.ends_with("]"):
+			atual = limpa.trim_prefix("[").trim_suffix("]")
+			r[atual] = []
+		elif atual != "" and limpa in valores:
+			(r[atual] as Array).append(limpa)
+	return r
 
 
 # ── F6 ──────────────────────────────────────────────────────────────────
@@ -6061,3 +6095,79 @@ func _f23_nomes_com_prefixo(no: Node, prefixo: String, saida: Array[String]) -> 
 		saida.append(nome)
 	for filho in no.get_children():
 		_f23_nomes_com_prefixo(filho, prefixo, saida)
+
+
+# ── F24 ─────────────────────────────────────────────────────────────────
+# A HÁPTICA TEM UM PONTO SÓ (`149`). O D54 do `teste_design` conta o que o
+# `Haptica` pediu; isto confere as duas pontas que a contagem não vê: que o
+# pedido chega mesmo ao aparelho — uma chamada ao `vibrate_handheld`, e só no
+# `Haptica.gd` —, e que cada momento da tabela tem quem o peça no jogo e
+# ninguém pede um que ela não tenha (a «fala escrita não é fala ouvida» da
+# `narrativa.md`, com um momento no lugar da fala). As chamadas contam-se por
+# dois caminhos — o nome no código contra as que a expressão leu —, para que
+# um pedido de forma nova reprove em vez de escapar (`037`).
+var _f24_terminou := false
+
+
+func _f24_um_ponto_so() -> void:
+	var arquivos: Array[String] = []
+	for pasta in F23_PASTAS_DO_JOGO:
+		_f23_arquivos(pasta, arquivos)
+	var vibram: Array[String] = []
+	var nomes := 0
+	var lidos: Array[String] = []
+	var literal := RegEx.create_from_string('Haptica\\.pedir\\("([a-z_]+)"\\)')
+	for caminho in arquivos:
+		var codigo := ""
+		for linha in FileAccess.get_file_as_string(caminho).split("\n"):
+			codigo += _f23_codigo(linha) + "\n"
+		for _i in codigo.count("vibrate_handheld"):
+			vibram.append(caminho.get_file())
+		nomes += codigo.count("Haptica.pedir(")
+		for m in literal.search_all(codigo):
+			lidos.append(m.get_string(1))
+	_confere("F24: o aparelho é chamado uma vez, no Haptica.gd (%s)" % ", ".join(vibram),
+		vibram == ["Haptica.gd"])
+	_confere("F24: os pedidos estão lidos todos (%d no código, %d lidos)" % [nomes, lidos.size()],
+		nomes > 0 and nomes == lidos.size())
+	var tabela: Dictionary = load("res://scripts/Haptica.gd").PADROES
+	var desconhecidos: Array[String] = []
+	for m in lidos:
+		if not tabela.has(m):
+			desconhecidos.append(m)
+	_confere("F24: ninguém pede um momento fora da tabela (%s)" % ", ".join(desconhecidos),
+		desconhecidos.is_empty())
+	var mudos: Array[String] = []
+	for m in tabela:
+		if not lidos.has(String(m)):
+			mudos.append(String(m))
+	_confere("F24: cada momento da tabela é pedido no jogo (%s)" % ", ".join(mudos), mudos.is_empty())
+	_f24_terminou = true
+
+
+# O SEGUNDO TOQUE CHEGA PELO RELÓGIO (`149`, a segunda passagem): o padrão
+# de sucesso são dois pulsos, e o D54 — que não deixa passar quadros — só vê
+# o primeiro. Aqui esperam-se os quadros do intervalo, e lê-se o que chegou
+# ao aparelho, pela ordem: o primeiro no instante do pedido, o segundo depois
+# do intervalo e não antes, e nada mais.
+func _f24_o_segundo_toque() -> bool:
+	var haptica: Script = load("res://scripts/Haptica.gd")
+	var padrao: Array = haptica.PADROES["obra_pronta"]
+	var intervalo: float = haptica.INTERVALO_SEG
+	haptica.zerar()
+	haptica.pedir("obra_pronta")
+	_confere("F24: o primeiro toque chega no instante do pedido (%s)" % [haptica.pulsos],
+		haptica.pulsos == [padrao[0]])
+	var quadros := 0
+	while quadros < int(intervalo * 60.0) - 1:
+		await process_frame
+		quadros += 1
+	_confere("F24: e o segundo ainda não, a meio do intervalo (%s)" % [haptica.pulsos],
+		haptica.pulsos.size() == 1)
+	while quadros < int(intervalo * 60.0) * 3:
+		await process_frame
+		quadros += 1
+	_confere("F24: o segundo chega depois do intervalo, e nada mais (%s)" % [haptica.pulsos],
+		haptica.pulsos == padrao)
+	haptica.zerar()
+	return true

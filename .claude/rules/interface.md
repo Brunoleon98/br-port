@@ -444,7 +444,8 @@ paths:
 - ⚠️ **NO TELEFONE O «PASSAR POR CIMA» FICA DEPOIS DO TOQUE.** O rato é
   emulado do toque e fica onde o dedo saiu: o botão solto ficava no âmbar
   claro do `hover` (`148`). Só o rodapé o trata (`hover` = `normal`); os
-  outros botões continuam com o deles, e são os irmãos por varrer.
+  outros botões continuam com o deles, e são os irmãos por varrer — a
+  «Vibração» desligada nos Ajustes fica nesse tom claro (`149`).
 - ⚠️ **SHADER SÓ COMPILA ONDE É DESENHADO — e as suítes headless não desenham
   nada.** O primeiro shader da virada da folha redefinia `PI`, e as seis
   suítes passaram verdes; quem o apanhou foi a captura, com `SHADER ERROR` e
