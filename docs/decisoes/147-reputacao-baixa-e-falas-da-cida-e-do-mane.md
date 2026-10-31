@@ -58,3 +58,12 @@ No fechamento de 31/10, incorporou-se também o PR #157 (`9c36e97`), que
 reforça as bandeiras dos testes de design. Sem mudança de jogo nessa base;
 o relatório completo de 259 defeitos na base do #156 foi preservado, e a
 verificação final acompanha o catálogo ampliado, com 263.
+
+Na retomada de 31/10, o GitHub já mostrava o #158 incorporado em `d11311b`,
+com head `926eb0b`. O Codex desta retomada não fez merge. Testes e Captura
+desse head concluíram com sucesso: seis suítes, export APK/Web e catálogo
+completo de 263 defeitos, em fatias de 88, 88 e 87, com agregador aprovado.
+Marcadores e links estão no registro de provas acima. Não se repetiu o catálogo.
+O log/relatório local de `/tmp` e o commit documental `7af5e6d` informados no
+handoff não existem neste ambiente novo; não se declara resultado local sem
+eles. O fecho documental foi reconstruído a partir do repositório e do CI.

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 31/10/2026 — reputação baixa e falas (`147`)
+> **Atualização:** 31/10/2026 — #158 incorporado e validado (`147`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -64,8 +64,7 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **19** local (`146`), com migração desde a 14 e exemplos preservados;
-a main permanece na 18 até fundir esta entrega;
+Save **19** na main (`146`, #158), com migração desde a 14 e exemplos preservados;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
@@ -132,8 +131,8 @@ A3, uma conversa cada, e a esteira, a fumaça e o fundeadouro (§7).
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
-**História/lojas (`146`):** save 19; chave/almoço aceitos e integrados.
-Revisão restante em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`; telefone pendente.
+**História/lojas (`146`, #158):** chave/almoço/Mané aceitos; envelope e retorno
+das lojas propostos. Telefone pendente; seis suítes e 263 mutantes verdes no CI.
 **Revisor de mensagens (`145`):** skill `revisar-mensagens`, com parecer contextual.
 **Reputação (`147`):** aviso da Cida e HUD vermelho quando baixa.
 
