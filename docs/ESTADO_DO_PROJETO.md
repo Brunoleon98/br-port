@@ -93,8 +93,8 @@ turno, sem o nome de quem jogou (`006`). Sai pelos Ajustes (`066`).
 
 **O jogo tem som:** 14 efeitos de `tools/gerar_sons.py`, num autoload com
 prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
-**E vibra** (`149`): atracar (20 ms), obra pronta e parcela paga (40 ms),
-pelo `Haptica.gd`; «Vibração» nos Ajustes.
+**E vibra** (`149`): um toque leve ao atracar, dois a subir na obra pronta e
+na parcela paga; «Vibração» nos Ajustes.
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`, `066`): aparelho de
 400×680 (460×782 na conversa), com o **diário**, as **mensagens** (a conversa do porto, `067`) e

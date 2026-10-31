@@ -25,6 +25,9 @@ extends PainelNarrativo
 # ============================================================
 
 const LARGURA := 460
+## O que se sente, por baixo da «Vibração». Constante porque o D33 a conta,
+## e a frase já mudou uma vez (a segunda passagem da `149`).
+const EXPLICACAO_VIBRACAO := "Um toque leve ao atracar; dois toques quando uma obra fica pronta, mais fortes quando a parcela é paga."
 var _movimento: CheckButton
 var _vibracao: CheckButton
 var _aviso_preferencia: Label
@@ -45,7 +48,7 @@ func setup(_sem_argumentos: Variant = null) -> void:
 	_vibracao.custom_minimum_size = Vector2(0, TOQUE_MIN)
 	_vibracao.button_pressed = PreferenciasDeApresentacao.atual().vibrar
 	_vbox.add_child(_vibracao)
-	var vibra := paragrafo("Um toque curto ao atracar; mais longo quando uma obra fica pronta e quando a parcela é paga.")
+	var vibra := paragrafo(EXPLICACAO_VIBRACAO)
 	vibra.theme_type_variation = &"RotuloApoio"
 	_vibracao.toggled.connect(_escolher_vibracao)
 	PreferenciasDeApresentacao.atual().vibracao_mudou.connect(_mostrar_vibracao)

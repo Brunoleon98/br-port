@@ -1069,18 +1069,63 @@ reprova = { teste_design = "D54: §5 e ela mostra a preferência, ligada" }
 [[mutante]]
 id = "haptica-duracao-trocada"
 de = "149"
-o_que = "o atracar vibra tanto quanto as conquistas, e o dedo deixa de as distinguir"
+o_que = "o atracar vibra tão forte quanto as conquistas, e o gesto de todos os dias deixa de ser o leve"
 alvo = "brport_vs/scripts/Haptica.gd"
-antes = '"atracar": 20,'
-depois = '"atracar": 40,'
-reprova = { teste_design = "D54: §6 o atracar é o toque curto" }
+antes = '"atracar": [[15, 0.4]],'
+depois = '"atracar": [[15, 0.9]],'
+reprova = { teste_design = "D54: §6 o atracar é um toque só, e o mais leve" }
+
+[[mutante]]
+id = "haptica-pulso-zumbido"
+de = "149"
+o_que = "o marco num pulso longo: o motor ressoa depois dele, o zumbido que a orientação do Android desaconselha"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"parcela_paga": [[22, 0.6], [36, 1.0]],'
+depois = '"parcela_paga": [[22, 0.6], [120, 1.0]],'
+reprova = { teste_design = "D54: §6 todo pulso é curto e com força entre 0 e 1" }
+
+[[mutante]]
+id = "haptica-sucesso-num-toque"
+de = "149"
+o_que = "a obra pronta num toque só, como o atracar: o sucesso perde a forma dele"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"obra_pronta": [[18, 0.5], [28, 0.8]],'
+depois = '"obra_pronta": [[28, 0.8]],'
+reprova = { teste_design = "D54: §6 a obra pronta e a parcela paga são dois toques a subir" }
+
+[[mutante]]
+id = "haptica-parcela-como-obra"
+de = "149"
+o_que = "a parcela paga igual à obra pronta: o marco da fase sem mais força"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '"parcela_paga": [[22, 0.6], [36, 1.0]],'
+depois = '"parcela_paga": [[18, 0.5], [28, 0.8]],'
+reprova = { teste_design = "D54: §6 e a parcela, o marco, mais forte do que a obra" }
+
+[[mutante]]
+id = "haptica-segundo-toque-perdido"
+de = "149"
+o_que = "o padrão sem o relógio: só o primeiro toque chega, e o sucesso lê como um toque só"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '		arvore.create_timer(INTERVALO_SEG * i).timeout.connect(func(): _pulsar(pulso))'
+depois = '		pass'
+reprova = { teste_fumaca = "F24: o segundo chega depois do intervalo, e nada mais" }
+
+[[mutante]]
+id = "haptica-segundo-toque-colado"
+de = "149"
+o_que = "os dois toques no mesmo instante: o motor soma-os num pulso só, mais longo"
+alvo = "brport_vs/scripts/Haptica.gd"
+antes = '		arvore.create_timer(INTERVALO_SEG * i).timeout.connect(func(): _pulsar(pulso))'
+depois = '		_pulsar(pulso)'
+reprova = { teste_fumaca = "F24: e o segundo ainda não, a meio do intervalo" }
 
 [[mutante]]
 id = "haptica-sem-aparelho"
 de = "149"
 o_que = "o ponto único conta o pedido e não chama o aparelho: a régua verde e o telefone parado"
 alvo = "brport_vs/scripts/Haptica.gd"
-antes = '	Input.vibrate_handheld(ms)'
+antes = '	Input.vibrate_handheld(int(pulso[0]), float(pulso[1]))'
 depois = '	pass'
 reprova = { teste_fumaca = "F24: o aparelho é chamado uma vez, no Haptica.gd" }
 
@@ -1089,8 +1134,8 @@ id = "haptica-momento-renomeado"
 de = "149"
 o_que = "um momento renomeado na tabela e não no pedido: a obra pronta rebenta em vez de vibrar"
 alvo = "brport_vs/scripts/Haptica.gd"
-antes = '"obra_pronta": 40,'
-depois = '"obra_concluida": 40,'
+antes = '"obra_pronta": [[18, 0.5], [28, 0.8]],'
+depois = '"obra_concluida": [[18, 0.5], [28, 0.8]],'
 reprova = { teste_fumaca = "F24: ninguém pede um momento fora da tabela" }
 
 [[mutante]]

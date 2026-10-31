@@ -10,13 +10,16 @@ os cinco commits da `148`.
 antes: nenhuma vibração no jogo, nenhuma permissão `VIBRATE`, e no Linux o
 `vibrate_handheld()` não faz nada nem se queixa. **A vibração segue a porta
 do assentar, e vale para os três momentos: quem a pede é o toque, depois de
-o `GameState` aceitar** — o cartão ao largo (atracar, 20 ms), a virada armada
-pelo «Avançar dia» (obra pronta, 40 ms), o «Pagar» e o «Quitar agora»
-(parcela paga, 40 ms). A virada simples e a segunda chance não vibram; o
-movimento reduzido não a cala. «Vibração» nos Ajustes, ao lado do som,
+o `GameState` aceitar** — o cartão ao largo (atracar), a virada armada pelo
+«Avançar dia» (obra pronta), o «Pagar» e o «Quitar agora» (parcela paga). A
+virada simples e a segunda chance não vibram; o movimento reduzido não a
+cala. **O primeiro veredito foi «Ajustar», com o pedido de aplicar as boas
+práticas**: pulsos curtos com a força na amplitude, um toque leve ao atracar
+e dois a subir nas conquistas, a parcela mais forte (a `149`, «As boas
+práticas»). «Vibração» nos Ajustes, ao lado do som,
 ligada por omissão, fora do save. `permissions/vibrate=true` no preset
 Android, e o CI procura-a no manifesto do APK. O D54, o F5 e o F24 provam-no,
-com 20 defeitos no catálogo; a linha nova entra no D33, no RB5, no T29 e no
+com 25 defeitos no catálogo; a linha nova entra no D33, no RB5, no T29 e no
 T30.
 
 ⚠️ O motor do contraste mede o nó invisível: a linha escondida passou o D33,
@@ -34,12 +37,15 @@ logo a seguir, e a `149`).
 `vibrate_handheld()` é silencioso (`.claude/rules/plataforma.md`, «Chaves e
 export do Godot»).
 
+⚠️ A força da vibração é amplitude, não duração; vibração longa é zumbido
+(`.claude/rules/plataforma.md`, «Chaves e export do Godot»).
+
 ⚠️ A «Vibração» desligada fica no tom claro do `hover` depois do toque — um
 dos irmãos por varrer do rodapé (`.claude/rules/interface.md`, «NO TELEFONE O
 "PASSAR POR CIMA" FICA DEPOIS DO TOQUE»).
 
-**Pendente:** o veredito do Bruno no telefone (o APK é o `brport-apk` do CI
-do PR desta conversa); o merge do #160 e depois o deste, que são dele.
+**Pendente:** o veredito do Bruno à segunda passagem, no telefone (o APK é o
+`brport-apk` do CI do PR desta conversa); o merge do #160 e depois o deste, que são dele.
 Escolha desta conversa que ele pode reverter: a segunda chance não vibra.
 
 **A próxima conversa, pela ordem do Bruno:** o casco que rola (A3), com o

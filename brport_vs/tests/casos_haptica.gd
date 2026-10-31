@@ -29,8 +29,11 @@ extends RefCounted
 #      omissão), o toque aplica-a já e grava-a fora do save, lida de novo do
 #      disco; um valor de outro tipo no arquivo mantém a omissão; e a escrita
 #      que falha diz que não lembrou, com a escolha a valer na sessão;
-#   §6 A DURAÇÃO: o atracar é o toque curto, e as duas conquistas iguais e
-#      mais longas.
+#   §6 O PADRÃO, pelas boas práticas (a segunda passagem da `149`): todo
+#      pulso curto (até 40 ms — claro, não zumbido) e com força entre 0 e 1;
+#      o atracar é um toque só e o mais leve; a obra pronta e a parcela paga
+#      são dois toques a subir, e a parcela, o marco, mais forte do que a
+#      obra. O segundo toque, que chega por relógio, prova-o o F24.
 #
 # ⚠️ FICA DE FORA, e é do telefone: se o aparelho vibra, e se a duração se
 # sente. O `F5` do `teste_fumaca` lê a permissão no preset, o `F24` o ponto
@@ -79,7 +82,7 @@ func rodar(gs: Node, arvore: SceneTree) -> void:
 	conferir("a preferência desligada correu até ao fim", _desligada() == true)
 	conferir("o movimento reduzido correu até ao fim", _o_reduzido() == true)
 	conferir("os Ajustes correram até ao fim", _os_ajustes() == true)
-	conferir("a duração correu até ao fim", _a_duracao() == true)
+	conferir("o padrão correu até ao fim", _o_padrao() == true)
 	_pref.vibrar = vibrar_antes
 	_pref.reduzir_movimento = reduzido_antes
 	_haptica.zerar()
@@ -449,11 +452,24 @@ func _os_ajustes() -> bool:
 
 # §6 ─────────────────────────────────────────────────────────────────────────
 
-func _a_duracao() -> bool:
-	var ms: Dictionary = _haptica.DURACAO_MS
-	conferir("§6 os três momentos têm duração (%s)" % ms,
-		ms.keys().size() == 3 and ms.has("atracar") and ms.has("obra_pronta") and ms.has("parcela_paga"))
-	conferir("§6 o atracar é o toque curto, e as conquistas o dobro (%s)" % ms,
-		int(ms["atracar"]) >= 10 and int(ms["obra_pronta"]) == int(ms["parcela_paga"])
-		and int(ms["obra_pronta"]) >= 2 * int(ms["atracar"]))
+func _o_padrao() -> bool:
+	var p: Dictionary = _haptica.PADROES
+	conferir("§6 os três momentos têm padrão (%s)" % p,
+		p.keys().size() == 3 and p.has("atracar") and p.has("obra_pronta") and p.has("parcela_paga"))
+	var longos: Array = []
+	for momento in p:
+		for pulso in p[momento]:
+			if int(pulso[0]) < 10 or int(pulso[0]) > 40 or float(pulso[1]) <= 0.0 or float(pulso[1]) > 1.0:
+				longos.append("%s %s" % [momento, pulso])
+	conferir("§6 todo pulso é curto e com força entre 0 e 1 (%s)" % ", ".join(longos), longos.is_empty())
+	var atracar: Array = p["atracar"]
+	conferir("§6 o atracar é um toque só, e o mais leve (%s)" % [atracar],
+		atracar.size() == 1 and float(atracar[0][1]) < float(p["obra_pronta"][0][1]))
+	var sobem := true
+	for momento in ["obra_pronta", "parcela_paga"]:
+		var padrao: Array = p[momento]
+		sobem = sobem and padrao.size() == 2 and float(padrao[1][1]) > float(padrao[0][1])
+	conferir("§6 a obra pronta e a parcela paga são dois toques a subir", sobem, str(p))
+	conferir("§6 e a parcela, o marco, mais forte do que a obra",
+		float(p["parcela_paga"][1][1]) > float(p["obra_pronta"][1][1]), str(p))
 	return true

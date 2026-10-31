@@ -892,8 +892,9 @@ nova (o casco virado para o cais) e as boias do lado do mar. A ordem do
 Bruno é **A1′ → A1 → T1 → A3**. **O A1 fechou na `148`**, aceite à quarta
 passagem: a peça nova assenta de 94% e a obra velha esvai-se por baixo dela,
 e o «Avançar dia» e o cartão ao largo afundam ao premir. **A T1 fechou na
-`149`**, à espera do telefone: o toque que atraca vibra 20 ms, a obra pronta
-e a parcela paga 40, só pela porta do jogador, com «Vibração» nos Ajustes.
+`149`**, à espera do telefone: um toque leve ao atracar, dois a subir na
+obra pronta e na parcela paga (as boas práticas, a pedido dele), só pela
+porta do jogador, com «Vibração» nos Ajustes.
 **A próxima conversa é o casco que rola (A3)**, com o desenho na `144`.
 Das melhorias que a `148` encontrou ficaram por pedir o «Dia N» a marcar a
 virada e os postes do pátio. **Abriram-se três

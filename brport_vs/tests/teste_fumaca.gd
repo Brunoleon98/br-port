@@ -189,6 +189,7 @@ func _rodar() -> void:
 
 	print("=== F24: a háptica tem um ponto só, e cada momento dele é pedido no jogo ===")
 	_f24_um_ponto_so()
+	_confere("F24: o segundo toque correu até ao fim", (await _f24_o_segundo_toque()) == true)
 	_confere("o bloco F24 correu até ao fim", _f24_terminou)
 
 	_acabou = true
@@ -6129,7 +6130,7 @@ func _f24_um_ponto_so() -> void:
 		vibram == ["Haptica.gd"])
 	_confere("F24: os pedidos estão lidos todos (%d no código, %d lidos)" % [nomes, lidos.size()],
 		nomes > 0 and nomes == lidos.size())
-	var tabela: Dictionary = load("res://scripts/Haptica.gd").DURACAO_MS
+	var tabela: Dictionary = load("res://scripts/Haptica.gd").PADROES
 	var desconhecidos: Array[String] = []
 	for m in lidos:
 		if not tabela.has(m):
@@ -6142,3 +6143,31 @@ func _f24_um_ponto_so() -> void:
 			mudos.append(String(m))
 	_confere("F24: cada momento da tabela é pedido no jogo (%s)" % ", ".join(mudos), mudos.is_empty())
 	_f24_terminou = true
+
+
+# O SEGUNDO TOQUE CHEGA PELO RELÓGIO (`149`, a segunda passagem): o padrão
+# de sucesso são dois pulsos, e o D54 — que não deixa passar quadros — só vê
+# o primeiro. Aqui esperam-se os quadros do intervalo, e lê-se o que chegou
+# ao aparelho, pela ordem: o primeiro no instante do pedido, o segundo depois
+# do intervalo e não antes, e nada mais.
+func _f24_o_segundo_toque() -> bool:
+	var haptica: Script = load("res://scripts/Haptica.gd")
+	var padrao: Array = haptica.PADROES["obra_pronta"]
+	var intervalo: float = haptica.INTERVALO_SEG
+	haptica.zerar()
+	haptica.pedir("obra_pronta")
+	_confere("F24: o primeiro toque chega no instante do pedido (%s)" % [haptica.pulsos],
+		haptica.pulsos == [padrao[0]])
+	var quadros := 0
+	while quadros < int(intervalo * 60.0) - 1:
+		await process_frame
+		quadros += 1
+	_confere("F24: e o segundo ainda não, a meio do intervalo (%s)" % [haptica.pulsos],
+		haptica.pulsos.size() == 1)
+	while quadros < int(intervalo * 60.0) * 3:
+		await process_frame
+		quadros += 1
+	_confere("F24: o segundo chega depois do intervalo, e nada mais (%s)" % [haptica.pulsos],
+		haptica.pulsos == padrao)
+	haptica.zerar()
+	return true

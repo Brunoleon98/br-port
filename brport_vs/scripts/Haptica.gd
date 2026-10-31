@@ -5,7 +5,7 @@ extends RefCounted
 # BR Port VS — HÁPTICA: o ponto único que vibra (`docs/decisoes/149`)
 #
 # O desenho é o da `144` («T1 — a háptica»): quem vibra recebe o MOMENTO e
-# decide a duração, a preferência e a contagem num lugar só, como o
+# decide o padrão, a preferência e a contagem num lugar só, como o
 # `Audio.gd` faz ao som. Medido antes (`144`, e outra vez na `149`): nenhuma
 # chamada de vibração no jogo e nenhuma permissão `VIBRATE` no preset.
 #
@@ -28,32 +28,63 @@ extends RefCounted
 #
 # ⚠️ NINGUÉM QUE ESCREVEU ISTO SENTIU ESTA VIBRAÇÃO. O contêiner não tem
 # motor, e no Linux o `vibrate_handheld` não faz nada nem se queixa (sondado
-# na `149`, com e sem tela). O que as suítes provam é a contagem; se vibra, e
-# se a duração se sente, prova-se no telefone.
+# na `149`, com e sem tela). O que as suítes provam é a contagem e os pulsos
+# pela ordem; se vibra, e se o padrão se sente, prova-se no telefone.
 # ============================================================
 
-## Momento → duração em ms (`144`): o atracar é um toque curto, a obra pronta
-## e a parcela paga o dobro, que são conquistas e não gestos.
-const DURACAO_MS := {
-	"atracar": 20,
-	"obra_pronta": 40,
-	"parcela_paga": 40,
+## Momento → os pulsos, `[ms, força]` (`149`, a segunda passagem, pelas
+## boas práticas que o Bruno pediu):
+##
+## - CLARO, NÃO ZUMBIDO: a orientação do Android desaconselha a vibração
+##   longa de um tiro só — o motor continua a ressoar depois dela —, e pede
+##   pulsos curtos. Nenhum passa de 40 ms; a força vai na amplitude (0–1).
+##   No telefone sem controlo de amplitude, e no Web, ela é ignorada e o
+##   pulso sai inteiro: curto, continua a ler como um toque.
+## - A FORÇA SEGUE A IMPORTÂNCIA: o atracar é o gesto de todos os dias, e é
+##   o mais leve; a parcela paga é o marco da fase, e é a mais forte.
+## - O SUCESSO TEM FORMA PRÓPRIA: dois toques a subir, o «confirmado» do
+##   Android, na obra pronta e na parcela paga. Um toque só é «feito».
+## A primeira passagem tinha um pulso por momento (20 e 40 ms à força do
+## aparelho), e a obra e a parcela eram iguais.
+const PADROES := {
+	"atracar": [[15, 0.4]],
+	"obra_pronta": [[18, 0.5], [28, 0.8]],
+	"parcela_paga": [[22, 0.6], [36, 1.0]],
 }
+## Entre os pulsos de um padrão: curto o bastante para ler como um gesto só,
+## longo o bastante para o motor parar entre os dois.
+const INTERVALO_SEG := 0.08
 
-## Os pedidos que chegaram ao aparelho, por momento, desde que o processo
-## abriu ou desde o `zerar()`. É a régua das suítes (D54): o
-## `vibrate_handheld` não devolve nada, e aqui nada vibra.
+## Os pedidos por momento, desde que o processo abriu ou desde o `zerar()`:
+## a régua do D54, que não deixa passar quadros.
 static var pedidos: Dictionary = {}
+## Os pulsos que chegaram ao aparelho, `[ms, força]`, pela ordem: a régua do
+## F24, que espera os quadros do segundo. O `vibrate_handheld` não devolve
+## nada, e aqui nada vibra.
+static var pulsos: Array = []
 
 
 static func pedir(momento: String) -> void:
-	# Acesso direto: um momento mal escrito rebenta em vez de vibrar 0 ms.
-	var ms: int = DURACAO_MS[momento]
+	# Acesso direto: um momento mal escrito rebenta em vez de vibrar nada.
+	var padrao: Array = PADROES[momento]
 	if not PreferenciasDeApresentacao.atual().vibrar:
 		return
 	pedidos[momento] = int(pedidos.get(momento, 0)) + 1
-	Input.vibrate_handheld(ms)
+	_pulsar(padrao[0])
+	# O resto do padrão pelo relógio da árvore, que corre também com o jogo
+	# em pausa (`create_timer` processa sempre): o painel que abre a seguir
+	# não corta o segundo toque.
+	var arvore := Engine.get_main_loop() as SceneTree
+	for i in range(1, padrao.size()):
+		var pulso: Array = padrao[i]
+		arvore.create_timer(INTERVALO_SEG * i).timeout.connect(func(): _pulsar(pulso))
+
+
+static func _pulsar(pulso: Array) -> void:
+	pulsos.append(pulso)
+	Input.vibrate_handheld(int(pulso[0]), float(pulso[1]))
 
 
 static func zerar() -> void:
 	pedidos.clear()
+	pulsos.clear()

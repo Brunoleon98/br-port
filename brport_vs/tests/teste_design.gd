@@ -5119,8 +5119,11 @@ func _d33_contraste_efetivo() -> void:
 	var inativos: Array = []
 	var medidos := 0
 	# A LINHA DA VIBRAÇÃO (`149`), contada: «já é medido pelo D33» é
-	# afirmação a conferir, nunca a herdar (`042`).
+	# afirmação a conferir, nunca a herdar (`042`). A explicação lê-se da
+	# constante do painel, pelos 46 caracteres que o motor guarda: escrita
+	# aqui, prendia a guarda à frase, que mudou na segunda passagem.
 	var vibracao: Array[String] = []
+	var explicacao: String = String(load("res://scripts/PainelAjustes.gd").EXPLICACAO_VIBRACAO).substr(0, 46)
 
 	for caso in motor.percurso():
 		var no: Node = motor.montar_caso(root, GS, caso, tema)
@@ -5135,7 +5138,7 @@ func _d33_contraste_efetivo() -> void:
 		medidos += linhas.size()
 		if String(caso["nome"]) == "Ajustes":
 			for l in linhas:
-				if String(l["texto"]) == "Vibração" or String(l["texto"]).begins_with("Um toque curto ao atracar"):
+				if String(l["texto"]) == "Vibração" or String(l["texto"]) == explicacao:
 					vibracao.append(String(l["estado"]))
 
 		for l in linhas:

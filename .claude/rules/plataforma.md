@@ -118,7 +118,11 @@ manifesto BINÁRIO do APK (`tools/conferir_permissoes_apk.py`, nas duas
 codificações do pool de strings). A chave é `permissions/` + o nome em
 minúsculas. ⚠️ **No Linux o `Input.vibrate_handheld()` não faz nada e não se
 queixa**, com ou sem tela: a vibração prova-se pela contagem do `Haptica`, e
-o resto no aparelho.
+o resto no aparelho. ⚠️ **E A FORÇA É AMPLITUDE, NÃO DURAÇÃO**: o
+`vibrate_handheld(ms, amplitude)` é um tiro só, e a orientação do Android
+desaconselha-o longo — o motor ressoa depois dele. Pulsos curtos (até 40 ms
+no `Haptica`), a força de 0 a 1, e o sucesso em dois toques; no Web e no
+telefone sem controlo de amplitude ela é ignorada (`149`).
 
 ⚠️ **No CI, importe por `tools/importar_para_ci.py`, inclusive a base do PR.**
 No PR #130, o Godot 4.6.3 abortou com sinal 11 ao importar Patrick Hand na
