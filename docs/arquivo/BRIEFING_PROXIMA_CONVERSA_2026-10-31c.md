@@ -5,8 +5,8 @@ junta: o PR #156 da `144` fundiu a meio da conversa (fast-forward), e no
 fecho o #157 (a bandeira dos sub-blocos do `teste_design`) e o #158 do Codex
 (o revisor de mensagens, com a decisão 145 dele — a desta conversa, escrita
 como 145, passou a `148`, e o briefing a `31c`, que o `31b` já é de uma
-branch do Codex). Nenhum PR aberto desta
-branch: não foi pedido nesta conversa.
+branch do Codex). O PR é o #160, aberto a pedido do Bruno no fim da
+conversa, com o CI a correr.
 
 **Decisão `148` — o A1, o segundo item do tema animação e toque.** Medido
 antes: a virada que conclui cada uma das oito obras trocava a textura num
@@ -47,9 +47,9 @@ com uma terceira pergunta medida (a skill `/arte`, §8, a `148`).
 esvaírem-se (a `148`, «O que fica de fora»). O fundeadouro, a esteira e a
 fumaça continuam depois do A3 (a `144`).
 
-**Pendente:** o PR desta branch (pergunte ao Bruno se o abre), e com ele o
-CI — o catálogo com os 31 defeitos novos, e a captura igual à da main (o
-assentar só existe nos 0,3 s depois de uma obra acabar pelo botão).
+**Pendente:** o PR #160 — o CI (o catálogo com os 31 defeitos novos, e a
+captura igual à da main: o assentar só existe nos 0,3 s depois de uma obra
+acabar pelo botão) e o merge, que é do Bruno.
 
 **A próxima conversa, pela ordem do Bruno:** a T1, a háptica, com o desenho
 na `144`. A guarda nova e os defeitos dela são F6 (Opus); o resto é receita.
@@ -62,11 +62,11 @@ e as decisões 144 (o desenho dos quatro itens do tema animação e toque) e
 148 (o A1: a peça que assenta e o botão que afunda). Confira a main remota,
 os PRs abertos e o CI do último merge, e rode python3
 tools/conferir_colaboracao.py com o trabalho commitado (ele lê o HEAD). Se o
-trabalho da 148 (branch claude/sharp-lamport-kf55gf) ainda não estiver na
-main, pergunte ao Bruno se abre o PR dele e conduza-o até verde antes de
-começar: o CI deve mostrar a captura igual à da main (o assentar só existe
-nos 0,3 s depois de uma obra acabar pelo botão) e o catálogo com 31 defeitos
-novos na secção da 148.
+PR #160 (a 148, branch claude/sharp-lamport-kf55gf) ainda não estiver
+fundido, confira o CI dele e conduza-o até verde antes de começar — o merge é
+do Bruno, e a branch nova arranca da main depois dele: o CI deve mostrar a
+captura igual à da main (o assentar só existe nos 0,3 s depois de uma obra
+acabar pelo botão) e o catálogo com 31 defeitos novos na secção da 148.
 
 O item desta conversa, na ordem que o Bruno escolheu (A1′ → A1 → T1 → A3):
 a T1, a háptica. Um ponto único, como o Audio.gd, que recebe o MOMENTO
