@@ -26,17 +26,21 @@ func rodar(na_arvore: SceneTree) -> void:
 	var movimento_anterior := _preferencias.reduzir_movimento
 	var caminho_anterior := _preferencias.caminho
 	_preferencias.caminho = ArmazemLocal.caminho("rb5-sonda.cfg")
-	_persistencia()
+	# Cada sub-bloco devolve `true` na última linha, e reprova aqui pelo nome se
+	# um erro de execução o abortar a meio — senão só ele morria e a bandeira
+	# do bloco ficava verde (`testes-e-guardas.md`, «um sub-bloco leva a sua
+	# BANDEIRA»).
+	conferir("persistencia correu ate ao fim", _persistencia() == true)
 	_preferencias.tamanho_do_texto = PreferenciasDeApresentacao.PADRAO
 	_preferencias.reduzir_movimento = true
-	await _interface()
-	await _inicio()
-	await _leitura_e_campos()
-	await _nome_na_fala()
-	await _paineis()
-	await _abertura_direta()
-	await _proporcoes()
-	await _cartao_alto()
+	conferir("interface correu ate ao fim", (await _interface()) == true)
+	conferir("inicio correu ate ao fim", (await _inicio()) == true)
+	conferir("leitura e campos correram ate ao fim", (await _leitura_e_campos()) == true)
+	conferir("nome na fala correu ate ao fim", (await _nome_na_fala()) == true)
+	conferir("paineis correram ate ao fim", (await _paineis()) == true)
+	conferir("abertura direta correu ate ao fim", (await _abertura_direta()) == true)
+	conferir("proporcoes correram ate ao fim", (await _proporcoes()) == true)
+	conferir("cartao alto correu ate ao fim", (await _cartao_alto()) == true)
 	_preferencias.tamanho_do_texto = modo_anterior
 	_preferencias.reduzir_movimento = movimento_anterior
 	_preferencias.caminho = caminho_anterior
@@ -44,7 +48,7 @@ func rodar(na_arvore: SceneTree) -> void:
 	completo = true
 
 
-func _persistencia() -> void:
+func _persistencia() -> bool:
 	var caminho := ArmazemLocal.caminho(PreferenciasDeApresentacao.ARQUIVO)
 	var existia := FileAccess.file_exists(caminho)
 	var original := FileAccess.get_file_as_bytes(caminho) if existia else PackedByteArray()
@@ -91,9 +95,10 @@ func _persistencia() -> void:
 		arquivo.close()
 	else:
 		DirAccess.remove_absolute(caminho)
+	return true
 
 
-func _interface() -> void:
+func _interface() -> bool:
 	gs.clear_save()
 	gs._rng.seed = 42
 	gs.new_game()
@@ -157,7 +162,7 @@ func _interface() -> void:
 	conferir("painel aberto bloqueia gesto no porto de baixo", rolo.scroll_vertical == 0)
 	pausa.queue_free()
 	await assentar()
-	await _gestos(tela, rolo, apoio)
+	var gesticulou: bool = (await _gestos(tela, rolo, apoio)) == true
 	var tardio := Label.new()
 	tardio.text = "Aviso posterior"
 	tardio.add_theme_font_size_override("font_size", 12)
@@ -181,9 +186,10 @@ func _interface() -> void:
 		== tela._fila_lugares.get_child(0))
 	tela.free()
 	arvore.root.get_node("Registro").desarmar()
+	return gesticulou
 
 
-func _inicio() -> void:
+func _inicio() -> bool:
 	var tela: Control = load("res://scenes/TelaInicial.tscn").instantiate()
 	arvore.root.add_child(tela)
 	tela._abrir_ajustes()
@@ -212,7 +218,7 @@ func _inicio() -> void:
 	conferir("logotipo conserva tamanho 68", tela.get_node("Logo").get_theme_font_size("font_size") == 68)
 	var exemplo: Label = tela.find_child("ExemploDoTexto", true, false)
 	conferir("exemplo usa fonte maior do tema", exemplo.get_theme_font_size("font_size") == 19)
-	_conferir_faixa(tela, "ajustes acompanham conteudo sem faixa branca")
+	var sem_faixa: bool = _conferir_faixa(tela, "ajustes acompanham conteudo sem faixa branca") == true
 	var padrao: Button = tela.find_child("TextoPadrao", true, false)
 	padrao.pressed.emit()
 	await assentar()
@@ -236,11 +242,13 @@ func _inicio() -> void:
 	arvore.root.add_child(nova)
 	nova._abrir_ajustes()
 	await assentar()
-	_conferir_faixa(nova, "ajustes novos no maior nao guardam faixa vazia")
+	sem_faixa = _conferir_faixa(nova, "ajustes novos no maior nao guardam faixa vazia") == true \
+		and sem_faixa
 	nova.free()
+	return sem_faixa
 
 
-func _conferir_faixa(tela: Control, rotulo: String) -> void:
+func _conferir_faixa(tela: Control, rotulo: String) -> bool:
 	var voltar: Button
 	for no in TextoDaInterface.descendentes(tela):
 		if no is Button and no.text == "Voltar":
@@ -249,9 +257,10 @@ func _conferir_faixa(tela: Control, rotulo: String) -> void:
 	while not cartao.has_meta(&"cartao_rolavel_rb5"):
 		cartao = cartao.get_parent()
 	conferir(rotulo, cartao.get_global_rect().end.y - voltar.get_global_rect().end.y <= 32.0)
+	return true
 
 
-func _gestos(tela: Control, rolo: ScrollContainer, apoio: RefCounted) -> void:
+func _gestos(tela: Control, rolo: ScrollContainer, apoio: RefCounted) -> bool:
 	var antes: Dictionary = apoio.fotografia()
 	var origem := Vector2(60, 810)
 	_mouse(origem, true)
@@ -315,6 +324,7 @@ func _gestos(tela: Control, rolo: ScrollContainer, apoio: RefCounted) -> void:
 	gs.tocar_doca(0)
 	tela._refresh_all()
 	await assentar()
+	return true
 
 
 func _botao_que_diz(tela: Node, texto: String) -> Button:
@@ -333,7 +343,7 @@ func _mouse(posicao: Vector2, pressionado: bool) -> void:
 	arvore.root.push_input(evento, true)
 
 
-func _leitura_e_campos() -> void:
+func _leitura_e_campos() -> bool:
 	_preferencias.tamanho_do_texto = "padrao"
 	var ajuda: Control = load("res://scenes/panels/PainelComoJogar.tscn").instantiate()
 	ajuda.theme = TextoDaInterface.TEMA
@@ -411,6 +421,7 @@ func _leitura_e_campos() -> void:
 	conferir("campo sem selecao nao gera erro do motor", not log.is_empty()
 		and not log.contains("get_selection_from_column") and not log.contains("get_selection_to_column"))
 	nomes.free()
+	return true
 
 
 func _fontes(tela: Node) -> Dictionary:
@@ -421,7 +432,7 @@ func _fontes(tela: Node) -> Dictionary:
 	return fontes
 
 
-func _nome_na_fala() -> void:
+func _nome_na_fala() -> bool:
 	# A pausa é larga o bastante para a palavra sozinha. O balão ao lado
 	# do retrato é estreito: o nome válido precisa quebrar sem diminuir a letra.
 	_preferencias.tamanho_do_texto = "padrao"
@@ -432,7 +443,7 @@ func _nome_na_fala() -> void:
 	var tela: Control = percurso.montar_caso(arvore.root, gs, caso, TextoDaInterface.TEMA)
 	if tela == null:
 		conferir("nome longo montou a fala", false)
-		return
+		return true
 	await assentar()
 	var rotulo: Label
 	for no in TextoDaInterface.descendentes(tela):
@@ -450,9 +461,10 @@ func _nome_na_fala() -> void:
 	conferir("nome de 24 letras cabe no balao sem encolher", legivel)
 	tela.free()
 	arvore.root.get_node("Registro").desarmar()
+	return true
 
 
-func _paineis() -> void:
+func _paineis() -> bool:
 	var percurso = load("res://scripts/validation/contraste_ui.gd").new()
 	var medidor = load("res://tools/medir_texto_bancada.gd")
 	var medidas: Array = []
@@ -532,9 +544,10 @@ func _paineis() -> void:
 	log.store_string(JSON.stringify(medidas, "\t"))
 	conferir("percurso montou todos os estados", medidas.size() == percurso.percurso().size()
 		and percurso.falhas.is_empty())
+	return true
 
 
-func _abertura_direta() -> void:
+func _abertura_direta() -> bool:
 	# Trocar depois do Padrão não prova a primeira abertura: ali as larguras
 	# já assentaram. Meu Porto perdia a altura do rolo só no arranque em Maior.
 	var percurso = load("res://scripts/validation/contraste_ui.gd").new()
@@ -553,9 +566,10 @@ func _abertura_direta() -> void:
 		tela.free()
 		arvore.root.get_node("Registro").desarmar()
 	conferir("aberturas diretas terminaram", percurso.falhas.is_empty())
+	return true
 
 
-func _proporcoes() -> void:
+func _proporcoes() -> bool:
 	var motor = load("res://scripts/validation/contraste_ui.gd").new()
 	var medidor = load("res://tools/medir_texto_bancada.gd")
 	_preferencias.tamanho_do_texto = "maior"
@@ -576,6 +590,7 @@ func _proporcoes() -> void:
 						and (texto.em_rolagem or texto.excesso_janela <= 2.0)
 			conferir("leitura maior cabe em %s: %s" % [tamanho, cena], cabe)
 			visor.free()
+	return true
 
 
 # ⚠️ O CARTÃO ALTO É O ÚNICO QUE A ACOMODAÇÃO MUDA À VISTA (`138`). Medido
@@ -584,7 +599,7 @@ func _proporcoes() -> void:
 # Construir no Maior é o que não cabe — numa tela de 720×1000 ele começava em
 # −37 px, com o título fora da tela, e o certo é ficar dentro e rolar por
 # dentro. As duas metades da pergunta são o que o jogador vê.
-func _cartao_alto() -> void:
+func _cartao_alto() -> bool:
 	var motor = load("res://scripts/validation/contraste_ui.gd").new()
 	_preferencias.tamanho_do_texto = "maior"
 	var caso: Dictionary = {}
@@ -607,3 +622,4 @@ func _cartao_alto() -> void:
 		and cartao.get_meta(&"cartao_rolavel_rb5").get_parent() is ScrollContainer)
 	visor.free()
 	arvore.root.get_node("Registro").desarmar()
+	return true

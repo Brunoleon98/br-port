@@ -169,20 +169,25 @@ func _rodar() -> void:
 	_main = load(CENA).instantiate()
 	root.add_child(_main)
 
+	# Os blocos mais antigos devolvem a bandeira em vez de a escrever num campo:
+	# `true` na última linha (e nas saídas de propósito, que já reprovaram por
+	# nome ou não têm o que conferir). Até 31/10 não tinham bandeira nenhuma, e
+	# um erro de execução num deles abortava-o calado, com `DESIGN OK` no fim
+	# (`testes-e-guardas.md`, «um sub-bloco leva a sua BANDEIRA»).
 	print("=== D1: props ancorados onde o mapa os desenha ===")
-	_d1_encaixe_das_docas()
+	_confere("o bloco D1 correu até ao fim", _d1_encaixe_das_docas() == true)
 	print("=== D2: cenário em terra, e não em cima da rua ===")
-	_d2_cenario_em_terra()
+	_confere("o bloco D2 correu até ao fim", _d2_cenario_em_terra() == true)
 	print("=== D3: ordem dos nós = profundidade isométrica ===")
-	_d3_profundidade()
+	_confere("o bloco D3 correu até ao fim", _d3_profundidade() == true)
 	print("=== D4: nada estoura a viewport ===")
-	_d4_dentro_da_tela()
+	_confere("o bloco D4 correu até ao fim", _d4_dentro_da_tela() == true)
 	print("=== D5: o rodapé não se sobrepõe ===")
-	_d5_sem_sobreposicao()
+	_confere("o bloco D5 correu até ao fim", _d5_sem_sobreposicao() == true)
 	print("=== D6: alvo de toque cabe no dedo ===")
-	_d6_alvos_de_toque()
+	_confere("o bloco D6 correu até ao fim", _d6_alvos_de_toque() == true)
 	print("=== D8: o pipeline BRP concorda com a projeção do mapa ===")
-	_d8_contrato_brp()
+	_confere("o bloco D8 correu até ao fim", _d8_contrato_brp() == true)
 	print("=== D9: a escolha à espera avisa onde se resolve ===")
 	_d9_aviso_de_trabalho_parado()
 	_confere("o bloco D9 correu até ao fim", _d9_completo)
@@ -1165,18 +1170,18 @@ func _no_mapa(no: Control) -> Vector2:
 const MANIFEST_BRP := "res://data/assets/BRP_EXPORT_MANIFEST.json"
 
 
-func _d8_contrato_brp() -> void:
+func _d8_contrato_brp() -> bool:
 	if not FileAccess.file_exists(MANIFEST_BRP):
 		# Sem pipeline BRP no repositório não há o que conferir, e isso não é
 		# falha: o jogo funciona sem ele.
 		print("  (sem manifest BRP — nada a conferir)")
-		return
+		return true
 	var f := FileAccess.open(MANIFEST_BRP, FileAccess.READ)
 	var lido: Variant = JSON.parse_string(f.get_as_text())
 	f.close()
 	if typeof(lido) != TYPE_DICTIONARY or not lido.has("contrato"):
 		_confere("manifest BRP tem bloco `contrato`", false, "JSON inválido")
-		return
+		return true
 
 	var c: Dictionary = lido["contrato"]
 	var pr: Dictionary = _ancoras["projecao"]
@@ -1191,16 +1196,17 @@ func _d8_contrato_brp() -> void:
 			and abs(float(c["rot_z"]) - 45.0) < 0.001,
 		"BRP usa %s/%s — o 54,736 do isométrico verdadeiro daria 1,732:1"
 			% [c["rot_x"], c["rot_z"]])
+	return true
 
 
 # ── D1 ── cada píer e cada barco em cima do que o gerador desenhou
-func _d1_encaixe_das_docas() -> void:
+func _d1_encaixe_das_docas() -> bool:
 	var vagas := _main.get_node("MapaWrap/Docas").get_children()
 	var esperado: Array = _ancoras["pieres"]
 	_confere("o mapa desenha %d berços e a cena tem %d vagas"
 		% [esperado.size(), vagas.size()], vagas.size() == esperado.size())
 	if vagas.size() != esperado.size():
-		return
+		return true
 
 	for i in range(vagas.size()):
 		var vaga: Control = vagas[i]
@@ -1225,6 +1231,7 @@ func _d1_encaixe_das_docas() -> void:
 			var d := (_no_mapa(trab) + Vector2(MEIO_QUADRO, MEIO_QUADRO)).distance_to(centro)
 			_confere("Doca %d · trabalhador no convés" % [i + 1], d <= 80.0,
 				"%.0f px do centro do píer — o tabuado tem ~70 de meia-diagonal" % d)
+	return true
 
 
 # ── D2 ── nada do cenário fixo pode nascer no asfalto da rua
@@ -1290,7 +1297,7 @@ const VIVEM_NA_AGUA := ["BarcoEspera", "Ancoragem", "Bote"]
 const SILHUETA_QUE_EXIGE_PEGADA_MUNDO := 4.33
 
 
-func _d2_cenario_em_terra() -> void:
+func _d2_cenario_em_terra() -> bool:
 	var cenario := _main.get_node("MapaWrap/Cenario")
 	var pegadas: Dictionary = _ancoras.get("pegadas", {})
 	var alt := float(_ancoras["projecao"]["alt_cais"])
@@ -1371,6 +1378,7 @@ func _d2_cenario_em_terra() -> void:
 		if not _comeca_com_algum(nome, PODEM_PISAR_A_RUA + VIVEM_NA_CALCADA):
 			_confere("%s fora do asfalto" % nome, not pisa_rua, pior)
 		_confere("%s em terra" % nome, not na_agua, pior)
+	return true
 
 
 func _comeca_com_algum(nome: String, lista: Array) -> bool:
@@ -1388,7 +1396,7 @@ func _id_do_prop(tex: Texture2D) -> String:
 
 
 # ── D3 ── num plano isométrico, ordem de irmão É profundidade
-func _d3_profundidade() -> void:
+func _d3_profundidade() -> bool:
 	var alt := float(_ancoras["projecao"]["alt_cais"])
 	for caminho in ["MapaWrap/Cenario", "MapaWrap/Docas"]:
 		var pai := _main.get_node(caminho)
@@ -1412,10 +1420,11 @@ func _d3_profundidade() -> void:
 			if profundidade > anterior:
 				anterior = profundidade
 				nome_anterior = String(no.name)
+	return true
 
 
 # ── D4 ── tudo dentro da viewport, com margem
-func _d4_dentro_da_tela() -> void:
+func _d4_dentro_da_tela() -> bool:
 	var tela := Vector2(
 		ProjectSettings.get_setting("display/window/size/viewport_width"),
 		ProjectSettings.get_setting("display/window/size/viewport_height"))
@@ -1428,10 +1437,11 @@ func _d4_dentro_da_tela() -> void:
 			r.position.x >= -0.5 and r.position.y >= -0.5
 			and r.end.x <= tela.x + 0.5 and r.end.y <= tela.y + 0.5,
 			"ocupa %s numa tela de %s" % [r, tela])
+	return true
 
 
 # ── D5 ── a pilha do rodapé não pode se atropelar
-func _d5_sem_sobreposicao() -> void:
+func _d5_sem_sobreposicao() -> bool:
 	# ⚠️ "Upgrade" ERA UM FILHO DIRETO E PASSOU A VIVER EM "LinhaConstruir".
 	# A pilha percorre-se por NOME, então um nó que se mova de sítio some
 	# desta conta sem erro nenhum: quem o apanhou foi a asserção "%s existe",
@@ -1462,10 +1472,11 @@ func _d5_sem_sobreposicao() -> void:
 	_confere("os cartões preenchem a barra de docas",
 		abs(soma - barra.size.x) <= 1.0,
 		"somam %.0f numa barra de %.0f" % [soma, barra.size.x])
+	return true
 
 
 # ── D6 ── nada clicável menor que o dedo
-func _d6_alvos_de_toque() -> void:
+func _d6_alvos_de_toque() -> bool:
 	var alvos: Array[Control] = []
 	alvos.append(_main.get_node("AcoesTurno/Avancar"))
 	alvos.append(_main.get_node("LinhaConstruir/Upgrade"))
@@ -1481,6 +1492,7 @@ func _d6_alvos_de_toque() -> void:
 		_confere("%s cabe no dedo (%.0fx%.0f)" % [c.name, c.size.x, c.size.y],
 			c.size.y >= TOQUE_MIN and c.size.x >= TOQUE_MIN,
 			"mínimo é %.0f em cada lado" % TOQUE_MIN)
+	return true
 
 
 # ── D9 ── o aviso de escolha à espera tem de aparecer ONDE ela se resolve
@@ -3347,6 +3359,13 @@ func _d20_a_rua_no_desenho() -> void:
 		for tr in trafego.call("trechos_de", rota):
 			trechos.append([tr[0], tr[1]])
 
+	# ⚠️ O `null` DO `_mapa_lido` TEM DUAS CAUSAS: a falha que ele já reprovou
+	# pelo nome, e um erro de execução lá dentro, que devolve o `null` do tipo
+	# sem reprovar nada. O `continue` saltava o mapa nos dois casos, e o bloco
+	# dava-se por inteiro — por isso a bandeira exige os mapas todos lidos.
+	# Não é ela que segura esse erro, medido em 31/10: o D49 e o D51 leem os
+	# mesmos mapas e reprovam o `null` deles. Ela diz que foi o D20 a saltar.
+	var mapas_lidos := 0
 	for caminho in MAPAS_DA_RUA:
 		# O `_mapa_lido` carrega a textura e confere a escala dela contra a
 		# tabela. Ler no sítio errado é pior do que não ler — o relvado também
@@ -3354,6 +3373,7 @@ func _d20_a_rua_no_desenho() -> void:
 		var mapa := _mapa_lido(caminho)
 		if mapa == null:
 			continue
+		mapas_lidos += 1
 		var img := mapa.img
 
 		# A janela da prova, na régua desta imagem. Ver `D20_RAIO`/`D20_MINIMO`.
@@ -3407,7 +3427,7 @@ func _d20_a_rua_no_desenho() -> void:
 			pior_areia == "", pior_areia)
 		print("SONDA %s: janela %dx%d, mínimo %d — máx calçada %d, máx areia %d"
 			% [caminho.get_file(), raio*2+1, raio*2+1, minimo, _sonda_calcada, _sonda_areia])
-	_d20_completo = true
+	_d20_completo = mapas_lidos == MAPAS_DA_RUA.size()
 
 
 # ── D25 ── a fauna respeita a régua do mundo, e o toque continua tocável

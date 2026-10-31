@@ -76,8 +76,12 @@ func conferir(nome: String, ok: bool, detalhe: String = "") -> void:
 func rodar(gs: Node, arvore: SceneTree, ancoras: Dictionary, terra, patio,
 		camadas: Array) -> void:
 	var caminho := _caminho(ancoras)
-	_a_copia(ancoras)
-	_em_agua(caminho, terra, patio, camadas)
+	# Cada sub-bloco devolve `true` na última linha, e reprova aqui pelo nome se
+	# um erro de execução o abortar a meio — senão só ele morria e a bandeira
+	# do bloco ficava verde (`testes-e-guardas.md`, «um sub-bloco leva a sua
+	# BANDEIRA»).
+	conferir("a cópia correu até ao fim", _a_copia(ancoras) == true)
+	conferir("a água sob as marolas correu até ao fim", _em_agua(caminho, terra, patio, camadas) == true)
 	var pref := PreferenciasDeApresentacao.atual()
 	var antes := pref.reduzir_movimento
 	# Em memória, e nunca no disco: o `guardar()` do `movimento_de_fundo` lê
@@ -95,14 +99,14 @@ func rodar(gs: Node, arvore: SceneTree, ancoras: Dictionary, terra, patio,
 	for tw in arvore.get_processed_tweens():
 		if not vistos.has(tw):
 			novos.append(tw)
-	_na_cena(tela)
-	_o_ciclo(tela, novos, caminho)
+	conferir("as camadas na cena correram até ao fim", _na_cena(tela) == true)
+	conferir("o ciclo correu até ao fim", _o_ciclo(tela, novos, caminho) == true)
 	arvore.root.remove_child(tela)
 	tela.free()
 	pref.reduzir_movimento = true
 	tela = load(CENA).instantiate()
 	arvore.root.add_child(tela)
-	_em_repouso(tela)
+	conferir("o repouso correu até ao fim", _em_repouso(tela) == true)
 	arvore.root.remove_child(tela)
 	tela.free()
 	pref.reduzir_movimento = antes
@@ -119,21 +123,22 @@ func _caminho(ancoras: Dictionary) -> Vector2:
 
 
 # ── §1 ─────────────────────────────────────────────────────────────────────
-func _a_copia(ancoras: Dictionary) -> void:
+func _a_copia(ancoras: Dictionary) -> bool:
 	var tabela := float(ancoras.get("marolas", {}).get("rola", -1.0))
 	var copia := float((load("res://scripts/Main.gd") as Script)
 		.get_script_constant_map().get("MAROLA_ROLA", -2.0))
 	conferir("a tabela publica o caminho das marolas (%.3f u)" % tabela, tabela > 0.0)
 	conferir("a cópia do Main.gd é a da tabela (%.3f contra %.3f)" % [copia, tabela],
 		absf(copia - tabela) < 0.000001)
+	return true
 
 
 # ── §2 ─────────────────────────────────────────────────────────────────────
-func _em_agua(caminho: Vector2, terra, patio, camadas: Array) -> void:
+func _em_agua(caminho: Vector2, terra, patio, camadas: Array) -> bool:
 	if terra == null or patio == null or camadas.size() != 2 \
 			or camadas[0] == null or camadas[1] == null:
 		conferir("os dois mapas e as duas camadas abrem", false)
-		return
+		return true
 	var mapas := [["terra", _rgba(terra.img), terra], ["pavimentado", _rgba(patio.img), patio]]
 	for i in 2:
 		var camada = camadas[i]
@@ -166,6 +171,7 @@ func _em_agua(caminho: Vector2, terra, patio, camadas: Array) -> void:
 		conferir("a camada %d foi lida (%d pixels de marola)" % [i, lidas], lidas >= LIDAS_MIN)
 		conferir("a camada %d só pousa em água em todo o caminho (pior azul %+.1f, o mínimo é %+.1f; %d leituras fora)"
 			% [i, pior, AZUL_MIN, fora], fora == 0, onde)
+	return true
 
 
 func _rgba(img: Image) -> Image:
@@ -177,7 +183,7 @@ func _rgba(img: Image) -> Image:
 
 
 # ── §3 ─────────────────────────────────────────────────────────────────────
-func _na_cena(tela: Control) -> void:
+func _na_cena(tela: Control) -> bool:
 	var wrap := tela.get_node("MapaWrap")
 	var mapa := wrap.get_node_or_null("Mapa") as TextureRect
 	var cenario := wrap.get_node_or_null("Cenario")
@@ -195,10 +201,11 @@ func _na_cena(tela: Control) -> void:
 		conferir("a Marola%d tem o tamanho do mapa e a mesma escala" % i,
 			no.size == mapa.size and no.expand_mode == mapa.expand_mode)
 		conferir("a Marola%d não apanha toque" % i, no.mouse_filter == Control.MOUSE_FILTER_IGNORE)
+	return true
 
 
 # ── §4 ─────────────────────────────────────────────────────────────────────
-func _o_ciclo(tela: Control, tweens: Array, caminho: Vector2) -> void:
+func _o_ciclo(tela: Control, tweens: Array, caminho: Vector2) -> bool:
 	var wrap := tela.get_node("MapaWrap")
 	var base: Vector2 = (wrap.get_node("Mapa") as Control).position
 	var nos: Array = []
@@ -206,7 +213,7 @@ func _o_ciclo(tela: Control, tweens: Array, caminho: Vector2) -> void:
 		nos.append(wrap.get_node_or_null(n))
 	if nos.has(null):
 		conferir("as quatro camadas da água existem", false)
-		return
+		return true
 	conferir("a cena criou os tweens do fundo (%d)" % tweens.size(), tweens.size() >= 4)
 	var ciclo := float((load("res://scripts/Main.gd") as Script)
 		.get_script_constant_map().get("MAROLA_CICLO", 7.0))
@@ -267,10 +274,11 @@ func _o_ciclo(tela: Control, tweens: Array, caminho: Vector2) -> void:
 		conferir("a Espuma%d lava: o brilho varia %.3f e ela anda %.2f px"
 			% [j - 2, al.max() - al.min(), xs.max() - xs.min()],
 			al.max() - al.min() >= ESPUMA_VARIA_MIN and xs.max() - xs.min() >= ESPUMA_ANDA_MIN)
+	return true
 
 
 # ── §5 ─────────────────────────────────────────────────────────────────────
-func _em_repouso(tela: Control) -> void:
+func _em_repouso(tela: Control) -> bool:
 	var wrap := tela.get_node("MapaWrap")
 	var base: Vector2 = (wrap.get_node("Mapa") as Control).position
 	for i in 2:
@@ -282,3 +290,4 @@ func _em_repouso(tela: Control) -> void:
 		conferir("com o movimento reduzido a Marola%d fica no sítio, com brilho %.0f (tem %.2f em %s)"
 			% [i, quer, no.modulate.a, no.position],
 			no.position == base and is_equal_approx(no.modulate.a, quer))
+	return true
