@@ -442,6 +442,447 @@ offset_bottom = 724.83
 '''
 reprova = { teste_design = "D52: §7 nenhum casco passa por cima da ancoragem nos 9 caminhos" }
 
+# ── A PEÇA NOVA ASSENTA E O «AVANÇAR DIA» AFUNDA (`148`) ──────────────────
+
+[[mutante]]
+id = "assentar-toda-virada"
+de = "148"
+o_que = "o assentar pendurado na virada e não na obra: tudo o que está construído assenta a cada dia"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	GameState.obra_concluida.connect(_ao_concluir_obra)
+'''
+depois = '''
+	GameState.turn_advanced.connect(func(_t, _w):
+		for id in GameState.estruturas:
+			_ao_concluir_obra(String(id)))
+'''
+reprova = { teste_design = "D53: §1 a virada do porto completo não assenta nada" }
+
+[[mutante]]
+id = "assentar-peca-errada"
+de = "148"
+o_que = "a doca dá o píer e a lança a qualquer obra: o armazém pronto faz assentar os píeres"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+	if id != GameState.id_do_pier(dock_index) and id not in OBRAS_DE_TODA_DOCA:
+		return []
+'''
+depois = ''
+reprova = { teste_design = "D53: armazem: só assenta o que a virada mudou" }
+
+[[mutante]]
+id = "assentar-nao-acaba"
+de = "148"
+o_que = "o assentar sem valor final e sem fecho: a peça fica a 94% até ao toque seguinte"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	_tw_assentar.tween_method(_pousar_pecas, ASSENTAR_DE, 1.0, ASSENTAR_SEG) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	for rasto in _rastos:
+		_tw_assentar.parallel().tween_property(rasto, "modulate:a", 0.0,
+			float(rasto.get_meta(&"segundos")))
+	_tw_assentar.finished.connect(_acabar_assentar)
+'''
+depois = '''
+	_tw_assentar.tween_method(_pousar_pecas, ASSENTAR_DE, ASSENTAR_DE, ASSENTAR_SEG) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	for rasto in _rastos:
+		_tw_assentar.parallel().tween_property(rasto, "modulate:a", 0.0,
+			float(rasto.get_meta(&"segundos")))
+'''
+reprova = { teste_design = "D53: armazem §3: acaba inteira e no sítio, exatos" }
+
+[[mutante]]
+id = "assentar-salta"
+de = "148"
+o_que = "a curva com recuo: a peça passa de 100% e volta, a pedra salta"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	for rasto in _rastos:
+'''
+depois = '''
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	for rasto in _rastos:
+'''
+reprova = { teste_design = "D53: armazem §3: nunca passa de 100%" }
+
+[[mutante]]
+id = "assentar-fica-a-meio"
+de = "148"
+o_que = "o fim do assentar mata o tween e não repõe a peça: o toque a meio deixa-a a 98%"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	for p in _assentando:
+		var no: Control = p[0]
+		if is_instance_valid(no):
+			no.scale = Vector2.ONE
+			no.position = p[1]
+	_assentando = []
+'''
+depois = '''
+	_assentando = []
+'''
+reprova = { teste_design = "D53: §5 o `_concluir_virada()` põe cada peça inteira e no sítio já" }
+
+[[mutante]]
+id = "assentar-sem-concluir-virada"
+de = "148"
+o_que = "o `_concluir_virada()` esquece o assentar: o segundo toque e a bateria apanham a peça a meio"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+		rotulo.queue_free()
+	_acabar_assentar()
+'''
+depois = '''
+		rotulo.queue_free()
+'''
+reprova = { teste_design = "D53: §5 o `_concluir_virada()` põe cada peça inteira e no sítio já" }
+
+[[mutante]]
+id = "assentar-pivo-no-canto"
+de = "148"
+o_que = "o armazém, o escritório e o equipamento do pátio escalam à volta do canto do quadro, e não do chão"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+		pecas.append([no, no.position + no.size * 0.5])
+'''
+depois = '''
+		pecas.append([no, no.position])
+'''
+reprova = { teste_design = "D53: armazem §4: o chão das peças fica parado" }
+
+[[mutante]]
+id = "assentar-lanca-no-eixo"
+de = "148"
+o_que = "a lança assenta à volta do eixo dela e o píer à volta do chão: a lança descola da base"
+alvo = "brport_vs/scripts/Dock.gd"
+antes = '''
+	return [[_pier, chao], [_lanca, chao]]
+'''
+depois = '''
+	return [[_pier, chao], [_lanca, _lanca.position + _lanca.pivot_offset]]
+'''
+reprova = { teste_design = "D53: pier_2 §4: a lança não descola da base do píer" }
+
+[[mutante]]
+id = "assentar-sem-reduzido"
+de = "148"
+o_que = "o assentar ignora o movimento reduzido (RB6)"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	if not _virada_armada or PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	var pecas := pecas_da_obra(id)
+'''
+depois = '''
+	if not _virada_armada:
+		return
+	var pecas := pecas_da_obra(id)
+'''
+reprova = { teste_design = "D53: §6 com o movimento reduzido a obra conclui e nada assenta" }
+
+[[mutante]]
+id = "assentar-fora-do-botao"
+de = "148"
+o_que = "qualquer obra concluída assenta, também a da bancada: a peça a 97% numa foto ou numa régua"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	if not _virada_armada or PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	var pecas := pecas_da_obra(id)
+'''
+depois = '''
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	var pecas := pecas_da_obra(id)
+'''
+reprova = { teste_design = "D53: §1 a obra concluída fora do botão não assenta nada" }
+
+[[mutante]]
+id = "assentar-reduzido-a-meio"
+de = "148"
+o_que = "ligar o movimento reduzido a meio do assentar deixa a peça a crescer"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	if reduzido:
+		_acabar_assentar()
+'''
+depois = ''
+reprova = { teste_design = "D53: §6 ligado a meio, o armazém fica inteiro e no sítio já" }
+
+[[mutante]]
+id = "afundar-sem-margem"
+de = "148"
+o_que = "o premido do «Avançar dia» sem as margens negativas: o botão não afunda"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = '''
+expand_margin_left = -13.84
+expand_margin_top = -1.16
+expand_margin_right = -13.84
+expand_margin_bottom = -1.16
+'''
+depois = ''
+reprova = { teste_design = "D53: §7 premido, desenha-se 4% menor nos dois eixos" }
+
+[[mutante]]
+id = "afundar-sempre"
+de = "148"
+o_que = "o estilo afundado no estado normal: o botão já está pequeno antes de se tocar"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = 'BotaoPrimarioBarra/styles/pressed = SubResource("primario_press_barra")'
+depois = 'BotaoPrimarioBarra/styles/normal = SubResource("primario_press_barra")'
+reprova = { teste_design = "D53: §7 em repouso desenha-se inteiro" }
+
+[[mutante]]
+id = "afundar-icone-encosta"
+de = "148"
+o_que = "o premido encolhe a borda e não a margem: o ícone encosta a 3 px da borda (visto no vídeo)"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = '''
+content_margin_left = 27.84
+'''
+depois = '''
+content_margin_left = 14.0
+'''
+reprova = { teste_design = "D53: §7 e o ícone fica à mesma distância da borda" }
+
+[[mutante]]
+id = "afundar-texto-parado"
+de = "148"
+o_que = "o premido encolhe o painel e o texto fica onde estava (o veredito 1)"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = '''
+content_margin_top = 11.0
+content_margin_right = 27.84
+content_margin_bottom = 9.0
+'''
+depois = '''
+content_margin_top = 10.0
+content_margin_right = 27.84
+content_margin_bottom = 10.0
+'''
+reprova = { teste_design = "D53: §7 e o conteúdo desce 1 px" }
+
+[[mutante]]
+id = "afundar-hover-claro"
+de = "148"
+o_que = "o rodapé volta ao «passar por cima» do primário: solto no telefone, o botão fica âmbar claro (o veredito 1)"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = '''
+BotaoPrimarioBarra/styles/hover = SubResource("primario_normal")
+'''
+depois = ''
+reprova = { teste_design = "D53: §7 solto, com o rato ainda por cima, tem a cor do repouso" }
+
+[[mutante]]
+id = "rasto-sem-antes"
+de = "148"
+o_que = "o aspeto de antes da virada não é lido: a obra some de uma vez, como antes do veredito"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	_antes_da_virada = _aspeto_da_obra()
+'''
+depois = ''
+reprova = { teste_design = "D53: armazem §8: cada peça que mudou deixa o rasto do que mostrava antes" }
+
+[[mutante]]
+id = "rasto-por-cima"
+de = "148"
+o_que = "o rasto entra logo ACIMA da peça: a obra velha tapa a nova enquanto se esvai"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+		indice = (no as Node).get_index()
+'''
+depois = '''
+		indice = (no as Node).get_index() + 1
+'''
+reprova = { teste_design = "D53: armazem §8: o rasto fica logo abaixo da peça" }
+
+[[mutante]]
+id = "rasto-nao-esvai"
+de = "148"
+o_que = "o rasto fica opaco o assentar inteiro e some de uma vez no fim"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+		_tw_assentar.parallel().tween_property(rasto, "modulate:a", 0.0,
+			float(rasto.get_meta(&"segundos")))
+'''
+depois = '''
+		_tw_assentar.parallel().tween_property(rasto, "modulate:a", 1.0,
+			float(rasto.get_meta(&"segundos")))
+'''
+reprova = { teste_design = "D53: armazem §8: e some no tempo dele" }
+
+[[mutante]]
+id = "rasto-fica"
+de = "148"
+o_que = "o fim do assentar não tira o rasto: um nó transparente a mais por obra, para sempre"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	for rasto in _rastos:
+		if is_instance_valid(rasto):
+			rasto.get_parent().remove_child(rasto)
+			rasto.queue_free()
+	_rastos.clear()
+'''
+depois = '''
+	_rastos.clear()
+'''
+reprova = { teste_design = "D53: armazem §8: no fim não fica rasto nenhum" }
+
+[[mutante]]
+id = "rasto-sem-patio"
+de = "148"
+o_que = "o canteiro e os cones do pátio somem de uma vez: só as peças deixam rasto"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	if id == "patio":
+		for a in _antes_da_virada:
+'''
+depois = '''
+	if id == "nenhum":
+		for a in _antes_da_virada:
+'''
+reprova = { teste_design = "D53: patio §8: cada peça que mudou deixa o rasto do que mostrava antes" }
+
+[[mutante]]
+id = "rasto-rapido"
+de = "148"
+o_que = "o rasto de volta aos 0,15 s: mal se vê o andaime sair (o veredito 2)"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+const RASTO_SEG := 0.25
+'''
+depois = '''
+const RASTO_SEG := 0.15
+'''
+reprova = { teste_design = "D53: armazem §8: e aos 80% do tempo dele ainda se vê" }
+
+[[mutante]]
+id = "rasto-do-canteiro-lento"
+de = "148"
+o_que = "o canteiro e os cones saem no tempo dos outros: o rolo cruza-se com o equipamento novo (o veredito 2)"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+				canteiro["segundos"] = RASTO_DO_CANTEIRO_SEG
+'''
+depois = '''
+				canteiro["segundos"] = RASTO_SEG
+'''
+reprova = { teste_design = "D53: patio §8: e some no tempo dele" }
+
+[[mutante]]
+id = "rasto-sem-chao"
+de = "148"
+o_que = "o chão do pátio não é lido na véspera: os últimos 20% do asfalto aparecem de uma vez"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	_chao_da_virada = _chao_do_patio()
+'''
+depois = ''
+reprova = { teste_design = "D53: patio §8: o chão de antes deixa rasto" }
+
+[[mutante]]
+id = "rasto-do-chao-por-cima"
+de = "148"
+o_que = "o chão de antes entra acima do cenário: tapa o porto inteiro enquanto se esvai"
+alvo = "brport_vs/scripts/Main.gd"
+antes = '''
+	$MapaWrap.move_child(rasto, $MapaWrap/RuaRecapeada.get_index() + 1)
+'''
+depois = '''
+	$MapaWrap.move_child(rasto, $MapaWrap/Cenario.get_index() + 1)
+'''
+reprova = { teste_design = "D53: patio §8: o rasto do chão fica acima do chão e abaixo das marolas" }
+
+[[mutante]]
+id = "cartao-sem-premido"
+de = "148"
+o_que = "o cartão «Ao largo» não muda ao premir, como antes"
+alvo = "brport_vs/scripts/BarcoFila.gd"
+antes = '''
+	if event.pressed:
+		_premido = true
+		_vestir_premido()
+		return
+'''
+depois = '''
+	if event.pressed:
+		return
+'''
+reprova = { teste_design = "D53: §9 premido, desenha-se 4% mais estreito, com a altura inteira" }
+
+[[mutante]]
+id = "cartao-preso-premido"
+de = "148"
+o_que = "o cartão fica afundado depois de solto"
+alvo = "brport_vs/scripts/BarcoFila.gd"
+antes = '''
+	_premido = false
+	refresh()
+	GameState.atracar(indice)
+'''
+depois = '''
+	refresh()
+	GameState.atracar(indice)
+'''
+reprova = { teste_design = "D53: §9 e o cartão volta a desenhar-se inteiro" }
+
+[[mutante]]
+id = "cartao-atraca-ao-premir"
+de = "148"
+o_que = "o cartão atraca ao premir: um dedo que arrasta pela fila atraca o que tocar primeiro"
+alvo = "brport_vs/scripts/BarcoFila.gd"
+antes = '''
+		_premido = true
+		_vestir_premido()
+		return
+'''
+depois = '''
+		_premido = true
+		_vestir_premido()
+'''
+reprova = { teste_design = "D53: §9 premido, ainda não atracou" }
+
+[[mutante]]
+id = "cartao-premido-mesma-cor"
+de = "148"
+o_que = "o cartão premido só encolhe, com o fundo de sempre: muda pouco (o veredito 3)"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = 'bg_color = Color(0.063, 0.132, 0.187, 0.96)'
+depois = 'bg_color = Color(0.129, 0.2, 0.259, 0.96)'
+reprova = { teste_design = "D53: §9 e o fundo escurece o passo do botão" }
+
+[[mutante]]
+id = "cartao-texto-pisa-borda"
+de = "148"
+o_que = "o cartão premido também encolhe na altura: a última linha pisa a borda (visto na passagem 4)"
+alvo = "brport_vs/ui/tema_brport.tres"
+antes = '''
+content_margin_bottom = 6.0
+expand_margin_left = -4.48
+expand_margin_right = -4.48
+'''
+depois = '''
+content_margin_bottom = 6.0
+expand_margin_left = -4.48
+expand_margin_top = -3.0
+expand_margin_right = -4.48
+expand_margin_bottom = -3.0
+'''
+reprova = { teste_design = "D53: §9 e nos três estados premidos a última linha não pisa a borda" }
+
+[[mutante]]
+id = "d53-obra-rebenta"
+de = "148"
+o_que = "uma obra do D53 lê uma constante que o Main não tem e aborta a meio; sem a bandeira dela reprovava só de raspão (a cena que ficava aberta deixava rastos, e o §1 acusava-os), longe da causa"
+alvo = "brport_vs/tests/casos_assentar_obra.gd"
+antes = 'get_script_constant_map()["EQUIPAMENTO_DE_PATIO"]'
+depois = 'get_script_constant_map()["EQUIPAMENTO_DO_PATIO"]'
+reprova = { teste_design = "D53: pier_2 correu até ao fim" }
+
 # ── O TRABALHADOR E O CAIXA ────────────────────────────────────────────────
 
 [[mutante]]
