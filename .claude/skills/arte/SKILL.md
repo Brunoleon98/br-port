@@ -520,6 +520,17 @@ Arlindo seis, e o que as encurtou foi a FORMA da pergunta, não a arte.
   e reprodutível. Movimento de poucos px por segundo mostra-se a 1:1 do
   telefone e num recorte a 2×. Reinícios do worker caíram outra vez entre o
   envio e a pergunta, e a pergunta sozinha voltou.
+  ⚠️ **E NO BARCO DO LARGO AO BERÇO (`144`) FORAM QUATRO PASSAGENS, e os
+  três «Ajustar» chegaram SEM texto ou com a lista marcada.** O primeiro
+  trouxe no «Outro» um escopo maior («mais lento e realista», água, fumaça):
+  a pergunta seguinte foi de ESCOPO, quatro questões num formulário com a
+  recomendada primeiro e o custo honesto de cada uma, e voltou à primeira. Os
+  outros dois foram «Ajustar» vazios, e a lista dos defeitos vistos, cada um
+  com a correção escrita, voltou marcada nas duas. ⚠️ **E A CORREÇÃO ESCRITA
+  NUMA OPÇÃO MEDE-SE ANTES DE A ESCREVER:** «a arte do casco espelhada» não
+  punha a proa para o cais (aponta-a para `+my`), e só a medição o disse —
+  depois de ele a ter marcado. As perguntas sozinhas, a seguir ao vídeo,
+  voltaram todas, com reinícios do worker pelo meio.
 - **Folha que recorta pode fazer parecer cortado o que no jogo sai inteiro.**
   A janela da folha ampliada estava escrita à mão na cabeça de hoje e cortava
   14 px do crespo; ele perguntou «vão aparecer cortadas?». A janela sai do

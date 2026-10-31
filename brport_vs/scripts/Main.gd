@@ -312,21 +312,59 @@ func _recuperar_fase() -> void:
 # que a profundidade dele cai (o D3).
 const ANCORADOS := ["BarcoEspera1", "BarcoEspera2", "BarcoEspera3"]
 
+# O LUGAR AO LARGO É DO BARCO, e não da posição dele na fila (`144`): o id de
+# cada barco ao largo para o índice do nó em `ANCORADOS`. Até lá cada lugar
+# pintava o barco da mesma posição da fila, e atracar o primeiro fazia sumir
+# do mapa o ÚLTIMO e trocar o casco dos outros — medido numa sonda, e também
+# na virada (o arrasteiro e o bote trocavam de lugar). Com o barco a deslizar
+# do lugar onde foi tocado, o lugar tem de ser dele. Quem chega fica com o
+# primeiro lugar livre.
+var _lugar_do_barco: Dictionary = {}
+
 
 func _pintar_ancorados() -> void:
-	var i := 0
-	for nome in ANCORADOS:
-		var barco := $MapaWrap/Cenario.get_node_or_null(nome) as TextureRect
+	var na_fila := {}
+	for b in GameState.fila:
+		na_fila[int(b["id"])] = b
+	for id in _lugar_do_barco.keys():
+		if not na_fila.has(id):
+			_lugar_do_barco.erase(id)
+	var por_lugar := {}
+	for id in _lugar_do_barco:
+		por_lugar[_lugar_do_barco[id]] = na_fila[id]
+	for b in GameState.fila:
+		var id := int(b["id"])
+		if _lugar_do_barco.has(id):
+			continue
+		for i in range(ANCORADOS.size()):
+			if not por_lugar.has(i):
+				_lugar_do_barco[id] = i
+				por_lugar[i] = b
+				break
+	for i in range(ANCORADOS.size()):
+		var barco := $MapaWrap/Cenario.get_node_or_null(ANCORADOS[i]) as TextureRect
 		if barco == null:
 			continue
-		if i < GameState.fila.size():
-			var b: Dictionary = GameState.fila[i]
+		barco.visible = por_lugar.has(i)
+		if barco.visible:
+			var b: Dictionary = por_lugar[i]
 			barco.texture = DockScript.arte_do_barco(
 				String(b["classe"]), String(b["motivo"]), int(b["value"]))
-			barco.visible = true
-		else:
-			barco.visible = false
-		i += 1
+
+
+## O barco tocado ao largo sai do lugar onde estava e desliza até ao berço
+## (`144`). O `atracou` vem antes do `fila_mudou` que esvazia o lugar e do
+## `roster_changed` que refresca a doca, e é por isso que o lugar ainda está
+## no mapa quando se lê o centro dele.
+func _ao_atracar(doca: int, barco: Dictionary, _valores_ao_largo: Array) -> void:
+	var id := int(barco["id"])
+	var vagas := _docks_container.get_children()
+	if doca >= vagas.size() or not _lugar_do_barco.has(id):
+		return
+	var no := $MapaWrap/Cenario.get_node_or_null(ANCORADOS[_lugar_do_barco[id]]) as TextureRect
+	if no == null or not no.visible:
+		return
+	vagas[doca].chegar_de(no.get_global_rect().get_center())
 
 
 # Parados, fazem o porto parecer uma fotografia. Vivem dentro do Cenario, e
@@ -628,6 +666,7 @@ func _connect_game_state() -> void:
 	GameState.estrutura_comprada.connect(func(_id): _refresh_all())
 	GameState.fila_mudou.connect(_refresh_fila)
 	GameState.fila_mudou.connect(_pintar_ancorados)
+	GameState.atracou.connect(_ao_atracar)
 	GameState.message.connect(_on_message)
 	GameState.rival_offer_triggered.connect(_on_rival_offer_triggered)
 	GameState.debt_due.connect(_on_debt_due)

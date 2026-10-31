@@ -394,6 +394,12 @@ func _rodar() -> void:
 	_falhas += int(marolas.falhas)
 	_confere("o bloco D51 correu até ao fim", marolas.completo)
 
+	print("=== D52: o barco que desliza do largo ao berço — o lugar, o começo, o caminho, o trabalho, o toque a meio e o repouso ===")
+	var deslize = load("res://tests/casos_deslize_do_largo.gd").new()
+	deslize.rodar(root.get_node("GameState"), self)
+	_falhas += int(deslize.falhas)
+	_confere("o bloco D52 correu até ao fim", deslize.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")

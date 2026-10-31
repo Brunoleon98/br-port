@@ -114,6 +114,23 @@ const CASCOS := {
 	},
 }
 
+## O MESMO CASCO VIRADO PARA O CAIS (`144`), pelo caminho da arte de sempre:
+## o barco que desliza do largo navega de proa, e cada casco tem a sua
+## variante `_ao_cais` — o grupo do Blender espelhado em `x`
+## (`gerar_props_iso.py`, `SUFIXO_AO_CAIS`). Acesso DIRETO: um casco novo sem
+## a variante rebenta no primeiro deslize, em vez de navegar de ré calado.
+const CASCOS_AO_CAIS := {
+	"res://art/props/barco_pesca_bote.png": preload("res://art/props/barco_pesca_bote_ao_cais.png"),
+	"res://art/props/barco_pesca_traineira.png": preload("res://art/props/barco_pesca_traineira_ao_cais.png"),
+	"res://art/props/barco_pesca_arrasteiro.png": preload("res://art/props/barco_pesca_arrasteiro_ao_cais.png"),
+	"res://art/props/barco_medio_geral.png": preload("res://art/props/barco_medio_geral_ao_cais.png"),
+	"res://art/props/barco_medio_conteiner.png": preload("res://art/props/barco_medio_conteiner_ao_cais.png"),
+	"res://art/props/barco_medio_granel.png": preload("res://art/props/barco_medio_granel_ao_cais.png"),
+	"res://art/props/barco_grande_geral.png": preload("res://art/props/barco_grande_geral_ao_cais.png"),
+	"res://art/props/barco_grande_conteiner.png": preload("res://art/props/barco_grande_conteiner_ao_cais.png"),
+	"res://art/props/barco_grande_granel.png": preload("res://art/props/barco_grande_granel_ao_cais.png"),
+}
+
 
 # ── O PAU-DE-CARGA QUE DESCARREGA (02/10, `docs/decisoes/075`, `076`) ──
 #
@@ -726,6 +743,42 @@ const ESMAECER := 0.3
 ## rumo ATRAVESSA O TABUADO (o `Barco` desenha-se depois do `Pier`): ninguém o
 ## viu porque aquela chegada nunca correu. Viu-se na primeira foto da partida.
 const RUMO_DO_MAR := Vector2(90, 45)
+## O BARCO TOCADO AO LARGO VAI DO LUGAR ONDE ESTAVA ATÉ AO BERÇO (`144`). Até
+## lá, atracar não tinha gesto nenhum: a chegada da `078` arrancava e morria
+## no mesmo quadro, porque desde a `083` o trabalhador vai com o barco e «quem
+## aloca a meio da chegada encosta o barco já». Medido numa sonda: o casco
+## aparecia no berço no quadro do toque.
+##
+## São TRÊS TRECHOS, como um barco de verdade manobra: navega DE PROA do
+## lugar ao largo até perto da boca do berço (`DESLIZE_BOCA` vezes o
+## `RUMO_DO_MAR` para fora dele), vira em passos de 90° até ficar com a proa
+## para o mar SEM PARAR — continua a deslizar devagar (`DESLIZE_DERIVA`
+## px/s), com a arte de cada rumo a aparecer por cima da anterior — e entra
+## DE RÉ pela faixa da `078`, que é a que não cruza o píer, travando a
+## encostar.
+## A primeira passagem era uma curva de ré do largo ao berço, em 1,4 s, e o
+## Bruno marcou «entrar de ré estranha» e pediu «um movimento mais lento e
+## realista». A segunda virava parada, num salto de 0,2 s por passo, com a ré
+## a ~140 px: «a viragem salta», «parar para virar é robótico» e «a ré na
+## faixa é longa». Daí 0,35 s por passo, a deriva e a boca a ~110 px. A
+## terceira misturava as duas artes o passo inteiro, e a 90° elas cruzavam-se
+## num «X»; e a deriva, a 30 px/s, «não se nota». A arte nova aparece só nos
+## últimos `DESLIZE_TROCA_SEG` de cada passo, e a deriva é de 60 px/s (~40 px).
+const DESLIZE_BOCA := 1.1
+const DESLIZE_PROA_SEG := 1.1
+const DESLIZE_VIRA_SEG := 0.35
+const DESLIZE_TROCA_SEG := 0.1
+const DESLIZE_RE_SEG := 0.8
+const DESLIZE_DERIVA := 60.0
+## Os quatro rumos de um casco, pela ordem em que a proa roda: para o mar
+## (`+mx`, a arte de sempre), `+my` (a mesma espelhada), para o cais (`-mx`,
+## a arte `_ao_cais`) e `-my` (essa espelhada). O navio é simétrico, e o
+## espelho da imagem é o navio a apontar para o lado oposto em `my`.
+const RUMO_MAR := 0
+const RUMO_MY := 1
+const RUMO_CAIS := 2
+const RUMO_MENOS_MY := 3
+const DIRECAO_DO_RUMO := [Vector2(2, 1), Vector2(-2, 1), Vector2(-2, -1), Vector2(2, -1)]
 const PULSO_SEG := 0.9
 const REALCE := Color(1.45, 1.22, 0.72)
 
@@ -737,6 +790,11 @@ var _tw_balanco: Tween
 # num tween só (`078`). `_barco_alvo` é a arte em que ela vai acabar.
 var _tw_troca: Tween
 var _barco_alvo: Texture2D = null
+# De onde vem o PRÓXIMO barco, em coordenada GLOBAL, quando foi tocado ao
+# largo (`chegar_de()`), ou `null`; e se a troca em curso é esse deslize. O
+# trabalho espera por ele: o guindaste descarrega do porão no berço.
+var _origem_do_deslize: Variant = null
+var _deslizando := false
 # A primeira vista não anima: o porto que se abre (partida nova, save
 # carregado) mostra os barcos onde estão. Daí em diante toda troca anima.
 var _vista_feita := false
@@ -775,6 +833,7 @@ var _ocupada := false
 
 @onready var _pier: TextureRect = $Pier
 @onready var _barco: TextureRect = $Barco
+var _barco_vira: TextureRect
 @onready var _trabalhador_prop: TextureRect = $Trabalhador
 @onready var _pilha: TextureRect = $Pilha
 @onready var _lanca: TextureRect = $Lanca
@@ -797,6 +856,15 @@ func _ready() -> void:
 	# offset, então zerá-lo não "volta ao lugar" — atira o nó para o canto do
 	# pai e apaga a ancoragem da cena.
 	_barco_base = _barco.position
+	# A segunda imagem do casco, para a viragem do deslize (`144`): uma cópia
+	# do nó `Barco` logo a seguir a ele, escondida fora da viragem. Nasce
+	# aqui e não na cena porque é o mesmo quadro, o mesmo tamanho e a mesma
+	# ordem que o `Barco` — copiá-lo é o que garante que não divergem.
+	_barco_vira = _barco.duplicate() as TextureRect
+	_barco_vira.name = "BarcoVira"
+	_barco_vira.visible = false
+	add_child(_barco_vira)
+	move_child(_barco_vira, _barco.get_index() + 1)
 	_trabalhador_base = _trabalhador_prop.position
 	_emp_base = _empilhadeira.position
 	PreferenciasDeApresentacao.atual().mudou.connect(_ao_movimento)
@@ -896,6 +964,10 @@ func _refresh_cena() -> void:
 		return
 
 	if dock["worker_id"] != null:
+		# O BARCO QUE VEM DO LARGO NÃO ENCOSTA JÁ, E O TRABALHO ESPERA POR ELE
+		# (`144`): quem o arma é o `_pousar_barco()`, com o casco no berço.
+		if _deslizando:
+			return
 		# QUEM ALOCA A MEIO DA CHEGADA ENCOSTA O BARCO JÁ. O guindaste
 		# descarrega do porão no berço, e com o casco ainda a deslizar a
 		# carga sairia da água ao lado dele.
@@ -933,6 +1005,11 @@ func _refresh_cena() -> void:
 ## guindaste pára e a vez é do trabalhador (`077`). No 3 o pórtico trabalha o
 ## serviço inteiro, ao mesmo tempo que a empilhadeira (`079`).
 func _guindaste_opera() -> bool:
+	# Com o barco a vir do largo a lança continua a varrer: a pergunta é feita
+	# ANTES de o `_mostrar_barco()` armar o deslize, e por isso conta também a
+	# origem pendente (`144`).
+	if _deslizando or _origem_do_deslize != null:
+		return false
 	var nivel := int(GameState.nivel_guindaste()) if esta_construida() else 0
 	if nivel < 1 or nivel > 3:
 		return false
@@ -977,10 +1054,15 @@ func _gui_input(event: InputEvent) -> void:
 ## em toda virada, com o esvaziar e o encher no mesmo quadro: o segundo
 ## pedido encontra o barco velho ainda no berço e parte com ele.
 func _mostrar_barco(barco_id: int, textura: Texture2D) -> void:
+	# A origem vale para ESTA troca e só para ela: lida e largada antes de
+	# tudo, para não sobrar para a troca seguinte (`144`).
+	var origem: Variant = _origem_do_deslize
+	_origem_do_deslize = null
 	if barco_id == _barco_id_anterior:
 		return                      # mesmo barco: já está balançando
 	_barco_id_anterior = barco_id
 	_barco_alvo = textura
+	_deslizando = false
 	for tw in [_tw_troca, _tw_balanco]:
 		if tw != null and tw.is_valid():
 			tw.kill()
@@ -999,11 +1081,133 @@ func _mostrar_barco(barco_id: int, textura: Texture2D) -> void:
 	if textura == null:
 		_tw_troca.tween_callback(_pousar_barco.bind(null))
 		return
+	if origem != null:
+		# O quadro do barco ao largo e o do berço têm o mesmo tamanho (512) e
+		# a mesma arte: o casco começa onde o jogador o viu, centro com centro.
+		var inicio: Vector2 = get_global_transform().affine_inverse() \
+			* Vector2(origem) - _barco.size * 0.5
+		_deslizando = true
+		var dur := duracao_do_deslize(inicio, _barco_base)
+		_tw_troca.tween_callback(_entrar_do_largo.bind(textura, inicio))
+		_tw_troca.tween_method(_aplicar_deslize.bind(inicio), 0.0, dur, dur)
+		_tw_troca.tween_callback(_pousar_barco.bind(textura))
+		return
 	_tw_troca.tween_callback(_entrar_barco.bind(textura))
 	_tw_troca.tween_property(_barco, "position", _barco_base, CHEGADA_SEG) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	_tw_troca.parallel().tween_property(_barco, "modulate:a", 1.0, CHEGADA_SEG * ESMAECER)
 	_tw_troca.tween_callback(_pousar_barco.bind(textura))
+
+
+## O próximo barco desta doca vem do largo, de `centro_global` — o centro do
+## barco que o jogador tocou (`144`). Quem a chama é o `Main`, no `atracou`,
+## que o `GameState` emite antes do `roster_changed` que refresca a doca.
+##
+## ⚠️ COM O MOVIMENTO REDUZIDO A ORIGEM NEM SE GUARDA. Não há deslize, e uma
+## origem pendente punha o `_guindaste_opera()` a dizer que não no refresh do
+## toque: o guindaste do n1 ficava parado e ninguém o rearmava, porque só o
+## fim do deslize o faz. Apanhou-o o T29 na primeira corrida.
+func chegar_de(centro_global: Vector2) -> void:
+	if PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	_origem_do_deslize = centro_global
+
+
+## O rumo de proa mais perto da direção `d` na tela: o casco navega com a
+## arte que aponta para onde ele vai.
+static func rumo_de(d: Vector2) -> int:
+	var melhor := RUMO_MAR
+	var maior := -INF
+	for r in range(DIRECAO_DO_RUMO.size()):
+		var c: float = (DIRECAO_DO_RUMO[r] as Vector2).normalized().dot(d.normalized())
+		if c > maior:
+			maior = c
+			melhor = r
+	return melhor
+
+
+## Os rumos por que a proa passa, na boca do berço, até ficar para o mar: um
+## passo de 90° de cada vez, nunca 180° de uma vez. Do rumo do cais vira pelo
+## lado para onde vinha a andar na tela (`d.x`), que é o que a curva pede.
+static func viragem(r0: int, d: Vector2) -> Array:
+	if r0 == RUMO_MAR:
+		return []
+	if r0 == RUMO_CAIS:
+		return [RUMO_MENOS_MY if d.x > 0.0 else RUMO_MY, RUMO_MAR]
+	return [RUMO_MAR]
+
+
+## Quanto dura o deslize de `inicio` a `base`: o trecho de proa, um passo de
+## viragem por cada 90° e a ré na faixa.
+static func duracao_do_deslize(inicio: Vector2, base: Vector2) -> float:
+	var boca := base + RUMO_DO_MAR * DESLIZE_BOCA
+	var d := boca - inicio
+	return DESLIZE_PROA_SEG + DESLIZE_VIRA_SEG * viragem(rumo_de(d), d).size() \
+		+ DESLIZE_RE_SEG
+
+
+## Onde está o casco e para onde aponta a proa, `t` segundos depois de sair
+## do largo (posições do nó, em coordenada da doca): `{"pos", "rumo",
+## "proximo", "mistura"}`. Na viragem, `proximo` é o rumo que está a chegar e
+## `mistura` quanto dele já se vê (0 a 1); fora dela, `proximo` é −1.
+##
+## A velocidade não cai a zero entre os trechos: o de proa arranca do zero e
+## chega à deriva, a viragem anda à deriva pela faixa, e a ré parte da deriva
+## e trava no berço — um Hermite cúbico por trecho, com a inclinação das
+## pontas tirada da deriva.
+static func pose_do_deslize(inicio: Vector2, base: Vector2, t: float) -> Dictionary:
+	var boca := base + RUMO_DO_MAR * DESLIZE_BOCA
+	var d := boca - inicio
+	var r0 := rumo_de(d)
+	var passos := viragem(r0, d)
+	var vira_seg := DESLIZE_VIRA_SEG * passos.size()
+	# A deriva da viragem já corre AO LONGO DA FAIXA, para o berço: o casco
+	# entra no eixo enquanto vira, e a ré continua na mesma direção e à mesma
+	# velocidade. Correndo na direção da chegada, o passo da junção com a ré
+	# misturava as duas e lia-se como andar de lado (o D52 apanhou-o).
+	var deriva := minf(DESLIZE_DERIVA * vira_seg, d.length() * 0.3)
+	var antes := boca + RUMO_DO_MAR.normalized() * deriva
+	var v := deriva / vira_seg if vira_seg > 0.0 else 0.0
+	if t < DESLIZE_PROA_SEG:
+		var l1 := antes.distance_to(inicio)
+		var m1 := v * DESLIZE_PROA_SEG / l1 if l1 > 0.0 else 0.0
+		var u := _hermite(t / DESLIZE_PROA_SEG, 0.0, m1)
+		return {"pos": inicio.lerp(antes, u), "rumo": r0, "proximo": -1, "mistura": 0.0}
+	t -= DESLIZE_PROA_SEG
+	if t < vira_seg:
+		var passo := int(t / DESLIZE_VIRA_SEG)
+		var de: int = r0 if passo == 0 else int(passos[passo - 1])
+		var falta := DESLIZE_VIRA_SEG * (passo + 1) - t
+		var mistura := clampf(1.0 - falta / DESLIZE_TROCA_SEG, 0.0, 1.0)
+		return {"pos": antes.lerp(boca, t / vira_seg), "rumo": de,
+			"proximo": int(passos[passo]) if mistura > 0.0 else -1,
+			"mistura": mistura}
+	t -= vira_seg
+	var l2 := boca.distance_to(base)
+	var m0 := v * DESLIZE_RE_SEG / l2 if l2 > 0.0 else 0.0
+	var u := _hermite(clampf(t / DESLIZE_RE_SEG, 0.0, 1.0), m0, 0.0)
+	return {"pos": boca.lerp(base, u), "rumo": RUMO_MAR, "proximo": -1, "mistura": 0.0}
+
+
+## De 0 a 1 em `u`, com a inclinação `m0` no começo e `m1` no fim (em
+## unidades de trecho por trecho de tempo): 0 é arrancar parado, ou travar.
+static func _hermite(u: float, m0: float, m1: float) -> float:
+	var x := clampf(u, 0.0, 1.0)
+	return (x * x * x - 2.0 * x * x + x) * m0 + (-2.0 * x * x * x + 3.0 * x * x) \
+		+ (x * x * x - x * x) * m1
+
+
+## A arte do casco `mar` (a de sempre, proa para o mar) a apontar para o
+## `rumo`: a textura e se vai espelhada.
+static func arte_no_rumo(mar: Texture2D, rumo: int) -> Array:
+	if rumo == RUMO_MAR or rumo == RUMO_MY:
+		return [mar, rumo == RUMO_MY]
+	return [CASCOS_AO_CAIS[mar.resource_path], rumo == RUMO_MENOS_MY]
+
+
+## O barco está a vir do largo para o berço.
+func deslizando() -> bool:
+	return _deslizando
 
 
 ## Leva a troca ao fim já: o barco seguinte no berço, a balançar, ou a doca
@@ -1028,18 +1232,50 @@ func em_troca() -> bool:
 
 func _entrar_barco(textura: Texture2D) -> void:
 	_barco.texture = textura
+	_barco.flip_h = false
+	_barco_vira.visible = false
 	_barco.position = _barco_base + RUMO_DO_MAR
 	_barco.modulate.a = 0.0
 
 
+func _entrar_do_largo(textura: Texture2D, inicio: Vector2) -> void:
+	_barco.texture = textura
+	_barco.position = inicio
+	_barco.modulate.a = 1.0
+	_aplicar_deslize(0.0, inicio)
+
+
+func _aplicar_deslize(t: float, inicio: Vector2) -> void:
+	var p := pose_do_deslize(inicio, _barco_base, t)
+	_barco.position = p["pos"]
+	var arte: Array = arte_no_rumo(_barco_alvo, int(p["rumo"]))
+	_barco.texture = arte[0]
+	_barco.flip_h = arte[1]
+	# Na viragem, a arte do rumo que chega aparece POR CIMA da que sai.
+	_barco_vira.visible = int(p["proximo"]) >= 0
+	if _barco_vira.visible:
+		var nova: Array = arte_no_rumo(_barco_alvo, int(p["proximo"]))
+		_barco_vira.texture = nova[0]
+		_barco_vira.flip_h = nova[1]
+		_barco_vira.position = _barco.position
+		_barco_vira.modulate.a = float(p["mistura"])
+
+
 func _pousar_barco(textura: Texture2D) -> void:
 	_barco.texture = textura
+	_barco.flip_h = false
+	_barco_vira.visible = false
 	_barco.position = _barco_base
 	_barco.modulate.a = 1.0
 	if _tw_balanco != null and _tw_balanco.is_valid():
 		_tw_balanco.kill()
 	if textura != null:
 		_iniciar_balanco()
+	# O casco que veio do largo encostou: agora sim o trabalho começa, pelo
+	# mesmo `refresh()` que o teria armado no toque (`144`).
+	if _deslizando:
+		_deslizando = false
+		refresh()
 
 
 func _iniciar_balanco() -> void:
