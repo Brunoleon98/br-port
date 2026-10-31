@@ -754,6 +754,7 @@ bônus, estresse, carros e imóveis continuam para depois. Detalhe em
 personagens na revisão: versões para leitura e percurso das lojas em
 `docs/REVISAO_FALAS_LOJAS_FASE_1.md`. Em 25/10, aceitou chave/almoço;
 essas duas versões foram integradas. Demais falas e retorno continuam propostas.
+Em 31/10, Bruno aceitou também o envelope, aplicado localmente (`146`).
 A fila gráfica abaixo segue com Claude.
 
 **Prioridade em vigor desde 10/10, escolha do Bruno: a FILA DE MELHORIAS da

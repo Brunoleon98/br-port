@@ -1,5 +1,16 @@
 # Próxima conversa — revisão contextual após validar a entrega
 
+Atualização na continuação: o PR documental #159 terminou com CI verde e foi
+marcado pronto para revisão, sem merge. Bruno pediu evitar PRs pequenos.
+Na revisão pelo chat, aceitou o envelope («Ficou bom»); a versão de
+`docs/REVISAO_FALAS_LOJAS_FASE_1.md` foi aplicada localmente em `Narrativa.gd`,
+sem mudar gatilhos. Retorno das lojas continua proposta; é o próximo recorte
+possível. O histórico abaixo preserva o handoff anterior; o prompt foi atualizado.
+
+Envelope: seis suítes aprovadas em 51 s; seis falas olhadas em Padrão/Maior
+no painel real. Provas locais em `/tmp/brport-envelope-verificacao/`; aceite
+e resultados na decisão `146`. O commit local do envelope não foi enviado.
+
 31/10/2026. Branch `codex/revisor-de-mensagens`, sobre a main `d11311b`.
 Ler AGENTS.md, estado, §7 do plano e decisões 145–147.
 
@@ -36,9 +47,11 @@ Retome /workspace/br-port na branch codex/revisor-de-mensagens.
 Leia AGENTS.md, docs/ESTADO_DO_PROJETO.md, a §7 do plano e as decisões 145–147.
 Leia docs/arquivo/BRIEFING_PROXIMA_CONVERSA_2026-10-31b.md.
 O PR #158 já está incorporado; seu CI passou nas seis suítes e nos 263 mutantes.
-Confira o PR documental complementar e seu CI pelo head final, sem repetir a validação concluída. Não faça merge.
+O PR documental #159 está pronto para revisão, com CI verde no head fb481d1. Não faça merge.
+O envelope foi aceito e aplicado em commit local posterior, ainda não enviado: seis suítes passaram e as falas foram conferidas em Padrão/Maior.
 Vamos retomar a revisão contextual pelo chat, com prioridade no vínculo com os personagens.
-Chave, almoço e Mané estão aceitos; envelope e retorno das lojas ainda são propostas.
+Chave, almoço, Mané e envelope estão aceitos; retorno das lojas ainda é proposta.
 Use a skill revisar-mensagens; leia texto, gatilhos e contexto, apresente sugestões sem aplicar automaticamente.
+Evite PRs de coisas menores; reúna o commit local com uma entrega relevante antes de publicar.
 A parte gráfica segue com Claude; teste no telefone pendente.
 ```

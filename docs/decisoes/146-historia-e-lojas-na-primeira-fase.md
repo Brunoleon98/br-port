@@ -82,3 +82,23 @@ A decisão, criada como 140 quando o número estava livre, foi renumerada para
 140 no PR #152. A branch incorporou `origin/main` em `3de1526`, preservando a
 frente gráfica e os dois registros. Provas desta revisão em
 `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`.
+
+## Revisão do envelope — 31/10
+
+Bruno aceitou a candidata apresentada pelo revisor no chat («Ficou bom»).
+Toninho encontra o envelope no armário, sem pressupor leitura da chave;
+ele e Cida compartilham a surpresa. A oferta fica explicitamente antiga,
+a frase do avô permanece e Cida convida a chefia a ler junto, sem explicar
+novamente o empréstimo nem prometer investigação jogável. Texto aceito em
+`docs/REVISAO_FALAS_LOJAS_FASE_1.md`, aplicado localmente em `Narrativa.gd`.
+Sem alteração de condições, save, preços ou arte. Retorno das lojas e as
+demais propostas não receberam aceite. O complemento fica em commit local,
+para acompanhar uma entrega relevante; Bruno pediu evitar PRs de coisas menores.
+
+Verificação local: seis suítes aprovadas em 51 s (`SUITES OK`), `DOCS OK` e
+as seis falas fotografadas e olhadas em Padrão/Maior, a 720×1280 e passo fixo.
+Captura deriva o dia 43 e o armazém pronto por ações reais, sem forjar o
+desbloqueio; a cena é percorrida pelos botões. Logs, fotos e folhas de leitura
+em `/tmp/brport-envelope-verificacao/`. Telefone pendente. `Narrativa.gd` não
+é alvo de mutante do catálogo; nenhuma suíte ou alvo mudou, portanto não se
+repetiu a execução integral de 263 já aprovada.

@@ -4,7 +4,7 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 31/10/2026 — #158 incorporado e validado (`147`)
+> **Atualização:** 31/10/2026 — envelope aceito e aplicado localmente (`146`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -131,8 +131,8 @@ A3, uma conversa cada, e a esteira, a fumaça e o fundeadouro (§7).
 pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
 ou teste no telefone.
 
-**História/lojas (`146`, #158):** chave/almoço/Mané aceitos; envelope e retorno
-das lojas propostos. Telefone pendente; seis suítes e 263 mutantes verdes no CI.
+**História/lojas (`146`, #158):** chave/almoço/Mané na main; envelope aceito e
+aplicado localmente. Retorno das lojas proposto; telefone pendente.
 **Revisor de mensagens (`145`):** skill `revisar-mensagens`, com parecer contextual.
 **Reputação (`147`):** aviso da Cida e HUD vermelho quando baixa.
 

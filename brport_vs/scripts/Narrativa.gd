@@ -763,11 +763,12 @@ const HISTORIA_DO_PORTO := {
 		["cida", "Dona Cida", "Que pode mandar. Fiado, não. Seu Maneco já me deu trabalho suficiente com isso."],
 	],
 	"envelope": [
-		["toninho", "Toninho", "A chave ainda serve, chefia. Achei esse envelope atrás dos livros do galpão."],
-		["cida", "Dona Cida", "Grupo Atlântico. Uma oferta de compra. Pelo cais inteiro."],
-		["toninho", "Toninho", "O Seu Maneco guardou a oferta e continuou vindo trabalhar."],
-		["cida", "Dona Cida", "A dívida antiga é uma história. O empréstimo que fizemos pra reconstruir é outra. Não mistura os papéis."],
+		["toninho", "Toninho", "Achei esse envelope no armário do Seu Maneco, chefia. Tava no meio dos papéis."],
+		["cida", "Dona Cida", "Grupo Atlântico. Uma oferta antiga de compra. Pelo cais inteiro."],
+		["toninho", "Toninho", "Ele nunca me falou disso."],
+		["cida", "Dona Cida", "Pra mim também não."],
 		["toninho", "Toninho", "No verso tem letra dele: enquanto tiver quem volte, eu fico."],
+		["cida", "Dona Cida", "Deixa aqui na mesa, chefia. A gente lê junto."],
 	],
 	"mesa": [
 		["cida", "Dona Cida", "O Mané perguntou se ainda tem lugar pra ele quando passar no cais."],
