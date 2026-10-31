@@ -1,0 +1,23 @@
+{
+  "base": "3cdba77930eb7b6fa2fe36fd5c42cdf9727d96cb",
+  "arvore_suja": true,
+  "fontes": {
+    "brport_vs/scripts/PainelLojas.gd": "299295ab4e6cc9f7c7994ee332106d5c9a81b9c10267666f41f736a9741214dd",
+    "brport_vs/scripts/Narrativa.gd": "29e467d0fb683eaff4d47e06a39a0b1bf23658d36810f2ce5abfe4c5d6610679",
+    "brport_vs/tests/casos_retorno_lojas.gd": "f507eb1befbb93f97210f5dfad939eeef3e6192e677f96a6444cb2db304f5f82",
+    "brport_vs/tests/casos_historia_lojas.gd": "bdf534a8c1625e14221008460de099d4c83827a97562464f7fee6b1b078f016d",
+    "brport_vs/tests/run_tests.gd": "dc82b6b69a63fc8e3ad6d79214218cd84a863666aecbfbb836f5136c8325f723",
+    "tools/mutantes.toml": "a98ea8435aa45f1651ecfd674d4ae6f752f880f7249c84c809ecb76c53386c9e"
+  },
+  "integracao": {
+    "main": "28c2f2d",
+    "fontes": {
+      "brport_vs/scripts/PainelLojas.gd": "299295ab4e6cc9f7c7994ee332106d5c9a81b9c10267666f41f736a9741214dd",
+      "brport_vs/scripts/Narrativa.gd": "29e467d0fb683eaff4d47e06a39a0b1bf23658d36810f2ce5abfe4c5d6610679",
+      "brport_vs/tests/casos_retorno_lojas.gd": "f507eb1befbb93f97210f5dfad939eeef3e6192e677f96a6444cb2db304f5f82",
+      "brport_vs/tests/casos_historia_lojas.gd": "bdf534a8c1625e14221008460de099d4c83827a97562464f7fee6b1b078f016d",
+      "brport_vs/tests/run_tests.gd": "dc82b6b69a63fc8e3ad6d79214218cd84a863666aecbfbb836f5136c8325f723",
+      "tools/mutantes.toml": "8396e61424e6cd9aa0d72c79fab9d6adf0ec7987649fbd6570d69a3f2b1d90fd"
+    }
+  }
+}

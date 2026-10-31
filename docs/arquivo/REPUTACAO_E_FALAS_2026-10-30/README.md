@@ -1,4 +1,4 @@
-# Reputação baixa e falas — implementação local
+# Reputação baixa e falas — implementação e validação
 
 Iniciada em 30/10/2026, decisão `147`, branch `codex/revisor-de-mensagens`.
 Bruno reformulou o apontamento do revisor: Cida comenta quando a reputação
@@ -65,7 +65,7 @@ o laço da ferramenta para terminar também o pagamento pendente. Os tiros
 finais derivam o estado pelas ações, sem forjar a parcela.
 
 `previa-reputacao.gd.txt` preserva a ferramenta antiga de prévia. Ela não é a
-receita usada pelas capturas finais. Telefone e export não foram verificados.
+receita usada pelas capturas finais. Telefone pendente; export aprovado no CI abaixo.
 
 ## Verificação
 
@@ -120,8 +120,11 @@ trabalhadores: a importação ainda modificava o cache do editor. Log
 A importação inicial também tentou pastas do perfil sem acesso de escrita;
 foi refeita com XDG_DATA_HOME, XDG_CONFIG_HOME e XDG_CACHE_HOME isolados em
 `/tmp`. Concluída sem erro de script, só então se reiniciou a bateria em nova
-pasta (`importacao-157-isolada.log`). O catálogo integral de 263 está em
-andamento; atualizar o resultado antes do commit.
+pasta (`importacao-157-isolada.log`). O resultado dessa execução local não pôde
+ser recuperado na retomada: os caminhos `/tmp/brport-reputacao-mutantes-157-final.log`
+e `/tmp/brport-reputacao-mutantes-157-final/relatorio.json` não existem neste
+ambiente novo. A comprovação integral de 263 vem do CI abaixo; não se iniciou
+outra execução local para repetir a verificação concluída no GitHub.
 
 Preparador contextual inclui agora o predicado do alerta e seu consumidor no
 HUD. Seis testes Python do preparador passaram (`testes-preparador.log`). O pacote
@@ -139,3 +142,29 @@ O diff contra a main inclui também a história, Mercado/Delivery, migração
 18→19 e revisor ainda locais (`146`, `145`); o PR descreve esse recorte
 completo. Não altera a frente gráfica incorporada. Rascunho não é aprovação
 para merge nem publicação do jogo.
+
+## Fecho verificado na retomada de 31/10
+
+O [PR #158](https://github.com/Brunoleon98/br-port/pull/158) já estava
+incorporado ao consultar o GitHub: merge `d11311b`, head `926eb0b`.
+Esta retomada não executou merge nem alterou o jogo. O commit documental
+`7af5e6d` citado no handoff não está neste clone nem no GitHub; seus registros
+não puderam ser recuperados. O complemento documental parte da main incorporada.
+
+O [Testes #424](https://github.com/Brunoleon98/br-port/actions/runs/41165399752)
+e o [Captura #376](https://github.com/Brunoleon98/br-port/actions/runs/41165399696)
+do head publicado terminaram com sucesso. Checkout de integração testado:
+`056b6abf4380449c2ac3508951c86e8576a56def`, junção de `926eb0b` e `9c36e97`.
+Resultados conferidos pelos jobs e logs do GitHub:
+
+- As seis suítes imprimiram seus marcadores finais; documentação aprovada.
+- Catálogo inteiro: **263 defeitos**, todos reprovados pela guarda declarada.
+  Fatias 1/3, 2/3 e 3/3: **88, 88 e 87**; agregador `MUTANTES OK`.
+- Export APK e Web, prova da cópia do diagnóstico no navegador e captura
+  visual aprovados; sentinelas do jogador preservadas.
+
+`ci-158-marcadores.log` preserva os marcadores com horário UTC e IDs dos jobs,
+extraídos dos logs oficiais, sem repetir os testes. Isso conclui a pendência
+de validação do código; não equivale ao aceite editorial do envelope/retorno
+das lojas nem ao teste no telefone. A segunda revisão contextual segue pelo
+chat, com prioridade no vínculo e preservando chave, almoço e Mané aceitos.

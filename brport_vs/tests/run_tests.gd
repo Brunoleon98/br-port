@@ -1724,6 +1724,9 @@ func _run() -> void:
 	var reputacao_baixa = load("res://tests/casos_reputacao_baixa.gd").new()
 	await reputacao_baixa.rodar(GS, self)
 	_check("T33: reputação baixa, aviso e indicador", reputacao_baixa.completo and reputacao_baixa.falhas == 0)
+	var retorno_lojas = load("res://tests/casos_retorno_lojas.gd").new()
+	await retorno_lojas.rodar(GS, self)
+	_check("T34: retorno das conversas e reencontros nas lojas", retorno_lojas.completo and retorno_lojas.falhas == 0)
 
 	print("")
 	if _fails == 0:

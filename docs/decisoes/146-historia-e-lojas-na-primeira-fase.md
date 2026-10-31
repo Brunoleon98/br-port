@@ -82,3 +82,49 @@ A decisão, criada como 140 quando o número estava livre, foi renumerada para
 140 no PR #152. A branch incorporou `origin/main` em `3de1526`, preservando a
 frente gráfica e os dois registros. Provas desta revisão em
 `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`.
+
+## Revisão do envelope — 31/10
+
+Bruno aceitou a candidata apresentada pelo revisor no chat («Ficou bom»).
+Toninho encontra o envelope no armário, sem pressupor leitura da chave;
+ele e Cida compartilham a surpresa. A oferta fica explicitamente antiga,
+a frase do avô permanece e Cida convida a chefia a ler junto, sem explicar
+novamente o empréstimo nem prometer investigação jogável. Texto aceito em
+`docs/REVISAO_FALAS_LOJAS_FASE_1.md`, aplicado localmente em `Narrativa.gd`.
+Sem alteração de condições, save, preços ou arte. Retorno das lojas e as
+demais propostas não receberam aceite. O complemento fica em commit local,
+para acompanhar uma entrega relevante; Bruno pediu evitar PRs de coisas menores.
+
+Verificação local: seis suítes aprovadas em 51 s (`SUITES OK`), `DOCS OK` e
+as seis falas fotografadas e olhadas em Padrão/Maior, a 720×1280 e passo fixo.
+Captura deriva o dia 43 e o armazém pronto por ações reais, sem forjar o
+desbloqueio; a cena é percorrida pelos botões. Logs, fotos e folhas de leitura
+em `/tmp/brport-envelope-verificacao/`. Telefone pendente. `Narrativa.gd` não
+é alvo de mutante do catálogo; nenhuma suíte ou alvo mudou, portanto não se
+repetiu a execução integral de 263 já aprovada.
+
+## Retorno e reencontros — 31/10
+
+Bruno aceitou o parecer seguinte («Pode ser»): conversas voltam à loja ou ao
+arquivo de onde foram abertas; o boletim já ficava por baixo e continua assim.
+Interromper preserva compra e leitura pendente, inclusive na última fala;
+concluir registra a leitura uma vez. A compra aparece na loja ao voltar,
+com releitura gratuita. O botão de retorno nomeia o destino.
+
+Seu Biu pergunta pelo café e brinca com o Toninho; Mané pergunta pelo almoço
+e pelo prato da Cida. São variantes de visita após concluir `cafe`/`almoco`,
+não só comprar. As primeiras visitas e as cenas já aceitas permanecem.
+Nenhum campo persistente, preço ou condição de capítulo mudou. Implementação
+em `PainelLojas.gd` e `Narrativa.gd`, sem editar o Main ou a frente gráfica.
+T34 tem percursos próprios por loja, arquivo e boletim, com bandeiras de fim;
+as regressões entram em seção própria do catálogo. Nove defeitos foram
+explorados e detectados pelas guardas declaradas. Provas em
+`docs/arquivo/RETORNO_LOJAS_2026-10-31/README.md`.
+
+A main recebeu o gráfico #160 durante o catálogo local: a corrida foi
+interrompida com 48/272 detectados, preservando as provas, e incorporou-se
+`28c2f2d`. Seis suítes aprovadas na junção em 52 s. O catálogo integral de
+303 da base integrada é conferido no CI. Envelope e retorno formam agora
+uma entrega jogável no PR #159 existente, em vez de outro PR pequeno.
+O commit `3cdba77` do envelope segue preservado; a restrição a PRs menores
+não impediu agrupar e publicar o recorte aprovado. Sem merge pelo assistente.

@@ -1,0 +1,27 @@
+Base:
+  verde     run_tests (13 s)
+
+9 mutante(s):
+  retorno-compra-fecha-app  (146)
+      run_tests        18 reprovada(s): T32: botão alcançável: Voltar ao mercado | T32: botão alcançável: Ler a conversa | T32: história, lojas, compra, contas e retomada | T34: botão alcançável: Voltar ao mercado
+  retorno-releitura-perde-loja  (146)
+      run_tests        27 reprovada(s): T34: concluir compra volta à loja e grava leitura: mercado | T34: botão alcançável: Conversar com Seu Biu | T34: reencontro acompanha cena concluída: mercado | T34: botão alcançável: Continuar a conversa
+  retorno-arquivo-perde-origem  (146)
+      run_tests        17 reprovada(s): T34: botão alcançável: Voltar às histórias | T34: releitura volta ao arquivo sem cobrar: mercado | T34: botão alcançável: Voltar às lojas | T34: botão alcançável: Ver o delivery
+  retorno-visita-fecha-app  (146)
+      run_tests        9 reprovada(s): T34: botão alcançável: Voltar ao mercado | T34: interromper visita volta à loja: mercado | T34: botão alcançável: Conversar com Seu Biu | T34: percurso completo: mercado
+  retorno-nao-grava-leitura  (146)
+      run_tests        23 reprovada(s): T32: ler até o fim grava conclusão | T32: história, lojas, compra, contas e retomada | T34: concluir compra volta à loja e grava leitura: mercado | T34: reencontro acompanha cena concluída: mercado
+  retorno-interrupcao-consome  (146)
+      run_tests        12 reprovada(s): T32: sair cedo não consome cena | T32: história, lojas, compra, contas e retomada | T34: interromper preserva compra e leitura pendente: mercado | T34: comprar sem concluir não antecipa reencontro: mercado
+  reencontro-antecipa-na-compra  (146)
+      run_tests        3 reprovada(s): T34: comprar sem concluir não antecipa reencontro: mercado | T34: comprar sem concluir não antecipa reencontro: delivery | T34: retorno das conversas e reencontros nas lojas
+  reencontro-cruza-lojas  (146)
+      run_tests        11 reprovada(s): T32: delivery tem visita própria | T32: história, lojas, compra, contas e retomada | T34: reencontro acompanha cena concluída: mercado | T34: reencontro tem remate próprio: mercado
+  retorno-boletim-abre-lojas  (146)
+      run_tests        3 reprovada(s): T34: interromper volta ao mesmo boletim sem consumir capítulo | T34: concluir volta ao mesmo boletim e grava capítulo | T34: retorno das conversas e reencontros nas lojas
+
+Base no fim:
+  verde     run_tests
+
+Explorado — relatório em /tmp/brport-retorno-lojas/exploracao/relatorio.json.

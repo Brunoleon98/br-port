@@ -1,0 +1,12 @@
+extends "res://tools/capturar_cena.gd"
+
+func _initialize() -> void:
+	if OS.get_environment("BRPORT_FOTO_TAMANHO") == "maior":
+		PreferenciasDeApresentacao.atual().tamanho_do_texto = PreferenciasDeApresentacao.MAIOR
+
+func _montar_estado() -> void:
+	# Resolve a oferta inicial de uma partida semeada. As compras, leituras e
+	# voltas seguintes são feitas pelos botões pedidos à ferramenta base.
+	var gs: Node = root.get_node("GameState")
+	if gs.phase == gs.ESTADO_OFERTA:
+		gs.resolve_rival_offer(true)

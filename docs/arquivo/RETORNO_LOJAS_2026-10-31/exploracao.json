@@ -1,0 +1,197 @@
+{
+  "retorno-compra-fecha-app": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "18 reprovada(s)",
+      "reprovadas": [
+        "T32: botão alcançável: Voltar ao mercado",
+        "T32: botão alcançável: Ler a conversa",
+        "T32: história, lojas, compra, contas e retomada",
+        "T34: botão alcançável: Voltar ao mercado",
+        "T34: compra volta à loja com item visível: mercado",
+        "T34: botão alcançável: Conversar com Seu Biu",
+        "T34: comprar sem concluir não antecipa reencontro: mercado",
+        "T34: botão alcançável: Voltar ao mercado",
+        "T34: botão alcançável: Ler a conversa",
+        "T34: percurso completo: mercado",
+        "T34: botão alcançável: Voltar ao delivery",
+        "T34: compra volta à loja com item visível: delivery",
+        "T34: botão alcançável: Conversar com Mané",
+        "T34: comprar sem concluir não antecipa reencontro: delivery",
+        "T34: botão alcançável: Voltar ao delivery",
+        "T34: botão alcançável: Ler a conversa",
+        "T34: percurso completo: delivery",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "retorno-releitura-perde-loja": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "27 reprovada(s)",
+      "reprovadas": [
+        "T34: concluir compra volta à loja e grava leitura: mercado",
+        "T34: botão alcançável: Conversar com Seu Biu",
+        "T34: reencontro acompanha cena concluída: mercado",
+        "T34: botão alcançável: Continuar a conversa",
+        "T34: reencontro tem remate próprio: mercado",
+        "T34: botão alcançável: Concluir conversa",
+        "T34: botão alcançável: Conversar com Seu Biu",
+        "T34: reencontro continua após retomar: mercado",
+        "T34: botão alcançável: Voltar ao mercado",
+        "T34: botão alcançável: Ler a conversa",
+        "T34: chegou ao botão de conclusão",
+        "T34: botão alcançável: Concluir conversa",
+        "T34: reler na loja não cobra nem duplica leitura: mercado",
+        "T34: concluir compra volta à loja e grava leitura: delivery",
+        "T34: botão alcançável: Conversar com Mané",
+        "T34: reencontro acompanha cena concluída: delivery",
+        "T34: botão alcançável: Continuar a conversa",
+        "T34: reencontro tem remate próprio: delivery",
+        "T34: botão alcançável: Concluir conversa",
+        "T34: botão alcançável: Conversar com Mané",
+        "T34: reencontro continua após retomar: delivery",
+        "T34: botão alcançável: Voltar ao delivery",
+        "T34: botão alcançável: Ler a conversa",
+        "T34: chegou ao botão de conclusão",
+        "T34: botão alcançável: Concluir conversa",
+        "T34: reler na loja não cobra nem duplica leitura: delivery",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "retorno-arquivo-perde-origem": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "17 reprovada(s)",
+      "reprovadas": [
+        "T34: botão alcançável: Voltar às histórias",
+        "T34: releitura volta ao arquivo sem cobrar: mercado",
+        "T34: botão alcançável: Voltar às lojas",
+        "T34: botão alcançável: Ver o delivery",
+        "T34: botão alcançável: Conversar com Mané",
+        "T34: reencontro não vaza entre lojas: mercado",
+        "T34: botão alcançável: Voltar às histórias",
+        "T34: releitura volta ao arquivo sem cobrar: delivery",
+        "T34: botão alcançável: Voltar às lojas",
+        "T34: botão alcançável: Visitar o mercado",
+        "T34: botão alcançável: Conversar com Seu Biu",
+        "T34: reencontro não vaza entre lojas: delivery",
+        "T34: botão alcançável: Voltar às histórias",
+        "T34: interromper capítulo novo conserva pendência no arquivo",
+        "T34: botão alcançável: Nova: A caneca que ficou",
+        "T34: concluir capítulo mostra reler no arquivo",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "retorno-visita-fecha-app": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "9 reprovada(s)",
+      "reprovadas": [
+        "T34: botão alcançável: Voltar ao mercado",
+        "T34: interromper visita volta à loja: mercado",
+        "T34: botão alcançável: Conversar com Seu Biu",
+        "T34: percurso completo: mercado",
+        "T34: botão alcançável: Voltar ao delivery",
+        "T34: interromper visita volta à loja: delivery",
+        "T34: botão alcançável: Conversar com Mané",
+        "T34: percurso completo: delivery",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "retorno-nao-grava-leitura": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "23 reprovada(s)",
+      "reprovadas": [
+        "T32: ler até o fim grava conclusão",
+        "T32: história, lojas, compra, contas e retomada",
+        "T34: concluir compra volta à loja e grava leitura: mercado",
+        "T34: reencontro acompanha cena concluída: mercado",
+        "T34: reencontro tem remate próprio: mercado",
+        "T34: retomada preserva leitura: mercado",
+        "T34: reencontro continua após retomar: mercado",
+        "T34: reler na loja não cobra nem duplica leitura: mercado",
+        "T34: botão alcançável: Reler: Café no cais",
+        "T34: botão alcançável: Voltar às histórias",
+        "T34: releitura volta ao arquivo sem cobrar: mercado",
+        "T34: concluir compra volta à loja e grava leitura: delivery",
+        "T34: reencontro acompanha cena concluída: delivery",
+        "T34: reencontro tem remate próprio: delivery",
+        "T34: retomada preserva leitura: delivery",
+        "T34: reencontro continua após retomar: delivery",
+        "T34: reler na loja não cobra nem duplica leitura: delivery",
+        "T34: botão alcançável: Reler: A mesa do cais",
+        "T34: botão alcançável: Voltar às histórias",
+        "T34: releitura volta ao arquivo sem cobrar: delivery",
+        "T34: concluir capítulo mostra reler no arquivo",
+        "T34: concluir volta ao mesmo boletim e grava capítulo",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "retorno-interrupcao-consome": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "12 reprovada(s)",
+      "reprovadas": [
+        "T32: sair cedo não consome cena",
+        "T32: história, lojas, compra, contas e retomada",
+        "T34: interromper preserva compra e leitura pendente: mercado",
+        "T34: comprar sem concluir não antecipa reencontro: mercado",
+        "T34: interromper preserva compra e leitura pendente: delivery",
+        "T34: comprar sem concluir não antecipa reencontro: delivery",
+        "T34: interromper capítulo novo conserva pendência no arquivo",
+        "T34: botão alcançável: Nova: A caneca que ficou",
+        "T34: chegou ao botão de conclusão",
+        "T34: botão alcançável: Concluir conversa",
+        "T34: interromper volta ao mesmo boletim sem consumir capítulo",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "reencontro-antecipa-na-compra": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "3 reprovada(s)",
+      "reprovadas": [
+        "T34: comprar sem concluir não antecipa reencontro: mercado",
+        "T34: comprar sem concluir não antecipa reencontro: delivery",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "reencontro-cruza-lojas": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "11 reprovada(s)",
+      "reprovadas": [
+        "T32: delivery tem visita própria",
+        "T32: história, lojas, compra, contas e retomada",
+        "T34: reencontro acompanha cena concluída: mercado",
+        "T34: reencontro tem remate próprio: mercado",
+        "T34: reencontro continua após retomar: mercado",
+        "T34: reencontro não vaza entre lojas: mercado",
+        "T34: reencontro acompanha cena concluída: delivery",
+        "T34: reencontro tem remate próprio: delivery",
+        "T34: reencontro continua após retomar: delivery",
+        "T34: reencontro não vaza entre lojas: delivery",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  },
+  "retorno-boletim-abre-lojas": {
+    "run_tests": {
+      "aprovado": true,
+      "frase": "3 reprovada(s)",
+      "reprovadas": [
+        "T34: interromper volta ao mesmo boletim sem consumir capítulo",
+        "T34: concluir volta ao mesmo boletim e grava capítulo",
+        "T34: retorno das conversas e reencontros nas lojas"
+      ]
+    }
+  }
+}

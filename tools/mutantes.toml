@@ -89,6 +89,117 @@ antes = 'in ["Questionável", "Desconhecido"]'
 depois = 'in ["Questionável", "Desconhecido", "Confiável"]'
 reprova = { run_tests = "T33: patamar de alerta em 41.0" }
 
+# ── RETORNO E REENCONTROS NAS LOJAS (`146`) ──────────────────────────────
+
+[[mutante]]
+id = "retorno-compra-fecha-app"
+de = "146"
+o_que = "comprar abre a cena sem guardar o retorno à loja"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+		abrir_capitulo(id, Origem.LOJA)'''
+depois = '''
+		abrir_capitulo(id, Origem.BOLETIM)'''
+reprova = { run_tests = "T34: compra volta à loja com item visível: mercado" }
+
+[[mutante]]
+id = "retorno-releitura-perde-loja"
+de = "146"
+o_que = "reler pela loja volta ao arquivo em vez do catálogo"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+abrir_capitulo.bind(produto, Origem.LOJA)'''
+depois = '''
+abrir_capitulo.bind(produto, Origem.HISTORIAS)'''
+reprova = { run_tests = "T34: concluir compra volta à loja e grava leitura: mercado" }
+
+[[mutante]]
+id = "retorno-arquivo-perde-origem"
+de = "146"
+o_que = "o arquivo abre a história com retorno à loja"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+abrir_capitulo.bind(id, Origem.HISTORIAS)'''
+depois = '''
+abrir_capitulo.bind(id, Origem.LOJA)'''
+reprova = { run_tests = "T34: releitura volta ao arquivo sem cobrar: mercado" }
+
+[[mutante]]
+id = "retorno-visita-fecha-app"
+de = "146"
+o_que = "interromper a visita fecha o app em vez de voltar à loja"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+func conversar() -> void:
+	_visita = true
+	_origem_conversa = Origem.LOJA'''
+depois = '''
+func conversar() -> void:
+	_visita = true
+	_origem_conversa = Origem.BOLETIM'''
+reprova = { run_tests = "T34: interromper visita volta à loja: mercado" }
+
+[[mutante]]
+id = "retorno-nao-grava-leitura"
+de = "146"
+o_que = "concluir volta à origem sem registrar a leitura"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+		GameState.concluir_capitulo(_capitulo)'''
+depois = '''
+		pass'''
+reprova = { run_tests = "T34: concluir compra volta à loja e grava leitura: mercado" }
+
+[[mutante]]
+id = "retorno-interrupcao-consome"
+de = "146"
+o_que = "voltar sem concluir marca o capítulo como lido"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+func _voltar_da_conversa() -> void:
+	match _origem_conversa:'''
+depois = '''
+func _voltar_da_conversa() -> void:
+	if _capitulo != "":
+		GameState.concluir_capitulo(_capitulo)
+	match _origem_conversa:'''
+reprova = { run_tests = "T34: interromper preserva compra e leitura pendente: mercado" }
+
+[[mutante]]
+id = "reencontro-antecipa-na-compra"
+de = "146"
+o_que = "a compra basta para disparar o reencontro antes de ler a cena"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+Narrativa.falas_da_visita(_loja, GameState.vida_do_porto["cenas_lidas"])'''
+depois = '''
+Narrativa.falas_da_visita(_loja, GameState.vida_do_porto["compras"])'''
+reprova = { run_tests = "T34: comprar sem concluir não antecipa reencontro: mercado" }
+
+[[mutante]]
+id = "reencontro-cruza-lojas"
+de = "146"
+o_que = "Biu comenta o almoço e Mané espera o café para reconhecer a visita"
+alvo = "brport_vs/scripts/Narrativa.gd"
+antes = '''
+var capitulo := "cafe" if loja == "mercado" else "almoco"'''
+depois = '''
+var capitulo := "almoco" if loja == "mercado" else "cafe"'''
+reprova = { run_tests = "T34: reencontro acompanha cena concluída: mercado" }
+
+[[mutante]]
+id = "retorno-boletim-abre-lojas"
+de = "146"
+o_que = "terminar ou interromper pelo boletim abre as lojas por cima dele"
+alvo = "brport_vs/scripts/PainelLojas.gd"
+antes = '''
+		Origem.BOLETIM:
+			_fechar()'''
+depois = '''
+		Origem.BOLETIM:
+			mostrar_lojas()'''
+reprova = { run_tests = "T34: interromper volta ao mesmo boletim sem consumir capítulo" }
+
 # ── HISTÓRIA E LOJAS (`146`) ───────────────────────────────────────────────
 
 [[mutante]]

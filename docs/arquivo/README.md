@@ -31,6 +31,10 @@ aqui.
 
 | Documento | Data | O que registra |
 |---|---|---|
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-31f.md` | 31/10 | Conflito documental do #159 conciliado com a main #161, preservando háptica e aceites narrativos; CI do novo head obrigatório |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-31e.md` | 31/10 | Envelope e retorno aceitos no #159, main #160 incorporada, provas e revisão seguinte |
+| `RETORNO_LOJAS_2026-10-31/README.md` | 31/10 | Retorno ao contexto da conversa, reencontros Biu/Mané, T34 e provas locais (`146`) |
+| `BRIEFING_PROXIMA_CONVERSA_2026-10-31b.md` | 31/10 | #158 já incorporado, CI com seis suítes/263 mutantes aprovado; complemento documental e retorno à revisão contextual |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-31.md` | 31/10 | Reputação e falas integradas após #156 (`147`); provas e continuação da revisão |
 | `REPUTACAO_E_FALAS_2026-10-30/README.md` | 30–31/10 | Aviso de reputação baixa, Cida/Mané e provas (`147`); HUD integrado após Bruno confirmar o merge do #156 |
 | `BRIEFING_PROXIMA_CONVERSA_2026-10-30b.md` | 30/10 | Revisor contextual (`145`), modo pelo chat, primeira rodada, base preservada e continuação |

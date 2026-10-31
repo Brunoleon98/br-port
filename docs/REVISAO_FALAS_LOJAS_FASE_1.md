@@ -5,8 +5,9 @@ commit `2056dad`. Bruno escolheu **mais vínculo com os personagens** como
 prioridade desta revisão. **Chave e almoço foram aceitos em 25/10/2026 e
 aplicados ao jogo**, com a redação final abaixo. Em 30/10, Bruno aceitou a cena
 do Mané sem entregas fixas e o elogio ao bom contrato sem previsão financeira;
-escolheu também aviso da Cida no patamar baixo de reputação (`147`). Demais
-trechos e retorno das lojas continuam propostas. Após o #156, a cor do HUD foi integrada.
+escolheu também aviso da Cida no patamar baixo de reputação (`147`). Em 31/10,
+aceitou o envelope, o retorno às lojas e os reencontros abaixo, aplicados
+localmente. Demais trechos continuam propostas. Após o #156, a cor do HUD foi integrada.
 
 ## Diagnóstico da primeira implementação
 
@@ -41,7 +42,7 @@ Referências verificadas: `brport_vs/scripts/Narrativa.gd`, linhas 744–804;
 | A caneca que ficou | A caneca a mais, a borda lascada e «não tá ocupando tanto espaço assim». O gesto sustenta a ausência. | Manter nesta passagem. |
 | A chave do galpão | Toninho entregar algo que estava sob sua guarda. | Aplicado: lembrança breve e oferta de ajuda, sem presumir o estado do galpão. |
 | O nome no recibo | A cidade começar a reconhecer quem ficou. | Fazer o recibo aparecer de fato na conversa; Toninho se oferece para buscar o pão. |
-| O envelope | A oferta antiga do Grupo Atlântico e a frase no verso. | Encontrar o envelope no armário da chave; trocar a explicação bancária por uma reação da equipe e disposição de olhar os papéis juntos. |
+| O envelope | A oferta antiga do Grupo Atlântico e a frase no verso. | Aceito em 31/10 e aplicado localmente: surpresa compartilhada e convite da Cida para ler junto. |
 | Mais uma cadeira (`mesa`) | Mané aproximar cidade e cais. | Aplicado em 30/10: convite para sentar com a equipe, sem entrega fixa ou conta mensal. |
 | Uma proposta informal | A simpatia interessada de Arlindo e «meu caro», escolha já registrada de Bruno. | Manter nesta passagem. É o contraponto à confiança da equipe; intensificar a ameaça não é a prioridade escolhida. |
 | Café no cais | O café fraco para a conversa durar, a resposta seca de Cida e a garrafa que fica. | Manter nesta passagem. Já cumpre o objetivo de vínculo. |
@@ -85,7 +86,9 @@ permanece parte do cotidiano narrado, sem criar produto ou cobrança novos.
 
 ### O envelope
 
-**Toninho:** Olha, chefia... tava no armário. No meio dos papéis do Seu Maneco.
+Versão aceita por Bruno em 31/10/2026 («Ficou bom»), aplicada localmente:
+
+**Toninho:** Achei esse envelope no armário do Seu Maneco, chefia. Tava no meio dos papéis.
 
 **Cida:** Grupo Atlântico. Uma oferta antiga de compra. Pelo cais inteiro.
 
@@ -95,7 +98,7 @@ permanece parte do cotidiano narrado, sem criar produto ou cobrança novos.
 
 **Toninho:** No verso tem letra dele: enquanto tiver quem volte, eu fico.
 
-**Cida:** Deixa aqui na mesa. A gente olha o resto junto.
+**Cida:** Deixa aqui na mesa, chefia. A gente lê junto.
 
 A descoberta também mostra que Toninho e Cida não sabem tudo. A oferta é
 antiga; o empréstimo atual para reconstruir continua sendo o contrato já
@@ -174,13 +177,13 @@ quando a descrição fica mais natural.
 
 ## Percurso de leitura e retorno
 
-Na versão atual, a visita gratuita termina na loja. A compra bem-sucedida abre
+Na versão anterior, a visita gratuita termina na loja. A compra bem-sucedida abre
 a cena imediatamente; tanto «Concluir conversa» quanto «Ler depois» fecham o
 painel. Para encontrar o item comprado, é preciso abrir o app novamente. Uma
 cena escolhida no arquivo também fecha o app ao terminar. Esses caminhos foram
 conferidos no código; não foram classificados como perda de compra ou save.
 
-A proposta de retorno é:
+O retorno aceito por Bruno em 31/10 e aplicado localmente é:
 
 | Entrada | Depois da última fala | Ao interromper |
 |---|---|---|
@@ -193,14 +196,34 @@ A proposta de retorno é:
 continua primeiro no boletim; esta revisão não recoloca a história antes da
 ação habitual, cuja ordem já foi provada na entrega da `146`.
 
-O retorno é uma proposta de comportamento, ainda sem alteração de código.
-Pode ser mantido só durante a abertura do painel, sem novo campo no save. Sua
-implementação deve conferir os quatro percursos com os botões reais e depois
-deixar uma prova de defeito no catálogo, como pedem as regras do projeto.
+O painel guarda a origem durante a conversa, sem campo novo no save. Os
+botões indicam o destino: mercado, delivery, histórias ou boletim. O retorno
+ao boletim já existia e foi preservado. T34 percorre os botões reais, incluindo
+interrupção na última fala sem concluir, releitura, compra e retomada.
+
+## Reencontros aceitos em 31/10
+
+As primeiras visitas permanecem. Comprar sem concluir a cena não antecipa o
+reencontro; as variantes consultam as leituras já salvas da própria loja.
+
+Depois de concluir **Café no cais**:
+
+**Seu Biu:** E o café lá no cais, chefia? O pessoal gostou?
+
+**Seu Biu:** Se o Toninho disser que tá forte, manda ele tomar mais devagar.
+
+Depois de concluir **A mesa do cais**:
+
+**Mané:** E o almoço, chefia? Deu pra sentar com o pessoal?
+
+**Mané:** Espero que o Toninho tenha respeitado o prato da Cida.
+
+São falas de visita, não alterações das cenas de almoço/Mané já aceitas.
+Nenhum bônus, resposta selecionável, entrega recorrente ou nova cobrança.
 
 ## O que esta revisão já permite avaliar
 
-A leitura da chave e do almoço foi aceita por Bruno. A continuação pode usar
+A leitura da chave, do almoço e do envelope foi aceita por Bruno. A continuação pode usar
 essas cenas como referência para o restante: a equipe acolher quem joga, cada
 voz continuar reconhecível e o humor parecer uma conversa. O aceite das outras
 cenas continua aberto; suíte verde não resolve gosto de escrita.
@@ -209,7 +232,7 @@ A implementação da `146` recebeu as falas aceitas da chave e do almoço;
 provas em `docs/arquivo/VERIFICACAO_FALAS_2026-10-25/README.md`. A `147` aplica
 a cena do Mané, o elogio e o aviso ao entrar no patamar baixo de reputação;
 provas em `docs/arquivo/REPUTACAO_E_FALAS_2026-10-30/README.md`. Preços, save,
-condições dos capítulos e percurso das lojas continuam iguais.
+condições dos capítulos continuam iguais; o retorno do painel foi atualizado.
 As capturas da entrega anterior não representam os textos novos. Telefone e
-as propostas restantes continuam por conferir; envelope e catálogo precisarão
-ser vistos no painel real em Padrão/Maior quando forem integrados.
+as propostas restantes continuam por conferir; catálogo precisará ser visto
+no painel real em Padrão/Maior quando for integrado.

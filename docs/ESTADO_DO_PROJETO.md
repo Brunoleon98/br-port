@@ -1,11 +1,8 @@
 # BR Port — Estado do Projeto
 
-> **Como o jogo está hoje.** É a segunda das quatro camadas de documentação
-> deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
-> calada.
+> **Como o jogo está hoje.** Segunda das quatro camadas; histórico no arquivo.
 >
-> **Atualização:** 31/10/2026 — a peça que assenta (`148`); a háptica
-> (`149`)
+> **Atualização:** 31/10/2026 — peça que assenta (`148`), háptica (`149`) e #159
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -64,9 +61,8 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 **A fauna tem seis espécies em nove pontos**, com toque de **44 px**
 (D25–D27); a pessoa, a 1,5× o real, é o menor ser vivo do mapa (`069`).
 
-**A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
-na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
-os perfis (`005`, `009`); não se certificaram preços de mercado.
+**Moeda e preços (`085`–`087`):** valores na tabela gerada; taxas, perfis e
+medição em `economia.md`. Não se certificaram preços de mercado.
 Save **19** (`146`), com migração desde a 14 e exemplos preservados;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
@@ -133,9 +129,10 @@ segue A3, depois esteira, fumaça e fundeadouro (§7).
 **A4, caderno, leitura e telefone pendentes.** `Safe save failed` sem causa
 (`110`); `107` local, sem publicação ou teste no telefone.
 
-**História/lojas (`146`):** chave/almoço aceitos e integrados.
-Revisão restante em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`; telefone pendente.
-**Revisor de mensagens (`145`):** skill `revisar-mensagens`.
+**História/lojas (`146`):** chave/almoço/Mané integrados; envelope, retornos e
+reencontros aceitos no #159, com a main #161 integrada. Incorporação/telefone
+pendentes. Revisão: `docs/REVISAO_FALAS_LOJAS_FASE_1.md`.
+**Revisor (`145`):** skill `revisar-mensagens`, com parecer contextual.
 **Reputação (`147`):** aviso da Cida e HUD vermelho quando baixa.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;

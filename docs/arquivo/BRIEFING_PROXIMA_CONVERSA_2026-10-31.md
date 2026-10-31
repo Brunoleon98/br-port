@@ -1,5 +1,10 @@
 # Próxima conversa — reputação e vínculo com os personagens
 
+Retomada concluída: este briefing foi substituído por
+`BRIEFING_PROXIMA_CONVERSA_2026-10-31b.md`. O #158 já estava incorporado e
+seu CI confirmou as seis suítes e os 263 mutantes; o texto abaixo preserva
+a fotografia anterior à consulta do GitHub.
+
 31/10/2026. Branch `codex/revisor-de-mensagens`, main incorporada em
 `9c36e97` (#157, reforço de testes), após integrar o gráfico #156. História local é
 146, revisor é 145, retorno da revisão é 147; gráfico do barco é 144.

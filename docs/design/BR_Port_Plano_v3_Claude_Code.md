@@ -734,7 +734,7 @@ com a dor que pagou, desceu para `docs/arquivo/PLANO_V3_FECHADOS.md` (`092`).
 
 **30/10, retorno do Bruno (`147`):** Cida comenta reputação baixa; elogio ao
 bom contrato sem prever as contas e Mané sem entrega fixa/conta mensal. Falas
-e narradora integradas localmente. Após Bruno avisar do merge do PR gráfico
+e narradora na main pelo #158. Após Bruno avisar do merge do PR gráfico
 #156, a cor foi integrada ao HUD na base `53b923b`. Provas em
 `docs/arquivo/REPUTACAO_E_FALAS_2026-10-30/README.md`.
 
@@ -747,13 +747,15 @@ aprova automaticamente a escrita. A frente gráfica abaixo segue com Claude.
 história da primeira fase e abrir lojas enquanto o Claude continua no gráfico.
 Ele escolheu Mercado e Delivery, com visitas/conversas e compras, e autorizou
 o save 19 com migração preservando progresso. O primeiro recorte está integrado
-localmente: seis cenas de progresso, duas de compras, arquivo pelas lojas e
-convite no boletim. Escrita/telefone e publicação pendentes; catálogo com
+na main pelo #158: seis cenas de progresso, duas de compras, arquivo pelas lojas e
+convite no boletim. Revisão da escrita e telefone pendentes; catálogo com
 bônus, estresse, carros e imóveis continuam para depois. Detalhe em
 `docs/RECORTE_HISTORIA_LOJAS_FASE_1.md`. Bruno priorizou mais vínculo com os
 personagens na revisão: versões para leitura e percurso das lojas em
 `docs/REVISAO_FALAS_LOJAS_FASE_1.md`. Em 25/10, aceitou chave/almoço;
 essas duas versões foram integradas. Demais falas e retorno continuam propostas.
+Em 31/10, Bruno aceitou também o envelope, aplicado localmente (`146`).
+Aceitou depois o retorno e os reencontros das lojas, agora locais (`146`).
 A fila gráfica abaixo segue com Claude.
 
 **Prioridade em vigor desde 10/10, escolha do Bruno: a FILA DE MELHORIAS da
