@@ -4,8 +4,8 @@
 > deste projeto, e a única que nenhum teste protege — se envelhecer, envelhece
 > calada.
 >
-> **Atualização:** 31/10/2026 — reputação baixa e falas (`147`); a peça que
-> assenta (`148`)
+> **Atualização:** 31/10/2026 — a peça que assenta (`148`); a háptica
+> (`149`)
 >
 > Regras no `CLAUDE.md`; rumo na §7 do plano v3; razões em `docs/decisoes/`.
 >
@@ -67,8 +67,7 @@ tapado pelo contêiner; as construções ficam quadradas, e é decisão.
 **A moeda foi restaurada (`085`); preços intactos na `086`/`087`.** Valores atuais
 na tabela gerada, taxas e medição na `economia.md`. Expansão e margem distinguem
 os perfis (`005`, `009`); não se certificaram preços de mercado.
-Save **19** local (`146`), com migração desde a 14 e exemplos preservados;
-a main permanece na 18 até fundir esta entrega;
+Save **19** (`146`), com migração desde a 14 e exemplos preservados;
 13 e anteriores recusadas. A Fase 1 dura
 12 semanas de 7 dias, com cobranças nos dias 28, 56 e 84 e vitória somente
 após as três quitações (`085`). Crédito inicial R$400 mil; três parcelas
@@ -90,10 +89,12 @@ Pescado, Armazenagem, Contêiner ou Granel —, lido no cartão da doca. O efeit
 o da ESTRUTURA a que o motivo está preso; oficina e posto são Fase 2 (`008`).
 
 **A partida grava-se** — uma linha JSON por acontecimento, com o tempo de cada
-turno, sem o nome de quem jogou (`006`). Sai pelo menu de pausa.
+turno, sem o nome de quem jogou (`006`). Sai pelos Ajustes (`066`).
 
 **O jogo tem som:** 14 efeitos de `tools/gerar_sons.py`, num autoload com
 prioridade, dois buses e sliders. São de RASCUNHO e esperam o Bruno ouvir.
+**E vibra** (`149`): atracar (20 ms), obra pronta e parcela paga (40 ms),
+pelo `Haptica.gd`; «Vibração» nos Ajustes.
 
 **E O HUD INFERIOR TEM UM MENU, QUE É UM CELULAR** (`021`, `066`): aparelho de
 400×680 (460×782 na conversa), com o **diário**, as **mensagens** (a conversa do porto, `067`) e
@@ -127,15 +128,14 @@ igreja com torre e adro, a praça da matriz na esquina e duas obras de tijolo.
 
 **R1–R9 e M1–M11 fecharam** (revisão de 09/10, §6); M12 espera A8.
 **RB6 (`129`) e RB5 (`134`, `135`)** nos Ajustes; telefone pendente.
-**Animação e toque** (`143`): A1′ (`144`) e A1 (`148`) feitos; seguem T1 →
-A3, uma conversa cada, e a esteira, a fumaça e o fundeadouro (§7).
-**A4, caderno, leitura e telefone
-pendentes.** `Safe save failed` sem causa (`110`); `107` local, sem publicação
-ou teste no telefone.
+**Animação e toque** (`143`): A1′, A1 e T1 feitos (`144`, `148`, `149`;
+T1 no telefone); segue A3, depois esteira, fumaça e fundeadouro (§7).
+**A4, caderno, leitura e telefone pendentes.** `Safe save failed` sem causa
+(`110`); `107` local, sem publicação ou teste no telefone.
 
-**História/lojas (`146`):** save 19; chave/almoço aceitos e integrados.
+**História/lojas (`146`):** chave/almoço aceitos e integrados.
 Revisão restante em `docs/REVISAO_FALAS_LOJAS_FASE_1.md`; telefone pendente.
-**Revisor de mensagens (`145`):** skill `revisar-mensagens`, com parecer contextual.
+**Revisor de mensagens (`145`):** skill `revisar-mensagens`.
 **Reputação (`147`):** aviso da Cida e HUD vermelho quando baixa.
 
 **Construídos:** B1–B8, A2–A4 e export APK/Web do A1. Gates humanos abaixo;

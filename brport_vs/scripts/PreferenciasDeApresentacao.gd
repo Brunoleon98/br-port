@@ -5,6 +5,7 @@ extends RefCounted
 # só o toque nos Ajustes grava. Ferramentas passam pelo mesmo ArmazemLocal.
 signal mudou(reduzido: bool)
 signal texto_mudou(tamanho: String)
+signal vibracao_mudou(ligada: bool)
 
 const ARQUIVO := "apresentacao.cfg"
 const PADRAO := "padrao"
@@ -13,6 +14,9 @@ const FATOR_MAIOR := 1.25
 static var _compartilhada: PreferenciasDeApresentacao
 var reduzir_movimento := false
 var tamanho_do_texto := PADRAO
+## LIGADA POR OMISSÃO (`144`): é o retorno do toque, e quem não o quer
+## desliga-o nos Ajustes. O `Haptica` lê-a a cada pedido (`149`).
+var vibrar := true
 var caminho: String
 
 
@@ -39,6 +43,9 @@ func _init(carregar: bool = true) -> void:
 		var texto: Variant = cfg.get_value("apresentacao", "tamanho_do_texto", PADRAO)
 		if typeof(texto) == TYPE_STRING and texto in [PADRAO, MAIOR]:
 			tamanho_do_texto = texto
+		var vibracao: Variant = cfg.get_value("apresentacao", "vibrar", true)
+		if typeof(vibracao) == TYPE_BOOL:
+			vibrar = vibracao
 
 
 func definir_reduzir_movimento(valor: bool) -> Error:
@@ -64,6 +71,16 @@ func definir_tamanho_do_texto(valor: String) -> Error:
 	cfg.set_value("apresentacao", "tamanho_do_texto", valor)
 	var erro := cfg.save(caminho)
 	texto_mudou.emit(valor)
+	return erro
+
+
+func definir_vibrar(valor: bool) -> Error:
+	vibrar = valor
+	var cfg := ConfigFile.new()
+	cfg.load(caminho)
+	cfg.set_value("apresentacao", "vibrar", valor)
+	var erro := cfg.save(caminho)
+	vibracao_mudou.emit(valor)
 	return erro
 
 

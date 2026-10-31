@@ -309,5 +309,8 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	_premido = false
 	refresh()
-	GameState.atracar(indice)
+	# A VIBRAÇÃO SÓ DEPOIS DE ATRACAR (`149`): o berço cheio ou a falta de
+	# trabalhador recusam com um aviso, e o dedo não sente o que não houve.
+	if GameState.atracar(indice):
+		Haptica.pedir("atracar")
 	accept_event()

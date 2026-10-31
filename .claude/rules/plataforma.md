@@ -111,6 +111,15 @@ em segundos em vez de depois de um export inteiro.
 O `xvfb-run` só faz falta para a captura, que precisa de contexto gráfico.
 Teste e import rodam sem tela.
 
+**Permissão Android lê-se em dois sítios, e só um é o do telefone** (`149`).
+O F5 do `teste_fumaca` lê `permissions/vibrate=true` como item da secção de
+opções do preset Android; o CI procura `android.permission.VIBRATE` no
+manifesto BINÁRIO do APK (`tools/conferir_permissoes_apk.py`, nas duas
+codificações do pool de strings). A chave é `permissions/` + o nome em
+minúsculas. ⚠️ **No Linux o `Input.vibrate_handheld()` não faz nada e não se
+queixa**, com ou sem tela: a vibração prova-se pela contagem do `Haptica`, e
+o resto no aparelho.
+
 ⚠️ **No CI, importe por `tools/importar_para_ci.py`, inclusive a base do PR.**
 No PR #130, o Godot 4.6.3 abortou com sinal 11 ao importar Patrick Hand na
 base, depois de toda a captura do HEAD passar; repetir passou. O padrão está

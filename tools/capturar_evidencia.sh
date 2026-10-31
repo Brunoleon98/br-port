@@ -492,6 +492,9 @@ tirar espacos_nova - - --script res://tools/capturar_cena.gd -- res://scenes/Tel
 tirar espacos_confirmar - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/espacos_confirmar.png" espacos=1 --tocar=Nova --tocar=Substituir --tempo=confirmar
 tirar ajustes - -  --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes.png" espacos=1,3 "--tocar=Configurações" --tocar=Ajustes
 tirar ajustes_movimento_ligado - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes_movimento_ligado.png" espacos=1,3 "--tocar=Configurações" --tocar=Ajustes "--tocar=Reduzir movimento"
+# A VIBRAÇÃO DESLIGADA (`149`): a linha nasce ligada, e é a foto de cima que
+# a mostra assim; esta mostra o outro estado do mesmo interruptor.
+tirar ajustes_vibracao_desligada - - --script res://tools/capturar_cena.gd -- res://scenes/TelaInicial.tscn "$SAIDA/ajustes_vibracao_desligada.png" espacos=1,3 "--tocar=Configurações" --tocar=Ajustes "--tocar=Vibração"
 tirar movimento_normal - - --script res://tools/capturar_movimento.gd -- normal "$SAIDA/movimento_normal.png"
 tirar movimento_reduzido - - --script res://tools/capturar_movimento.gd -- reduzido "$SAIDA/movimento_reduzido.png"
 # A comparação lê as fotos e os logs dos dois tiros acima: espera-os.
