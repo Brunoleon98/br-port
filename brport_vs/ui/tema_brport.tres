@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=79 format=3]
+[gd_resource type="Theme" load_steps=83 format=3]
 
 ; BR Port VS — tema da interface
 ;
@@ -384,6 +384,38 @@ content_margin_top = 10.0
 content_margin_right = 14.0
 content_margin_bottom = 10.0
 
+; O «AVANÇAR DIA» AFUNDA AO PREMIR (`145`): o mesmo premido, desenhado 4%
+; menor à volta do centro — 2% de cada lado dos 692 × 58 do rodapé. As
+; margens de expansão NEGATIVAS encolhem o que se desenha sem mexer no
+; tamanho do botão nem no texto, e o premido volta ao normal ao soltar, que
+; é o próprio estado do botão. A `144` desenhou duas saídas, porque o botão
+; vive num `HBoxContainer` e um contentor reescreve a `scale` do filho
+; (`interface.md`); medidas as duas, a outra — o botão num `Control` simples
+; — mudava o caminho `AcoesTurno/Avancar` e o D43 deixava de medir o
+; contraste. Com o texto Maior o rodapé cresce e o encolher vertical fica um
+; pouco abaixo dos 4%.
+; ⚠️ E A MARGEM DE CONTEÚDO CRESCE O MESMO QUE A BORDA ENCOLHE, na horizontal:
+; sem isso o ícone ficava onde estava e encostava a 3 px da borda esquerda
+; (17 px solto), visto no vídeo. Na vertical não, que a altura mínima do botão
+; é a que o texto Maior usa para crescer o rodapé.
+; ⚠️ E O CONTEÚDO DESCE 1 PX (veredito da `145`): só o painel encolhia, e o
+; texto e o ícone ficavam onde estavam. É 11 em cima e 9 em baixo — a soma
+; fica nos 20 de sempre, e com ela a altura mínima.
+[sub_resource type="StyleBoxFlat" id="primario_press_barra"]
+bg_color = Color(0.776, 0.522, 0.043, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 27.84
+content_margin_top = 11.0
+content_margin_right = 27.84
+content_margin_bottom = 9.0
+expand_margin_left = -13.84
+expand_margin_top = -1.16
+expand_margin_right = -13.84
+expand_margin_bottom = -1.16
+
 [sub_resource type="StyleBoxFlat" id="barra_fundo"]
 bg_color = Color(0.878, 0.914, 0.965, 1)
 corner_radius_top_left = 99
@@ -484,6 +516,69 @@ content_margin_left = 12.0
 content_margin_top = 7.0
 content_margin_right = 12.0
 content_margin_bottom = 7.0
+
+; O CARTÃO «AO LARGO» PREMIDO (`145`): o mesmo cartão, 4% mais estreito à
+; volta do centro — 4,48 px de cada lado dos 224 de um lugar da fila — e o
+; conteúdo 1 px abaixo, como o «Avançar dia». ⚠️ NA ALTURA FICA INTEIRO: com
+; 2% em cima e em baixo (3 px) e o conteúdo a descer, a última linha
+; («aguarda mais 1 dia») pisava a borda de 3 px — visto na quarta passagem. ⚠️ E O FUNDO ESCURECE O PASSO DO BOTÃO (veredito 3):
+; só a encolher, no cartão escuro, mudava pouco. O passo é o do âmbar do
+; botão para o premido dele, −0,07 de L em OKLab, com o matiz de cada um; o
+; cartão premido fica no tom do rodapé, que é o que «afundar» quer dizer. As margens de conteúdo laterais ficam:
+; mudá-las mudava a largura mínima, e a fila rearrumava-se a meio do toque.
+[sub_resource type="StyleBoxFlat" id="cartao_doca_premido"]
+bg_color = Color(0.026, 0.094, 0.168, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.341, 0.478, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+expand_margin_left = -4.48
+expand_margin_right = -4.48
+
+[sub_resource type="StyleBoxFlat" id="cartao_doca_espera_premido"]
+bg_color = Color(0.063, 0.132, 0.187, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.878, 0.604, 0.063, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 11.0
+content_margin_top = 7.0
+content_margin_right = 11.0
+content_margin_bottom = 5.0
+expand_margin_left = -4.48
+expand_margin_right = -4.48
+
+[sub_resource type="StyleBoxFlat" id="cartao_doca_rival_premido"]
+bg_color = Color(0.127, 0.065, 0.081, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.761, 0.188, 0.188, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 11.0
+content_margin_top = 7.0
+content_margin_right = 11.0
+content_margin_bottom = 5.0
+expand_margin_left = -4.48
+expand_margin_right = -4.48
 
 [sub_resource type="StyleBoxFlat" id="cartao_doca_obra"]
 bg_color = Color(0.086, 0.133, 0.173, 0.92)
@@ -1302,6 +1397,11 @@ BotaoBarra/base_type = &"Button"
 BotaoBarra/styles/disabled = SubResource("botao_off_barra")
 BotaoPrimarioBarra/base_type = &"BotaoPrimario"
 BotaoPrimarioBarra/styles/disabled = SubResource("botao_off_barra")
+BotaoPrimarioBarra/styles/pressed = SubResource("primario_press_barra")
+; NO RODAPÉ O «PASSAR POR CIMA» É O REPOUSO (veredito da `145`): no telefone o
+; rato é emulado do toque e fica onde o dedo saiu, e o botão ficava no âmbar
+; claro depois de solto. Vale também no Web com rato, de propósito.
+BotaoPrimarioBarra/styles/hover = SubResource("primario_normal")
 BotaoPerigo/base_type = &"Button"
 BotaoPerigo/colors/font_color = Color(1, 1, 1, 1)
 BotaoPerigo/colors/font_hover_color = Color(1, 1, 1, 1)
@@ -1320,6 +1420,12 @@ CartaoDocaEspera/base_type = "PanelContainer"
 CartaoDocaEspera/styles/panel = SubResource("cartao_doca_espera")
 CartaoDocaRival/base_type = "PanelContainer"
 CartaoDocaRival/styles/panel = SubResource("cartao_doca_rival")
+CartaoDocaPremido/base_type = "PanelContainer"
+CartaoDocaPremido/styles/panel = SubResource("cartao_doca_premido")
+CartaoDocaEsperaPremido/base_type = "PanelContainer"
+CartaoDocaEsperaPremido/styles/panel = SubResource("cartao_doca_espera_premido")
+CartaoDocaRivalPremido/base_type = "PanelContainer"
+CartaoDocaRivalPremido/styles/panel = SubResource("cartao_doca_rival_premido")
 CartaoDocaObra/base_type = "PanelContainer"
 CartaoDocaObra/styles/panel = SubResource("cartao_doca_obra")
 CartaoFilaVazia/base_type = "PanelContainer"

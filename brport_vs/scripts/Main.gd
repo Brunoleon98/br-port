@@ -664,6 +664,9 @@ func _connect_game_state() -> void:
 	# mesmo dia: até aqui nada redesenhava o porto ao comprar, porque a obra
 	# só mudava alguma coisa na virada, quando ficava pronta.
 	GameState.estrutura_comprada.connect(func(_id): _refresh_all())
+	# E O DIA EM QUE ELA ACABA, a peça nova assenta (`145`). O sinal sai depois
+	# do `roster_changed`, que já pôs a textura nova no nó.
+	GameState.obra_concluida.connect(_ao_concluir_obra)
 	GameState.fila_mudou.connect(_refresh_fila)
 	GameState.fila_mudou.connect(_pintar_ancorados)
 	GameState.atracou.connect(_ao_atracar)
@@ -1025,9 +1028,40 @@ const GANHO_SEG := 1.2
 ## barco cai no FUNDO do casco, e por isso o meio dele está acima do centro.
 const GANHO_SUBIDA_PX := 20.0
 const GANHO_ACIMA_PX := 12.0
+## A PEÇA NOVA ASSENTA (`145`, desenho da `144`): na virada que conclui uma
+## obra, o que ela levantou cresce de 94% a 100% em 0,3 s, a travar, com o
+## pivô no CHÃO — o centro do quadro de 512, que é a origem do mundo do prop
+## (`projecao.md`). Até aqui a textura trocava num quadro e mais nada. Não
+## passa de 100%: pedra não salta. ⚠️ ERAM 97%, o desenho da `144`, e no
+## vídeo a 1:1 quase não se via — no armazém, uns 6 px. O Bruno pediu o dobro.
+const ASSENTAR_DE := 0.94
+const ASSENTAR_SEG := 0.3
+## E A OBRA ESVAI-SE POR BAIXO DELA (veredito da `145`): o andaime, a ruína,
+## as estacas, o canteiro e os cones sumiam num quadro, e só depois a peça
+## assentava. O aspeto de antes fica num RASTO — uma cópia com a textura
+## velha, logo abaixo da peça — que se apaga em 0,25 s, dentro dos 0,3 do
+## assentar. A lança não deixa rasto: duas lanças cruzadas são o «X» que o
+## Bruno recusou na `144`. ⚠️ Eram 0,15 s, e mal se via o andaime sair.
+const RASTO_SEG := 0.25
+## O CANTEIRO E OS CONES DO PÁTIO SAEM MAIS DEPRESSA, em 0,1 s: o rolo a
+## esvair-se a 0,25 cruzava-se com o equipamento novo que assenta no mesmo
+## sítio, e lia-se como duas imagens (o segundo vídeo).
+const RASTO_DO_CANTEIRO_SEG := 0.1
 var _virada_armada := false
 var _caixa_mostrado := 0
 var _tw_caixa: Tween
+var _tw_assentar: Tween
+## As peças a assentar, `[nó, posição de repouso, chão no pai]`.
+var _assentando: Array = []
+## O que uma obra podia deixar para trás, lido ANTES de a virada a concluir:
+## o `roster_changed` já pôs a textura nova quando o `obra_concluida` chega, e
+## os cones do pátio já foram libertados.
+var _antes_da_virada: Array = []
+## O chão do pátio na véspera: o mapa de terra e as três camadas da obra, com
+## a forma que tinham (`{nome: {textura, polígonos}}`); vazio fora do último
+## dia da obra do pátio.
+var _chao_da_virada: Dictionary = {}
+var _rastos: Array[CanvasItem] = []
 
 
 func _on_advance_pressed() -> void:
@@ -1047,9 +1081,13 @@ func _on_advance_pressed() -> void:
 		if doca["boat"] != null and doca["worker_id"] != null:
 			a_pagar[i] = {"id": int(doca["boat"]["id"]),
 				"valor": GameState.receita_da_doca(i)}
+	_antes_da_virada = _aspeto_da_obra()
+	_chao_da_virada = _chao_do_patio()
 	_virada_armada = true
 	GameState.advance_turn()
 	_virada_armada = false
+	_antes_da_virada = []
+	_chao_da_virada = {}
 	for i in a_pagar:
 		var barco = GameState.docks[i]["boat"]
 		if barco == null or int(barco["id"]) != int(a_pagar[i]["id"]):
@@ -1069,11 +1107,14 @@ func _concluir_virada() -> void:
 	for rotulo in _ganhos.get_children():
 		rotulo.visible = false
 		rotulo.queue_free()
+	_acabar_assentar()
 
 
 ## A virada ainda está a acontecer na tela.
 func virada_em_curso() -> bool:
 	if _tw_caixa != null and _tw_caixa.is_valid() and _tw_caixa.is_running():
+		return true
+	if _tw_assentar != null and _tw_assentar.is_valid() and _tw_assentar.is_running():
 		return true
 	for vaga in _docks_container.get_children():
 		if vaga.em_troca():
@@ -1097,6 +1138,232 @@ func _mostrar_caixa(alvo: int) -> void:
 
 func _pintar_caixa_f(valor: float) -> void:
 	_pintar_caixa(int(round(valor)))
+
+
+## ⚠️ SÓ O BOTÃO ARMA O ASSENTAR, como a contagem: as suítes, a bateria e as
+## bancadas concluem obras pela `estado_da_bancada.gd` e viram o dia pelo
+## `GameState`, e uma peça a 94% numa foto ou numa régua de geometria seria um
+## estado que o jogo nunca mostra parado. E com o movimento reduzido a peça
+## aparece já inteira (RB6, `129`) — é transição, e não ciclo de fundo, por
+## isso não passa pelo `MovimentoDeFundo`.
+func _ao_concluir_obra(id: String) -> void:
+	if not _virada_armada or PreferenciasDeApresentacao.atual().reduzir_movimento:
+		return
+	var pecas := pecas_da_obra(id)
+	_assentar(pecas, _rastos_da_obra(id, pecas))
+
+
+## O que a obra `id` levantou no mapa, `[[nó, chão no pai], …]`: o píer e a
+## lança das vagas que ela mudou (`Dock.pecas_da_obra()`), o armazém, o
+## escritório, ou o equipamento que o pátio traz. O PÁTIO NÃO ASSENTA O CHÃO —
+## o asfalto é o mapa inteiro, e encolhê-lo seria o porto a respirar —, e a
+## sinalização já estava de pé durante a obra (`SINALIZACAO_DE_OBRA`).
+func pecas_da_obra(id: String) -> Array:
+	var pecas: Array = []
+	for vaga in _docks_container.get_children():
+		pecas.append_array(vaga.pecas_da_obra(id))
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario == null:
+		return pecas
+	var nomes: Array = []
+	if id == "armazem":
+		nomes = ["Armazem"]
+	elif id == "escritorio":
+		nomes = ["Escritorio"]
+	elif id == "patio":
+		for nome in EQUIPAMENTO_DE_PATIO:
+			if nome not in SINALIZACAO_DE_OBRA:
+				nomes.append(nome)
+	for nome in nomes:
+		var no := cenario.get_node(nome) as Control
+		pecas.append([no, no.position + no.size * 0.5])
+	return pecas
+
+
+## Os nós que uma obra pode deixar para trás, com a textura e a geometria
+## de agora — o rasto de um cone tem de sobreviver ao `free()` dele. Só com
+## obra em curso, que é a única virada que pode concluir uma.
+func _aspeto_da_obra() -> Array:
+	var r: Array = []
+	if GameState.obra_em_andamento.is_empty():
+		return r
+	var nos: Array = []
+	for vaga in _docks_container.get_children():
+		nos.append(vaga.get_node("Pier"))
+	var cenario := $MapaWrap.get_node_or_null("Cenario")
+	if cenario != null:
+		for no in cenario.get_children():
+			var nome := String(no.name)
+			if nome in ["Armazem", "Escritorio", "CanteiroDoPatio"] \
+					or nome.begins_with("ConeDaRua") or nome.begins_with("CavaleteDaRua"):
+				nos.append(no)
+	for no in nos:
+		var t := no as TextureRect
+		if t != null and t.is_visible_in_tree() and t.texture != null:
+			r.append({"no": t, "nome": String(t.name), "textura": t.texture, "pai": t.get_parent(),
+				"indice": t.get_index(), "posicao": t.position, "tamanho": t.size,
+				"expand": t.expand_mode, "stretch": t.stretch_mode, "flip_h": t.flip_h,
+				"material": t.material})
+	return r
+
+
+## O CHÃO DO PÁTIO NA VÉSPERA DE ACABAR: o mapa de terra e as três camadas
+## da obra (o asfalto que já chegou, a rua por recapear e a recapeada), com a
+## forma que têm hoje — a virada troca o mapa e esconde as três num quadro, e
+## os últimos 20% do asfalto apareciam de uma vez. Só no último dia da obra
+## do pátio: são cópias de polígonos, e fora dele não servem a nada.
+func _chao_do_patio() -> Dictionary:
+	var r := {}
+	if GameState.obra_em_andamento.is_empty() \
+			or String(GameState.obra_em_andamento["id"]) != "patio" \
+			or GameState.dias_restantes_da_obra() > 1:
+		return r
+	r["Mapa"] = {"textura": _mapa.texture}
+	for nome in ["AsfaltoDaObra", "RuaPorRecapear", "RuaRecapeada"]:
+		var poli := $MapaWrap.get_node(nome) as Polygon2D
+		if poli.visible:
+			r[nome] = {"textura": poli.texture, "polygon": poli.polygon, "uv": poli.uv,
+				"polygons": poli.polygons, "antialiased": poli.antialiased}
+	return r
+
+
+## O que a obra `id` deixa para trás: a textura de antes de cada peça que
+## mudou (menos a lança), e no pátio o canteiro e os cones que a virada tirou.
+func _rastos_da_obra(id: String, pecas: Array) -> Array:
+	var r: Array = []
+	var por_no := {}
+	for a in _antes_da_virada:
+		if is_instance_valid(a["no"]):
+			por_no[a["no"]] = a
+	for p in pecas:
+		var no: TextureRect = p[0]
+		if no.name != "Lanca" and por_no.has(no) and por_no[no]["textura"] != no.texture:
+			var peca: Dictionary = por_no[no].duplicate()
+			peca["segundos"] = RASTO_SEG
+			r.append(peca)
+	if id == "patio":
+		for a in _antes_da_virada:
+			var nome := String(a["nome"])
+			if nome != "CanteiroDoPatio" and not nome.begins_with("ConeDaRua") \
+					and not nome.begins_with("CavaleteDaRua"):
+				continue
+			var no = a["no"]
+			if not is_instance_valid(no) or not (no as CanvasItem).is_visible_in_tree():
+				var canteiro: Dictionary = a.duplicate()
+				canteiro["segundos"] = RASTO_DO_CANTEIRO_SEG
+				r.append(canteiro)
+	return r
+
+
+func _assentar(pecas: Array, rastos: Array = []) -> void:
+	_acabar_assentar()
+	if pecas.is_empty():
+		return
+	for p in pecas:
+		_assentando.append([p[0], (p[0] as Control).position, p[1]])
+	for a in rastos:
+		_deixar_rasto(a)
+	if not _chao_da_virada.is_empty():
+		_deixar_rasto_do_chao(_chao_da_virada)
+	_pousar_pecas(ASSENTAR_DE)
+	_tw_assentar = create_tween()
+	_tw_assentar.tween_method(_pousar_pecas, ASSENTAR_DE, 1.0, ASSENTAR_SEG) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	for rasto in _rastos:
+		_tw_assentar.parallel().tween_property(rasto, "modulate:a", 0.0,
+			float(rasto.get_meta(&"segundos")))
+	_tw_assentar.finished.connect(_acabar_assentar)
+
+
+## O chão de antes por cima do novo, logo acima das camadas do chão e abaixo
+## das marolas e de tudo o que pousa nele, a esvair-se com os rastos.
+func _deixar_rasto_do_chao(chao: Dictionary) -> void:
+	var rasto := Control.new()
+	rasto.name = "RastoDoChao"
+	rasto.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rasto.set_meta(&"segundos", RASTO_SEG)
+	rasto.add_to_group(&"rasto_da_obra")
+	var mapa := TextureRect.new()
+	mapa.texture = chao["Mapa"]["textura"]
+	mapa.expand_mode = _mapa.expand_mode
+	mapa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mapa.position = _mapa.position
+	mapa.size = _mapa.size
+	rasto.add_child(mapa)
+	for nome in ["AsfaltoDaObra", "RuaPorRecapear", "RuaRecapeada"]:
+		if not chao.has(nome):
+			continue
+		var poli := Polygon2D.new()
+		poli.texture = chao[nome]["textura"]
+		poli.polygon = chao[nome]["polygon"]
+		poli.uv = chao[nome]["uv"]
+		poli.polygons = chao[nome]["polygons"]
+		poli.antialiased = chao[nome]["antialiased"]
+		rasto.add_child(poli)
+	$MapaWrap.add_child(rasto)
+	$MapaWrap.move_child(rasto, $MapaWrap/RuaRecapeada.get_index() + 1)
+	_rastos.append(rasto)
+
+
+## Uma cópia do que o nó mostrava antes, no mesmo pai e LOGO ABAIXO dele (ou
+## no lugar dele, se ele já saiu), para se esvair enquanto a peça assenta.
+func _deixar_rasto(a: Dictionary) -> void:
+	var rasto := TextureRect.new()
+	rasto.name = "RastoDaObra"
+	rasto.texture = a["textura"]
+	rasto.expand_mode = a["expand"]
+	rasto.stretch_mode = a["stretch"]
+	rasto.flip_h = a["flip_h"]
+	rasto.material = a["material"]
+	rasto.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rasto.position = a["posicao"]
+	rasto.size = a["tamanho"]
+	rasto.set_meta(&"segundos", float(a["segundos"]))
+	rasto.add_to_group(&"rasto_da_obra")
+	var pai: Node = a["pai"]
+	var no = a["no"]
+	var indice: int = int(a["indice"])
+	if is_instance_valid(no) and (no as Node).get_parent() == pai:
+		indice = (no as Node).get_index()
+	pai.add_child(rasto)
+	pai.move_child(rasto, mini(indice, pai.get_child_count() - 1))
+	_rastos.append(rasto)
+
+
+## Cada peça na escala `s` com o chão parado. A posição COMPENSA, em vez de se
+## mudar o `pivot_offset`: a lança gira no eixo dela (`Dock.gd`) e pode estar
+## a varrer — e uma escala uniforme comuta com a rotação, logo a conta vale a
+## meio do giro.
+func _pousar_pecas(s: float) -> void:
+	for p in _assentando:
+		var no: Control = p[0]
+		if is_instance_valid(no):
+			no.scale = Vector2(s, s)
+			no.position = pose_assentada(p[1], no.pivot_offset, p[2], s)
+
+
+## Onde fica o canto de um nó com repouso `repouso` e pivô `pivo`, escalado
+## por `s` à volta do ponto `chao` do pai.
+static func pose_assentada(repouso: Vector2, pivo: Vector2, chao: Vector2, s: float) -> Vector2:
+	return chao + (repouso + pivo - chao) * s - pivo
+
+
+## Leva o assentar ao fim já: cada peça inteira, no sítio dela.
+func _acabar_assentar() -> void:
+	if _tw_assentar != null and _tw_assentar.is_valid():
+		_tw_assentar.kill()
+	_tw_assentar = null
+	for p in _assentando:
+		var no: Control = p[0]
+		if is_instance_valid(no):
+			no.scale = Vector2.ONE
+			no.position = p[1]
+	_assentando = []
+	for rasto in _rastos:
+		if is_instance_valid(rasto):
+			rasto.get_parent().remove_child(rasto)
+			rasto.queue_free()
+	_rastos.clear()
 
 
 func _pintar_caixa(valor: int) -> void:
@@ -1137,6 +1404,8 @@ func _aplicar_movimento(reduzido: bool) -> void:
 	if reduzido and _tw_caixa != null and _tw_caixa.is_valid():
 		_tw_caixa.kill()
 		_pintar_caixa(int(GameState.cash))
+	if reduzido:
+		_acabar_assentar()
 
 
 # O BOTÃO VOLTAR DO ANDROID. Só existe no telefone, e é por isso que ninguém

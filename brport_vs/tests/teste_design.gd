@@ -400,6 +400,12 @@ func _rodar() -> void:
 	_falhas += int(deslize.falhas)
 	_confere("o bloco D52 correu até ao fim", deslize.completo)
 
+	print("=== D53: a peça nova assenta e o «Avançar dia» afunda — só na virada que conclui, só na peça, a curva, o chão, o toque a meio, o repouso e o botão ===")
+	var assentar = load("res://tests/casos_assentar_obra.gd").new()
+	assentar.rodar(root.get_node("GameState"), self)
+	_falhas += int(assentar.falhas)
+	_confere("o bloco D53 correu até ao fim", assentar.completo)
+
 	print("")
 	if _falhas == 0:
 		print("=== DESIGN OK — tudo no lugar ===")
