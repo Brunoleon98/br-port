@@ -4,7 +4,8 @@
 junta: o PR #156 da `144` fundiu a meio da conversa (fast-forward), e no
 fecho o #157 (a bandeira dos sub-blocos do `teste_design`) e o #158 do Codex
 (o revisor de mensagens, com a decisão 145 dele — a desta conversa, escrita
-como 145, passou a `148`, e o briefing a `31b`). Nenhum PR aberto desta
+como 145, passou a `148`, e o briefing a `31c`, que o `31b` já é de uma
+branch do Codex). Nenhum PR aberto desta
 branch: não foi pedido nesta conversa.
 
 **Decisão `148` — o A1, o segundo item do tema animação e toque.** Medido
